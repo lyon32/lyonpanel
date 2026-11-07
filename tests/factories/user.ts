@@ -1,3 +1,12 @@
+/*
+ * Limites connues de ces fabriques :
+ * - removeUser échoue en silence quand des lignes de journal immuables
+ *   (wallet_transactions, audit_log) référencent l'utilisateur : c'est voulu.
+ * - Les comptes de test s'accumulent donc dans la base locale.
+ * - Les tests utilisent des valeurs uniques (email, téléphone, ref) : ils ne
+ *   dépendent pas de l'état restant.
+ * - Lancer `supabase db reset` de temps en temps pour repartir d'une base propre.
+ */
 import { adminClient, TEST_PASSWORD } from '../db/helpers/client';
 
 let counter = 0;

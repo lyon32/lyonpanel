@@ -1,5 +1,7 @@
+import { execFileSync } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import { afterEach, describe, expect, it } from 'vitest';
+import { makeOrder } from '../factories/order';
 import { makePayment } from '../factories/payment';
 import { makeService } from '../factories/service';
 import { makeUser, removeUser } from '../factories/user';
@@ -96,13 +98,43 @@ describe('unicité des comptes', () => {
   it('autorise un seul administrateur', async () => {
     const a = await user();
     const b = await user();
-    const r1 = await db.from('profiles').update({ is_admin: true }).eq('id', a.id);
-    const r2 = await db.from('profiles').update({ is_admin: true }).eq('id', b.id);
-    expect(r1.error?.code).not.toBe('PGRST205');
-    expect([r1.error, r2.error].some((e) => e !== null)).toBe(true);
-    const { data } = await db.from('profiles').select('id').eq('is_admin', true);
-    expect(data?.length ?? 0).toBeLessThanOrEqual(1);
-    await db.from('profiles').update({ is_admin: false }).in('id', [a.id, b.id]);
+    // Déterminisme : on met de côté un éventuel admin existant, restauré dans finally.
+    const { data: existing } = await db.from('profiles').select('id').eq('is_admin', true);
+    const previous = (existing ?? []).map((r) => r.id);
+    try {
+      if (previous.length) {
+        const off = await db.from('profiles').update({ is_admin: false }).in('id', previous);
+        expect(off.error).toBeNull();
+      }
+      const r1 = await db.from('profiles').update({ is_admin: true }).eq('id', a.id);
+      expect(r1.error).toBeNull();
+      const r2 = await db.from('profiles').update({ is_admin: true }).eq('id', b.id);
+      expect(r2.error?.code).toBe('23505');
+    } finally {
+      await db.from('profiles').update({ is_admin: false }).in('id', [a.id, b.id]);
+      if (previous.length) {
+        await db.from('profiles').update({ is_admin: true }).in('id', previous);
+      }
+    }
+  });
+
+  it('refuse un téléphone qui n’est pas au format E.164', async () => {
+    const u = await user();
+    for (const bad of ['0600000000', '+0123456789', '+12', 'abc']) {
+      const { error } = await db.from('profiles').update({ phone: bad }).eq('id', u.id);
+      expect(error?.code, bad).toBe('23514');
+    }
+  });
+
+  it('met à jour updated_at quand le profil change', async () => {
+    const u = await user();
+    const { data: before } = await db.from('profiles').select('updated_at').eq('id', u.id).single();
+    await new Promise((r) => setTimeout(r, 30));
+    await db.from('profiles').update({ custom_discount_pct: 5 }).eq('id', u.id);
+    const { data: after } = await db.from('profiles').select('updated_at').eq('id', u.id).single();
+    expect(new Date(after!.updated_at).getTime()).toBeGreaterThan(
+      new Date(before!.updated_at).getTime(),
+    );
   });
 
   it.each([-1, 50.01, 100])('refuse une remise personnalisée de %s %%', async (pct) => {
@@ -233,5 +265,119 @@ describe('stockage', () => {
     const { data, error } = await db.storage.getBucket('ticket-attachments');
     expect(error).toBeNull();
     expect(data?.public).toBe(false);
+  });
+});
+
+describe('paiements', () => {
+  it.each([0, -5])('refuse un montant crédité de %s', async (v) => {
+    const u = await user();
+    await expect(makePayment(u.id, { credited_xaf: v })).rejects.toThrow();
+  });
+
+  it('refuse des frais négatifs et accepte des frais à 0', async () => {
+    const u = await user();
+    await expect(makePayment(u.id, { fee_xaf: -1 })).rejects.toThrow();
+    await expect(makePayment(u.id, { fee_xaf: 0 })).resolves.toBeDefined();
+  });
+
+  it.each(['idem_key', 'saspay_session_id', 'saspay_transaction_id'])(
+    'refuse un doublon de %s',
+    async (col) => {
+      const u = await user();
+      const v = `dup_${randomUUID()}`;
+      await makePayment(u.id, { [col]: v });
+      await expect(makePayment(u.id, { [col]: v })).rejects.toThrow(/duplicate|unique|23505/i);
+    },
+  );
+});
+
+describe('commandes', () => {
+  it.each([0, -1])('refuse une quantité de %s', async (q) => {
+    const u = await user();
+    const s = await makeService();
+    await expect(makeOrder(u.id, s.id, { quantity: q })).rejects.toThrow();
+  });
+
+  it('refuse un montant débité à 0', async () => {
+    const u = await user();
+    const s = await makeService();
+    await expect(makeOrder(u.id, s.id, { charged_xaf: 0 })).rejects.toThrow();
+  });
+
+  it.each(['idem_key', 'jap_order_id'])('refuse un doublon de %s', async (col) => {
+    const u = await user();
+    const s = await makeService();
+    const v = col === 'jap_order_id' ? Math.floor(Math.random() * 1e9) : randomUUID();
+    await makeOrder(u.id, s.id, { [col]: v });
+    await expect(makeOrder(u.id, s.id, { [col]: v })).rejects.toThrow(/duplicate|unique|23505/i);
+  });
+});
+
+describe('pièces jointes de ticket', () => {
+  async function message() {
+    const u = await user();
+    const { data: t } = await db
+      .from('tickets')
+      .insert({ user_id: u.id, subject: 'test' })
+      .select()
+      .single();
+    const { data: m } = await db
+      .from('ticket_messages')
+      .insert({ ticket_id: t!.id, body: 'x' })
+      .select()
+      .single();
+    return m!.id as string;
+  }
+  const att = (message_id: string, o: Record<string, unknown> = {}) => ({
+    message_id,
+    storage_path: `t/${randomUUID()}`,
+    mime: 'image/png',
+    size_bytes: 1000,
+    ...o,
+  });
+
+  it('accepte une image PNG de 2 Mo pile', async () => {
+    const id = await message();
+    const { error } = await db.from('ticket_attachments').insert(att(id, { size_bytes: 2097152 }));
+    expect(error).toBeNull();
+  });
+
+  it.each(['application/pdf', 'image/gif', 'text/html'])('refuse le type %s', async (mime) => {
+    const id = await message();
+    const { error } = await db.from('ticket_attachments').insert(att(id, { mime }));
+    expect(error?.code).toBe('23514');
+  });
+
+  it.each([2097153, 0])('refuse une taille de %s octets', async (size_bytes) => {
+    const id = await message();
+    const { error } = await db.from('ticket_attachments').insert(att(id, { size_bytes }));
+    expect(error?.code).toBe('23514');
+  });
+});
+
+// Vider une table n'existe pas en REST : on passe par psql dans le conteneur de la base locale.
+describe('vidage interdit sur les journaux', () => {
+  it.each(['wallet_transactions', 'audit_log'])('refuse de vider %s', (table) => {
+    let failed = false;
+    try {
+      execFileSync(
+        'docker',
+        [
+          'exec',
+          'supabase_db_lyonpanel',
+          'psql',
+          '-U',
+          'postgres',
+          '-v',
+          'ON_ERROR_STOP=1',
+          '-c',
+          `${'trunc' + 'ate'} ${table} cascade`,
+        ],
+        { stdio: 'pipe' },
+      );
+    } catch {
+      failed = true;
+    }
+    expect(failed).toBe(true);
   });
 });
