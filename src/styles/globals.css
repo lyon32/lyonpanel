@@ -110,3 +110,20 @@ h3 {
     font-size: var(--titre-h3-bureau);
   }
 }
+
+/* Tuiles de réseaux du héros : petit rebond sur place, coupé si l'utilisateur réduit les animations. */
+@keyframes lp-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .lp-bounce {
+    animation: lp-bounce 3s ease-in-out infinite;
+  }
+}

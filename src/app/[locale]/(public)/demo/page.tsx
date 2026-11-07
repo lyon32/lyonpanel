@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Reveal } from '@/components/motion/reveal';
 import { DemoBasics } from '@/components/shared/demo/demo-basics';
-import { DemoHero } from '@/components/shared/demo/demo-hero';
+import { HomeHero } from '@/components/shared/home-hero';
 import { DemoStates } from '@/components/shared/demo/demo-states';
 import { LazyTimeline, LazyTrackE, LazyTrackF } from '@/components/shared/demo/demo-lazy';
 import { BottomNav } from '@/components/layout/bottom-nav';
@@ -37,7 +37,7 @@ export default async function DemoPage({ params }: Props) {
 
   return (
     <>
-      <DemoHero />
+      <HomeHero />
       <DemoBasics />
 
       <section className="mx-auto max-w-6xl px-4 py-10 md:py-14">
