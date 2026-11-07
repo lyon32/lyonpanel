@@ -1,0 +1,18 @@
+import { setRequestLocale, getTranslations } from 'next-intl/server';
+
+import { SITE_NAME } from '@/lib/constants';
+
+// Page provisoire ; l'accueil réel arrive en phase 14.
+export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations('home');
+
+  return (
+    <main className="flex min-h-screen flex-col items-center justify-center gap-3 px-4 text-center">
+      <h1 className="text-4xl font-bold text-[#1D4ED8]">{SITE_NAME}</h1>
+      <p className="text-slate-600">{t('title')}</p>
+      <p className="text-slate-600">{t('subtitle')}</p>
+    </main>
+  );
+}

@@ -1,0 +1,44 @@
+{
+  "nav": {
+    "home": "Home",
+    "order": "Order",
+    "orders": "Orders",
+    "addFunds": "Add funds",
+    "account": "Account",
+    "login": "Log in",
+    "register": "Sign up"
+  },
+  "footer": {
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "support": "Support",
+    "rights": "All rights reserved."
+  },
+  "common": {
+    "loading": "Loading…",
+    "retry": "Try again",
+    "close": "Close"
+  },
+  "errors": {
+    "notFound": "This page does not exist.",
+    "generic": "Something went wrong. Please try again in a moment."
+  },
+  "currency": {
+    "label": "Currency",
+    "XAF": "CFA franc (XAF)",
+    "XOF": "CFA franc (XOF)",
+    "USD": "US dollar (USD)"
+  },
+  "language": {
+    "label": "Language",
+    "fr": "Français",
+    "en": "English"
+  },
+  "home": {
+    "title": "The site is coming soon.",
+    "subtitle": "Followers, likes and views for your social media."
+  },
+  "meta": {
+    "description": "LyonPanel: followers, likes and views for TikTok and Instagram, paid with Mobile Money."
+  }
+}

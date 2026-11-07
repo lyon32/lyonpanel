@@ -1,0 +1,44 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "order": "Commander",
+    "orders": "Commandes",
+    "addFunds": "Recharger",
+    "account": "Compte",
+    "login": "Connexion",
+    "register": "Inscription"
+  },
+  "footer": {
+    "privacy": "Confidentialité",
+    "terms": "Conditions",
+    "support": "Support",
+    "rights": "Tous droits réservés."
+  },
+  "common": {
+    "loading": "Chargement…",
+    "retry": "Réessayer",
+    "close": "Fermer"
+  },
+  "errors": {
+    "notFound": "Cette page n'existe pas.",
+    "generic": "Une erreur est survenue. Réessayez dans un instant."
+  },
+  "currency": {
+    "label": "Devise",
+    "XAF": "Franc CFA (XAF)",
+    "XOF": "Franc CFA (XOF)",
+    "USD": "Dollar US (USD)"
+  },
+  "language": {
+    "label": "Langue",
+    "fr": "Français",
+    "en": "English"
+  },
+  "home": {
+    "title": "Le site arrive bientôt.",
+    "subtitle": "Abonnés, likes et vues pour vos réseaux sociaux."
+  },
+  "meta": {
+    "description": "LyonPanel : abonnés, likes et vues pour TikTok et Instagram, payés en Mobile Money."
+  }
+}
