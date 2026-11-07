@@ -96,6 +96,44 @@ describe('scrubEvent', () => {
     expect(out.message).toBe('[téléphone] et [téléphone] et [téléphone]');
   });
 
+  it('laisse strictement intacts les identifiants et métadonnées techniques', () => {
+    const technical = {
+      event_id: '12345678901234567890123456789012',
+      contexts: {
+        trace: {
+          trace_id: '12345678901234567890123456789012',
+          span_id: '1234567890123456',
+          parent_span_id: '6543210987654321',
+        },
+      },
+      spans: [{ trace_id: '12345678901234567890123456789012', span_id: '1234567890123456' }],
+      release: '20261107123456789',
+      timestamp: 1762500000.123456,
+      sdk: { name: 'sentry.javascript.nextjs', version: '10.12345678' },
+      platform: 'javascript',
+      environment: 'production',
+      level: 'error',
+      type: 'transaction',
+    };
+    const out = scrubEvent({
+      ...technical,
+      message: 'tel 677123456 a@b.com',
+      tags: { who: '00237677123456' },
+      request: { url: 'https://lyonpanel.com/a?x=1' },
+    });
+    for (const key of Object.keys(technical) as (keyof typeof technical)[]) {
+      expect(out[key]).toEqual(technical[key]);
+    }
+    expect(out.message).toBe('tel [téléphone] [email]');
+    expect(out.tags.who).toBe('[téléphone]');
+    expect(out.request?.url).toBe('https://lyonpanel.com/a');
+  });
+
+  it('ne laisse aucun fragment de chiffres pour un numéro long', () => {
+    const out = scrubEvent({ message: '+237(677)123456 00237677123456' });
+    expect(out.message).not.toMatch(/\d/);
+  });
+
   it('laisse intacts les autres champs', () => {
     const out = scrubEvent({
       user: { id: 'u1' },
