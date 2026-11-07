@@ -129,7 +129,7 @@ Solde négatif, montant 0, `ref` en double, téléphone en double, `min_qty > ma
 
 **(a) Déjà validé.** Prix arrondi au XAF supérieur (jamais en dessous du coût).
 
-**(b) À valider : documents à compléter.** Je n'ai modifié aucun de ces documents (ils sont validés). Voici ce qui est proposé.
+**(b) Validé par le propriétaire le 2026-11-07 : documents complétés.** `DATA_MODEL.md`, `API_SPEC.md §3` et `openapi.yaml` ont été alignés sur le code.
 - `DATA_MODEL.md` à compléter avec :
   - `min_qty` et `max_qty` sont `NOT NULL` ;
   - un compte `deleted` ne lit ni n'écrit plus rien ;
@@ -137,7 +137,7 @@ Solde négatif, montant 0, `ref` en double, téléphone en double, `min_qty > ma
   - `credit_payment` refuse un paiement `failed`.
 - `API_SPEC.md §3` à compléter avec les codes d'erreur : `INVALID_AMOUNT`, `USER_NOT_FOUND`, `PAYMENT_NOT_PAYABLE`, `NOT_ADMIN`, `ORDER_NOT_FOUND`, `ALREADY_REFUNDED`, `AMOUNT_TOO_HIGH`, `NOTE_REQUIRED`, `QUANTITY_OUT_OF_RANGE`, et les autres codes de la base (`INSUFFICIENT_BALANCE`, `ACCOUNT_BLOCKED`, `SERVICE_UNAVAILABLE`, `PRICE_CHANGED`, `DAILY_LIMIT_REACHED`, `AMOUNT_MISMATCH`, `PAYMENT_NOT_FOUND`).
 
-**(c) Valeurs provisoires du seed à confirmer.** `saspay_fee_pct = 3` et `price_alert_pct = 20`.
+**(c) Validé par le propriétaire le 2026-11-07 : valeurs provisoires du seed (ajustables).** `saspay_fee_pct = 3` et `price_alert_pct = 20`.
 
 **(d) Écart à aligner en phase 4.** Le seed met tous les services fictifs à +60 % et arrondit à la dizaine, alors que `docs/01` demande le multiple de 5. À corriger quand le vrai calcul de prix sera écrit.
 

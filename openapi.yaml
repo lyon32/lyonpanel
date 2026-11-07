@@ -780,10 +780,16 @@ components:
         - INVALID_CREDENTIALS
         - MFA_REQUIRED
         - ACCOUNT_BLOCKED
+        - NOT_ADMIN
         - NOT_FOUND
+        - ORDER_NOT_FOUND
+        - PAYMENT_NOT_FOUND
+        - USER_NOT_FOUND
         - EMAIL_TAKEN
         - PHONE_TAKEN
         - IDEMPOTENCY_CONFLICT
+        - ALREADY_REFUNDED
+        - PAYMENT_NOT_PAYABLE
         - INSUFFICIENT_BALANCE
         - QUANTITY_OUT_OF_RANGE
         - INVALID_LINK
@@ -791,6 +797,10 @@ components:
         - PRICE_CHANGED
         - DAILY_LIMIT_REACHED
         - AMOUNT_BELOW_MINIMUM
+        - AMOUNT_MISMATCH
+        - AMOUNT_TOO_HIGH
+        - INVALID_AMOUNT
+        - NOTE_REQUIRED
         - FILE_TOO_LARGE
         - FILE_TYPE_NOT_ALLOWED
         - RATE_LIMITED
