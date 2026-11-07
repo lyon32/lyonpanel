@@ -1,12 +1,10 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import { Timeline } from '@/components/motion/timeline';
 import { Reveal } from '@/components/motion/reveal';
 import { DemoBasics } from '@/components/shared/demo/demo-basics';
 import { DemoHero } from '@/components/shared/demo/demo-hero';
 import { DemoStates } from '@/components/shared/demo/demo-states';
-import { DemoTrackE } from '@/components/shared/demo/demo-track-e';
-import { DemoTrackF } from '@/components/shared/demo/demo-track-f';
+import { LazyTimeline, LazyTrackE, LazyTrackF } from '@/components/shared/demo/demo-lazy';
 import { BottomNav } from '@/components/layout/bottom-nav';
 import { Sidebar } from '@/components/layout/sidebar';
 
@@ -44,17 +42,17 @@ export default async function DemoPage({ params }: Props) {
 
       <section className="mx-auto max-w-6xl px-4 py-10 md:py-14">
         <SectionTitle>{t('trackETitle')}</SectionTitle>
-        <DemoTrackE />
+        <LazyTrackE />
       </section>
 
       <section className="mx-auto max-w-6xl px-4 py-10 md:py-14">
         <SectionTitle>{t('trackFTitle')}</SectionTitle>
-        <DemoTrackF />
+        <LazyTrackF />
       </section>
 
       <section className="mx-auto max-w-6xl px-4 py-10 md:py-14">
         <SectionTitle>{t('stepsTitle')}</SectionTitle>
-        <Timeline data={steps} />
+        <LazyTimeline data={steps} />
       </section>
 
       <section className="mx-auto max-w-6xl px-4 py-10 md:py-14">

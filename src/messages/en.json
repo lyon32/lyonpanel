@@ -177,5 +177,23 @@
     "errorText": "Example of an error shown on screen.",
     "layoutTitle": "Customer area layout",
     "layoutText": "Sidebar on large screens, bottom menu on mobile."
+  },
+  "pages": {
+    "order": "Order",
+    "orders": "My orders",
+    "addFunds": "Add funds",
+    "dashboard": "Dashboard",
+    "transactions": "Transactions",
+    "favorites": "Favorites",
+    "tickets": "Support",
+    "referral": "Referral",
+    "account": "My account",
+    "login": "Log in",
+    "register": "Sign up",
+    "forgotPassword": "Forgot password",
+    "privacy": "Privacy",
+    "terms": "Terms of use",
+    "services": "Services",
+    "blog": "Blog"
   }
 }

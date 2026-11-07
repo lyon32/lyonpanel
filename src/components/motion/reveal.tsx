@@ -1,7 +1,8 @@
 'use client';
 
-import { motion } from 'motion/react';
+import * as m from 'motion/react-m';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { MotionLazy } from './motion-lazy';
 import { useMotionLevel } from '@/hooks/use-motion-level';
 
 type RevealProps = { children: ReactNode; className?: string };
@@ -20,14 +21,16 @@ export function Reveal({ children, className }: RevealProps) {
   if (level === 'none') return <div className={className}>{children}</div>;
   const distance = level === 'rich' ? 16 : 8;
   return (
-    <motion.div
-      ref={ref}
-      className={className}
-      initial={{ opacity: 0, y: distance }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: hasAmount ? 0 : 0.3, ease: 'easeOut' }}
-    >
-      {children}
-    </motion.div>
+    <MotionLazy>
+      <m.div
+        ref={ref}
+        className={className}
+        initial={{ opacity: 0, y: distance }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: hasAmount ? 0 : 0.3, ease: 'easeOut' }}
+      >
+        {children}
+      </m.div>
+    </MotionLazy>
   );
 }

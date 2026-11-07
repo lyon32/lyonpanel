@@ -42,7 +42,7 @@ export function SiteHeader({ currency, setCurrencyCookie }: Props) {
   return (
     <header className="border-gris-200 bg-blanc border-b">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-0.5 gap-y-1 px-2 py-2 md:flex-nowrap md:gap-x-6 md:px-4">
-        <Link href="/" className="order-1 shrink-0">
+        <Link href="/" className="order-1 flex min-h-11 shrink-0 items-center">
           <Logo alt="LyonPanel" className="h-7 w-auto md:h-8" />
         </Link>
         <nav

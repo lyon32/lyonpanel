@@ -1,7 +1,7 @@
 export const CURRENCIES = ['XAF', 'XOF', 'USD'] as const;
 export type Currency = (typeof CURRENCIES)[number];
 
-export const CURRENCY_COOKIE = 'NEXT_CURRENCY';
+export const CURRENCY_COOKIE = 'lp_currency';
 // 1 an, sans donnée personnelle.
 export const CURRENCY_COOKIE_OPTIONS = {
   maxAge: 60 * 60 * 24 * 365,

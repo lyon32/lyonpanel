@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
 const LOCALES = [
   { code: 'fr', bottom: 'Menu du bas', app: 'Espace client', lang: 'Langue', other: 'English' },
@@ -84,10 +84,91 @@ test('le sélecteur de langue de /fr/demo mène à /en/demo', async ({ page }) =
   await expect(page).toHaveURL(/\/en\/demo$/);
 });
 
-test('changer la devise met à jour le cookie NEXT_CURRENCY', async ({ page, context }) => {
+test('changer la devise met à jour le cookie lp_currency', async ({ page, context }) => {
   await page.goto('/fr/demo');
   await page.getByRole('combobox', { name: 'Devise' }).first().selectOption('USD');
   await expect
-    .poll(async () => (await context.cookies()).find((c) => c.name === 'NEXT_CURRENCY')?.value)
+    .poll(async () => (await context.cookies()).find((c) => c.name === 'lp_currency')?.value)
     .toBe('USD');
+});
+
+// Les blocs lourds ne se montent qu'à l'approche de l'écran : on descend la page pour les faire apparaître.
+async function scrollThrough(page: Page) {
+  for (let y = 0; y < 9000; y += 600) {
+    await page.evaluate((v) => window.scrollTo(0, v), y);
+    await page.waitForTimeout(120);
+  }
+}
+
+test('focus clavier : chaque onglet « Nouvelle commande » montre un anneau visible', async ({
+  page,
+}) => {
+  await page.goto('/fr/demo');
+  await scrollThrough(page);
+  const first = page.getByRole('tab', { name: 'Nouvelle commande' });
+  await first.scrollIntoViewIfNeeded();
+  await first.focus();
+  const count = await page.getByRole('tab').count();
+  expect(count).toBeGreaterThan(1);
+  for (let i = 0; i < count; i++) {
+    const focused = page.locator('[role="tab"]:focus');
+    await expect(focused).toHaveCount(1);
+    const style = await focused.evaluate((el) => {
+      const cs = getComputedStyle(el);
+      return { shadow: cs.boxShadow, border: cs.borderTopColor };
+    });
+    expect(style.shadow).not.toBe('none');
+    expect(style.border).not.toBe('rgba(0, 0, 0, 0)');
+    await page.keyboard.press('ArrowRight');
+  }
+});
+
+test('cibles tactiles >= 44 px sur téléphone : logo, onglets, bouton principal', async ({
+  browser,
+}) => {
+  const context = await browser.newContext({
+    viewport: { width: 360, height: 740 },
+    hasTouch: true,
+  });
+  const page = await context.newPage();
+  await page.goto('/fr/demo');
+  await scrollThrough(page);
+  const logo = page.getByRole('link', { name: 'LyonPanel' }).first();
+  const create = page.getByRole('button', { name: /Créer un compte/ }).first();
+  const tab = page.getByRole('tab').first();
+  await tab.scrollIntoViewIfNeeded();
+  for (const el of [logo, create, tab]) {
+    const box = await el.boundingBox();
+    expect(box?.height ?? 0).toBeGreaterThanOrEqual(43.5);
+  }
+  await context.close();
+});
+
+test('la pile d’écrans ouvre le détail au clic et au clavier, Échap le ferme', async ({ page }) => {
+  await page.goto('/fr/demo');
+  await scrollThrough(page);
+  const card = page.getByRole('button', { name: /Voir le détail/ }).first();
+  await card.scrollIntoViewIfNeeded();
+  await card.click();
+  await expect(page.getByRole('dialog')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('dialog')).toBeHidden();
+  await card.focus();
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('dialog')).toBeVisible();
+});
+
+test('mouvement réduit : aucune animation continue ne reste active', async ({ browser }) => {
+  const context = await browser.newContext({ reducedMotion: 'reduce' });
+  const page = await context.newPage();
+  await page.goto('/fr/demo');
+  for (let y = 0; y < 8000; y += 700) {
+    await page.evaluate((v) => window.scrollTo(0, v), y);
+    await page.waitForTimeout(150);
+  }
+  const running = await page.evaluate(
+    () => document.getAnimations().filter((a) => a.playState === 'running').length,
+  );
+  expect(running).toBe(0);
+  await context.close();
 });

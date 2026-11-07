@@ -3,7 +3,6 @@ import { getTranslations } from 'next-intl/server';
 import AttractButton from '@/components/motion/attract-button';
 import { DotBackground } from '@/components/motion/dot-background';
 import { FloatingCards } from '@/components/motion/floating-cards';
-import { Reveal } from '@/components/motion/reveal';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 
@@ -43,14 +42,11 @@ export async function DemoHero() {
       <div className="mx-auto grid max-w-6xl items-center gap-8 px-4 py-12 md:py-20 lg:grid-cols-[1fr_minmax(0,34rem)_1fr] lg:gap-10">
         <FloatingCards cards={mini.slice(0, 2)} className="order-2 lg:order-1 lg:grid-cols-1" />
         <div className="order-1 flex flex-col items-center gap-6 text-center lg:order-2">
-          <Reveal>
-            <h1 className="text-encre text-3xl font-bold text-balance md:text-5xl">
-              {t('heroTitle')}
-            </h1>
-          </Reveal>
-          <Reveal>
-            <p className="text-gris-600 max-w-prose text-base">{t('heroText')}</p>
-          </Reveal>
+          {/* Pas de Reveal ici : le titre est l'élément le plus gros de l'écran (LCP), il doit être visible dès le HTML. */}
+          <h1 className="text-encre text-3xl font-bold text-balance md:text-5xl">
+            {t('heroTitle')}
+          </h1>
+          <p className="text-gris-600 max-w-prose text-base">{t('heroText')}</p>
           <AttractButton>{t('createAccount')}</AttractButton>
           <ul aria-label={t('networks')} className="mt-4 flex flex-wrap justify-center gap-3">
             {networks.map(({ Icon, name }) => (

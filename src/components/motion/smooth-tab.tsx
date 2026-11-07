@@ -409,9 +409,10 @@ export default function SmoothTab({
                 aria-controls={panelId(i)}
                 aria-selected={isSelected}
                 className={cn(
-                  'relative flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-medium',
+                  'relative flex min-h-11 shrink-0 items-center gap-1.5 rounded-full border border-transparent px-3.5 py-1.5 text-sm font-medium',
                   'text-gris-600 hover:text-encre transition-colors duration-150 ease-out',
-                  'focus-visible:outline-gris-400 outline-none focus-visible:outline-2 focus-visible:outline-offset-2',
+                  // Même anneau que les boutons du design system : visible sur chaque onglet.
+                  'focus-visible:border-bleu-600 focus-visible:ring-bleu-100 outline-none focus-visible:ring-4',
                 )}
                 id={tabId(i)}
                 key={item.id}
@@ -443,7 +444,7 @@ export default function SmoothTab({
               return (
                 <span
                   className={cn(
-                    'flex shrink-0 items-center gap-1.5 px-3.5 py-1.5 text-sm font-medium',
+                    'flex min-h-11 shrink-0 items-center gap-1.5 border border-transparent px-3.5 py-1.5 text-sm font-medium',
                     activeTextColor,
                   )}
                   key={item.id}

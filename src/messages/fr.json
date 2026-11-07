@@ -177,5 +177,23 @@
     "errorText": "Exemple d’erreur affichée à l’écran.",
     "layoutTitle": "Mise en page de l’espace client",
     "layoutText": "Barre latérale sur grand écran, menu du bas sur mobile."
+  },
+  "pages": {
+    "order": "Commander",
+    "orders": "Mes commandes",
+    "addFunds": "Recharger mon solde",
+    "dashboard": "Tableau de bord",
+    "transactions": "Transactions",
+    "favorites": "Favoris",
+    "tickets": "Support",
+    "referral": "Parrainage",
+    "account": "Mon compte",
+    "login": "Connexion",
+    "register": "Inscription",
+    "forgotPassword": "Mot de passe oublié",
+    "privacy": "Confidentialité",
+    "terms": "Conditions d’utilisation",
+    "services": "Services",
+    "blog": "Blog"
   }
 }

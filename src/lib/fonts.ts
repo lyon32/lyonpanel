@@ -12,6 +12,8 @@ export const atkinson = Atkinson_Hyperlegible({
   subsets: ['latin'],
   weight: ['400', '700'],
   display: 'swap',
+  // Non utilisée au premier affichage : on évite de la précharger.
+  preload: false,
   variable: '--font-atkinson',
 });
 
@@ -19,5 +21,6 @@ export const plexMono = IBM_Plex_Mono({
   subsets: ['latin'],
   weight: ['400', '500'],
   display: 'swap',
+  preload: false,
   variable: '--font-plex-mono',
 });

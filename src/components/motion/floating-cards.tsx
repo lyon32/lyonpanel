@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useRef, type ReactNode } from 'react';
-import { motion } from 'motion/react';
+import * as m from 'motion/react-m';
+import { MotionLazy } from './motion-lazy';
 import { useMotionLevel } from '@/hooks/use-motion-level';
 import { cn } from '@/lib/cn';
 
@@ -31,26 +32,30 @@ export function FloatingCards({ cards, className }: FloatingCardsProps) {
   }, [level]);
 
   return (
-    <div ref={rootRef} className={cn('grid gap-4', className)}>
-      {shown.map((card, i) =>
-        level === 'none' ? (
-          <div key={card.id} data-floating-card>
-            {card.content}
-          </div>
-        ) : (
-          <motion.div
-            key={card.id}
-            data-floating-card
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: i * 0.08 }}
-          >
-            <div style={level === 'rich' ? { translate: 'var(--px, 0) var(--py, 0)' } : undefined}>
+    <MotionLazy>
+      <div ref={rootRef} className={cn('grid gap-4', className)}>
+        {shown.map((card, i) =>
+          level === 'none' ? (
+            <div key={card.id} data-floating-card>
               {card.content}
             </div>
-          </motion.div>
-        ),
-      )}
-    </div>
+          ) : (
+            <m.div
+              key={card.id}
+              data-floating-card
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: i * 0.08 }}
+            >
+              <div
+                style={level === 'rich' ? { translate: 'var(--px, 0) var(--py, 0)' } : undefined}
+              >
+                {card.content}
+              </div>
+            </m.div>
+          ),
+        )}
+      </div>
+    </MotionLazy>
   );
 }
