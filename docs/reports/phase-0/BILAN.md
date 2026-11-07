@@ -23,10 +23,10 @@ Un projet Next.js vide mais complet : il démarre, se vérifie tout seul (lint, 
 Contrôles : relecture `lp-reviewer` ACCEPTÉ. `lp-security` : audit À CORRIGER, puis ré-audit ACCEPTÉ. La phase n'a pas de tâche 0.3.
 
 ## Chiffres réels (relancés le 2026-11-07)
-- Tests Vitest : 26 écrits, 26 passent, 0 échec (env 9, nettoyage Sentry 12, contrôle du bundle 4, constantes 1).
+- Tests Vitest : 28 écrits, 28 passent, 0 échec (env 11, nettoyage Sentry 12, contrôle du bundle 4, constantes 1).
 - Test Playwright : 1 écrit, 1 passe.
 - Lint, types, format, build, `check:bundle` : tous sans erreur.
-- Couverture globale : 83,16 % des instructions, 81,57 % des branches. `env.ts` 96,15 %, `sentry-scrub.ts` 97,67 %, script `check-client-bundle.mjs` 51,61 %. Aucun module d'argent dans cette phase.
+- Couverture globale : 83,49 % des instructions, 82,5 % des branches. `env.ts` 96,42 %, `sentry-scrub.ts` 97,67 %, script `check-client-bundle.mjs` 51,61 %. Aucun module d'argent dans cette phase.
 - Durée de la CI : non mesurée (la CI n'a pas encore tourné sur GitHub).
 
 ## Problèmes rencontrés et solutions
@@ -36,7 +36,7 @@ Contrôles : relecture `lp-reviewer` ACCEPTÉ. `lp-security` : audit À CORRIGER
 - **Incident** : 14 documents à la racine ont été déplacés vers `docs/` par un agent non identifié pendant la phase. Ils ont été restaurés depuis git. À surveiller.
 
 ## Points ouverts
-- Décision du propriétaire : `SASPAY_MODE=live` hors production (refuser, comme aujourd'hui, ou autre).
+- `SASPAY_MODE=live` hors production : refus ajouté au code (commit `c2531cd`, postérieur aux rapports de tâche) ; décision du propriétaire à confirmer.
 - Extras CI non faits : actions GitHub épinglées par SHA, Dependabot pour les actions GitHub, analyse du HTML pré-rendu, valeurs de faux secrets en CI.
 - Une date ISO peut être masquée en `[téléphone]` dans Sentry (faux positif sans gravité).
 - `NEXT_PUBLIC_VERCEL_ENV` à documenter.

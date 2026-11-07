@@ -1,7 +1,7 @@
 # Tableau de bord LyonPanel
 Mis à jour le 2026-11-07 (fin de la phase 0). Chiffres lus dans les comptes-rendus et les commandes de la tâche 0.6.
 
-**En 5 secondes :** la phase 0 est faite, en attente de ton « validé ». Rien ne bloque côté technique. À faire par toi : protéger `main`, ouvrir/valider la PR, trancher `SASPAY_MODE=live`. Ensuite : phase 1, base de données.
+**En 5 secondes :** la phase 0 est faite, en attente de ton « validé ». Rien ne bloque côté technique. À faire par toi : protéger `main`, ouvrir/valider la PR, confirmer le refus de `SASPAY_MODE=live` hors production. Ensuite : phase 1, base de données.
 
 ## 1. Avancement des phases
 Aucune date n'est prévue pour les phases 1 à 16 : seule la phase 0 a une date réelle (2026-11-07). Jaune : faite, en attente de validation. Gris : à faire. Bleu : validée (aucune pour l'instant).
@@ -105,16 +105,16 @@ flowchart TD
 ## 5. Santé du projet
 | Phase | Tests (écrits) | Tests verts | Couverture modules d'argent | Corrections demandées par les contrôles |
 |---|---|---|---|---|
-| 0 | 27 (26 Vitest + 1 Playwright) | 27 | sans objet (aucun module d'argent) | 2 correctifs après audit sécurité (`518d1b0`, `bd1a38a`) |
+| 0 | 29 (28 Vitest + 1 Playwright) | 29 | sans objet (aucun module d'argent) | 2 correctifs après audit sécurité (`518d1b0`, `bd1a38a`) |
 
-Couverture globale Vitest : 83,16 % des instructions, 81,57 % des branches.
+Couverture globale Vitest : 83,49 % des instructions, 82,5 % des branches.
 
 ```mermaid
 xychart-beta
   title "Tests par phase"
   x-axis ["Phase 0"]
   y-axis "Nombre de tests" 0 --> 30
-  bar [27]
-  bar [27]
+  bar [29]
+  bar [29]
 ```
 Première barre : tests écrits. Deuxième barre : tests verts.
