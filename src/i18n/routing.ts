@@ -27,6 +27,8 @@ export const routing = defineRouting({
     '/': '/',
     '/services': '/services',
     '/blog': '/blog',
+    // Page interne de démonstration (noindex), même adresse dans les deux langues.
+    '/demo': '/demo',
     ...pathnames,
   },
 });
