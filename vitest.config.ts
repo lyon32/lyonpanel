@@ -6,7 +6,9 @@ export default defineConfig({
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },
   test: {
-    include: ['tests/unit/**/*.test.ts'],
+    include: ['tests/unit/**/*.test.{ts,tsx}'],
     environment: 'node',
+    // Les tests de composants ajoutent `// @vitest-environment jsdom` en tête de fichier.
+    setupFiles: ['tests/helpers/setup-ui.ts'],
   },
 });

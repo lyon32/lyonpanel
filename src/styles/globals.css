@@ -17,6 +17,8 @@
   --gris-50: #f8fafc;
   --succes: #067647;
   --erreur: #b42318;
+  --succes-fond: #ecfdf3;
+  --erreur-fond: #fef3f2;
 
   --rayon: 8px;
   --rayon-carte: 12px;
@@ -63,6 +65,8 @@
   --color-gris-50: var(--gris-50);
   --color-succes: var(--succes);
   --color-erreur: var(--erreur);
+  --color-succes-fond: var(--succes-fond);
+  --color-erreur-fond: var(--erreur-fond);
   --radius-base: var(--rayon);
   --radius-carte: var(--rayon-carte);
   --font-sans: var(--font-public-sans), var(--police);
