@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { adminClient } from './helpers/client';
 
@@ -136,10 +138,13 @@ describe('seed : services fictifs', () => {
 });
 
 describe('seed : aucune donnée réelle', () => {
-  it('ne crée aucun faux client (tout compte existant est un compte de test @lyonpanel.test)', async () => {
+  it('ne crée aucun faux client (aucun compte réel hors @lyonpanel.test, et seed.sql ne crée aucun compte)', async () => {
     const { data, error } = await adminClient().auth.admin.listUsers({ perPage: 1000 });
     expect(error).toBeNull();
-    const foreign = data.users.filter((u) => !(u.email ?? '').endsWith('@lyonpanel.test'));
+    // Les comptes anonymisés (email NULL) laissés par d'autres tests sont ignorés.
+    const foreign = data.users.filter((u) => u.email && !u.email.endsWith('@lyonpanel.test'));
     expect(foreign).toEqual([]);
+    const sql = readFileSync(join(process.cwd(), 'supabase', 'seed.sql'), 'utf8');
+    expect(sql).not.toMatch(/insert\s+into\s+(auth\.users|(public\.)?profiles)/i);
   });
 });
