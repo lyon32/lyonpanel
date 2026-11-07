@@ -75,6 +75,8 @@ Remplace `docs/04-roadmap.md`. S'appuie sur : `PRD.md`, `ARCHITECTURE.md`, `DATA
 ### Phase 5 — Recharge SasPay (mode test)
 - Lire la documentation SasPay (paiements, webhooks, signature, frais) et compléter `saspay-client.ts`.
 - Devis avec frais, création du paiement, webhook signé, rattrapage cron, page de retour.
+- **Page de paiement dynamique** (demande du propriétaire, 2026-11-07) : pas de page statique ni d'étapes figées ; l'état du paiement se met à jour en direct sous les yeux du client (en attente, confirmé, échoué, délai dépassé) ; téléphone d'abord puis ordinateur ; maquette inspirée des 6 images de `payment page reference/` (à étudier au début de la phase). Le propriétaire teste lui-même en mode test avant toute mise en ligne.
+- `SASPAY_MODE=live` refusé hors production (décision du propriétaire, déjà dans `src/server/env.ts`).
 - **Terminé quand** : en mode test, tu recharges 3 000 XAF ; le solde est crédité **une seule fois** même si le webhook est renvoyé.
 - 🧑 Compte marchand SasPay, clés de **test**, secret de webhook ; installer `cloudflared`.
 
@@ -139,6 +141,13 @@ Remplace `docs/04-roadmap.md`. S'appuie sur : `PRD.md`, `ARCHITECTURE.md`, `DATA
 - **Terminé quand** : le site est ouvert à tous.
 - 🧑 Annoncer le lancement.
 
+## Outil à évaluer plus tard : context-mode
+
+- **Quoi** : [context-mode](https://github.com/mksglu/context-mode), plugin local et gratuit qui range les gros résultats de commandes hors de la conversation de l'IA (économie de mémoire sur les longues sessions).
+- **Quand** : à la fin de la **Phase 2** (quand il y a du vrai code), pas avant.
+- **Conditions avant installation** : mettre Node à jour en **24.15 ou plus** (installé : 24.13.1) ; vérifier sur une branche de test qu'il ne bloque pas graphify ni le contrôle GateGuard ; accord du propriétaire.
+- **Si OK** : l'ajouter à `CLAUDE.md` (outils) et `ENV_SETUP.md` (installation).
+
 ## Après le lancement (non planifié)
 
 Pages par pays, blog, commandes en lot, notifications client, email « nouvelle connexion », paiement pays anglophones, crypto, API revendeurs, mise à jour automatique du taux.
@@ -147,7 +156,7 @@ Pages par pays, blog, commandes en lot, notifications client, email « nouvelle 
 
 | Phase | Statut | Date de validation |
 |---|---|---|
-| 0 | à faire | — |
+| 0 | faite – en attente de validation (2026-11-07) | — |
 | 1 | à faire | — |
 | 2 | à faire | — |
 | 3 | à faire | — |

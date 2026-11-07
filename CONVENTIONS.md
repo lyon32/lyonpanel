@@ -23,22 +23,22 @@ Liés : `LLD.md` (arborescence, noms), `ARCHITECTURE.md` (choix techniques).
 - `package-lock.json` toujours commité ; installation en CI par `npm ci`.
 - Node fixé par `.nvmrc` et `"engines"` dans `package.json`.
 
-| Outil | Version majeure visée (mon choix) |
-|---|---|
-| Node.js | 24 LTS (installé : 24.13.1) |
-| npm | 11 |
-| TypeScript | 5.x (mode `strict`) |
-| Next.js | 15.x (App Router) |
-| React | 19.x |
-| Tailwind CSS | 4.x |
-| next-intl | 4.x |
-| @supabase/supabase-js | 2.x |
-| @tanstack/react-query | 5.x |
-| zod | 3.x |
-| react-hook-form | 7.x |
-| gsap / lenis | 3.x / 1.x |
-| vitest / playwright | dernières stables |
-| Supabase CLI / Postgres | dernière stable / 15+ |
+| Outil | Version majeure visée (mon choix) | Installé le 2026-11-07 (Phase 0) |
+|---|---|---|
+| Node.js | 24 LTS | 24 (`.nvmrc`), poste : 24.13.1 |
+| npm | 11 | selon Node 24 |
+| TypeScript | 5.x (mode `strict`) | **5.9.3** |
+| Next.js | 16.x (App Router) — passée de 15 à 16 avec l'accord du propriétaire (décision D1) | **16.4.5** |
+| React / React DOM | 19.x | **19.3.1** |
+| Tailwind CSS | 4.x | **4.3.5** |
+| next-intl | 4.x | pas encore installé (Phase 2) |
+| @supabase/supabase-js | 2.x | pas encore installé (Phase 1) |
+| @tanstack/react-query | 5.x | pas encore installé |
+| zod | 4.x — passée de 3 à 4 avec l'accord du propriétaire (décision D1) | **4.6.7** |
+| react-hook-form | 7.x | pas encore installé |
+| gsap / lenis | 3.x / 1.x | pas encore installés |
+| vitest / playwright | dernières stables | **5.1.0** / **1.65.0** |
+| Supabase CLI / Postgres | dernière stable / 15+ | pas encore installés |
 
 Le numéro exact (ex. `15.1.6`) est celui de la dernière version stable le jour de l'initialisation, puis ne bouge qu'à la mise à jour mensuelle. Changer de **version majeure** = accord du propriétaire.
 

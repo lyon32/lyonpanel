@@ -1,0 +1,16 @@
+node_modules
+.next
+out
+coverage
+playwright-report
+test-results
+package-lock.json
+graphify-out
+docs
+.claude
+reference-design system
+brand
+data
+*.md
+openapi.yaml
+.env*

@@ -137,14 +137,14 @@ Versions **exactes** fixées le jour de la création du projet (dernière stable
 **Production**
 | Paquet | Majeure |
 |---|---|
-| next | 15 |
-| react, react-dom | 19 |
+| next | 16 (**16.4.5** installé) |
+| react, react-dom | 19 (**19.3.1** installé) |
 | next-intl | 4 |
 | @supabase/supabase-js | 2 |
 | @supabase/ssr | dernière |
 | @tanstack/react-query | 5 |
 | react-hook-form | 7 |
-| zod | 3 |
+| zod | 4 (**4.6.7** installé) |
 | @hookform/resolvers | dernière |
 | @marsidev/react-turnstile | dernière |
 | gsap | 3 |
@@ -169,7 +169,31 @@ Versions **exactes** fixées le jour de la création du projet (dernière stable
 | tsx (scripts) | 4 |
 | @types/node, @types/react | 24 / 19 |
 
-La liste exacte avec numéros sera recopiée ici après la création du projet (étape 1 du plan).
+**Numéros exacts installés en Phase 0** (lus dans `package.json` et `package-lock.json`, le 2026-11-07) :
+
+| Paquet | Version installée | Type |
+|---|---|---|
+| next | 16.4.5 | production |
+| react, react-dom | 19.3.1 | production |
+| zod | 4.6.7 | production |
+| @sentry/nextjs | 11.11.0 | production |
+| server-only | 0.0.1 | production |
+| typescript | 5.9.3 | développement |
+| tailwindcss, @tailwindcss/postcss | 4.3.5 | développement |
+| eslint | 9.39.5 (pas la 10 : `eslint-config-next@16.4.5` ne la gère pas encore) | développement |
+| eslint-config-next | 16.4.5 | développement |
+| prettier / prettier-plugin-tailwindcss | 3.9.10 / 0.8.1 | développement |
+| husky / lint-staged | 9.1.7 / 17.6.0 | développement |
+| vitest / @vitest/coverage-v8 | 5.1.0 / 5.1.0 | développement |
+| @playwright/test | 1.65.0 | développement |
+| @types/node | 24.19.2 | développement |
+| @types/react / @types/react-dom | 19.3.0 / 19.3.0 | développement |
+
+Node : 24 (`.nvmrc`). Les autres paquets de la liste (next-intl, Supabase, react-query, etc.) seront ajoutés dans leur phase.
+
+## 6 bis. Outils optionnels (plus tard)
+
+- **context-mode** (évaluation fin de Phase 2) : demande **Node ≥ 24.15** et Git for Windows. Avant : `node -v`, puis mise à jour de Node si besoin.
 
 ## 7. Problèmes fréquents
 

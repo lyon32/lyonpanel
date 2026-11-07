@@ -20,3 +20,7 @@ supabase/.temp/
 .DS_Store
 *.log
 .vercel/
+
+# Généré par Next.js / TypeScript
+next-env.d.ts
+*.tsbuildinfo
