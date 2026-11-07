@@ -1,20 +1,12 @@
-import {
-  ArrowRight,
-  Eye,
-  Globe,
-  Heart,
-  ListChecks,
-  Users,
-  Wallet,
-  WalletCards,
-} from 'lucide-react';
+import { ArrowRight, Globe, ListChecks, Wallet, WalletCards } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { FaqAccordion } from '@/components/motion/faq-accordion';
-import { HoverCards } from '@/components/motion/hover-cards';
+import { FeatureTabs } from '@/components/motion/feature-tabs';
 import { Marquee } from '@/components/motion/marquee';
 import { Reveal } from '@/components/motion/reveal';
-import { SpotlightCard } from '@/components/motion/spotlight-card';
 import { WordReveal } from '@/components/motion/word-reveal';
+import { NetworkLogo } from '@/components/shared/network-logo';
+import { NETWORKS } from '@/components/shared/networks';
 import { Badge } from '@/components/ui/badge';
 import { Link } from '@/i18n/navigation';
 
@@ -24,32 +16,15 @@ const h2 = 'text-encre mb-8 text-center text-balance md:mb-12';
 // Bandeau des réseaux : défile lentement, en pause au survol.
 export async function HomeNetworks() {
   const t = await getTranslations('home');
-  // Logos : simple-icons (licence CC0), copiés dans public/brand/networks/.
-  const networks = ['tiktok', 'instagram', 'youtube', 'facebook'].map((id) => ({
-    id,
-    name: { tiktok: 'TikTok', instagram: 'Instagram', youtube: 'YouTube', facebook: 'Facebook' }[
-      id
-    ],
-  }));
-  // Quatre réseaux répétés pour que la bande soit plus large que l'écran.
-  const items = [...networks, ...networks].map(({ id, name }, i) => (
+  const items = NETWORKS.map((n) => (
     <span
-      key={i}
+      key={n.id}
       className="border-gris-200 bg-blanc text-encre hover:border-bleu-100 hover:bg-bleu-50 flex min-h-11 items-center gap-2 rounded-xl border py-1.5 pr-4 pl-1.5 text-base font-semibold transition-colors duration-150"
     >
       <span className="bg-bleu-50 flex size-8 items-center justify-center rounded-lg">
-        <span
-          aria-hidden="true"
-          className="bg-bleu-600 size-[18px]"
-          style={{
-            maskImage: `url(/brand/networks/${id}.svg)`,
-            maskSize: 'contain',
-            maskRepeat: 'no-repeat',
-            maskPosition: 'center',
-          }}
-        />
+        <NetworkLogo id={n.id} />
       </span>
-      {name}
+      {n.name ?? t('webName')}
     </span>
   ));
   return (
@@ -59,82 +34,78 @@ export async function HomeNetworks() {
   );
 }
 
-// Trois services : la surbrillance glisse d'une carte à l'autre.
+// Une carte par réseau du catalogue : logo, nom, types de services. Ni prix ni nombre de services.
 export async function HomeServices() {
   const t = await getTranslations('home');
-  const list = [
-    { n: 1, Icon: Users },
-    { n: 2, Icon: Heart },
-    { n: 3, Icon: Eye },
-  ] as const;
   return (
     <section className={wrap}>
-      <WordReveal text={t('servicesTitle')} className={h2} />
-      <HoverCards
-        items={list.map(({ n, Icon }) => ({
-          id: String(n),
-          content: (
-            <div className="flex flex-col gap-3">
-              <span className="bg-bleu-50 text-bleu-600 flex size-11 items-center justify-center rounded-lg">
-                <Icon size={22} aria-hidden="true" />
-              </span>
-              <h3 className="text-encre">{t(`service${n}`)}</h3>
-              <p className="text-gris-600 text-base">{t(`service${n}Text`)}</p>
+      <WordReveal text={t('servicesTitle')} className="text-encre mb-3 text-center text-balance" />
+      <p className="text-gris-600 mx-auto mb-8 max-w-xl text-center text-base text-pretty md:mb-12">
+        {t('servicesIntro')}
+      </p>
+      <ul className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4">
+        {NETWORKS.map((n) => (
+          <li
+            key={n.id}
+            className="border-gris-200 bg-blanc hover:border-bleu-100 hover:bg-bleu-50 flex flex-col gap-3 rounded-xl border p-4 transition-[background-color,border-color,transform] duration-150 ease-out hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+          >
+            <span className="bg-bleu-50 flex size-11 items-center justify-center rounded-lg">
+              <NetworkLogo id={n.id} size={22} />
+            </span>
+            <div>
+              <h3 className="text-encre text-base md:text-lg">{n.name ?? t('webName')}</h3>
+              <p className="text-gris-600 mt-1 text-sm">{t(`nets.${n.id}`)}</p>
             </div>
-          ),
-        }))}
-      />
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }
 
-// Atouts en grille « bento » : cartes de tailles différentes, halo qui suit le curseur sur ordinateur.
+// Atouts en onglets : le choix à gauche, le détail à droite (grille 2 x 2 sur téléphone).
 export async function HomeFeatures() {
   const t = await getTranslations('home');
-  const icon = 'bg-bleu-50 text-bleu-600 mb-3 flex size-11 items-center justify-center rounded-lg';
+  const tabs = [
+    {
+      id: 'pay',
+      Icon: WalletCards,
+      title: t('feat1'),
+      text: t('feat1Text'),
+      extra: (
+        <div className="border-gris-200 bg-blanc flex items-center justify-between rounded-lg border px-4 py-3">
+          <span className="text-gris-600 text-sm font-semibold">{t('feat1Balance')}</span>
+          <span className="text-encre font-bold tabular-nums" data-no-motion="">
+            15 000 XAF
+          </span>
+        </div>
+      ),
+    },
+    { id: 'balance', Icon: Wallet, title: t('feat2'), text: t('feat2Text') },
+    { id: 'tracking', Icon: ListChecks, title: t('feat3'), text: t('feat3Text') },
+    {
+      id: 'lang',
+      Icon: Globe,
+      title: t('feat4'),
+      text: t('feat4Text'),
+      extra: (
+        <div className="flex gap-2">
+          <Badge>FR</Badge>
+          <Badge>EN</Badge>
+        </div>
+      ),
+    },
+  ];
   return (
     <section className={wrap}>
       <WordReveal text={t('featuresTitle')} className={h2} />
-      <div className="grid gap-4 md:grid-cols-3">
-        <SpotlightCard className="md:col-span-2">
-          <span className={icon}>
-            <WalletCards size={22} aria-hidden="true" />
-          </span>
-          <h3 className="text-encre">{t('feat1')}</h3>
-          <p className="text-gris-600 mt-1 max-w-md text-base">{t('feat1Text')}</p>
-          <div className="bg-gris-50 border-gris-200 mt-4 flex items-center justify-between rounded-lg border px-4 py-3">
-            <span className="text-gris-600 text-sm font-semibold">{t('feat1Balance')}</span>
-            <span className="text-encre font-bold tabular-nums" data-no-motion="">
-              15 000 XAF
-            </span>
-          </div>
-        </SpotlightCard>
-        <SpotlightCard>
-          <span className={icon}>
-            <Wallet size={22} aria-hidden="true" />
-          </span>
-          <h3 className="text-encre">{t('feat2')}</h3>
-          <p className="text-gris-600 mt-1 text-base">{t('feat2Text')}</p>
-        </SpotlightCard>
-        <SpotlightCard>
-          <span className={icon}>
-            <ListChecks size={22} aria-hidden="true" />
-          </span>
-          <h3 className="text-encre">{t('feat3')}</h3>
-          <p className="text-gris-600 mt-1 text-base">{t('feat3Text')}</p>
-        </SpotlightCard>
-        <SpotlightCard className="md:col-span-2">
-          <span className={icon}>
-            <Globe size={22} aria-hidden="true" />
-          </span>
-          <h3 className="text-encre">{t('feat4')}</h3>
-          <p className="text-gris-600 mt-1 max-w-md text-base">{t('feat4Text')}</p>
-          <div className="mt-4 flex gap-2">
-            <Badge>FR</Badge>
-            <Badge>EN</Badge>
-          </div>
-        </SpotlightCard>
-      </div>
+      <FeatureTabs
+        label={t('featuresTitle')}
+        tabs={tabs.map(({ Icon, ...tab }) => ({
+          ...tab,
+          icon: <Icon size={22} aria-hidden="true" />,
+        }))}
+      />
     </section>
   );
 }

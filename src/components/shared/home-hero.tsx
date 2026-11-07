@@ -1,6 +1,7 @@
 import { CheckCircle2, Clock, LayoutDashboard, ListOrdered, Wallet } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { DotBackground } from '@/components/motion/dot-background';
+import { HeroStage } from '@/components/motion/hero-stage';
 import { FloatingCards } from '@/components/motion/floating-cards';
 import { HeroCtas } from '@/components/shared/hero-ctas';
 import { Badge } from '@/components/ui/badge';
@@ -136,34 +137,38 @@ export async function HomeHero() {
 
   return (
     <DotBackground>
-      <div className="relative mx-auto flex max-w-6xl flex-col items-center gap-6 px-4 pt-10 pb-12 text-center md:pt-16 md:pb-16">
-        {/* Pas de Reveal : le titre est le LCP, visible dès le HTML. */}
-        <h1 className="text-encre max-w-3xl text-3xl font-bold text-balance md:text-5xl">
-          {t.rich('heroTitle', {
-            accent: (chunks) => (
-              <span className="decoration-jaune-500 underline decoration-4 underline-offset-8">
-                {chunks}
-              </span>
-            ),
-          })}
-        </h1>
-        <p className="text-gris-600 max-w-xl text-base text-pretty md:text-lg">{t('heroText')}</p>
-        <HeroCtas primary={t('createAccount')} secondary={t('seeServices')} />
+      <HeroStage>
+        <div className="relative mx-auto flex max-w-6xl flex-col items-center gap-6 px-4 pt-10 pb-12 text-center md:pt-16 md:pb-16">
+          {/* Pas de Reveal : le titre est le LCP, visible dès le HTML. */}
+          <h1 className="text-encre max-w-3xl text-3xl font-bold text-balance md:text-5xl">
+            {t.rich('heroTitle', {
+              accent: (chunks) => (
+                <span className="decoration-jaune-500 underline decoration-4 underline-offset-8">
+                  {chunks}
+                </span>
+              ),
+            })}
+          </h1>
+          <p className="text-gris-600 max-w-xl text-base text-pretty md:text-lg">{t('heroText')}</p>
+          <HeroCtas primary={t('createAccount')} secondary={t('seeServices')} />
 
-        <div className="relative mt-4 w-full max-w-3xl text-left xl:mt-8">
-          <PanelMockup t={t} />
-          <div className="mt-4 grid grid-cols-2 gap-3 xl:mt-0 xl:contents">
-            <FloatingCards
-              cards={left}
-              className="max-xl:gap-0 xl:absolute xl:top-10 xl:-left-60 xl:w-56"
-            />
-            <FloatingCards
-              cards={right}
-              className="max-xl:gap-0 xl:absolute xl:top-32 xl:-right-60 xl:w-56"
-            />
+          <div className="relative mt-4 w-full max-w-3xl text-left xl:mt-8">
+            <div data-tilt="" className="will-change-transform">
+              <PanelMockup t={t} />
+            </div>
+            <div className="mt-4 grid grid-cols-2 gap-3 xl:mt-0 xl:contents">
+              <FloatingCards
+                cards={left}
+                className="max-xl:gap-0 xl:absolute xl:top-10 xl:-left-60 xl:w-56"
+              />
+              <FloatingCards
+                cards={right}
+                className="max-xl:gap-0 xl:absolute xl:top-32 xl:-right-60 xl:w-56"
+              />
+            </div>
           </div>
         </div>
-      </div>
+      </HeroStage>
     </DotBackground>
   );
 }

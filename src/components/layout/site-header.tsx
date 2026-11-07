@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { CurrencySwitcher } from './currency-switcher';
 import { LanguageSwitcher } from './language-switcher';
+import { useMotionLevel } from '@/hooks/use-motion-level';
 import { Logo } from '@/components/shared/logo';
 import { Button } from '@/components/ui/button';
 import { Link } from '@/i18n/navigation';
@@ -24,6 +25,8 @@ const links = [
 export function SiteHeader({ currency, setCurrencyCookie }: Props) {
   const t = useTranslations('nav');
   const [open, setOpen] = useState(false);
+  // Verre flouté seulement sur ordinateur et appareil correct : ailleurs, fond blanc simple.
+  const glass = useMotionLevel() === 'rich';
 
   // Échap ferme le menu (téléphone) ; l'écouteur n'existe que menu ouvert.
   useEffect(() => {
@@ -40,8 +43,10 @@ export function SiteHeader({ currency, setCurrencyCookie }: Props) {
   // en ligne. L'ordre (`order-*`) place chaque bloc selon la taille d'écran.
   const panel = open ? 'flex w-full' : 'hidden';
   return (
-    <header className="border-gris-200 bg-blanc border-b">
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-0.5 gap-y-1 px-2 py-2 md:flex-nowrap md:gap-x-6 md:px-4">
+    <header
+      className={`border-gris-200 border-b md:sticky md:top-3 md:z-40 md:mx-auto md:mt-3 md:w-[calc(100%-2rem)] md:max-w-5xl md:rounded-2xl md:border md:shadow-sm ${glass ? 'bg-blanc/90 md:bg-blanc/70 md:backdrop-blur-md' : 'bg-blanc md:bg-blanc/95'}`}
+    >
+      <div className="flex flex-wrap items-center gap-x-0.5 gap-y-1 px-2 py-2 md:flex-nowrap md:gap-x-6 md:px-3">
         <Link
           href="/"
           className="order-1 flex min-h-11 min-w-11 shrink-0 items-center justify-center"

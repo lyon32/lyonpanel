@@ -13,6 +13,12 @@ import { SiteHeader } from '@/components/layout/site-header';
 describe('SiteHeader', () => {
   beforeEach(() => {
     navState.pathname = '/';
+    // jsdom n'a pas matchMedia, utilisé par le niveau de mouvement (verre du menu).
+    vi.stubGlobal('matchMedia', () => ({
+      matches: false,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+    }));
   });
   const setup = () => renderIntl(<SiteHeader currency="XAF" setCurrencyCookie={vi.fn()} />);
 
