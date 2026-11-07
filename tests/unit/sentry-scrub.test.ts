@@ -41,6 +41,61 @@ describe('scrubEvent', () => {
     expect(out.message).toBe('Échec pour [email] au [téléphone]');
   });
 
+  it('ne garde que user.id (username, clés en casse différente)', () => {
+    const out = scrubEvent({
+      user: { id: 'u1', username: 'jean', IP_ADDRESS: '1.2.3.4', Phone: '+237677123456' },
+    });
+    expect(out.user).toEqual({ id: 'u1' });
+  });
+
+  it('applique une liste blanche aux en-têtes, sans tenir compte de la casse', () => {
+    const out = scrubEvent({
+      request: {
+        headers: {
+          'X-Api-Key': 'k',
+          'Proxy-Authorization': 'p',
+          'X-Forwarded-For': '1.2.3.4',
+          Referer: 'https://a.test/?email=a@b.co',
+          'User-Agent': 'ua',
+          'Accept-Language': 'fr',
+        },
+      },
+    });
+    expect(out.request?.headers).toEqual({ 'User-Agent': 'ua', 'Accept-Language': 'fr' });
+  });
+
+  it('retire query_string et nettoie la query de request.url', () => {
+    const out = scrubEvent({
+      request: {
+        url: 'https://lyonpanel.com/a?email=x@y.com&token=abc#h',
+        query_string: 'token=abc',
+      },
+    });
+    expect(out.request?.url).toBe('https://lyonpanel.com/a');
+    expect(out.request?.query_string).toBeUndefined();
+  });
+
+  it('masque exception, breadcrumbs, extra et tags sans muter l’entrée', () => {
+    const input = {
+      message: 'm',
+      exception: { values: [{ value: 'Échec jean@localhost' }] },
+      breadcrumbs: [{ message: 'tel 677123456', data: { to: 'a@b.com' } }],
+      extra: { n: ['+237-677-123-456'] },
+      tags: { who: '00237677123456' },
+    };
+    const out = scrubEvent(input);
+    expect(out.exception.values[0]?.value).toBe('Échec [email]');
+    expect(out.breadcrumbs[0]).toEqual({ message: 'tel [téléphone]', data: { to: '[email]' } });
+    expect(out.extra.n[0]).toBe('[téléphone]');
+    expect(out.tags.who).toBe('[téléphone]');
+    expect(input.exception.values[0]?.value).toBe('Échec jean@localhost');
+  });
+
+  it('masque les formats de téléphone variés', () => {
+    const out = scrubEvent({ message: '+237(677)123456 et 00237677123456 et 677 123 456' });
+    expect(out.message).toBe('[téléphone] et [téléphone] et [téléphone]');
+  });
+
   it('laisse intacts les autres champs', () => {
     const out = scrubEvent({
       user: { id: 'u1' },

@@ -43,20 +43,14 @@ const envSchema = z
       });
     }
     // Une clé de test avec le mode live (ou l'inverse) fausserait de vrais paiements.
-    const key = env.SASPAY_API_KEY;
+    const key = env.SASPAY_API_KEY?.toLowerCase();
     if (key) {
-      if (env.SASPAY_MODE === 'test' && key.startsWith('sk_live_')) {
+      const expected = env.SASPAY_MODE === 'live' ? 'sk_live_' : 'sk_test_';
+      if (!key.startsWith(expected)) {
         ctx.addIssue({
           code: 'custom',
           path: ['SASPAY_API_KEY'],
-          message: 'Clé SasPay live avec SASPAY_MODE=test',
-        });
-      }
-      if (env.SASPAY_MODE === 'live' && key.startsWith('sk_test_')) {
-        ctx.addIssue({
-          code: 'custom',
-          path: ['SASPAY_API_KEY'],
-          message: 'Clé SasPay test avec SASPAY_MODE=live',
+          message: `La clé SasPay doit commencer par ${expected} avec SASPAY_MODE=${env.SASPAY_MODE}`,
         });
       }
     }
@@ -71,7 +65,8 @@ export class MissingEnvError extends Error {
   }
 }
 
-const SECRET_NAME = /SECRET|SERVICE_ROLE|TOKEN/;
+// Insensible à la casse : un secret mal nommé ne doit jamais partir au navigateur.
+const SECRET_NAME = /SECRET|TOKEN|PASSWORD|PRIVATE|SERVICE|JAP_|SASPAY_|API_KEY|CRON|TELEGRAM/i;
 
 export function loadServerEnv(source: Record<string, string | undefined> = process.env): ServerEnv {
   // Tout ce qui est NEXT_PUBLIC_ part dans le navigateur : aucun secret ne doit y être.

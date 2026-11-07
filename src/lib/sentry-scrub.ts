@@ -1,8 +1,11 @@
 // Retire les données personnelles d'un événement Sentry avant envoi
-// (SECURITY_NOTES.md §7) : email, téléphone, IP, cookies, en-têtes sensibles, corps.
+// (SECURITY_NOTES.md §7). Approche : liste blanche pour ce qu'on connaît
+// (user, en-têtes, URL), masquage par regex pour toutes les chaînes du reste.
 export type SentryLikeEvent = {
   user?: Record<string, unknown>;
   request?: {
+    url?: string;
+    query_string?: unknown;
     headers?: Record<string, string>;
     cookies?: unknown;
     data?: unknown;
@@ -10,37 +13,52 @@ export type SentryLikeEvent = {
   message?: string;
 };
 
-const EMAIL = /[\w.+-]+@[\w-]+(?:\.[\w-]+)+/g;
-// Numéro international : + puis 8 à 15 chiffres (espaces tolérés).
-const PHONE = /\+\d[\d ]{7,17}\d/g;
-const SENSITIVE_HEADERS = new Set(['authorization', 'cookie', 'set-cookie']);
+// Email, y compris sans point dans le domaine (jean@localhost).
+const EMAIL = /[\w.+-]+@[\w-]+(?:\.[\w-]+)*/g;
+// Téléphone : 8 à 15 chiffres, séparateurs tolérés, avec ou sans + / 00.
+const PHONE = /(?:\+|00)?\d(?:[\s.\-()]*\d){7,14}/g;
+// En-têtes conservés (tout le reste est retiré : clés d'API, IP, referer…).
+const ALLOWED_HEADERS = new Set(['user-agent', 'content-type', 'accept', 'accept-language']);
+
+function maskString(value: string): string {
+  return value.replace(EMAIL, '[email]').replace(PHONE, '[téléphone]');
+}
+
+// Parcourt récursivement sans muter l'entrée.
+function maskDeep(value: unknown): unknown {
+  if (typeof value === 'string') return maskString(value);
+  if (Array.isArray(value)) return value.map(maskDeep);
+  if (value !== null && typeof value === 'object') {
+    return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, maskDeep(v)]));
+  }
+  return value;
+}
 
 export function scrubEvent<T extends SentryLikeEvent>(event: T): T {
-  const out: T = { ...event };
+  const out = maskDeep(event) as SentryLikeEvent;
 
   if (event.user) {
-    const user = { ...event.user };
-    delete user.email;
-    delete user.ip_address;
-    delete user.phone;
-    out.user = user;
+    // Seul l'identifiant interne est conservé (pas masqué par regex).
+    out.user = event.user.id === undefined ? {} : { id: event.user.id };
   }
 
-  if (event.request) {
-    const request = { ...event.request };
-    if (request.headers) {
+  if (event.request && out.request) {
+    const request = out.request;
+    if (event.request.headers) {
       request.headers = Object.fromEntries(
-        Object.entries(request.headers).filter(([k]) => !SENSITIVE_HEADERS.has(k.toLowerCase())),
+        Object.entries(maskDeep(event.request.headers) as Record<string, string>).filter(([k]) =>
+          ALLOWED_HEADERS.has(k.toLowerCase()),
+        ),
       );
     }
+    if (typeof event.request.url === 'string') {
+      // La query peut contenir email, jeton… : on la retire entièrement.
+      request.url = maskString(event.request.url.split('#')[0]!.split('?')[0]!);
+    }
+    delete request.query_string;
     delete request.cookies;
     delete request.data;
-    out.request = request;
   }
 
-  if (typeof event.message === 'string') {
-    out.message = event.message.replace(EMAIL, '[email]').replace(PHONE, '[téléphone]');
-  }
-
-  return out;
+  return out as T;
 }

@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('server-only', () => ({}));
@@ -35,6 +37,39 @@ describe('loadServerEnv', () => {
     ]) {
       expect(() => loadServerEnv({ [name]: 'x' })).toThrow();
     }
+  });
+
+  it('refuse les secrets NEXT_PUBLIC_ aux noms variés, sans tenir compte de la casse', () => {
+    for (const name of [
+      'NEXT_PUBLIC_SERVICE_KEY',
+      'NEXT_PUBLIC_JAP_API_KEY',
+      'NEXT_PUBLIC_SASPAY_API_KEY',
+      'NEXT_PUBLIC_API_KEY',
+      'NEXT_PUBLIC_PASSWORD',
+      'NEXT_PUBLIC_PRIVATE_KEY',
+      'NEXT_PUBLIC_supabase_service_role_key',
+    ]) {
+      expect(() => loadServerEnv({ [name]: 'x' })).toThrow(/Secret exposé/);
+    }
+  });
+
+  it('accepte toutes les NEXT_PUBLIC_ de .env.example', () => {
+    const text = readFileSync(resolve(process.cwd(), '.env.example'), 'utf8');
+    const names = [...text.matchAll(/^NEXT_PUBLIC_\w+/gm)].map((m) => m[0]);
+    expect(names.length).toBeGreaterThan(0);
+    for (const name of names) {
+      expect(() => loadServerEnv({ [name]: 'x' })).not.toThrow();
+    }
+  });
+
+  it('compare les préfixes SasPay sans tenir compte de la casse et exige le préfixe du mode', () => {
+    expect(() => loadServerEnv({ SASPAY_MODE: 'test', SASPAY_API_KEY: 'SK_LIVE_x' })).toThrow();
+    expect(() => loadServerEnv({ SASPAY_MODE: 'test', SASPAY_API_KEY: 'sansprefixe' })).toThrow();
+    expect(() => loadServerEnv({ SASPAY_MODE: 'test', SASPAY_API_KEY: 'SK_TEST_x' })).not.toThrow();
+    const live = { SASPAY_MODE: 'live', VERCEL_ENV: 'production' };
+    expect(() => loadServerEnv({ ...live, SASPAY_API_KEY: 'sansprefixe' })).toThrow();
+    expect(() => loadServerEnv({ ...live, SASPAY_API_KEY: 'SK_TEST_x' })).toThrow();
+    expect(() => loadServerEnv({ ...live, SASPAY_API_KEY: 'sk_live_x' })).not.toThrow();
   });
 
   it('requireEnv lève MissingEnvError avec le nom de la variable', () => {
