@@ -10,9 +10,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center gap-3 px-4 text-center">
-      <h1 className="text-4xl font-bold text-[#1D4ED8]">{SITE_NAME}</h1>
-      <p className="text-slate-600">{t('title')}</p>
-      <p className="text-slate-600">{t('subtitle')}</p>
+      <h1 className="text-bleu-600 text-4xl font-bold">{SITE_NAME}</h1>
+      <p className="text-gris-600">{t('title')}</p>
+      <p className="text-gris-600">{t('subtitle')}</p>
     </div>
   );
 }

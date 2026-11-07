@@ -497,7 +497,10 @@ export default function AttractButton(props: AttractButtonProps) {
   if (level === 'rich') {
     return <AttractButtonCanvas {...props} />;
   }
-  const { className, containerClassName, density: _d, radius: _r, ...rest } = props;
+  const { className, containerClassName, ...rest } = props;
+  // density et radius ne servent qu'au champ de limaille (canvas) : on les écarte du bouton simple.
+  delete (rest as Partial<AttractButtonProps>).density;
+  delete (rest as Partial<AttractButtonProps>).radius;
   return (
     <div className={cn('relative inline-flex', containerClassName)}>
       <button type="button" {...rest} className={cn(BUTTON_CLASS, className)} />

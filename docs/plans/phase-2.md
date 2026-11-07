@@ -143,3 +143,14 @@ flowchart LR
 - [ ] Résumé au propriétaire en français simple. **Il écrit « validé » ; sinon la Phase 3 ne démarre pas.**
 
 **Fini quand :** critères de `CLAUDE.md` (« Terminé quand ») tous cochés et PR verte.
+
+## Composants copiés de Kokonut UI et d'Aceternity : à quoi ils servent ensuite
+
+Décision du propriétaire (2026-11-07) : pistes D, E et F (limitée). Ils ne sont pas du poids mort :
+- `DotBackground`, `FloatingCards`, `AttractButton`, `Timeline` : accueil (phase 14) et page d'inscription.
+- `SmoothTab` : onglets Nouvelle commande / Recherche / En lot (phase 6).
+- `SlideToConfirm` : confirmation de recharge (phase 5), seulement si le test clavier et lecteur d'écran passe.
+- `StatusIsland` : statut d'une commande (phase 7).
+- `CardStack` : aperçu des écrans sur l'accueil (phase 14).
+Si une de ces phases n'en a finalement pas besoin, on retire le composant à ce moment-là.
+Les avertissements `max-lines` sur ces fichiers copiés sont acceptés tels quels (on garde le code d'origine pour pouvoir le mettre à jour) : **à valider par le propriétaire**.
