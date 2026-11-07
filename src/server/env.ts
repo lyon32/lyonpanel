@@ -1,0 +1,100 @@
+import 'server-only';
+import { z } from 'zod';
+
+// Une variable vide dans .env.local (ex. `JAP_API_KEY=`) équivaut à « absente ».
+const optionalString = z.preprocess(
+  (value) => (value === '' ? undefined : value),
+  z.string().optional(),
+);
+
+const envSchema = z
+  .object({
+    NEXT_PUBLIC_SITE_URL: optionalString,
+    ADMIN_PATH: optionalString,
+    NEXT_PUBLIC_SUPABASE_URL: optionalString,
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: optionalString,
+    SUPABASE_SERVICE_ROLE_KEY: optionalString,
+    JAP_API_URL: optionalString,
+    JAP_API_KEY: optionalString,
+    JAP_MODE: z.enum(['mock', 'live']).default('mock'),
+    SASPAY_API_URL: optionalString,
+    SASPAY_API_KEY: optionalString,
+    SASPAY_WEBHOOK_SECRET: optionalString,
+    SASPAY_MODE: z.enum(['test', 'live']).default('test'),
+    TELEGRAM_BOT_TOKEN: optionalString,
+    TELEGRAM_CHAT_ID: optionalString,
+    NEXT_PUBLIC_TURNSTILE_SITE_KEY: optionalString,
+    TURNSTILE_SECRET_KEY: optionalString,
+    CRON_SECRET: optionalString,
+    NEXT_PUBLIC_SENTRY_DSN: optionalString,
+    SENTRY_AUTH_TOKEN: optionalString,
+    SENTRY_ORG: optionalString,
+    SENTRY_PROJECT: optionalString,
+    NEXT_PUBLIC_GA_MEASUREMENT_ID: optionalString,
+    VERCEL_ENV: optionalString,
+  })
+  .superRefine((env, ctx) => {
+    // Le vrai JAP coûte de l'argent : interdit hors production.
+    if (env.JAP_MODE === 'live' && env.VERCEL_ENV !== 'production') {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['JAP_MODE'],
+        message: 'JAP_MODE=live est réservé à la production',
+      });
+    }
+    // Une clé de test avec le mode live (ou l'inverse) fausserait de vrais paiements.
+    const key = env.SASPAY_API_KEY;
+    if (key) {
+      if (env.SASPAY_MODE === 'test' && key.startsWith('sk_live_')) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['SASPAY_API_KEY'],
+          message: 'Clé SasPay live avec SASPAY_MODE=test',
+        });
+      }
+      if (env.SASPAY_MODE === 'live' && key.startsWith('sk_test_')) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['SASPAY_API_KEY'],
+          message: 'Clé SasPay test avec SASPAY_MODE=live',
+        });
+      }
+    }
+  });
+
+export type ServerEnv = z.infer<typeof envSchema>;
+
+export class MissingEnvError extends Error {
+  constructor(name: string) {
+    super(`Variable d'environnement manquante : ${name}`);
+    this.name = 'MissingEnvError';
+  }
+}
+
+const SECRET_NAME = /SECRET|SERVICE_ROLE|TOKEN/;
+
+export function loadServerEnv(source: Record<string, string | undefined> = process.env): ServerEnv {
+  // Tout ce qui est NEXT_PUBLIC_ part dans le navigateur : aucun secret ne doit y être.
+  for (const name of Object.keys(source)) {
+    if (name.startsWith('NEXT_PUBLIC_') && SECRET_NAME.test(name)) {
+      throw new Error(`Secret exposé au navigateur : ${name}`);
+    }
+  }
+  const result = envSchema.safeParse(source);
+  if (!result.success) {
+    const details = result.error.issues
+      .map((issue) => `${issue.path.join('.')} : ${issue.message}`)
+      .join(' ; ');
+    throw new Error(`Variables d'environnement invalides — ${details}`);
+  }
+  return result.data;
+}
+
+export function requireEnv<K extends keyof ServerEnv>(
+  env: ServerEnv,
+  key: K,
+): NonNullable<ServerEnv[K]> {
+  const value = env[key];
+  if (value === undefined || value === null) throw new MissingEnvError(key);
+  return value as NonNullable<ServerEnv[K]>;
+}
