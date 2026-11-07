@@ -110,27 +110,26 @@ Un agent ne démarre jamais avant ce dont il dépend ; ce qui est indépendant t
 
 > À mettre à jour au début de chaque phase (`ROADMAP.md`).
 
-**Phase en cours : Phase 1 — Base de données** (Phase 0 validée le 2026-11-07)
+**Phase en cours : Phase 2 — Design system + mise en page** (Phases 0 et 1 validées le 2026-11-07)
 
 **Périmètre (seulement ceci)**
-- Migrations Supabase (`supabase/migrations/`) : types énumérés, tables de `DATA_MODEL.md`, index, RLS, vue `services_public`.
-- Fonctions SQL : `place_order`, `credit_payment`, `refund_order`, `admin_adjust`, `anonymize_user`.
-- `supabase/seed.sql` (réglages par défaut + ~20 services fictifs) et fabriques de tests (`tests/factories/`).
-- Tests base de données de `TESTING.md §2` (`npm run test:db`, Supabase local) : fonctions d'argent, RLS.
-- Types TypeScript générés (`src/server/db/types.ts`) et étape « base locale + test:db » dans la CI (`CI_CD.md`).
+- Variables de `docs/05-design-system.md` (couleurs, Public Sans, espacements, arrondis) et composants shadcn/ui adaptés : bouton, champ, carte, badge, tableau, dialogue.
+- `next-intl` FR/EN avec adresses traduites (`LLD.md §6`), choix de langue et de devise mémorisés par cookies.
+- En-tête, pied de page, barre latérale (menu du bas sur téléphone), états vide / chargement / erreur.
+- Logo et favicon de `brand/lyonpanel-v2/`.
+- Page de démonstration montrant tous les composants en FR et EN, téléphone et ordinateur.
 
 **Hors périmètre (ne pas toucher)**
-- Comptes, inscription, connexion (phase 3) ; page de paiement et SasPay (phase 5).
-- Calcul de prix côté TypeScript, catalogue JAP (phase 4), routes API, écrans, design (phases 2+).
-- Base de production : aucune migration poussée vers un projet en ligne sans accord du propriétaire.
+- Comptes, paiement, commandes, toute logique métier ; base de données (migrations de la phase 1 intactes).
+- Page d'accueil finale et SEO complet (phase 14) ; tout texte ou chiffre inventé.
+- Toute bibliothèque hors `LLD.md §1` : demander d'abord.
 
 **Terminé quand (définition de « fini »)**
-- [ ] `npm run test:db` est vert et couvre 100 % des cas d'argent de `TESTING.md §2`.
-- [ ] Les tests RLS prouvent qu'un client ne lit rien d'un autre client ni des tables réservées.
-- [ ] `supabase db reset` applique migrations + seed sans erreur ; lint, types, tests, build verts.
-- [ ] La CI GitHub passe au vert sur la PR.
-- [ ] Aucun secret dans le dépôt ; aucune migration déjà appliquée modifiée.
-- [ ] Rapport dans `docs/reports/phase-1/` et résumé au propriétaire en français simple, avec ce qu'il doit tester.
+- [ ] Une page de démonstration montre tous les composants en FR et EN, sur téléphone (360 px) et ordinateur.
+- [ ] Adresses traduites et choix de langue/devise (cookies) fonctionnent et sont testés.
+- [ ] Aucun mode sombre, aucun look « IA » (`antislop-ui`, `antislop-layoutmobile`) ; contraste et clavier vérifiés.
+- [ ] Lint, types, tests, build verts ; CI GitHub verte sur la PR.
+- [ ] Rapport dans `docs/reports/phase-2/` et résumé au propriétaire en français simple, avec ce qu'il doit tester.
 
 ## État des documents
 
