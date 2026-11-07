@@ -157,7 +157,7 @@ Pages par pays, blog, commandes en lot, notifications client, email « nouvelle 
 | Phase | Statut | Date de validation |
 |---|---|---|
 | 0 | validée | 2026-11-07 |
-| 1 | en cours | — |
+| 1 | faite – en attente de validation (2026-11-07) | — |
 | 2 | à faire | — |
 | 3 | à faire | — |
 | 4 | à faire | — |

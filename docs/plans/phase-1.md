@@ -2,6 +2,8 @@
 
 > **Pour l'équipe :** exécuté par le chef de projet avec les sous-agents de `.claude/agents/` selon `TEAM.md`. Circuit de chaque tâche : `lp-tester` → `lp-db` → `lp-coder` (si TypeScript) → `lp-reviewer` ∥ `lp-security` → `lp-reporter`. Cases `- [ ]` pour le suivi. Pas d'écran dans cette phase : ni `lp-designer`, ni `lp-seo`, ni `lp-qa`.
 
+**Statut des tâches 1.1 à 1.7 : rapportée (2026-11-07). Tâche 1.8 : rapport écrit ; PR et CI à faire.**
+
 **Objectif :** une base Supabase locale complète (tables, RLS, fonctions SQL d'argent) dont chaque cas d'argent et chaque règle de sécurité est prouvé par un test automatique, rejoué à chaque PR.
 
 **Approche :** tests d'abord. On pose l'outillage (Supabase local, client de test, fabriques), puis le schéma, puis les cinq fonctions d'argent, puis la RLS. Les fonctions sont les seules à modifier `wallets` ; tout le reste est en lecture seule pour le client.
@@ -56,11 +58,11 @@ flowchart LR
 - **Agents :** `lp-tester` → `lp-coder` → `lp-reviewer` → `lp-reporter`.
 - **Fichiers :** `supabase/config.toml` (via `supabase init`), `vitest.db.config.ts`, `tests/db/helpers/client.ts`, `tests/factories/{user,service,payment,order}.ts`, `tests/db/smoke.test.ts` ; `package.json` (scripts `test:db`, `db:types` ; dépendance `@supabase/supabase-js` en version exacte).
 - **Interfaces :** `adminClient()` (clé de service), `userClient(userId)` (JWT du client, pour la RLS), `makeUser(overrides?)`, `makeService(overrides?)`, `makePayment(userId, overrides?)`, `makeOrder(...)` — créent des lignes via le client admin, valeurs par défaut modifiables.
-- [ ] Étape 1 (lp-tester) : `smoke.test.ts` › `it('se connecte à la base locale et lit settings')` → échoue (rien n'existe).
-- [ ] Étape 2 : `supabase init`, `supabase start` ; clés locales dans `.env.local` (jamais commité).
-- [ ] Étape 3 : scripts, client de test, fabriques (coquilles typées).
-- [ ] Étape 4 : vérifier — lint, types, `npm test` inchangés et verts.
-- [ ] Commit : `chore(db): outillage Supabase local et tests de base`.
+- [x] Étape 1 (lp-tester) : `smoke.test.ts` › `it('se connecte à la base locale et lit settings')` → échoue (rien n'existe).
+- [x] Étape 2 : `supabase init`, `supabase start` ; clés locales dans `.env.local` (jamais commité).
+- [x] Étape 3 : scripts, client de test, fabriques (coquilles typées).
+- [x] Étape 4 : vérifier — lint, types, `npm test` inchangés et verts.
+- [x] Commit : `chore(db): outillage Supabase local et tests de base`.
 
 **Fini quand :** `supabase start` OK, le test smoke devient vert après 1.2, rien d'autre ne casse.
 
@@ -69,11 +71,11 @@ flowchart LR
 - **Objectif :** toutes les tables de `DATA_MODEL.md §3` avec leurs contraintes, index (§4) et déclencheurs d'immuabilité.
 - **Dépend de :** 1.1. **Agents :** `lp-tester` → `lp-db` → `lp-reviewer` ∥ `lp-security` → `lp-reporter`.
 - **Fichiers :** `supabase/migrations/20261107100000_schema.sql`, `tests/db/schema.test.ts`.
-- [ ] Étape 1 (lp-tester) `schema.test.ts` : solde négatif refusé ; `amount_xaf = 0` refusé ; `ref` en double refusé ; deux comptes même téléphone refusé ; `min_qty > max_qty` refusé ; 2e `referral_rewards` pour le même filleul refusé ; `update`/`delete` sur `wallet_transactions` et `audit_log` refusés ; un seul `is_admin = true` ; `custom_discount_pct` hors 0–50 refusé ; `profiles` + `wallets` créés automatiquement à la création d'un `auth.users`, `referral_code` de 8 caractères.
-- [ ] Étape 2 : échec constaté (tables absentes).
-- [ ] Étape 3 (lp-db) : types, tables, index, contraintes, déclencheurs, bucket `ticket-attachments` privé.
-- [ ] Étape 4 : `supabase db reset` sans erreur ; tests verts.
-- [ ] Commit : `feat(db): schéma complet, index et contraintes`.
+- [x] Étape 1 (lp-tester) `schema.test.ts` : solde négatif refusé ; `amount_xaf = 0` refusé ; `ref` en double refusé ; deux comptes même téléphone refusé ; `min_qty > max_qty` refusé ; 2e `referral_rewards` pour le même filleul refusé ; `update`/`delete` sur `wallet_transactions` et `audit_log` refusés ; un seul `is_admin = true` ; `custom_discount_pct` hors 0–50 refusé ; `profiles` + `wallets` créés automatiquement à la création d'un `auth.users`, `referral_code` de 8 caractères.
+- [x] Étape 2 : échec constaté (tables absentes).
+- [x] Étape 3 (lp-db) : types, tables, index, contraintes, déclencheurs, bucket `ticket-attachments` privé.
+- [x] Étape 4 : `supabase db reset` sans erreur ; tests verts.
+- [x] Commit : `feat(db): schéma complet, index et contraintes`.
 
 **Fini quand :** schéma de `DATA_MODEL.md §3–4` complet, tests verts, `lp-security` ACCEPTÉ.
 
@@ -82,9 +84,9 @@ flowchart LR
 - **Dépend de :** 1.2. **Parallèle avec :** 1.4, 1.6. **Agents :** `lp-tester` → `lp-db` → `lp-reviewer` ∥ `lp-security`.
 - **Fichiers :** `supabase/migrations/20261107110000_credit_payment.sql`, `tests/db/credit-payment.test.ts`.
 - **Interface (mon choix) :** `credit_payment(p_payment_id uuid, p_saspay_transaction_id text, p_net_amount_xaf bigint, p_fee_xaf bigint, p_total_paid bigint, p_network text, p_raw jsonb) returns jsonb` → `{ credited, balance_xaf, referral_bonus_xaf }`.
-- [ ] Étape 1 (lp-tester), cas de `TESTING.md §2` : crédit normal (solde, transaction `recharge`, `ref = pay:<id>`, `total_recharged_xaf`) ; même appel 2 fois = 1 seul crédit ; 2 appels **en parallèle** = 1 crédit ; montant ≠ demandé → `AMOUNT_MISMATCH`, aucun crédit ; paiement inconnu → `PAYMENT_NOT_FOUND` ; 1re recharge d'un filleul → bonus parrain 5 % arrondi à l'inférieur (3 000 → 150 ; 10 000 → 500), **une seule fois** ; seuil 50 000 franchi (remise auto lisible via `total_recharged_xaf`) ; compte supprimé → crédit + `audit_log` « à rembourser » ; même identifiant SasPay sur un autre paiement refusé.
-- [ ] Étapes 2–4 : échec → implémentation (verrou `for update` sur paiement et portefeuille) → vert.
-- [ ] Commit : `feat(db): créditer un paiement une seule fois`.
+- [x] Étape 1 (lp-tester), cas de `TESTING.md §2` : crédit normal (solde, transaction `recharge`, `ref = pay:<id>`, `total_recharged_xaf`) ; même appel 2 fois = 1 seul crédit ; 2 appels **en parallèle** = 1 crédit ; montant ≠ demandé → `AMOUNT_MISMATCH`, aucun crédit ; paiement inconnu → `PAYMENT_NOT_FOUND` ; 1re recharge d'un filleul → bonus parrain 5 % arrondi à l'inférieur (3 000 → 150 ; 10 000 → 500), **une seule fois** ; seuil 50 000 franchi (remise auto lisible via `total_recharged_xaf`) ; compte supprimé → crédit + `audit_log` « à rembourser » ; même identifiant SasPay sur un autre paiement refusé.
+- [x] Étapes 2–4 : échec → implémentation (verrou `for update` sur paiement et portefeuille) → vert.
+- [x] Commit : `feat(db): créditer un paiement une seule fois`.
 
 ### Tâche 1.4 — `place_order`
 
@@ -92,41 +94,41 @@ flowchart LR
 - **Fichiers :** `supabase/migrations/20261107120000_place_order.sql`, `tests/db/place-order.test.ts`.
 - **Interface :** `place_order(p_user uuid, p_service int, p_link text, p_qty int, p_comments text[], p_idem_key text, p_expected_price_xaf_1000 bigint default null) returns orders` ; erreurs : `INSUFFICIENT_BALANCE`, `ACCOUNT_BLOCKED`, `SERVICE_UNAVAILABLE`, `QUANTITY_OUT_OF_RANGE`, `PRICE_CHANGED`, `DAILY_LIMIT_REACHED`.
 - **Règle de prix (voir Q3) :** remise = max(remise auto 10 % si `total_recharged_xaf` ≥ seuil, `custom_discount_pct`), jamais cumulées ; `charged_xaf` arrondi au XAF supérieur ; `cost_usd` estimé.
-- [ ] Étape 1 (lp-tester) : solde suffisant → débit exact + transaction `order` + commande `pending` ; solde insuffisant ; client bloqué ; service inactif ou indisponible ; quantité sous min / au-dessus de max / non ronde (137) ; même `idem_key` 2 fois = 1 commande, 1 débit ; **2 commandes en parallèle dépassant le solde = une seule passe** ; solde jamais négatif ; prix changé → `PRICE_CHANGED` sans débit ; plafond 500 000 XAF / 24 h → `DAILY_LIMIT_REACHED` ; remise auto, remise perso plus grande / plus petite, non cumulées ; aucun montant fourni par l'appelant n'est utilisé.
-- [ ] Étapes 2–4 : échec → implémentation (verrou portefeuille) → vert.
-- [ ] Commit : `feat(db): passer une commande et débiter le solde atomiquement`.
+- [x] Étape 1 (lp-tester) : solde suffisant → débit exact + transaction `order` + commande `pending` ; solde insuffisant ; client bloqué ; service inactif ou indisponible ; quantité sous min / au-dessus de max / non ronde (137) ; même `idem_key` 2 fois = 1 commande, 1 débit ; **2 commandes en parallèle dépassant le solde = une seule passe** ; solde jamais négatif ; prix changé → `PRICE_CHANGED` sans débit ; plafond 500 000 XAF / 24 h → `DAILY_LIMIT_REACHED` ; remise auto, remise perso plus grande / plus petite, non cumulées ; aucun montant fourni par l'appelant n'est utilisé.
+- [x] Étapes 2–4 : échec → implémentation (verrou portefeuille) → vert.
+- [x] Commit : `feat(db): passer une commande et débiter le solde atomiquement`.
 
 ### Tâche 1.5 — `refund_order`, `admin_adjust`, `anonymize_user`
 
 - **Dépend de :** 1.3, 1.4. **Agents :** `lp-tester` → `lp-db` → `lp-reviewer` ∥ `lp-security`.
 - **Fichiers :** `supabase/migrations/20261107130000_admin_functions.sql`, `tests/db/refund-order.test.ts`, `admin-adjust.test.ts`, `anonymize-user.test.ts`.
 - **Interfaces :** `refund_order(p_order uuid, p_amount bigint, p_admin uuid) returns orders` (`ALREADY_REFUNDED`, `AMOUNT_TOO_HIGH`, `NOT_ADMIN`) ; `admin_adjust(p_user uuid, p_amount bigint, p_note text, p_admin uuid)` (note obligatoire, solde jamais négatif) ; `anonymize_user(p_user uuid)`.
-- [ ] Étape 1 (lp-tester) : remboursement total ; partiel ; double remboursement refusé ; montant > débité refusé ; `audit_log` écrit ; non-admin refusé ; ajustement positif / négatif ; ajustement rendant le solde négatif refusé ; sans note refusé ; anonymisation : email, téléphone, messages effacés, `status='deleted'`, favoris et pièces jointes supprimés, **commandes et paiements gardés**, 2e appel sans effet.
-- [ ] Étapes 2–4 : échec → implémentation → vert.
-- [ ] Commit : `feat(db): remboursement, ajustement et anonymisation`.
+- [x] Étape 1 (lp-tester) : remboursement total ; partiel ; double remboursement refusé ; montant > débité refusé ; `audit_log` écrit ; non-admin refusé ; ajustement positif / négatif ; ajustement rendant le solde négatif refusé ; sans note refusé ; anonymisation : email, téléphone, messages effacés, `status='deleted'`, favoris et pièces jointes supprimés, **commandes et paiements gardés**, 2e appel sans effet.
+- [x] Étapes 2–4 : échec → implémentation → vert.
+- [x] Commit : `feat(db): remboursement, ajustement et anonymisation`.
 
 ### Tâche 1.6 — RLS et vue `services_public`
 
 - **Dépend de :** 1.2. **Parallèle avec :** 1.3, 1.4. **Agents :** `lp-tester` → `lp-db` → `lp-reviewer` ∥ `lp-security`.
 - **Fichiers :** `supabase/migrations/20261107140000_rls.sql`, `tests/db/rls.test.ts`.
-- [ ] Étape 1 (lp-tester), avec deux clients A et B et un admin : A ne lit ni commandes, ni solde, ni transactions, ni paiements, ni tickets, ni favoris de B, mais lit les siens ; A ne peut rien écrire dans `wallets`, `wallet_transactions`, `payments`, `orders` ; A modifie son `language` mais **pas** `status`, `is_admin`, `custom_discount_pct`, `referred_by` ; A ne lit jamais `admin_notes`, `settings`, `audit_log`, `referral_rewards`, `service_price_history`, `jap_balance_snapshots`, `login_attempts`, `rate_limits`, `allowed_signups`, `idempotency_keys` ; `services_public` sans `jap_name`, `cost_usd_1000`, `margin_pct`, seulement services actifs et disponibles, et `services` illisible directement ; l'admin lit tout ; un client ne peut pas appeler les cinq fonctions d'argent ; le visiteur anonyme ne lit rien ; un client ne voit que ses pièces jointes dans Storage.
-- [ ] Étapes 2–4 : échec → implémentation → vert.
-- [ ] Commit : `feat(db): sécurité des lignes et vue publique des services`.
+- [x] Étape 1 (lp-tester), avec deux clients A et B et un admin : A ne lit ni commandes, ni solde, ni transactions, ni paiements, ni tickets, ni favoris de B, mais lit les siens ; A ne peut rien écrire dans `wallets`, `wallet_transactions`, `payments`, `orders` ; A modifie son `language` mais **pas** `status`, `is_admin`, `custom_discount_pct`, `referred_by` ; A ne lit jamais `admin_notes`, `settings`, `audit_log`, `referral_rewards`, `service_price_history`, `jap_balance_snapshots`, `login_attempts`, `rate_limits`, `allowed_signups`, `idempotency_keys` ; `services_public` sans `jap_name`, `cost_usd_1000`, `margin_pct`, seulement services actifs et disponibles, et `services` illisible directement ; l'admin lit tout ; un client ne peut pas appeler les cinq fonctions d'argent ; le visiteur anonyme ne lit rien ; un client ne voit que ses pièces jointes dans Storage.
+- [x] Étapes 2–4 : échec → implémentation → vert.
+- [x] Commit : `feat(db): sécurité des lignes et vue publique des services`.
 
 ### Tâche 1.7 — Seed, types TypeScript, CI
 
 - **Dépend de :** 1.3, 1.4, 1.5, 1.6. **Agents :** `lp-tester` → `lp-db` + `lp-coder` → `lp-reviewer` ∥ `lp-security`.
 - **Fichiers :** `supabase/seed.sql`, `src/server/db/types.ts` (généré, jamais édité à la main), `.github/workflows/ci.yml` (étapes 6–7 de `CI_CD.md §3`), `tests/db/seed.test.ts`.
-- [ ] Test : les réglages par défaut existent avec les bonnes valeurs ; ~20 services fictifs (TikTok, Instagram, Facebook), une moitié active, prix inventés, aucun vrai nom JAP.
-- [ ] `seed.sql` (réglages de `DATA_MODEL.md §3`, aucune vraie donnée) ; `npm run db:types` ; CI : `supabase start` → `supabase db reset` → `npm run test:db` (bloquant).
-- [ ] Matrice : chaque ligne du tableau « cas d'argent » de `TESTING.md §2` associée à un test nommé (dans le rapport).
-- [ ] Commit : `feat(db): seed, types générés et étape base dans la CI`.
+- [x] Test : les réglages par défaut existent avec les bonnes valeurs ; ~20 services fictifs (TikTok, Instagram, Facebook), une moitié active, prix inventés, aucun vrai nom JAP.
+- [x] `seed.sql` (réglages de `DATA_MODEL.md §3`, aucune vraie donnée) ; `npm run db:types` ; CI : `supabase start` → `supabase db reset` → `npm run test:db` (bloquant).
+- [x] Matrice : chaque ligne du tableau « cas d'argent » de `TESTING.md §2` associée à un test nommé (dans le rapport).
+- [x] Commit : `feat(db): seed, types générés et étape base dans la CI`.
 
 ### Tâche 1.8 — Rapport
 
 - **Dépend de :** 1.1–1.7 acceptées. **Agent :** `lp-reporter`.
-- [ ] `docs/reports/phase-1/` (un rapport par tâche + `BILAN.md` avec la matrice des cas d'argent) ; tableau de bord ; notes Obsidian ; `graphify update .` ; `CHANGELOG`.
-- [ ] `ROADMAP.md` « Suivi » : Phase 1 → `faite – en attente de validation`. **Jamais « validée »** (seul le propriétaire).
+- [x] `docs/reports/phase-1/` (un rapport par tâche + `BILAN.md` avec la matrice des cas d'argent) ; tableau de bord ; notes Obsidian ; `graphify update .` ; `CHANGELOG`.
+- [x] `ROADMAP.md` « Suivi » : Phase 1 → `faite – en attente de validation`. **Jamais « validée »** (seul le propriétaire).
 - [ ] Le chef de projet ouvre la PR vers `main` et vérifie la CI.
 
 ## Ce que le propriétaire testera à la fin
