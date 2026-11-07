@@ -2,6 +2,25 @@
 
 Écrit pour le propriétaire. Une section par phase. Seul le propriétaire valide une phase.
 
+## Phase 2 — Design system et mise en page (2026-11-07) — faite, en attente de validation
+
+### Nouveau
+- Le site s'ouvre en français et en anglais, avec des adresses traduites (`/fr/commander`, `/en/order`). La langue et la devise (XAF, XOF, USD) sont retenues. Le taux de change est fictif jusqu'à la phase 4.
+- Couleurs, trois polices lisibles sur téléphone (Public Sans, Atkinson Hyperlegible, IBM Plex Mono), logo et icône d'onglet.
+- Six composants de base : bouton, champ, carte, badge, tableau, dialogue.
+- Navigation complète : en-tête (compact avec menu sur téléphone), pied de page, barre latérale sur ordinateur, menu du bas sur téléphone.
+- Pages « Bientôt disponible » pour ce qui n'est pas encore fait, et une vraie page 404.
+- Mouvement : léger sur téléphone, plus riche sur ordinateur, aucun mouvement si le système demande de réduire les animations, jamais sur un prix ou un solde.
+- Page de démonstration `/fr/demo` et `/en/demo`, cachée de Google. Elle sera supprimée avant la mise en ligne.
+
+### Vitesse
+- Sur la démo, téléphone lent : le plus gros élément s'affiche en 2,37 s au lieu de 5,85 s (médiane).
+- Point ouvert : les longues tâches et le temps de blocage ne sont pas améliorés.
+
+### Chiffres
+- 247 tests unitaires verts, 23 tests de navigateur verts (build de production). Lint sans erreur, types et build OK.
+- Les contrôles ont demandé des corrections deux fois (relecture et test navigateur), faites et revérifiées.
+
 ## Phase 1 — Base de données (2026-11-07) — faite, en attente de validation
 
 ### Nouveau

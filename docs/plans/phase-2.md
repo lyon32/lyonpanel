@@ -2,7 +2,7 @@
 
 > **Pour l'équipe :** exécuté par le chef de projet avec les sous-agents de `.claude/agents/` selon `TEAM.md`. Circuit : `lp-tester` → `lp-coder` → `lp-designer` ∥ `lp-seo` → `lp-reviewer` ∥ `lp-qa` → `lp-reporter`. Pas de base de données (`lp-db` absent) ni d'argent (`lp-security` absent). Cases `- [ ]` pour le suivi.
 
-**Statut : plan en attente d'accord du propriétaire (questions Q1 à Q6). Rien n'est codé.**
+**Statut : rapportée (2026-11-07). Faite et vérifiée, en attente de la validation du propriétaire. Rapports : `docs/reports/phase-2/`.**
 
 **Objectif :** un socle visuel et de navigation prêt à recevoir les écrans des phases 3 à 14 : couleurs et police du design system, six composants de base, FR/EN avec adresses traduites, langue et devise mémorisées, en-tête, pied de page, barre latérale, états vide/chargement/erreur, logo et favicon. Une page de démonstration prouve le tout en FR et EN, sur téléphone et ordinateur.
 
