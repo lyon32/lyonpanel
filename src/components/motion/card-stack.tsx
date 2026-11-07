@@ -637,7 +637,7 @@ export default function CardStack({
     <MotionConfig reducedMotion="user">
       <div
         className={cn(
-          'relative mx-auto flex min-h-[32rem] w-full max-w-md flex-col items-center justify-center py-8',
+          'relative mx-auto flex w-full max-w-md flex-col items-center justify-center py-6',
           className,
         )}
         style={{ '--deck-accent': accent } as CSSProperties}
@@ -724,7 +724,7 @@ export default function CardStack({
         </section>
 
         <div
-          className="mt-8 flex w-[min(16rem,calc(100%-5rem))] items-center justify-between gap-2"
+          className="mt-6 flex w-[min(16rem,calc(100%-5rem))] items-center justify-between gap-2"
           inert={Boolean(open)}
         >
           <button
@@ -865,6 +865,6 @@ function DeckDetails({
 const EASE_OUT = [0.23, 1, 0.32, 1] as const;
 const LAYOUT_SPRING = { type: 'spring', duration: 0.45, bounce: 0 } as const;
 const NAV_BUTTON =
-  'flex size-8 shrink-0 items-center justify-center rounded-full border border-gris-200 text-gris-600 transition-colors duration-150 hover:bg-gris-50 hover:text-encre focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gris-400 active:translate-y-px';
+  'flex size-11 shrink-0 items-center justify-center rounded-full border border-gris-200 text-gris-600 transition-colors duration-150 hover:bg-gris-50 hover:text-encre focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gris-400 active:translate-y-px';
 
 // ---------------------------------------------------------------------------

@@ -40,28 +40,33 @@ export async function DemoHero() {
 
   return (
     <DotBackground>
-      <div className="mx-auto grid max-w-6xl items-center gap-8 px-4 py-12 md:grid-cols-2 md:py-16">
-        <div className="flex flex-col items-start gap-5">
+      <div className="mx-auto grid max-w-6xl items-center gap-8 px-4 py-12 md:py-20 lg:grid-cols-[1fr_minmax(0,34rem)_1fr] lg:gap-10">
+        <FloatingCards cards={mini.slice(0, 2)} className="order-2 lg:order-1 lg:grid-cols-1" />
+        <div className="order-1 flex flex-col items-center gap-6 text-center lg:order-2">
           <Reveal>
-            <h1 className="text-encre text-3xl font-bold md:text-4xl">{t('heroTitle')}</h1>
+            <h1 className="text-encre text-3xl font-bold text-balance md:text-5xl">
+              {t('heroTitle')}
+            </h1>
           </Reveal>
           <Reveal>
-            <p className="text-gris-600 text-base">{t('heroText')}</p>
+            <p className="text-gris-600 max-w-prose text-base">{t('heroText')}</p>
           </Reveal>
           <AttractButton>{t('createAccount')}</AttractButton>
-          <ul aria-label={t('networks')} className="flex flex-wrap gap-2">
+          <ul aria-label={t('networks')} className="mt-4 flex flex-wrap justify-center gap-3">
             {networks.map(({ Icon, name }) => (
               <li
                 key={name}
-                className="border-gris-200 bg-blanc text-encre flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-semibold"
+                className="border-gris-200 bg-blanc text-encre flex min-h-11 items-center gap-2 rounded-xl border py-1.5 pr-4 pl-1.5 text-sm font-semibold"
               >
-                <Icon size={20} aria-hidden="true" className="text-bleu-600" />
+                <span className="bg-bleu-50 text-bleu-600 flex size-8 items-center justify-center rounded-lg">
+                  <Icon size={18} aria-hidden="true" />
+                </span>
                 {name}
               </li>
             ))}
           </ul>
         </div>
-        <FloatingCards cards={mini} className="sm:grid-cols-2" />
+        <FloatingCards cards={mini.slice(2)} className="order-3 lg:grid-cols-1" />
       </div>
     </DotBackground>
   );

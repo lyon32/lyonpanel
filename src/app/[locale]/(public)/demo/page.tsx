@@ -42,36 +42,43 @@ export default async function DemoPage({ params }: Props) {
       <DemoHero />
       <DemoBasics />
 
-      <section className="mx-auto max-w-6xl px-4 py-12">
+      <section className="mx-auto max-w-6xl px-4 py-10 md:py-14">
         <SectionTitle>{t('trackETitle')}</SectionTitle>
         <DemoTrackE />
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 py-12">
+      <section className="mx-auto max-w-6xl px-4 py-10 md:py-14">
         <SectionTitle>{t('trackFTitle')}</SectionTitle>
         <DemoTrackF />
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 py-12">
+      <section className="mx-auto max-w-6xl px-4 py-10 md:py-14">
         <SectionTitle>{t('stepsTitle')}</SectionTitle>
         <Timeline data={steps} />
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 py-12">
+      <section className="mx-auto max-w-6xl px-4 py-10 md:py-14">
         <SectionTitle>{t('statesTitle')}</SectionTitle>
         <DemoStates />
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 py-12">
+      <section className="mx-auto max-w-6xl px-4 py-10 md:py-14">
         <SectionTitle>{t('layoutTitle')}</SectionTitle>
         <p className="text-gris-600 mb-4 text-sm">{t('layoutText')}</p>
         {/* transform : le menu du bas (position fixed) reste dans ce cadre au lieu de coller à l'écran. */}
         <div
           data-testid="demo-layout-preview"
-          className="border-gris-200 relative flex h-96 [transform:translateZ(0)] overflow-hidden rounded-xl border"
+          className="border-gris-200 relative flex h-80 [transform:translateZ(0)] overflow-hidden rounded-xl border md:h-[30rem]"
         >
           <Sidebar />
-          <div className="bg-gris-50 flex-1" aria-hidden="true" />
+          <div
+            className="bg-gris-50 flex flex-1 flex-col gap-3 p-4 pb-20 md:p-6"
+            aria-hidden="true"
+          >
+            <div className="bg-gris-200 h-6 w-1/3 rounded" />
+            <div className="bg-blanc border-gris-200 h-20 rounded-lg border" />
+            <div className="bg-blanc border-gris-200 h-20 rounded-lg border" />
+          </div>
           <BottomNav />
         </div>
       </section>

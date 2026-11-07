@@ -81,13 +81,6 @@ export function DemoTrackE() {
       <Card className="flex flex-col gap-4 p-5">
         <h3 className="text-encre text-lg font-bold">{t('slideTitle')}</h3>
         <p className="text-gris-600 text-sm">{t('slideText')}</p>
-        <SlideToConfirm
-          label={t('slideLabel')}
-          confirmingLabel={t('slideConfirming')}
-          doneLabel={t('slideDone')}
-          onConfirm={fakeTopUp}
-          resetAfter={3000}
-        />
         <div className="relative flex min-h-16 justify-center">
           <StatusIsland
             tasks={tasks}
@@ -96,6 +89,13 @@ export function DemoTrackE() {
             pillLabel={(task, count) => t('islandPill', { label: task.label, count })}
           />
         </div>
+        <SlideToConfirm
+          label={t('slideLabel')}
+          confirmingLabel={t('slideConfirming')}
+          doneLabel={t('slideDone')}
+          onConfirm={fakeTopUp}
+          resetAfter={3000}
+        />
       </Card>
 
       <div>

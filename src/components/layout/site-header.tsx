@@ -38,16 +38,16 @@ export function SiteHeader({ currency, setCurrencyCookie }: Props) {
               {t(l.key)}
             </Link>
           ))}
+          <Link
+            href="/login"
+            className="text-encre hover:bg-gris-50 ml-auto flex min-h-11 items-center rounded-lg px-3 text-base font-medium md:ml-4"
+          >
+            {t('login')}
+          </Link>
         </nav>
         <div className="ml-auto flex items-center gap-2">
           <LanguageSwitcher />
           <CurrencySwitcher value={currency} setCurrencyCookie={setCurrencyCookie} />
-          <Link
-            href="/login"
-            className="text-encre hidden min-h-11 items-center px-3 text-base font-medium sm:flex"
-          >
-            {t('login')}
-          </Link>
           <Button asChild>
             <Link href="/register">{t('register')}</Link>
           </Button>
