@@ -22,6 +22,21 @@ describe('loadServerEnv', () => {
     expect(env.JAP_MODE).toBe('live');
   });
 
+  it('refuse SASPAY_MODE=live hors production', () => {
+    const live = { SASPAY_MODE: 'live', SASPAY_API_KEY: 'sk_live_x' };
+    expect(() => loadServerEnv({ ...live, VERCEL_ENV: 'preview' })).toThrow(/SASPAY_MODE/);
+    expect(() => loadServerEnv(live)).toThrow(/SASPAY_MODE/);
+  });
+
+  it('accepte SASPAY_MODE=live en production', () => {
+    const env = loadServerEnv({
+      SASPAY_MODE: 'live',
+      SASPAY_API_KEY: 'sk_live_x',
+      VERCEL_ENV: 'production',
+    });
+    expect(env.SASPAY_MODE).toBe('live');
+  });
+
   it('refuse une clé SasPay qui ne correspond pas au mode', () => {
     expect(() => loadServerEnv({ SASPAY_MODE: 'test', SASPAY_API_KEY: 'sk_live_x' })).toThrow();
     expect(() =>

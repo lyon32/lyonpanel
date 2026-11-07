@@ -42,6 +42,14 @@ const envSchema = z
         message: 'JAP_MODE=live est réservé à la production',
       });
     }
+    // Les vrais paiements SasPay sont interdits hors production.
+    if (env.SASPAY_MODE === 'live' && env.VERCEL_ENV !== 'production') {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['SASPAY_MODE'],
+        message: 'SASPAY_MODE=live est réservé à la production',
+      });
+    }
     // Une clé de test avec le mode live (ou l'inverse) fausserait de vrais paiements.
     const key = env.SASPAY_API_KEY?.toLowerCase();
     if (key) {
