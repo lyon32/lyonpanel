@@ -171,6 +171,10 @@ Versions **exactes** fixées le jour de la création du projet (dernière stable
 
 La liste exacte avec numéros sera recopiée ici après la création du projet (étape 1 du plan).
 
+## 6 bis. Outils optionnels (plus tard)
+
+- **context-mode** (évaluation fin de Phase 2) : demande **Node ≥ 24.15** et Git for Windows. Avant : `node -v`, puis mise à jour de Node si besoin.
+
 ## 7. Problèmes fréquents
 
 | Problème | Solution |

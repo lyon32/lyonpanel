@@ -149,6 +149,7 @@ Un agent ne démarre jamais avant ce dont il dépend ; ce qui est indépendant t
 - **graphify** (installé, skill `/graphify`, voir section en bas) : graphe de connaissance du projet (`graphify-out/`), consulté avant toute recherche dans le code et mis à jour après chaque modification. Règle à copier dans le message de chaque sous-agent qui explore le code.
 - **Obsidian** (serveur MCP `mcp-tools-istefox`) : mémoire du projet pour le propriétaire (rapports, suivi, vues graphiques), tenue par `lp-reporter`.
 - **CodeRabbit** : relecture automatique des PR (`.coderabbit.yaml`, génération de tests unitaires désactivée : c'est le rôle de `lp-tester`).
+- **context-mode** : **pas installé**, à évaluer fin de Phase 2 (`ROADMAP.md`, section « Outil à évaluer plus tard »). Ne pas l'installer sans accord.
 - **Sentry** : suivi des erreurs en production (skill `sentry-instrument`, `docs/` + `ENV_SETUP.md`).
 
 ## graphify

@@ -139,6 +139,13 @@ Remplace `docs/04-roadmap.md`. S'appuie sur : `PRD.md`, `ARCHITECTURE.md`, `DATA
 - **Terminé quand** : le site est ouvert à tous.
 - 🧑 Annoncer le lancement.
 
+## Outil à évaluer plus tard : context-mode
+
+- **Quoi** : [context-mode](https://github.com/mksglu/context-mode), plugin local et gratuit qui range les gros résultats de commandes hors de la conversation de l'IA (économie de mémoire sur les longues sessions).
+- **Quand** : à la fin de la **Phase 2** (quand il y a du vrai code), pas avant.
+- **Conditions avant installation** : mettre Node à jour en **24.15 ou plus** (installé : 24.13.1) ; vérifier sur une branche de test qu'il ne bloque pas graphify ni le contrôle GateGuard ; accord du propriétaire.
+- **Si OK** : l'ajouter à `CLAUDE.md` (outils) et `ENV_SETUP.md` (installation).
+
 ## Après le lancement (non planifié)
 
 Pages par pays, blog, commandes en lot, notifications client, email « nouvelle connexion », paiement pays anglophones, crypto, API revendeurs, mise à jour automatique du taux.
