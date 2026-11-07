@@ -26,6 +26,27 @@ jobs:
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test -- --coverage
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.75.0
+      - run: supabase start -x imgproxy,vector,logflare
+      - run: supabase db reset
+      - name: Exporter les clés Supabase locales (masquées dans les journaux)
+        run: |
+          supabase status -o env > "$RUNNER_TEMP/supabase.env"
+          for name in API_URL ANON_KEY SERVICE_ROLE_KEY; do
+            value="$(grep "^$name=" "$RUNNER_TEMP/supabase.env" | cut -d= -f2- | tr -d '"')"
+            if [ -z "$value" ]; then echo "Variable $name absente de supabase status"; exit 1; fi
+            echo "::add-mask::$value"
+            case "$name" in
+              API_URL) target=NEXT_PUBLIC_SUPABASE_URL ;;
+              ANON_KEY) target=NEXT_PUBLIC_SUPABASE_ANON_KEY ;;
+              SERVICE_ROLE_KEY) target=SUPABASE_SERVICE_ROLE_KEY ;;
+            esac
+            echo "$target=$value" >> "$GITHUB_ENV"
+          done
+          rm "$RUNNER_TEMP/supabase.env"
+      - run: npm run test:db
       - run: npm run build
       - run: npm run check:bundle
       - run: npx playwright install --with-deps chromium
@@ -34,6 +55,8 @@ jobs:
       - uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: supabase stop --no-backup
+        if: always()
       - uses: actions/upload-artifact@v4
         if: always()
         with:
