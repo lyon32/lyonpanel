@@ -1,0 +1,22 @@
+# Dépendances et build
+node_modules/
+.next/
+out/
+coverage/
+playwright-report/
+test-results/
+
+# Variables locales (jamais dans Git)
+.env
+.env*.local
+
+# Supabase local
+supabase/.temp/
+
+# Sentry
+.env.sentry-build-plugin
+
+# Divers
+.DS_Store
+*.log
+.vercel/

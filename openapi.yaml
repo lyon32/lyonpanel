@@ -1,0 +1,948 @@
+openapi: 3.1.0
+info:
+  title: LyonPanel API
+  version: 1.0.0-draft
+  description: |
+    API de LyonPanel. Montants toujours en XAF entiers (suffixe _xaf).
+    Erreurs au format unique ErrorResponse. Langue via Accept-Language (fr|en).
+    Document lisible : API_SPEC.md.
+servers:
+  - url: https://lyonpanel.com/api/v1
+security:
+  - session: []
+tags:
+  - name: auth
+  - name: profile
+  - name: wallet
+  - name: catalog
+  - name: orders
+  - name: payments
+  - name: favorites
+  - name: tickets
+  - name: referral
+  - name: system
+  - name: admin
+
+paths:
+  /auth/register:
+    post:
+      tags: [auth]
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RegisterRequest' }
+      responses:
+        '201': { description: Compte créé, content: { application/json: { schema: { $ref: '#/components/schemas/UserResponse' } } } }
+        '400': { $ref: '#/components/responses/Error' }
+        '409': { $ref: '#/components/responses/Error' }
+        '429': { $ref: '#/components/responses/Error' }
+  /auth/login:
+    post:
+      tags: [auth]
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/LoginRequest' }
+      responses:
+        '200': { description: Connecté, content: { application/json: { schema: { $ref: '#/components/schemas/UserResponse' } } } }
+        '400': { $ref: '#/components/responses/Error' }
+        '401': { $ref: '#/components/responses/Error' }
+        '403': { $ref: '#/components/responses/Error' }
+        '429': { $ref: '#/components/responses/Error' }
+  /auth/logout:
+    post:
+      tags: [auth]
+      responses:
+        '204': { description: Déconnecté }
+  /auth/password/forgot:
+    post:
+      tags: [auth]
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, turnstile_token]
+              properties:
+                email: { type: string, format: email }
+                turnstile_token: { type: string }
+      responses:
+        '200': { description: "Toujours 200, même si l'email n'existe pas" }
+        '429': { $ref: '#/components/responses/Error' }
+  /auth/password/reset:
+    post:
+      tags: [auth]
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token, new_password]
+              properties:
+                token: { type: string }
+                new_password: { type: string, minLength: 8 }
+      responses:
+        '200': { description: Mot de passe changé }
+        '400': { $ref: '#/components/responses/Error' }
+
+  /me:
+    get:
+      tags: [profile]
+      responses:
+        '200': { description: Profil, content: { application/json: { schema: { $ref: '#/components/schemas/User' } } } }
+        '401': { $ref: '#/components/responses/Error' }
+    patch:
+      tags: [profile]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                display_currency: { $ref: '#/components/schemas/Currency' }
+                language: { $ref: '#/components/schemas/Language' }
+                phone: { type: string, description: E.164 }
+      responses:
+        '200': { description: Profil modifié, content: { application/json: { schema: { $ref: '#/components/schemas/User' } } } }
+        '400': { $ref: '#/components/responses/Error' }
+        '409': { $ref: '#/components/responses/Error' }
+    delete:
+      tags: [profile]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [password]
+              properties:
+                password: { type: string }
+      responses:
+        '204': { description: Compte anonymisé }
+        '401': { $ref: '#/components/responses/Error' }
+
+  /wallet:
+    get:
+      tags: [wallet]
+      responses:
+        '200':
+          description: Solde
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  balance_xaf: { type: integer }
+                  total_recharged_xaf: { type: integer }
+                  discount_pct: { type: number }
+                  next_discount_threshold_xaf: { type: [integer, 'null'] }
+  /wallet/transactions:
+    get:
+      tags: [wallet]
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+      responses:
+        '200':
+          description: Transactions
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Page'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '#/components/schemas/Transaction' } }
+
+  /platforms:
+    get:
+      tags: [catalog]
+      security: []
+      responses:
+        '200':
+          description: Plateformes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    slug: { type: string }
+                    name: { type: string }
+                    service_count: { type: integer }
+  /services:
+    get:
+      tags: [catalog]
+      security: []
+      parameters:
+        - { name: platform, in: query, schema: { type: string } }
+        - { name: category, in: query, schema: { type: string } }
+        - { name: q, in: query, schema: { type: string } }
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+      responses:
+        '200':
+          description: Services
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Page'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '#/components/schemas/Service' } }
+  /services/{id}:
+    get:
+      tags: [catalog]
+      security: []
+      parameters: [ { $ref: '#/components/parameters/IntId' } ]
+      responses:
+        '200': { description: Service, content: { application/json: { schema: { $ref: '#/components/schemas/Service' } } } }
+        '404': { $ref: '#/components/responses/Error' }
+  /settings/public:
+    get:
+      tags: [catalog]
+      security: []
+      responses:
+        '200':
+          description: Réglages publics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  usd_xaf_rate: { type: number, example: 600 }
+                  xof_xaf_rate: { type: number, example: 1 }
+                  min_recharge_xaf: { type: integer, example: 3000 }
+                  currencies: { type: array, items: { $ref: '#/components/schemas/Currency' } }
+
+  /orders/quote:
+    post:
+      tags: [orders]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [service_id, quantity]
+              properties:
+                service_id: { type: integer }
+                quantity: { type: integer, minimum: 1 }
+      responses:
+        '200':
+          description: Devis
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  price_xaf_1000: { type: integer }
+                  discount_pct: { type: number }
+                  total_xaf: { type: integer }
+                  balance_after_xaf: { type: integer }
+        '422': { $ref: '#/components/responses/Error' }
+  /orders:
+    get:
+      tags: [orders]
+      parameters:
+        - { name: status, in: query, schema: { $ref: '#/components/schemas/OrderStatus' } }
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+      responses:
+        '200':
+          description: Commandes
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Page'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '#/components/schemas/Order' } }
+    post:
+      tags: [orders]
+      parameters: [ { $ref: '#/components/parameters/IdempotencyKey' } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CreateOrderRequest' }
+      responses:
+        '201': { description: Commande envoyée à JAP, content: { application/json: { schema: { $ref: '#/components/schemas/Order' } } } }
+        '202': { description: "Commande enregistrée, en vérification (to_review)", content: { application/json: { schema: { $ref: '#/components/schemas/Order' } } } }
+        '400': { $ref: '#/components/responses/Error' }
+        '403': { $ref: '#/components/responses/Error' }
+        '409': { $ref: '#/components/responses/Error' }
+        '422': { $ref: '#/components/responses/Error' }
+        '429': { $ref: '#/components/responses/Error' }
+  /orders/{id}:
+    get:
+      tags: [orders]
+      description: Rappelé toutes les 30 s par le site tant que le statut n'est pas final.
+      parameters: [ { $ref: '#/components/parameters/UuidId' } ]
+      responses:
+        '200': { description: Commande, content: { application/json: { schema: { $ref: '#/components/schemas/Order' } } } }
+        '404': { $ref: '#/components/responses/Error' }
+
+  /payments/quote:
+    post:
+      tags: [payments]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [amount_xaf]
+              properties:
+                amount_xaf: { type: integer }
+      responses:
+        '200':
+          description: Montant + frais
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  amount_xaf: { type: integer }
+                  fee_xaf: { type: integer }
+                  total_to_pay: { type: integer }
+        '422': { $ref: '#/components/responses/Error' }
+  /payments:
+    get:
+      tags: [payments]
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+      responses:
+        '200':
+          description: Recharges
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Page'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '#/components/schemas/Payment' } }
+    post:
+      tags: [payments]
+      parameters: [ { $ref: '#/components/parameters/IdempotencyKey' } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [amount_xaf]
+              properties:
+                amount_xaf: { type: integer }
+      responses:
+        '201':
+          description: Paiement créé
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Payment'
+                  - type: object
+                    properties:
+                      checkout_url: { type: string, format: uri }
+        '403': { $ref: '#/components/responses/Error' }
+        '422': { $ref: '#/components/responses/Error' }
+        '502': { $ref: '#/components/responses/Error' }
+  /payments/{id}:
+    get:
+      tags: [payments]
+      parameters: [ { $ref: '#/components/parameters/UuidId' } ]
+      responses:
+        '200': { description: Paiement, content: { application/json: { schema: { $ref: '#/components/schemas/Payment' } } } }
+        '404': { $ref: '#/components/responses/Error' }
+
+  /favorites:
+    get:
+      tags: [favorites]
+      responses:
+        '200': { description: Favoris, content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/Service' } } } } }
+  /favorites/{service_id}:
+    parameters:
+      - { name: service_id, in: path, required: true, schema: { type: integer } }
+    put:
+      tags: [favorites]
+      responses:
+        '204': { description: Ajouté }
+    delete:
+      tags: [favorites]
+      responses:
+        '204': { description: Retiré }
+
+  /tickets:
+    get:
+      tags: [tickets]
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+      responses:
+        '200':
+          description: Tickets
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Page'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '#/components/schemas/Ticket' } }
+    post:
+      tags: [tickets]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [subject, body]
+              properties:
+                subject: { type: string, maxLength: 120 }
+                order_id: { type: string, format: uuid }
+                body: { type: string, maxLength: 4000 }
+                attachment_ids: { type: array, items: { type: string, format: uuid }, maxItems: 3 }
+      responses:
+        '201': { description: Ticket créé, content: { application/json: { schema: { $ref: '#/components/schemas/Ticket' } } } }
+        '400': { $ref: '#/components/responses/Error' }
+  /tickets/{id}:
+    get:
+      tags: [tickets]
+      parameters: [ { $ref: '#/components/parameters/UuidId' } ]
+      responses:
+        '200':
+          description: Ticket et messages
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ticket: { $ref: '#/components/schemas/Ticket' }
+                  messages: { type: array, items: { $ref: '#/components/schemas/TicketMessage' } }
+        '404': { $ref: '#/components/responses/Error' }
+  /tickets/{id}/messages:
+    post:
+      tags: [tickets]
+      parameters: [ { $ref: '#/components/parameters/UuidId' } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [body]
+              properties:
+                body: { type: string, maxLength: 4000 }
+                attachment_ids: { type: array, items: { type: string, format: uuid }, maxItems: 3 }
+      responses:
+        '201': { description: Message ajouté, content: { application/json: { schema: { $ref: '#/components/schemas/TicketMessage' } } } }
+  /tickets/attachments:
+    post:
+      tags: [tickets]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file: { type: string, format: binary, description: 'image jpeg/png/webp, max 2 Mo' }
+      responses:
+        '201':
+          description: Pièce jointe enregistrée
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id: { type: string, format: uuid }
+        '422': { $ref: '#/components/responses/Error' }
+
+  /referral:
+    get:
+      tags: [referral]
+      responses:
+        '200':
+          description: Parrainage
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code: { type: string }
+                  link: { type: string, format: uri }
+                  referred_count: { type: integer }
+                  total_earned_xaf: { type: integer }
+                  pct: { type: number, example: 5 }
+
+  /admin/mfa/verify:
+    post:
+      tags: [admin]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [code]
+              properties:
+                code: { type: string, pattern: '^[0-9]{6}$' }
+      responses:
+        '200': { description: Session aal2 }
+        '401': { $ref: '#/components/responses/Error' }
+        '404': { $ref: '#/components/responses/Error' }
+  /admin/stats:
+    get:
+      tags: [admin]
+      security: [ { session: [], adminMfa: [] } ]
+      parameters:
+        - { name: from, in: query, schema: { type: string, format: date } }
+        - { name: to, in: query, schema: { type: string, format: date } }
+      responses:
+        '200':
+          description: Statistiques
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sales_xaf: { type: integer }
+                  profit_xaf: { type: integer }
+                  orders_count: { type: integer }
+                  recharges_xaf: { type: integer }
+                  new_users: { type: integer }
+                  by_country:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        country: { type: string }
+                        users: { type: integer }
+                        sales_xaf: { type: integer }
+                  jap_balance_usd: { type: number }
+                  jap_reserved_usd: { type: number }
+        '404': { $ref: '#/components/responses/Error' }
+  /admin/users:
+    get:
+      tags: [admin]
+      security: [ { session: [], adminMfa: [] } ]
+      parameters:
+        - { name: q, in: query, schema: { type: string } }
+        - { name: country, in: query, schema: { type: string } }
+        - { name: status, in: query, schema: { type: string, enum: [active, blocked, deleted] } }
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+      responses:
+        '200': { description: Clients (page) }
+  /admin/users/{id}:
+    parameters: [ { $ref: '#/components/parameters/UuidId' } ]
+    get:
+      tags: [admin]
+      security: [ { session: [], adminMfa: [] } ]
+      responses:
+        '200': { description: Fiche client complète }
+    patch:
+      tags: [admin]
+      security: [ { session: [], adminMfa: [] } ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status: { type: string, enum: [active, blocked] }
+                blocked_reason: { type: string }
+                custom_discount_pct: { type: [number, 'null'], minimum: 0, maximum: 50 }
+                daily_spend_limit_xaf: { type: integer, minimum: 0 }
+      responses:
+        '200': { description: Modifié }
+  /admin/users/{id}/notes:
+    post:
+      tags: [admin]
+      security: [ { session: [], adminMfa: [] } ]
+      parameters: [ { $ref: '#/components/parameters/UuidId' } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, required: [body], properties: { body: { type: string } } }
+      responses:
+        '201': { description: Note ajoutée }
+  /admin/users/{id}/adjust:
+    post:
+      tags: [admin]
+      security: [ { session: [], adminMfa: [] } ]
+      parameters: [ { $ref: '#/components/parameters/UuidId' } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [amount_xaf, note]
+              properties:
+                amount_xaf: { type: integer, description: "positif = crédit, négatif = débit" }
+                note: { type: string }
+      responses:
+        '200': { description: Solde ajusté }
+        '422': { $ref: '#/components/responses/Error' }
+  /admin/orders:
+    get:
+      tags: [admin]
+      security: [ { session: [], adminMfa: [] } ]
+      parameters:
+        - { name: status, in: query, schema: { $ref: '#/components/schemas/OrderStatus' } }
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+      responses:
+        '200': { description: Commandes avec coût JAP et bénéfice }
+  /admin/orders/{id}/refund:
+    post:
+      tags: [admin]
+      security: [ { session: [], adminMfa: [] } ]
+      parameters: [ { $ref: '#/components/parameters/UuidId' } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, required: [amount_xaf], properties: { amount_xaf: { type: integer, minimum: 1 } } }
+      responses:
+        '200': { description: Remboursé }
+        '422': { $ref: '#/components/responses/Error' }
+  /admin/orders/{id}/resend:
+    post:
+      tags: [admin]
+      security: [ { session: [], adminMfa: [] } ]
+      parameters: [ { $ref: '#/components/parameters/UuidId' } ]
+      responses:
+        '200': { description: Renvoyée à JAP }
+        '502': { $ref: '#/components/responses/Error' }
+  /admin/orders/{id}/close:
+    post:
+      tags: [admin]
+      security: [ { session: [], adminMfa: [] } ]
+      parameters: [ { $ref: '#/components/parameters/UuidId' } ]
+      responses:
+        '200': { description: Clôturée sans remboursement }
+  /admin/payments:
+    get:
+      tags: [admin]
+      security: [ { session: [], adminMfa: [] } ]
+      parameters:
+        - { name: status, in: query, schema: { type: string, enum: [created, pending, succeeded, failed] } }
+      responses:
+        '200': { description: Paiements (page) }
+  /admin/services:
+    get:
+      tags: [admin]
+      security: [ { session: [], adminMfa: [] } ]
+      parameters:
+        - { name: platform, in: query, schema: { type: string } }
+        - { name: active, in: query, schema: { type: boolean } }
+      responses:
+        '200': { description: "Catalogue complet (coût, marge, nom JAP)" }
+  /admin/services/{id}:
+    patch:
+      tags: [admin]
+      security: [ { session: [], adminMfa: [] } ]
+      parameters: [ { $ref: '#/components/parameters/IntId' } ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                active: { type: boolean }
+                name_fr: { type: string }
+                margin_pct: { type: [number, 'null'] }
+                sort_order: { type: integer }
+      responses:
+        '200': { description: Service modifié }
+  /admin/settings:
+    get:
+      tags: [admin]
+      security: [ { session: [], adminMfa: [] } ]
+      responses:
+        '200': { description: Tous les réglages }
+    patch:
+      tags: [admin]
+      security: [ { session: [], adminMfa: [] } ]
+      requestBody:
+        content:
+          application/json:
+            schema: { type: object, additionalProperties: true }
+      responses:
+        '200': { description: Réglages modifiés }
+  /admin/tickets:
+    get:
+      tags: [admin]
+      security: [ { session: [], adminMfa: [] } ]
+      parameters:
+        - { name: status, in: query, schema: { type: string, enum: [open, answered, closed] } }
+      responses:
+        '200': { description: Tickets (page) }
+  /admin/tickets/{id}:
+    patch:
+      tags: [admin]
+      security: [ { session: [], adminMfa: [] } ]
+      parameters: [ { $ref: '#/components/parameters/UuidId' } ]
+      requestBody:
+        content:
+          application/json:
+            schema: { type: object, properties: { status: { type: string, enum: [open, answered, closed] } } }
+      responses:
+        '200': { description: Statut modifié }
+  /admin/tickets/{id}/messages:
+    post:
+      tags: [admin]
+      security: [ { session: [], adminMfa: [] } ]
+      parameters: [ { $ref: '#/components/parameters/UuidId' } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, required: [body], properties: { body: { type: string } } }
+      responses:
+        '201': { description: Réponse envoyée }
+  /admin/audit:
+    get:
+      tags: [admin]
+      security: [ { session: [], adminMfa: [] } ]
+      parameters: [ { $ref: '#/components/parameters/Limit' } ]
+      responses:
+        '200': { description: Journal d'audit }
+
+components:
+  securitySchemes:
+    session:
+      type: apiKey
+      in: cookie
+      name: sb-access-token
+      description: Session Supabase (httpOnly, 7 jours). Nom exact du cookie fixé par @supabase/ssr.
+    adminMfa:
+      type: apiKey
+      in: cookie
+      name: sb-access-token
+      description: Session admin avec MFA TOTP (aal2). Non-admin => 404.
+    cronSecret:
+      type: http
+      scheme: bearer
+    saspaySignature:
+      type: apiKey
+      in: header
+      name: X-Webhook-Signature
+      description: "HMAC-SHA256 hex de timestamp + '.' + corps brut ; avec X-Webhook-Timestamp (± 300 s). Voir docs/06-saspay.md"
+
+  parameters:
+    Limit: { name: limit, in: query, schema: { type: integer, minimum: 1, maximum: 100, default: 20 } }
+    Cursor: { name: cursor, in: query, schema: { type: string } }
+    UuidId: { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+    IntId: { name: id, in: path, required: true, schema: { type: integer } }
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema: { type: string, format: uuid }
+
+  responses:
+    Error:
+      description: Erreur au format unique
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+
+  schemas:
+    Currency: { type: string, enum: [XAF, XOF, USD] }
+    Language: { type: string, enum: [fr, en] }
+    OrderStatus: { type: string, enum: [pending, in_progress, completed, partial, canceled, to_review, refunded] }
+    ErrorCode:
+      type: string
+      enum:
+        - VALIDATION_ERROR
+        - TURNSTILE_FAILED
+        - UNAUTHENTICATED
+        - INVALID_CREDENTIALS
+        - MFA_REQUIRED
+        - ACCOUNT_BLOCKED
+        - NOT_FOUND
+        - EMAIL_TAKEN
+        - PHONE_TAKEN
+        - IDEMPOTENCY_CONFLICT
+        - INSUFFICIENT_BALANCE
+        - QUANTITY_OUT_OF_RANGE
+        - INVALID_LINK
+        - SERVICE_UNAVAILABLE
+        - PRICE_CHANGED
+        - DAILY_LIMIT_REACHED
+        - AMOUNT_BELOW_MINIMUM
+        - FILE_TOO_LARGE
+        - FILE_TYPE_NOT_ALLOWED
+        - RATE_LIMITED
+        - AUTH_LOCKED
+        - PROVIDER_ERROR
+        - PROVIDER_TIMEOUT
+        - INTERNAL_ERROR
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message, request_id]
+          properties:
+            code: { $ref: '#/components/schemas/ErrorCode' }
+            message: { type: string, description: Traduit selon Accept-Language }
+            details: { type: object, additionalProperties: true }
+            request_id: { type: string }
+    Page:
+      type: object
+      properties:
+        next_cursor: { type: [string, 'null'] }
+    RegisterRequest:
+      type: object
+      required: [email, password, phone, country, display_currency, language, turnstile_token]
+      properties:
+        email: { type: string, format: email }
+        password: { type: string, minLength: 8 }
+        phone: { type: string, description: E.164, example: '+237690000000' }
+        country: { type: string, pattern: '^[A-Z]{2}$' }
+        display_currency: { $ref: '#/components/schemas/Currency' }
+        language: { $ref: '#/components/schemas/Language' }
+        referral_code: { type: string }
+        turnstile_token: { type: string }
+    LoginRequest:
+      type: object
+      required: [identifier, password, turnstile_token]
+      properties:
+        identifier: { type: string, description: Email ou téléphone E.164 }
+        password: { type: string }
+        turnstile_token: { type: string }
+    User:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        email: { type: string, format: email }
+        phone: { type: string }
+        country: { type: string }
+        display_currency: { $ref: '#/components/schemas/Currency' }
+        language: { $ref: '#/components/schemas/Language' }
+        referral_code: { type: string }
+        discount_pct: { type: number }
+        created_at: { type: string, format: date-time }
+    UserResponse:
+      type: object
+      properties:
+        user: { $ref: '#/components/schemas/User' }
+    Transaction:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        type: { type: string, enum: [recharge, order, refund, referral_bonus, adjustment] }
+        amount_xaf: { type: integer }
+        balance_after_xaf: { type: integer }
+        order_short_id: { type: [integer, 'null'] }
+        created_at: { type: string, format: date-time }
+    Service:
+      type: object
+      description: Jamais de coût JAP, marge ni nom JAP.
+      properties:
+        id: { type: integer }
+        platform: { type: string }
+        category: { type: string }
+        type: { type: string, description: 'default, custom_comments, ...' }
+        name: { type: string }
+        description: { type: string }
+        price_xaf_1000: { type: integer }
+        min_qty: { type: integer }
+        max_qty: { type: integer }
+        refill: { type: boolean }
+        cancel: { type: boolean }
+        guarantee_days: { type: [integer, 'null'] }
+        avg_start: { type: [string, 'null'] }
+    CreateOrderRequest:
+      type: object
+      required: [service_id, link, quantity, expected_total_xaf]
+      properties:
+        service_id: { type: integer }
+        link: { type: string, maxLength: 500 }
+        quantity: { type: integer, minimum: 1 }
+        comments: { type: array, items: { type: string, maxLength: 300 } }
+        expected_total_xaf: { type: integer }
+    Order:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        short_id: { type: integer }
+        service:
+          type: object
+          properties:
+            id: { type: integer }
+            name: { type: string }
+            platform: { type: string }
+        link: { type: string }
+        quantity: { type: integer }
+        charged_xaf: { type: integer }
+        status: { $ref: '#/components/schemas/OrderStatus' }
+        start_count: { type: [integer, 'null'] }
+        remains: { type: [integer, 'null'] }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+    Payment:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        amount_xaf: { type: integer }
+        fee_xaf: { type: integer }
+        status: { type: string, enum: [created, pending, succeeded, failed] }
+        created_at: { type: string, format: date-time }
+    Ticket:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        subject: { type: string }
+        status: { type: string, enum: [open, answered, closed] }
+        order_short_id: { type: [integer, 'null'] }
+        updated_at: { type: string, format: date-time }
+    TicketMessage:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        from_admin: { type: boolean }
+        body: { type: string }
+        attachments:
+          type: array
+          items:
+            type: object
+            properties:
+              id: { type: string, format: uuid }
+              url: { type: string, format: uri, description: "URL signée, 10 min" }
+        created_at: { type: string, format: date-time }
+
+webhooks:
+  saspayPayment:
+    post:
+      summary: POST /api/webhooks/saspay — confirmation de paiement
+      security: [ { saspaySignature: [] } ]
+      requestBody:
+        content:
+          application/json:
+            schema: { type: object, additionalProperties: true, description: Format exact selon la documentation SasPay }
+      responses:
+        '200': { description: Traité (ou doublon déjà traité) }
+        '403': { description: Signature ou horodatage invalide }

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 160"><rect width="520" height="160" fill="#fff"/>
+<rect x="30" y="92" width="24" height="44" rx="5" fill="#1D4ED8"/><rect x="62" y="70" width="24" height="66" rx="5" fill="#1D4ED8"/><rect x="94" y="44" width="24" height="92" rx="5" fill="#0E1726"/>
+<path d="M28 72 L74 40 L112 22" fill="none" stroke="#E0A030" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M97 18 L114 21 L109 37" fill="none" stroke="#E0A030" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="150" y="104" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="46" font-weight="700" fill="#0E1726">LyonPanel</text></svg>
