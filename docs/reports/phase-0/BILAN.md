@@ -36,7 +36,7 @@ Contrôles : relecture `lp-reviewer` ACCEPTÉ. `lp-security` : audit À CORRIGER
 - **Incident** : 14 documents à la racine ont été déplacés vers `docs/` par un agent non identifié pendant la phase. Ils ont été restaurés depuis git. À surveiller.
 
 ## Points ouverts
-- `SASPAY_MODE=live` hors production : refus ajouté au code (commit `c2531cd`, postérieur aux rapports de tâche) ; décision du propriétaire à confirmer.
+- `SASPAY_MODE=live` hors production : refus ajouté au code (commit `c2531cd`, postérieur aux rapports de tâche) ; décision confirmée par le propriétaire le 2026-11-07.
 - Extras CI non faits : actions GitHub épinglées par SHA, Dependabot pour les actions GitHub, analyse du HTML pré-rendu, valeurs de faux secrets en CI.
 - Une date ISO peut être masquée en `[téléphone]` dans Sentry (faux positif sans gravité).
 - `NEXT_PUBLIC_VERCEL_ENV` à documenter.

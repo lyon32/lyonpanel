@@ -75,6 +75,8 @@ Remplace `docs/04-roadmap.md`. S'appuie sur : `PRD.md`, `ARCHITECTURE.md`, `DATA
 ### Phase 5 — Recharge SasPay (mode test)
 - Lire la documentation SasPay (paiements, webhooks, signature, frais) et compléter `saspay-client.ts`.
 - Devis avec frais, création du paiement, webhook signé, rattrapage cron, page de retour.
+- **Page de paiement dynamique** (demande du propriétaire, 2026-11-07) : pas de page statique ni d'étapes figées ; l'état du paiement se met à jour en direct sous les yeux du client (en attente, confirmé, échoué, délai dépassé) ; téléphone d'abord puis ordinateur ; maquette inspirée des 6 images de `payment page reference/` (à étudier au début de la phase). Le propriétaire teste lui-même en mode test avant toute mise en ligne.
+- `SASPAY_MODE=live` refusé hors production (décision du propriétaire, déjà dans `src/server/env.ts`).
 - **Terminé quand** : en mode test, tu recharges 3 000 XAF ; le solde est crédité **une seule fois** même si le webhook est renvoyé.
 - 🧑 Compte marchand SasPay, clés de **test**, secret de webhook ; installer `cloudflared`.
 
