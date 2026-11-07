@@ -10,6 +10,17 @@ import { adminClient, TEST_PASSWORD, userClient } from './helpers/client';
 const db = adminClient();
 const BUCKET = 'ticket-attachments';
 
+// Colonnes que le client a le droit de lire (jamais cost_usd, error, raw_webhook, etc.).
+const CLIENT_COLS: Record<string, string> = {
+  wallet_transactions: '*',
+  tickets: '*',
+  favorites: '*',
+  payments:
+    'id, user_id, saspay_session_id, credited_xaf, fee_xaf, total_paid, pay_currency, status, saspay_network, created_at, succeeded_at',
+  orders:
+    'id, short_id, user_id, service_id, link, quantity, comments, price_xaf_1000, discount_pct, charged_xaf, status, start_count, remains, created_at, updated_at',
+};
+
 function need(value: string | undefined, label: string): string {
   if (value === undefined) throw new Error(`Donnée de test manquante : ${label}`);
   return value;
@@ -21,7 +32,6 @@ let b: { id: string; client: SupabaseClient };
 let admin: { id: string; client: SupabaseClient };
 let anon: SupabaseClient;
 let adminCreated = false;
-let previousAdminId: string | null = null;
 
 let serviceActive: number;
 let serviceHidden: number;
@@ -74,7 +84,6 @@ beforeAll(async () => {
   if (existing && existing.length > 0) {
     const first = existing[0];
     if (!first) throw new Error('Administrateur introuvable');
-    previousAdminId = first.id;
     admin = { id: first.id, client: undefined as unknown as SupabaseClient };
     await db.auth.admin.updateUserById(admin.id, { password: TEST_PASSWORD });
   } else {
@@ -128,14 +137,17 @@ describe('lecture de ses propres données (RLS)', () => {
     ['tickets', 'user_id'],
     ['favorites', 'user_id'],
   ])('A lit ses lignes de %s et aucune de B', async (table, col) => {
-    const own = await a.client.from(table).select('*').eq(col, a.id);
+    const cols = CLIENT_COLS[table] ?? '*';
+    const own = await a.client.from(table).select(cols).eq(col, a.id);
     expect(own.error).toBeNull();
     expect(own.data?.length).toBeGreaterThan(0);
-    const other = await a.client.from(table).select('*').eq(col, b.id);
+    const other = await a.client.from(table).select(cols).eq(col, b.id);
     expect(other.error).toBeNull();
     expect(other.data).toEqual([]);
-    const all = await a.client.from(table).select('*');
-    expect(all.data?.every((r) => r[col] === a.id)).toBe(true);
+    const all = await a.client.from(table).select(cols);
+    expect(
+      (all.data as unknown as Record<string, unknown>[] | null)?.every((r) => r[col] === a.id),
+    ).toBe(true);
   });
 
   it('A lit ses messages de ticket et pas ceux de B', async () => {
@@ -152,6 +164,54 @@ describe('lecture de ses propres données (RLS)', () => {
     const got = data?.map((r) => r.storage_path) ?? [];
     expect(got).toContain(ids.a.path);
     expect(got).not.toContain(ids.b.path);
+  });
+});
+
+describe('colonnes sensibles illisibles pour un client', () => {
+  it.each([
+    ['orders', 'cost_usd'],
+    ['orders', 'error'],
+    ['payments', 'raw_webhook'],
+    ['profiles', 'blocked_reason'],
+    ['profiles', 'custom_discount_pct'],
+    ['profiles', 'is_admin'],
+  ])('A ne peut pas lire %s.%s (erreur de permission)', async (table, col) => {
+    const { error } = await a.client.from(table).select(col);
+    expect(error?.code).toBe('42501');
+  });
+
+  it('A ne peut pas lire une colonne sensible avec select(*)', async () => {
+    for (const table of ['orders', 'payments', 'profiles']) {
+      const { error } = await a.client.from(table).select('*');
+      expect(error?.code).toBe('42501');
+    }
+  });
+
+  it('A lit ses colonnes autorisées de orders, payments et profiles', async () => {
+    const o = await a.client
+      .from('orders')
+      .select('price_xaf_1000, charged_xaf, status, quantity, link')
+      .eq('id', ids.a.order);
+    expect(o.error).toBeNull();
+    expect(o.data).toEqual([
+      expect.objectContaining({
+        charged_xaf: 150,
+        status: 'pending',
+        quantity: expect.any(Number),
+      }),
+    ]);
+    const p = await a.client
+      .from('payments')
+      .select('credited_xaf, status')
+      .eq('id', ids.a.payment);
+    expect(p.error).toBeNull();
+    expect(p.data).toHaveLength(1);
+    const pr = await a.client
+      .from('profiles')
+      .select('id, language, country, status')
+      .eq('id', a.id);
+    expect(pr.error).toBeNull();
+    expect(pr.data).toHaveLength(1);
   });
 });
 
@@ -387,7 +447,7 @@ describe('administrateur', () => {
     const profiles = await admin.client.from('profiles').select('id').in('id', [a.id, b.id]);
     expect(profiles.data).toHaveLength(2);
     for (const table of ['orders', 'payments', 'wallet_transactions', 'tickets', 'services']) {
-      const { data, error } = await admin.client.from(table).select('*');
+      const { data, error } = await admin.client.from(table).select('id');
       expect(error).toBeNull();
       expect(data?.length).toBeGreaterThan(0);
     }

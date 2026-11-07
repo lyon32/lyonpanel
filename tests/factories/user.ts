@@ -7,6 +7,7 @@
  *   dépendent pas de l'état restant.
  * - Lancer `supabase db reset` de temps en temps pour repartir d'une base propre.
  */
+import { randomInt } from 'node:crypto';
 import { adminClient, TEST_PASSWORD } from '../db/helpers/client';
 
 let counter = 0;
@@ -28,9 +29,12 @@ export type UserOverrides = {
  */
 export async function makeUser(overrides: UserOverrides = {}): Promise<TestUser> {
   counter += 1;
-  const n = `${Date.now() % 100000}${counter}`;
+  const n = `${process.pid}-${Date.now() % 100000}-${counter}-${randomInt(1000)}`;
   const email = overrides.email ?? `client-${n}@lyonpanel.test`;
-  const suffix = `${String(Date.now() % 1000).padStart(3, '0')}${String(counter).padStart(3, '0')}`;
+  // +237600 + 6 chiffres : aléa (1 000 000 valeurs) mêlé au compteur et au processus.
+  const suffix = String(
+    (randomInt(1_000_000) + counter * 7919 + process.pid * 104729) % 1_000_000,
+  ).padStart(6, '0');
   const phone = overrides.phone ?? `+237600${suffix}`;
   const { data, error } = await adminClient().auth.admin.createUser({
     email,
