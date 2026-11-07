@@ -216,9 +216,9 @@
     "semantic_hash": ""
   },
   "src/app/[locale]/(public)/demo/page.tsx": {
-    "mtime": 1794066890.4484859,
-    "seen": 1794068014.0148559,
-    "ast_hash": "c67386f2e173e4053ee65ffc9e110466",
+    "mtime": 1794068424.3999717,
+    "seen": 1794070068.1093974,
+    "ast_hash": "31e3dc5b435d67e29a1e4392c821ecc0",
     "semantic_hash": ""
   },
   "src/app/[locale]/(public)/forgot-password/page.tsx": {
@@ -246,9 +246,9 @@
     "semantic_hash": ""
   },
   "src/app/[locale]/(public)/page.tsx": {
-    "mtime": 1794066948.4166245,
-    "seen": 1794068014.017332,
-    "ast_hash": "d2acf0e9e908db10938b36de63454160",
+    "mtime": 1794068407.304969,
+    "seen": 1794070068.1116107,
+    "ast_hash": "6a71cbdacff408a6db4dd7bacdfe1043",
     "semantic_hash": ""
   },
   "src/app/[locale]/(public)/privacy/page.tsx": {
@@ -360,9 +360,9 @@
     "semantic_hash": ""
   },
   "src/components/layout/site-header.tsx": {
-    "mtime": 1794066971.3682995,
-    "seen": 1794068014.0321445,
-    "ast_hash": "0bb21245a0ab2970747849671f14d2c5",
+    "mtime": 1794068031.0191436,
+    "seen": 1794070068.1194553,
+    "ast_hash": "f0e0926991ad501044e3d4d43d30fe7c",
     "semantic_hash": ""
   },
   "src/components/motion/attract-button-canvas.tsx": {
@@ -630,15 +630,15 @@
     "semantic_hash": ""
   },
   "src/messages/en.json": {
-    "mtime": 1794067044.124429,
-    "seen": 1794068014.066353,
-    "ast_hash": "61a485ed2bd729e0e7eab2a7dd27f09b",
+    "mtime": 1794068585.2683198,
+    "seen": 1794070068.1454546,
+    "ast_hash": "d3aa0a4bd890df2a3523d1aefa15cf08",
     "semantic_hash": ""
   },
   "src/messages/fr.json": {
-    "mtime": 1794067044.121634,
-    "seen": 1794068014.0663621,
-    "ast_hash": "e9367fab31aca102b8925639a9ca3abf",
+    "mtime": 1794068585.3577871,
+    "seen": 1794070068.1454594,
+    "ast_hash": "77a7dbd48d445c6f2cf2924177ea7b5c",
     "semantic_hash": ""
   },
   "src/proxy.ts": {
@@ -732,9 +732,9 @@
     "semantic_hash": ""
   },
   "tests/e2e/home.spec.ts": {
-    "mtime": 1794066971.5948389,
-    "seen": 1794068014.0767188,
-    "ast_hash": "750a5010fc39fc3d76c2428bbf38deec",
+    "mtime": 1794068424.56977,
+    "seen": 1794070068.15167,
+    "ast_hash": "d3f85e68f759d6dfa7c79e8a9496da9a",
     "semantic_hash": ""
   },
   "tests/e2e/navigation.spec.ts": {
@@ -2724,15 +2724,15 @@
     "semantic_hash": ""
   },
   "src/components/shared/home-hero.tsx": {
-    "mtime": 1794067096.3559043,
-    "seen": 1794068014.0482154,
-    "ast_hash": "da7a844d880121f526ecccad57d270bb",
+    "mtime": 1794068583.7072077,
+    "seen": 1794070068.1333842,
+    "ast_hash": "e7b874cc3086bcc706ac40736370f440",
     "semantic_hash": ""
   },
   "src/components/shared/home-steps.tsx": {
-    "mtime": 1794066890.7560153,
-    "seen": 1794068014.0482206,
-    "ast_hash": "705fe1a42d2a75066293a667d2350a3e",
+    "mtime": 1794068401.0335324,
+    "seen": 1794070068.1333966,
+    "ast_hash": "d2c13878666e2258162c7c34ecf87769",
     "semantic_hash": ""
   },
   "reference-design system/702209766938720678.jpg": {
@@ -2775,6 +2775,78 @@
     "mtime": 1794066662.318241,
     "seen": 1794068014.3711185,
     "ast_hash": "6012bf8c4b1077b1953a2c93c93f1e78",
+    "semantic_hash": ""
+  },
+  "src/components/motion/faq-accordion.tsx": {
+    "mtime": 1794068307.615837,
+    "seen": 1794070068.121668,
+    "ast_hash": "791ffe3443a0d944ac9f50617e70642b",
+    "semantic_hash": ""
+  },
+  "src/components/motion/hover-cards.tsx": {
+    "mtime": 1794068581.767771,
+    "seen": 1794070068.122887,
+    "ast_hash": "db6b12c73b98a0a15e2e146b45799263",
+    "semantic_hash": ""
+  },
+  "src/components/motion/marquee.tsx": {
+    "mtime": 1794068283.2699728,
+    "seen": 1794070068.1228938,
+    "ast_hash": "0ff938e69287a82afbd0191c2e4fd782",
+    "semantic_hash": ""
+  },
+  "src/components/motion/scroll-steps.tsx": {
+    "mtime": 1794068312.8003972,
+    "seen": 1794070068.124388,
+    "ast_hash": "ff1b72f5b4e30ba702526cd41adbb6d9",
+    "semantic_hash": ""
+  },
+  "src/components/motion/spotlight-card.tsx": {
+    "mtime": 1794068289.2321565,
+    "seen": 1794070068.125231,
+    "ast_hash": "abf7ca0c879c6e291d65d64273e4ac20",
+    "semantic_hash": ""
+  },
+  "src/components/motion/word-reveal.tsx": {
+    "mtime": 1794068301.7286828,
+    "seen": 1794070068.126074,
+    "ast_hash": "0c8e33d1f4ac3cd6247b0fb287720ec9",
+    "semantic_hash": ""
+  },
+  "src/components/shared/home-sections.tsx": {
+    "mtime": 1794069582.7972295,
+    "seen": 1794070068.1333911,
+    "ast_hash": "8795152a0bee230fda73806d0876a2d6",
+    "semantic_hash": ""
+  },
+  "public/brand/networks/SOURCE.txt": {
+    "mtime": 1794069548.2918863,
+    "seen": 1794070068.2897077,
+    "ast_hash": "555aea598ad75d9f8df963a0afb57f99",
+    "semantic_hash": ""
+  },
+  "public/brand/networks/facebook.svg": {
+    "mtime": 1794069530.5363498,
+    "seen": 1794070068.3214128,
+    "ast_hash": "e4e9a2173656a39df687e7c0dd6335db",
+    "semantic_hash": ""
+  },
+  "public/brand/networks/instagram.svg": {
+    "mtime": 1794069527.236114,
+    "seen": 1794070068.32142,
+    "ast_hash": "8e8d554c282bd215a21fa0bcf813f097",
+    "semantic_hash": ""
+  },
+  "public/brand/networks/tiktok.svg": {
+    "mtime": 1794069526.2794585,
+    "seen": 1794070068.3214247,
+    "ast_hash": "068c4facb7efd7696d001f47ace6aae5",
+    "semantic_hash": ""
+  },
+  "public/brand/networks/youtube.svg": {
+    "mtime": 1794069528.5389678,
+    "seen": 1794070068.32143,
+    "ast_hash": "fbae9fa0bf72b79e967ca4537eaf6795",
     "semantic_hash": ""
   },
   "package-lock.json": {

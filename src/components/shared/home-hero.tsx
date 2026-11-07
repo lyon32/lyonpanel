@@ -1,14 +1,4 @@
-import {
-  Camera,
-  CheckCircle2,
-  Clock,
-  LayoutDashboard,
-  ListOrdered,
-  Music2,
-  Play,
-  ThumbsUp,
-  Wallet,
-} from 'lucide-react';
+import { CheckCircle2, Clock, LayoutDashboard, ListOrdered, Wallet } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { DotBackground } from '@/components/motion/dot-background';
 import { FloatingCards } from '@/components/motion/floating-cards';
@@ -110,7 +100,7 @@ function miniCard(
   };
 }
 
-// Héros d'accueil : titre, deux boutons, grande maquette du panel, cartes qui flottent, tuiles de réseaux.
+// Héros d'accueil : titre, deux boutons, grande maquette du panel, cartes qui flottent.
 export async function HomeHero() {
   const t = await getTranslations('home');
 
@@ -144,13 +134,6 @@ export async function HomeHero() {
     ),
   ];
 
-  const networks = [
-    { Icon: Music2, name: 'TikTok' },
-    { Icon: Camera, name: 'Instagram' },
-    { Icon: Play, name: 'YouTube' },
-    { Icon: ThumbsUp, name: 'Facebook' },
-  ];
-
   return (
     <DotBackground>
       <div className="relative mx-auto flex max-w-6xl flex-col items-center gap-6 px-4 pt-10 pb-12 text-center md:pt-16 md:pb-16">
@@ -180,21 +163,6 @@ export async function HomeHero() {
             />
           </div>
         </div>
-
-        <ul aria-label={t('networks')} className="flex flex-wrap justify-center gap-3">
-          {networks.map(({ Icon, name }, i) => (
-            <li
-              key={name}
-              style={{ animationDelay: `${i * 300}ms` }}
-              className="lp-bounce border-gris-200 bg-blanc text-encre flex min-h-11 items-center gap-2 rounded-xl border py-1.5 pr-4 pl-1.5 text-sm font-semibold shadow-sm"
-            >
-              <span className="bg-bleu-50 text-bleu-600 flex size-8 items-center justify-center rounded-lg">
-                <Icon size={18} aria-hidden="true" />
-              </span>
-              {name}
-            </li>
-          ))}
-        </ul>
       </div>
     </DotBackground>
   );

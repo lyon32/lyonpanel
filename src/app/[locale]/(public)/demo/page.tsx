@@ -3,6 +3,14 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Reveal } from '@/components/motion/reveal';
 import { DemoBasics } from '@/components/shared/demo/demo-basics';
 import { HomeHero } from '@/components/shared/home-hero';
+import {
+  HomeCta,
+  HomeFaq,
+  HomeFeatures,
+  HomeNetworks,
+  HomeServices,
+} from '@/components/shared/home-sections';
+import { HomeSteps } from '@/components/shared/home-steps';
 import { DemoStates } from '@/components/shared/demo/demo-states';
 import { LazyTimeline, LazyTrackE, LazyTrackF } from '@/components/shared/demo/demo-lazy';
 import { BottomNav } from '@/components/layout/bottom-nav';
@@ -38,6 +46,12 @@ export default async function DemoPage({ params }: Props) {
   return (
     <>
       <HomeHero />
+      <HomeNetworks />
+      <HomeServices />
+      <HomeSteps />
+      <HomeFeatures />
+      <HomeFaq />
+      <HomeCta />
       <DemoBasics />
 
       <section className="mx-auto max-w-6xl px-4 py-10 md:py-14">

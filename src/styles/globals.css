@@ -127,3 +127,35 @@ h3 {
     animation: lp-bounce 3s ease-in-out infinite;
   }
 }
+
+/* Bandeau des réseaux : défilement lent en boucle, en pause au survol ou au focus. Transform seul. */
+@keyframes lp-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .lp-marquee-track {
+    animation: lp-marquee 28s linear infinite;
+  }
+  .lp-marquee:hover .lp-marquee-track,
+  .lp-marquee:focus-within .lp-marquee-track {
+    animation-play-state: paused;
+  }
+}
+
+/* Panneau des étapes : fondu avec léger décalage. */
+@keyframes lp-step-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
