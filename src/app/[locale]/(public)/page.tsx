@@ -9,10 +9,10 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const t = await getTranslations('home');
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-3 px-4 text-center">
+    <div className="flex min-h-[60vh] flex-col items-center justify-center gap-3 px-4 text-center">
       <h1 className="text-4xl font-bold text-[#1D4ED8]">{SITE_NAME}</h1>
       <p className="text-slate-600">{t('title')}</p>
       <p className="text-slate-600">{t('subtitle')}</p>
-    </main>
+    </div>
   );
 }

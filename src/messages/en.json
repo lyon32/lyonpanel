@@ -6,13 +6,24 @@
     "addFunds": "Add funds",
     "account": "Account",
     "login": "Log in",
-    "register": "Sign up"
+    "register": "Sign up",
+    "services": "Services",
+    "blog": "Blog",
+    "newOrder": "New order",
+    "referral": "Referral",
+    "support": "Support",
+    "bottomOrder": "Order",
+    "mainLabel": "Main navigation",
+    "appLabel": "Customer area",
+    "bottomLabel": "Bottom menu"
   },
   "footer": {
     "privacy": "Privacy",
     "terms": "Terms",
     "support": "Support",
-    "rights": "All rights reserved."
+    "rights": "All rights reserved.",
+    "contact": "Contact",
+    "label": "Footer"
   },
   "common": {
     "loading": "Loading…",
@@ -40,5 +51,22 @@
   },
   "meta": {
     "description": "LyonPanel: followers, likes and views for TikTok and Instagram, paid with Mobile Money."
+  },
+  "comingSoon": {
+    "title": "This page is coming soon.",
+    "description": "We are working on it. Check back in a few days."
+  },
+  "error": {
+    "title": "Something went wrong.",
+    "description": "Please try again in a moment.",
+    "retry": "Try again"
+  },
+  "notFound": {
+    "title": "Page not found.",
+    "description": "The link may be wrong, or the page has moved.",
+    "backHome": "Back to home"
+  },
+  "loading": {
+    "label": "Loading"
   }
 }

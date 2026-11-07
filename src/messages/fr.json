@@ -6,13 +6,24 @@
     "addFunds": "Recharger",
     "account": "Compte",
     "login": "Connexion",
-    "register": "Inscription"
+    "register": "Inscription",
+    "services": "Services",
+    "blog": "Blog",
+    "newOrder": "Nouvelle commande",
+    "referral": "Parrainage",
+    "support": "Support",
+    "bottomOrder": "Commander",
+    "mainLabel": "Navigation principale",
+    "appLabel": "Espace client",
+    "bottomLabel": "Menu du bas"
   },
   "footer": {
     "privacy": "Confidentialité",
     "terms": "Conditions",
     "support": "Support",
-    "rights": "Tous droits réservés."
+    "rights": "Tous droits réservés.",
+    "contact": "Contact",
+    "label": "Pied de page"
   },
   "common": {
     "loading": "Chargement…",
@@ -40,5 +51,22 @@
   },
   "meta": {
     "description": "LyonPanel : abonnés, likes et vues pour TikTok et Instagram, payés en Mobile Money."
+  },
+  "comingSoon": {
+    "title": "Cette page arrive bientôt.",
+    "description": "Nous y travaillons. Revenez dans quelques jours."
+  },
+  "error": {
+    "title": "Un problème est survenu.",
+    "description": "Réessayez dans un instant.",
+    "retry": "Réessayer"
+  },
+  "notFound": {
+    "title": "Page introuvable.",
+    "description": "Le lien est peut-être incorrect ou la page a été déplacée.",
+    "backHome": "Retour à l'accueil"
+  },
+  "loading": {
+    "label": "Chargement en cours"
   }
 }

@@ -23,7 +23,12 @@ export const routing = defineRouting({
   defaultLocale: 'fr',
   localePrefix: 'always',
   // L'accueil « / » n'a pas de traduction : il garde la même adresse.
-  pathnames: { '/': '/', ...pathnames },
+  pathnames: {
+    '/': '/',
+    '/services': '/services',
+    '/blog': '/blog',
+    ...pathnames,
+  },
 });
 
 export type Locale = (typeof routing.locales)[number];
