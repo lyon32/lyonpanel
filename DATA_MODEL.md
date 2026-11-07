@@ -1,6 +1,7 @@
 # LyonPanel — Modèle de données
 
 Statut : **validé par le propriétaire le 2026-11-07**. « (mon choix) » = décidé par Claude, à vérifier.
+Mis à jour le 2026-11-07 : complété à la fin de la Phase 1, accord du propriétaire.
 Base : **Supabase Postgres**. Montants en **XAF entiers** (`bigint`), jamais en décimal flottant.
 
 ## 0. Décisions du propriétaire prises en compte
@@ -133,7 +134,7 @@ Le solde ne se modifie **que** par les fonctions SQL (§6), qui écrivent aussi 
 | cost_usd_1000 | numeric(12,4) | coût JAP |
 | margin_pct | numeric(6,2) | null = règle par plateforme |
 | price_xaf_1000 | bigint | prix client calculé |
-| min_qty / max_qty | int | > 0, min ≤ max |
+| min_qty / max_qty | int | NOT NULL, > 0, min ≤ max |
 | refill / cancel / dripfeed | boolean | |
 | active | boolean | défaut false (activé par l'admin) |
 | available | boolean | false si retiré chez JAP |
@@ -198,7 +199,7 @@ id uuid PK · user_id FK → profiles · body text · created_at. **Jamais lisib
 
 ### settings — réglages (admin seulement)
 key text PK · value jsonb · updated_at.
-Clés : `usd_xaf_rate` (600), `margins` (par plateforme + paliers), `min_recharge_xaf` (3000), `auto_discount` ({threshold_xaf: 50000, pct: 10}), `referral_pct` (5), `jap_low_balance_usd` (5), `saspay_fee_pct`, `price_alert_pct`.
+Clés : `usd_xaf_rate` (600), `margins` (par plateforme + paliers), `min_recharge_xaf` (3000), `auto_discount` ({threshold_xaf: 50000, pct: 10}), `referral_pct` (5), `jap_low_balance_usd` (5), `saspay_fee_pct` (3), `price_alert_pct` (20). Les deux dernières valeurs sont provisoires (seed), confirmées par le propriétaire le 2026-11-07 ; ajustables.
 
 ### login_attempts — essais de connexion (blocage 5 échecs / 15 min)
 id bigserial PK · identifier_hash text (email/téléphone haché) · ip_hash text · success bool · created_at. Index (identifier_hash, created_at), (ip_hash, created_at). Purge après 30 jours.
@@ -243,17 +244,19 @@ Pagination par curseur (`created_at`, `id`) sur commandes, transactions, tickets
 | favorites, tickets, ticket_messages, ticket_attachments | ses lignes | tout |
 | admin_notes, settings, audit_log, referral_rewards, service_price_history, jap_balance_snapshots, login_attempts, rate_limits, allowed_signups, idempotency_keys | **aucun accès** | tout |
 
-Client bloqué : peut lire, ne peut ni recharger ni commander (contrôlé dans les fonctions).
+Client bloqué (`blocked`) : peut lire et écrire au support, mais ne peut pas commander (contrôlé dans les fonctions).
+Compte supprimé (`deleted`) : ne lit et n'écrit plus rien (profil masqué ; insertions tickets, messages, favoris et pièces jointes refusées).
+Colonnes cachées au client : `orders.cost_usd`, `orders.error`, `orders.jap_order_id`, `orders.idem_key`, `payments.raw_webhook`, `payments.saspay_transaction_id`, `payments.idem_key`, `profiles.blocked_reason`, `custom_discount_pct`, `is_admin`. Le client lit par colonnes explicites, jamais `select *`.
 
 ## 6. Fonctions SQL atomiques (seules à toucher l'argent)
 
 | Fonction | Fait, en une transaction |
 |---|---|
-| `credit_payment(payment_id)` | si non `succeeded` et si `net_amount` = montant demandé : passe `succeeded`, crédite, journalise, augmente `total_recharged_xaf`, verse le bonus parrain si 1re recharge |
-| `place_order(user, service, link, qty, comments, idem_key)` | verrouille le portefeuille, recalcule prix + remise, vérifie statut client, min/max, solde ; débite ; crée la commande |
-| `refund_order(order_id, amount, admin_id)` | crédite, journalise, passe `refunded`, écrit `audit_log` |
+| `credit_payment(payment_id)` | si non `succeeded` (un paiement `failed` est refusé : `PAYMENT_NOT_PAYABLE`) et si `net_amount` = montant demandé : passe `succeeded`, crédite, journalise, augmente `total_recharged_xaf`, verse le bonus parrain si 1re recharge |
+| `place_order(user, service, link, qty, comments, idem_key)` | verrouille le portefeuille, recalcule prix + remise (total arrondi au XAF supérieur : `ceil(prix_1000 × quantité × (100 − remise) / 100 000)`), vérifie statut client, min/max, solde ; débite ; crée la commande |
+| `refund_order(order_id, amount, admin_id)` | un seul remboursement par commande, total ou partiel, qui clôt la commande (`refunded`) : crédite, journalise, écrit `audit_log` |
 | `admin_adjust(user, amount, note, admin_id)` | ajustement manuel + audit |
-| `anonymize_user(user_id)` | email/téléphone/messages → null, `status='deleted'`, supprime pièces jointes et favoris, garde commandes/paiements |
+| `anonymize_user(user_id)` | email/téléphone/messages → null, `status='deleted'`, supprime pièces jointes, favoris, sessions, jetons, mot de passe et sujet des tickets, garde commandes/paiements |
 
 Remise appliquée = la plus grande entre la remise auto 10 % (si seuil atteint) et `custom_discount_pct` ; elles ne s'additionnent pas (mon choix).
 

@@ -76,9 +76,13 @@ Liés : `ARCHITECTURE.md` (flux), `DATA_MODEL.md` (tables).
 | INVALID_CREDENTIALS | 401 | Identifiant ou mot de passe incorrect |
 | MFA_REQUIRED | 401 | Code à 6 chiffres requis (admin) |
 | ACCOUNT_BLOCKED | 403 | Compte bloqué par le propriétaire |
+| NOT_ADMIN | 403 | Fonction SQL réservée au propriétaire |
 | NOT_FOUND | 404 | Ressource absente (ou route admin pour un non-admin) |
+| ORDER_NOT_FOUND / PAYMENT_NOT_FOUND / USER_NOT_FOUND | 404 | Commande, paiement ou client introuvable (fonctions SQL) |
 | EMAIL_TAKEN / PHONE_TAKEN | 409 | Déjà utilisé |
 | IDEMPOTENCY_CONFLICT | 409 | Même clé réutilisée avec un contenu différent |
+| ALREADY_REFUNDED | 409 | Commande déjà remboursée (un seul remboursement par commande) |
+| PAYMENT_NOT_PAYABLE | 409 | Paiement `failed` : crédit refusé |
 | INSUFFICIENT_BALANCE | 422 | Solde client trop bas (`details.missing_xaf`) |
 | QUANTITY_OUT_OF_RANGE | 422 | Hors min/max (`details.min`, `details.max`) |
 | INVALID_LINK | 422 | Lien non accepté pour ce service |
@@ -86,6 +90,10 @@ Liés : `ARCHITECTURE.md` (flux), `DATA_MODEL.md` (tables).
 | PRICE_CHANGED | 422 | Prix modifié depuis le devis (`details.new_total_xaf`) |
 | DAILY_LIMIT_REACHED | 422 | Plafond de dépense sur 24 h atteint (`details.limit_xaf`) |
 | AMOUNT_BELOW_MINIMUM | 422 | Recharge sous le minimum (`details.min_xaf`) |
+| AMOUNT_MISMATCH | 422 | Montant reçu différent du montant demandé (paiement non crédité) |
+| AMOUNT_TOO_HIGH | 422 | Remboursement supérieur au montant débité |
+| INVALID_AMOUNT | 422 | Montant nul, négatif ou incohérent |
+| NOTE_REQUIRED | 422 | Note obligatoire pour un ajustement manuel |
 | FILE_TOO_LARGE / FILE_TYPE_NOT_ALLOWED | 422 | Pièce jointe refusée |
 | RATE_LIMITED | 429 | Trop de requêtes (en-tête `Retry-After`) |
 | AUTH_LOCKED | 429 | 5 échecs de connexion, attendre 15 min |

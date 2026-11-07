@@ -110,35 +110,27 @@ Un agent ne démarre jamais avant ce dont il dépend ; ce qui est indépendant t
 
 > À mettre à jour au début de chaque phase (`ROADMAP.md`).
 
-**Phase en cours : Phase 0 — Socle du projet**
+**Phase en cours : Phase 1 — Base de données** (Phase 0 validée le 2026-11-07)
 
 **Périmètre (seulement ceci)**
-- Créer le projet Next.js + TypeScript strict dans le dépôt `https://github.com/lyon32/lyonpanel.git`.
-- Versions exactes (`.npmrc` `save-exact=true`), Node 24 (`.nvmrc`) ; recopier les numéros dans `ENV_SETUP.md §6`.
-- Installer et configurer : Tailwind 4, ESLint, Prettier (+ plugin Tailwind), Husky + lint-staged, Vitest, Playwright.
-- `src/server/env.ts` : vérification des variables d'environnement avec Zod.
-- Créer l'arborescence vide de `LLD.md §2` (dossiers seulement).
-- `.github/workflows/ci.yml` (lint, types, tests, build), `.github/dependabot.yml`, `.gitattributes`, `.vscode/extensions.json`.
-- Sentry (`@sentry/nextjs`) avec le skill `sentry-instrument` : erreurs + traces seulement, DSN déjà dans `.env.local`, règles de confidentialité de `SECURITY_NOTES.md §7`.
-- Une page d'accueil provisoire « LyonPanel » aux couleurs du design system.
+- Migrations Supabase (`supabase/migrations/`) : types énumérés, tables de `DATA_MODEL.md`, index, RLS, vue `services_public`.
+- Fonctions SQL : `place_order`, `credit_payment`, `refund_order`, `admin_adjust`, `anonymize_user`.
+- `supabase/seed.sql` (réglages par défaut + ~20 services fictifs) et fabriques de tests (`tests/factories/`).
+- Tests base de données de `TESTING.md §2` (`npm run test:db`, Supabase local) : fonctions d'argent, RLS.
+- Types TypeScript générés (`src/server/db/types.ts`) et étape « base locale + test:db » dans la CI (`CI_CD.md`).
 
 **Hors périmètre (ne pas toucher)**
-- Base de données, migrations, Supabase (phase 1).
-- Composants shadcn/ui, traductions, mise en page (phase 2).
-- Toute logique métier : prix, comptes, paiements, commandes.
+- Comptes, inscription, connexion (phase 3) ; page de paiement et SasPay (phase 5).
+- Calcul de prix côté TypeScript, catalogue JAP (phase 4), routes API, écrans, design (phases 2+).
+- Base de production : aucune migration poussée vers un projet en ligne sans accord du propriétaire.
 
 **Terminé quand (définition de « fini »)**
-- [ ] `npm run dev` affiche la page provisoire sur http://localhost:3000.
-- [ ] `npm run lint`, `npm run typecheck`, `npm test`, `npm run build` passent sans erreur.
-- [ ] Un test Vitest d'exemple et un test Playwright d'exemple passent.
-- [ ] Un commit est refusé si Prettier ou ESLint échoue (hook Husky vérifié).
-- [ ] La CI GitHub passe au vert sur une première PR.
-- [ ] Aucune version avec `^` ou `~` dans `package.json`.
-- [ ] Aucun secret dans le dépôt.
-- [ ] Une erreur de test volontaire apparaît dans Sentry (lien de l'erreur donné au propriétaire).
-- [ ] Résumé envoyé au propriétaire en français simple, avec ce qu'il doit tester.
-
-🧑 Avant cette phase, le propriétaire protège `main` sur GitHub (`CI_CD.md §4`).
+- [ ] `npm run test:db` est vert et couvre 100 % des cas d'argent de `TESTING.md §2`.
+- [ ] Les tests RLS prouvent qu'un client ne lit rien d'un autre client ni des tables réservées.
+- [ ] `supabase db reset` applique migrations + seed sans erreur ; lint, types, tests, build verts.
+- [ ] La CI GitHub passe au vert sur la PR.
+- [ ] Aucun secret dans le dépôt ; aucune migration déjà appliquée modifiée.
+- [ ] Rapport dans `docs/reports/phase-1/` et résumé au propriétaire en français simple, avec ce qu'il doit tester.
 
 ## État des documents
 
