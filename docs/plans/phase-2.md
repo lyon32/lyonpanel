@@ -17,9 +17,10 @@
 | Q1 | Quelles devises dans le sélecteur ? | **XAF, XOF, USD** (comme prévu en phase 4). Choix gardé dans un cookie, même sans compte. En phase 2, l'affichage convertit avec un **taux fictif de démonstration** ; le vrai taux vient en phase 4. |
 | Q2 | La page de démonstration : où, et que devient-elle ? | **`/fr/demo` et `/en/demo`**, `noindex`, jamais dans le sitemap, **supprimée avant la mise en ligne** (phase 13). Textes d'exemple clairement fictifs, aucun faux chiffre ni faux avis. |
 | Q3 | Barre latérale : les pages pas encore faites (Commandes, Recharger…) ? | **Menu complet** comme `docs/05 §9`, et chaque page non faite affiche un écran « Bientôt disponible » (état vide). Ainsi on teste toute la navigation dès maintenant. |
-| Q4 | Animations GSAP et Lenis dans cette phase ? | **Non.** Seulement des transitions CSS de 150–250 ms. GSAP/Lenis arrivent en phase 14 (accueil) : moins de poids sur petit téléphone. |
-| Q5 | Police Public Sans : comment la charger ? | **Auto-hébergée par Next.js (`next/font`)** : aucun appel à Google à chaque visite, plus rapide, meilleur pour la vie privée. |
-| Q6 | Composants shadcn : comment les obtenir sans nouvelle bibliothèque ? | **Je les écris à la main dans `src/components/ui/`** à partir de Radix (`dialog`, `slot`), `clsx`, `tailwind-merge`, `lucide-react` — tous dans `LLD.md §1`. Je **n'utilise pas `class-variance-authority`** (absent de la liste) : variantes écrites simplement. `@testing-library/react` (déjà dans la liste) pour les tests. Aucune demande d'ajout. |
+| Q4 | Animations ? | **Réponse du propriétaire (2026-11-07) : oui, des pages vivantes et réactives, jamais statiques.** Mouvement original (pas les effets vus partout), surtout pour l'accueil. **Téléphone : simple mais marquant, léger. Ordinateur : plus fort.** → ajout de la tâche 2.8 (système de mouvement avec GSAP, déjà autorisé par `LLD §1`). `docs/05 §6` sera assoupli avec son accord ; règles gardées : rien sur les prix et le solde, `prefers-reduced-motion` respecté. |
+| Q5 | Police Public Sans : comment la charger ? | **Auto-hébergée par Next.js (`next/font`)** : aucun appel à Google à chaque visite, plus rapide, meilleur pour la vie privée. (Explication donnée au propriétaire ; par défaut si pas d'objection.) |
+| Q6 | Composants shadcn ? | **Réponse du propriétaire : prendre les composants du dépôt shadcn/ui officiel, juste ceux dont on a besoin**, avec un bon UI/UX. → via la CLI shadcn (copie le code dans `src/components/ui/`, adapté à `docs/05`). Point à valider : les composants shadcn utilisent `class-variance-authority`, absent de `LLD §1` (question Q7). |
+| Q7 | Ajouter `class-variance-authority` (petite bibliothèque de variantes de bouton) ? | **Oui**, indispensable pour utiliser shadcn tel quel ; sinon je réécris chaque composant. Demande d'accord requise (`CLAUDE.md` « Toujours » 11). |
 
 Mes choix mineurs (à relire dans le rapport) : barre du bas = Commander, Commandes, Recharger, Compte (`docs/05 §9`) ; pas de mode sombre (`LLD §0 #6`) ; `<html lang>` selon la langue ; cookies `NEXT_LOCALE` et `NEXT_CURRENCY` en `SameSite=Lax`, sans donnée personnelle.
 
@@ -120,6 +121,17 @@ flowchart LR
 - [ ] Commit : `feat(demo): page de démonstration des composants FR/EN`.
 
 **Fini quand :** tout est visible en FR et EN, téléphone et ordinateur.
+
+### Tâche 2.8 — Système de mouvement (demande du propriétaire)
+
+- **Objectif :** une petite boîte à outils de mouvement réutilisable (apparition des sections, réaction au toucher/survol, transitions de page, compteurs hors prix) avec **deux niveaux** : *léger* sur téléphone (transformations/opacité uniquement, courtes, 60 fps sur petit Android) et *riche* sur ordinateur. Signature visuelle propre à LyonPanel (à proposer par `lp-designer` avec 2–3 pistes montrées au propriétaire avant de coder), pas d'effets génériques.
+- **Dépend de :** 2.3, 2.4. **Agents :** `lp-designer` (pistes) → `lp-tester` → `lp-coder` → `lp-reviewer` ∥ `lp-qa`.
+- **Fichiers :** `src/lib/motion/*`, `src/hooks/use-motion-level.ts`, `src/components/shared/reveal.tsx`, démonstration dans la page 2.6.
+- **Règles :** `gsap` seulement (`LLD §1`) ; niveau choisi selon largeur d'écran et `prefers-reduced-motion` ; skills `fixing-motion-performance`, `emilkowalski-motion`, `gsap-react` ; jamais d'animation sur prix/solde ; Lenis seulement sur ordinateur.
+- [ ] Étape 1 : `use-motion-level` (mobile → léger, reduced-motion → aucun) testé.
+- [ ] Étape 2 : outils + démonstration ; Étape 3 : contrôle fluidité sur 360 px réseau/CPU ralentis par `lp-qa`.
+
+**Fini quand :** démonstration réactive et fluide sur téléphone et ordinateur, validée visuellement par le propriétaire.
 
 ### Tâche 2.7 — Contrôles finaux, rapport, PR
 
