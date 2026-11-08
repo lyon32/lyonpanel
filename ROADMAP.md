@@ -160,8 +160,8 @@ Pages par pays, blog, commandes en lot, notifications client, email « nouvelle 
 |---|---|---|
 | 0 | validée | 2026-11-07 |
 | 1 | validée | 2026-11-07 |
-| 2 | faite – à valider | — |
-| 3 | à faire | — |
+| 2 | validée | 2026-11-08 |
+| 3 | en cours (questions au propriétaire) | — |
 | 4 | à faire | — |
 | 5 | à faire | — |
 | 6 | à faire | — |
