@@ -29,6 +29,8 @@ export const routing = defineRouting({
     '/blog': '/blog',
     // Page interne de démonstration (noindex), même adresse dans les deux langues.
     '/demo': '/demo',
+    // Page du lien reçu par email (phase 3) : hors table LLD §6, ajoutée ici.
+    '/reset-password': { fr: '/nouveau-mot-de-passe', en: '/reset-password' },
     ...pathnames,
   },
 });
