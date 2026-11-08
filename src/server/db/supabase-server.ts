@@ -7,7 +7,7 @@ import { loadServerEnv, requireEnv } from '@/server/env';
 const SESSION_SECONDS = 7 * 24 * 60 * 60;
 
 /** Client lié à la session du visiteur (cookies httpOnly, SameSite=Lax, Secure en production). */
-export async function createSessionClient() {
+export async function createSessionClient(options: { maxAgeSeconds?: number } = {}) {
   const env = loadServerEnv();
   const store = await cookies();
   return createServerClient(
@@ -20,15 +20,15 @@ export async function createSessionClient() {
           // Pendant le rendu d'une page, Next interdit d'écrire des cookies : on ignore l'écriture
           // (le jeton rafraîchi sera réécrit à la prochaine route ou action), au lieu de planter la page.
           try {
-            for (const { name, value, options } of items) {
+            for (const { name, value, options: cookie } of items) {
               store.set(name, value, {
-                ...options,
+                ...cookie,
                 httpOnly: true,
                 sameSite: 'lax',
                 secure: process.env.NODE_ENV === 'production',
                 path: '/',
                 // Un cookie supprimé (maxAge 0) garde sa durée ; les autres durent 7 jours.
-                maxAge: options.maxAge === 0 ? 0 : SESSION_SECONDS,
+                maxAge: cookie.maxAge === 0 ? 0 : (options.maxAgeSeconds ?? SESSION_SECONDS),
               });
             }
           } catch {
