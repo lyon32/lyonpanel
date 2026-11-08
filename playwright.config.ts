@@ -6,6 +6,9 @@ const baseURL = `http://localhost:${port}`;
 
 export default defineConfig({
   testDir: './tests/e2e',
+  // `next dev` compile chaque page à la première visite (lent en CI) : marges plus larges.
+  timeout: 60_000,
+  expect: { timeout: 20_000 },
   use: { baseURL },
   webServer: {
     command: `npm run dev -- --port ${port}`,

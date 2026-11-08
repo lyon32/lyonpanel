@@ -89,7 +89,8 @@ for (const locale of ['fr', 'en'] as const) {
       await page.locator('select[name="display_currency"]').selectOption('XAF');
       await waitTurnstile(page);
       await page.locator('button[type="submit"]').click();
-      await expect(page).toHaveURL(p.home);
+      // Première visite du tableau de bord : compilation à froid de `next dev`.
+      await expect(page).toHaveURL(p.home, { timeout: 45_000 });
 
       await page.locator('[data-testid="logout"]').click();
       await expect(page).not.toHaveURL(p.home);
