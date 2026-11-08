@@ -77,6 +77,7 @@ Liés : `ARCHITECTURE.md` (flux), `DATA_MODEL.md` (tables).
 | MFA_REQUIRED | 401 | Code à 6 chiffres requis (admin) |
 | ACCOUNT_BLOCKED | 403 | Compte bloqué par le propriétaire |
 | NOT_ADMIN | 403 | Fonction SQL réservée au propriétaire |
+| FORBIDDEN | 403 | Requête refusée (CSRF : en-tête `Origin` étranger) |
 | NOT_FOUND | 404 | Ressource absente (ou route admin pour un non-admin) |
 | ORDER_NOT_FOUND / PAYMENT_NOT_FOUND / USER_NOT_FOUND | 404 | Commande, paiement ou client introuvable (fonctions SQL) |
 | EMAIL_TAKEN / PHONE_TAKEN | 409 | Déjà utilisé |

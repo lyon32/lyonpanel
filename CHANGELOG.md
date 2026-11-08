@@ -2,6 +2,25 @@
 
 Écrit pour le propriétaire. Une section par phase. Seul le propriétaire valide une phase.
 
+## Phase 3 — Comptes (2026-11-08) — faite, en attente de validation
+
+### Nouveau
+- Inscription (email, téléphone, pays d'Afrique, devise, langue) avec vérification anti-robot Turnstile, connexion par email ou par téléphone, déconnexion, mot de passe oublié avec email en français et en anglais.
+- Zone privée (tableau de bord) fermée aux visiteurs non connectés.
+- Mots de passe : 8 à 72 caractères, refus des mots de passe trop courants. Un nouveau mot de passe coupe les autres sessions.
+- Écrans FR et EN sur téléphone et ordinateur.
+
+### Sécurité
+- Blocage progressif : 3 essais ratés, puis pause de 15 min, 30 min, 1 h… jusqu'à 24 h. Le seuil par adresse IP est de 30 essais, pour ne pas bloquer des clients qui partagent un réseau mobile.
+- Inscription : message « déjà utilisé » conservé, avec 10 inscriptions par heure et par adresse IP au maximum.
+- Pas de confirmation d'email ni de code SMS pour l'instant (décision du propriétaire).
+- Trois contrôles sécurité : les deux premiers demandaient des corrections, le troisième accepte avec des réserves notées (à traiter en phase 15).
+- Documents modifiés avec accord : `SECURITY_NOTES.md §2` (blocage progressif) et `API_SPEC.md §3` (code `FORBIDDEN`).
+
+### Chiffres
+- 439 tests unitaires verts (54 fichiers), 18 tests de navigateur verts sur les comptes. Types sans erreur, build OK, lint sans erreur (6 avertissements de taille de fichier, hors phase 3).
+- Tests de la base de données : pas relancés dans le dernier état.
+
 ## Phase 2 — Design system et mise en page (2026-11-07) — faite, en attente de validation
 
 ### Nouveau
