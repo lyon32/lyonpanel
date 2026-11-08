@@ -113,12 +113,17 @@ test('focus clavier : chaque onglet « Nouvelle commande » montre un anneau vis
   for (let i = 0; i < count; i++) {
     const focused = page.locator('[role="tab"]:focus');
     await expect(focused).toHaveCount(1);
-    const style = await focused.evaluate((el) => {
-      const cs = getComputedStyle(el);
-      return { shadow: cs.boxShadow, border: cs.borderTopColor };
-    });
-    expect(style.shadow).not.toBe('none');
-    expect(style.border).not.toBe('rgba(0, 0, 0, 0)');
+    // On attend la fin de la transition du focus (le serveur de CI est lent).
+    await expect
+      .poll(
+        () =>
+          focused.evaluate((el) => {
+            const cs = getComputedStyle(el);
+            return cs.boxShadow !== 'none' && cs.borderTopColor !== 'rgba(0, 0, 0, 0)';
+          }),
+        { timeout: 5000 },
+      )
+      .toBe(true);
     await page.keyboard.press('ArrowRight');
   }
 });
