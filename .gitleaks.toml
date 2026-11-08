@@ -1,0 +1,14 @@
+# Configuration du contrôle de secrets (gitleaks).
+# On garde toutes les règles par défaut.
+title = "LyonPanel"
+
+[extend]
+useDefault = true
+
+# Faux positifs connus : le cache de graphify contient des empreintes de fichiers
+# (hash), que la règle « generic-api-key » prend pour des clés. Ce dossier est
+# régénéré automatiquement et n'est plus versionné (.gitignore).
+# Seul ce dossier est ignoré : le reste du dépôt reste analysé.
+[allowlist]
+description = "Cache graphify (empreintes de fichiers, pas des secrets)"
+paths = ['''^graphify-out/cache/''']

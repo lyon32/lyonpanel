@@ -1,10 +1,161 @@
 @import 'tailwindcss';
 
 :root {
-  --color-brand: #1d4ed8;
+  --blanc: #ffffff;
+  --bleu-50: #eff4ff;
+  --bleu-100: #dbe6fe;
+  --bleu-600: #1d4ed8;
+  --bleu-700: #1a3fb0;
+  --bleu-900: #14286b;
+  --jaune-50: #fdf7ea;
+  --jaune-500: #d9a23b;
+  --jaune-700: #a87a22;
+  --encre: #0e1726;
+  --gris-600: #475467;
+  --gris-400: #98a2b3;
+  --gris-200: #e4e7ec;
+  --gris-50: #f8fafc;
+  --succes: #067647;
+  --erreur: #b42318;
+  --succes-fond: #ecfdf3;
+  --erreur-fond: #fef3f2;
+
+  --rayon: 8px;
+  --rayon-carte: 12px;
+
+  --espace-1: 4px;
+  --espace-2: 8px;
+  --espace-3: 12px;
+  --espace-4: 16px;
+  --espace-5: 24px;
+  --espace-6: 32px;
+  --espace-7: 48px;
+  --espace-8: 64px;
+
+  --titre-h1-mobile: 28px;
+  --titre-h1-bureau: 40px;
+  --titre-h2-mobile: 22px;
+  --titre-h2-bureau: 28px;
+  --titre-h3-mobile: 18px;
+  --titre-h3-bureau: 20px;
+
+  /* prettier-ignore */
+  --police: "Public Sans", system-ui, "Segoe UI", Arial, sans-serif;
+  /* prettier-ignore */
+  --police-secondaire: "Atkinson Hyperlegible", system-ui, "Segoe UI", Arial, sans-serif;
+  /* prettier-ignore */
+  --police-mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+
+/* Thème Tailwind : expose les variables ci-dessus en classes (bg-bleu-600, rounded-carte…). */
+@theme inline {
+  --color-blanc: var(--blanc);
+  --color-bleu-50: var(--bleu-50);
+  --color-bleu-100: var(--bleu-100);
+  --color-bleu-600: var(--bleu-600);
+  --color-bleu-700: var(--bleu-700);
+  --color-bleu-900: var(--bleu-900);
+  --color-jaune-50: var(--jaune-50);
+  --color-jaune-500: var(--jaune-500);
+  --color-jaune-700: var(--jaune-700);
+  --color-encre: var(--encre);
+  --color-gris-600: var(--gris-600);
+  --color-gris-400: var(--gris-400);
+  --color-gris-200: var(--gris-200);
+  --color-gris-50: var(--gris-50);
+  --color-succes: var(--succes);
+  --color-erreur: var(--erreur);
+  --color-succes-fond: var(--succes-fond);
+  --color-erreur-fond: var(--erreur-fond);
+  --radius-base: var(--rayon);
+  --radius-carte: var(--rayon-carte);
+  --font-sans: var(--font-public-sans), var(--police);
+  --font-secondaire: var(--font-atkinson), var(--police-secondaire);
+  --font-mono: var(--font-plex-mono), var(--police-mono);
 }
 
 body {
-  background: #ffffff;
-  color: #0f172a;
+  background: var(--blanc);
+  color: var(--encre);
+  font-family: var(--font-public-sans), var(--police);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+h1,
+h2,
+h3 {
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: var(--titre-h1-mobile);
+}
+h2 {
+  font-size: var(--titre-h2-mobile);
+}
+h3 {
+  font-size: var(--titre-h3-mobile);
+}
+
+@media (min-width: 768px) {
+  h1 {
+    font-size: var(--titre-h1-bureau);
+  }
+  h2 {
+    font-size: var(--titre-h2-bureau);
+  }
+  h3 {
+    font-size: var(--titre-h3-bureau);
+  }
+}
+
+/* Tuiles de réseaux du héros : petit rebond sur place, coupé si l'utilisateur réduit les animations. */
+@keyframes lp-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .lp-bounce {
+    animation: lp-bounce 3s ease-in-out infinite;
+  }
+}
+
+/* Bandeau des réseaux : défilement lent en boucle, en pause au survol ou au focus. Transform seul. */
+@keyframes lp-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .lp-marquee-track {
+    animation: lp-marquee 28s linear infinite;
+  }
+  .lp-marquee:hover .lp-marquee-track,
+  .lp-marquee:focus-within .lp-marquee-track {
+    animation-play-state: paused;
+  }
+}
+
+/* Panneau des étapes : fondu avec léger décalage. */
+@keyframes lp-step-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
