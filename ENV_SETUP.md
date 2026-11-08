@@ -53,6 +53,7 @@ Modèle : [`.env.example`](.env.example). En local : copier en `.env.local` (ign
 | `TURNSTILE_SECRET_KEY` | **oui** | Vérification serveur Turnstile | idem | clé de test publique Cloudflare |
 | `CRON_SECRET` | **oui** | Protéger `/api/cron/*` ; même valeur dans Vercel et dans le Worker Cloudflare (`wrangler secret put`) | `openssl rand -hex 32` | une valeur au choix |
 | `AUTH_HASH_SECRET` | **oui** | Clé des empreintes (HMAC) des emails/IP dans `login_attempts` ; obligatoire en production (sans elle, les connexions échouent) | `openssl rand -hex 32` | vide (valeur de repli de test) |
+| `SUPABASE_AUTH_CAPTCHA_SECRET` | non (Supabase) | Clé secrète Turnstile lue par Supabase Auth, qui vérifie lui-même le captcha à la connexion et au mot de passe oublié | Cloudflare → Turnstile (même widget) ; en local `1x0000000000000000000000000000000AA` | vide |
 | `NEXT_PUBLIC_SENTRY_DSN` | non (public par nature) | Adresse d'envoi des erreurs à Sentry | Sentry → projet → Client Keys (DSN) ; **fournie par le propriétaire**, déjà dans `.env.local` | la valeur fournie |
 | `SENTRY_AUTH_TOKEN` | **oui** | Envoi des « source maps » (traces lisibles) au build | Sentry → Settings → Auth Tokens | vide en local ; seulement dans Vercel et la CI |
 | `SENTRY_ORG`, `SENTRY_PROJECT` | non | Identifiants pour l'envoi des source maps | Sentry → Settings | à remplir en Phase 0 |
@@ -141,6 +142,10 @@ Ensuite activer le code à 6 chiffres sur `http://localhost:3000/<ADMIN_PATH>/lo
 
 - **Tests de navigateur (Playwright)** : le port se règle avec `PLAYWRIGHT_PORT` (3000 par défaut), par exemple `PLAYWRIGHT_PORT=3190 npx playwright test` si le port 3000 est pris.
 - **CLI Supabase 3** : selon la version, `supabase start` ou `status` refuse `[inbucket]` et veut `[local_smtp]`. Si cela arrive, tester sur une copie temporaire du dossier `supabase` avec cette section renommée ; la version 3.0.0 testée ici accepte encore `[inbucket]`.
+- **Captcha vérifié par Supabase** : `[auth.captcha]` de `config.toml` lit `SUPABASE_AUTH_CAPTCHA_SECRET`. Local : `SUPABASE_AUTH_CAPTCHA_SECRET=1x0000000000000000000000000000000AA supabase start` (clé de test publique). Hébergé : Authentication → Attack Protection → **Enable CAPTCHA protection** (Turnstile) avec la clé secrète de production.
+- **Réinitialisation sans brûler le lien** : le lien est échangé une seule fois (cookie httpOnly `lp_recovery` + cookies de session limités à 15 min) ; un mot de passe refusé laisse le même lien utilisable pendant 15 min. Aucune migration.
+- Le contrôle « même mot de passe que l'actuel » est fait par Supabase (`same_password`), car la connexion par mot de passe exige désormais un jeton captcha.
+- Après inscription, la session s'ouvre par un lien magique généré côté serveur (le captcha protège la connexion par mot de passe).
 
 ## 6. Dépendances
 
