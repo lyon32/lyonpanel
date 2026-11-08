@@ -66,6 +66,11 @@ Un agent ne démarre jamais avant ce dont il dépend ; ce qui est indépendant t
 - Les règles du design system (`docs/05`) priment sur celles des skills en cas de conflit (ex. police Public Sans, pas de mode sombre).
 - Ne jamais lancer les commandes de mise à jour proposées dans les skills (`npx antislop-ai`, `npx ui-skills`, `npx @google/design.md`, `npm install -g firecrawl-cli`, `npm install -g @anthropic-ai/claude-code`) sans accord du propriétaire.
 
+## Rappels pour plus tard
+
+- **Fin de la phase 14 (accueil terminé)** : rappeler au propriétaire de proposer 2 à 3 prototypes d'accueil très différents (couleurs du design system gardées), inspirés des références, avec tous les skills de design dont `unslop`. Détail dans `ROADMAP.md`, phase 14.
+- Skill de design du propriétaire à toujours utiliser pour tout ce qui est visuel : `unslop` (`.claude/skills/unslop/`), avec `antislop-*`. Les règles de `docs/05` priment en cas de conflit.
+
 ## Serveurs MCP
 
 - `mcp-tools-istefox` : serveur local (`127.0.0.1:27200`), configuré dans la config **locale** de Claude Code (hors dépôt). Son jeton ne doit jamais être écrit dans un fichier du projet.

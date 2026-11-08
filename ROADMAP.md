@@ -126,8 +126,10 @@ Remplace `docs/04-roadmap.md`. S'appuie sur : `PRD.md`, `ARCHITECTURE.md`, `DATA
 - SEO : métadonnées FR/EN, `hreflang`, sitemap, robots, données structurées, images de partage, Google Analytics, bouton d'action fixe sur mobile.
 - Règles obligatoires : `docs/03-seo-et-design.md §3 ter` (pages indexées / non indexées, balises par page, Search Console, Bing, IndexNow).
 - **Terminé quand** : bon score mobile (Lighthouse) ; chaque page publique a titre, description, canonical, hreflang, Open Graph et JSON-LD valides ; toutes les pages privées et l'admin sont en `noindex` ; sitemap envoyé dans Google Search Console et Bing.
+- À améliorer dans cette phase (demandé par le propriétaire le 2026-11-08) : le texte et la composition du héros (en lien avec le SEO), l'aperçu du tableau de bord montré sur l'accueil, l'UI et l'UX en général. Le reste de l'accueil fait en phase 2 est jugé « passable » et conservé.
 - 🧑 Accès à Google Search Console et Bing Webmaster Tools avec ton compte Google.
 - 🧑 Relire les textes légaux ; décider s'il faut une immatriculation.
+- 🔔 **RAPPEL À LA FIN DE LA PHASE 14 (obligatoire)** : quand la page d'accueil est complètement finie, **rappeler au propriétaire** de proposer **2 à 3 prototypes de page d'accueil complètement différents** (seules les couleurs du design system sont gardées : blanc, bleu, jaune en accent). S'appuyer sur plusieurs images de `reference-design system/` comme inspiration (sans les copier, viser mieux) et utiliser tous les skills de design du projet (`unslop`, `antislop`, `antislop-ui`, `antislop-layoutmobile`, `baseline-ui`, `improve-ui`, `impeccable`, `ui-ux-pro-max`, etc.). Le propriétaire choisit, puis on garde la feuille de route. Ne rien lancer sans lui avoir posé la question.
 
 ### Phase 15 — Vrai JAP, tests finaux, lancement limité
 - Test de charge 100 clients, test de restauration de sauvegarde (`TESTING.md §6`).
