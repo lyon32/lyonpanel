@@ -24,3 +24,6 @@ supabase/.temp/
 # Généré par Next.js / TypeScript
 next-env.d.ts
 *.tsbuildinfo
+
+# Cache de graphify : se régénère, ne pas versionner
+graphify-out/cache/
