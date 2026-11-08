@@ -1,0 +1,9 @@
+{{ $link := printf "%s/fr/nouveau-mot-de-passe?token_hash=%s&type=recovery" .SiteURL .TokenHash }}{{ if eq .Data.language "en" }}{{ $link = printf "%s/en/reset-password?token_hash=%s&type=recovery" .SiteURL .TokenHash }}{{ end }}<h2>Réinitialisation du mot de passe</h2>
+<p>Pour choisir un nouveau mot de passe, ouvrez ce lien (valable 1 heure, usage unique) :</p>
+<p><a href="{{ $link }}">Choisir un nouveau mot de passe</a></p>
+<p>Si vous n'êtes pas à l'origine de cette demande, ignorez ce message.</p>
+<hr>
+<h2>Password reset</h2>
+<p>To choose a new password, open this link (valid for 1 hour, single use):</p>
+<p><a href="{{ $link }}">Choose a new password</a></p>
+<p>If you did not request this, you can ignore this message.</p>
