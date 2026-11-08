@@ -9,6 +9,6 @@ useDefault = true
 # (hash), que la règle « generic-api-key » prend pour des clés. Ce dossier est
 # régénéré automatiquement et n'est plus versionné (.gitignore).
 # Seul ce dossier est ignoré : le reste du dépôt reste analysé.
-[[allowlists]]
+[allowlist]
 description = "Cache graphify (empreintes de fichiers, pas des secrets)"
 paths = ['''^graphify-out/cache/''']
