@@ -1,6 +1,14 @@
 import 'server-only';
 import { after } from 'next/server';
 import { createAttemptStore, createLoginLimiter, createRateLimiter } from './rate-limit';
+import {
+  RECOVERY_MAX_AGE_SECONDS,
+  clearRecoveryCookie,
+  readRecoveryCookie,
+  signRecoveryMarker,
+  verifyRecoveryMarker,
+  writeRecoveryCookie,
+} from './recovery-cookie';
 import { verifyTurnstile } from './turnstile';
 import type { LoginDeps } from './login';
 import type { PasswordResetDeps } from './password-reset';
@@ -9,17 +17,32 @@ import type { RegisterDeps } from './register';
 import { createAdminClient } from '@/server/db/supabase-admin';
 import { createSessionClient, createStatelessClient } from '@/server/db/supabase-server';
 import { loadServerEnv } from '@/server/env';
+import { apiError } from '@/server/http/api-error';
 
 /** Le client SDK signale un mauvais identifiant par un statut 4xx ; le reste est une vraie panne. */
 function isRefusal(error: { status?: number }): boolean {
   return error.status !== undefined && error.status >= 400 && error.status < 500;
 }
 
-/** Ouvre la session (cookies) ; null si email ou mot de passe refusé. */
-async function signInWithCookies(email: string, password: string): Promise<{ id: string } | null> {
+/** Supabase signale un captcha refusé par le code « captcha_failed » (statut 400, comme un mauvais mot de passe). */
+function isCaptchaFailure(error: { code?: string; message?: string }): boolean {
+  return error.code === 'captcha_failed' || /captcha/i.test(error.message ?? '');
+}
+
+/** Ouvre la session (cookies) ; null si email ou mot de passe refusé. Supabase vérifie le jeton captcha. */
+async function signInWithCookies(
+  email: string,
+  password: string,
+  captchaToken: string,
+): Promise<{ id: string } | null> {
   const supabase = await createSessionClient();
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+    options: { captchaToken },
+  });
   if (error) {
+    if (isCaptchaFailure(error)) apiError('TURNSTILE_FAILED');
     if (isRefusal(error)) return null;
     throw error;
   }
@@ -66,7 +89,24 @@ export function buildRegisterDeps(): RegisterDeps {
   };
 }
 
-export const openSession = signInWithCookies;
+/**
+ * Ouvre la session juste après l'inscription. Le captcha de Supabase protège le mot de passe
+ * (jeton à usage unique, déjà vérifié par notre siteverify) : on passe donc par un lien magique
+ * généré côté serveur, que verifyOtp transforme en session sans captcha.
+ */
+export async function openSession(email: string): Promise<void> {
+  const { data, error } = await createAdminClient().auth.admin.generateLink({
+    type: 'magiclink',
+    email,
+  });
+  if (error) throw error;
+  const supabase = await createSessionClient();
+  const { error: otpError } = await supabase.auth.verifyOtp({
+    type: 'magiclink',
+    token_hash: data.properties.hashed_token,
+  });
+  if (otpError) throw otpError;
+}
 
 export function buildLoginDeps(): LoginDeps {
   const admin = createAdminClient();
@@ -91,11 +131,13 @@ const RESET_PATH = { fr: 'fr/nouveau-mot-de-passe', en: 'en/reset-password' } as
 export function buildForgotDeps(locale: 'fr' | 'en' = 'fr'): PasswordResetDeps {
   return {
     rateLimiter: createRateLimiter({ store: createAttemptStore(createAdminClient()) }),
-    verifyTurnstile,
-    sendReset(email) {
+    sendReset(email, captchaToken) {
       const site = loadServerEnv().NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
       const sending = createStatelessClient()
-        .auth.resetPasswordForEmail(email, { redirectTo: `${site}/${RESET_PATH[locale]}` })
+        .auth.resetPasswordForEmail(email, {
+          redirectTo: `${site}/${RESET_PATH[locale]}`,
+          captchaToken,
+        })
         .then(({ error }) => {
           // Remonté ici, avalé par requestPasswordReset pour garder une réponse identique.
           if (error) throw error;
@@ -108,19 +150,27 @@ export function buildForgotDeps(locale: 'fr' | 'en' = 'fr'): PasswordResetDeps {
 }
 
 export function buildResetDeps(): ResetPasswordDeps {
-  const admin = createAdminClient();
-  type Recovery = { userId: string; email: string; accessToken: string } | null;
-  // Supabase ne sait pas lire un jeton sans le consommer : la première lecture l'échange
-  // et la seconde réutilise ce résultat. Conséquence : un mot de passe refusé après l'échange
-  // brûle le lien (voir ResetPasswordDeps).
-  let exchanged: Promise<Recovery> | undefined;
-  // Client portant la session de récupération : seul lui peut la fermer pour tout le compte.
-  let recoveryClient: ReturnType<typeof createStatelessClient> | undefined;
-  const exchange = (token: string): Promise<Recovery> => {
-    exchanged ??= (async () => {
-      // Client sans mémoire disque : la session de récupération ne doit pas devenir un cookie.
-      const client = createStatelessClient();
-      const { data, error } = await client.auth.verifyOtp({
+  // Cookies de session limités à 15 min : la récupération ne doit pas devenir une session de 7 jours.
+  const session = () => createSessionClient({ maxAgeSeconds: RECOVERY_MAX_AGE_SECONDS });
+  // Le marqueur est signé (HMAC), lié à l'utilisateur et daté : un cookie fabriqué ou rejoué ne vaut rien.
+  return {
+    async getRecoverySession() {
+      const value = await readRecoveryCookie();
+      if (!value) return null;
+      try {
+        // getUser (jamais getSession) : le jeton est vérifié par Supabase.
+        const { data, error } = await (await session()).auth.getUser();
+        const user = data.user;
+        if (error || !user?.email || !verifyRecoveryMarker(value, user.id)) return null;
+        return { userId: user.id, email: user.email };
+      } catch {
+        return null;
+      }
+    },
+    async exchangeRecoveryToken(token) {
+      const { data, error } = await (
+        await session()
+      ).auth.verifyOtp({
         type: 'recovery',
         token_hash: token,
       });
@@ -130,35 +180,36 @@ export function buildResetDeps(): ResetPasswordDeps {
       }
       const email = data.user?.email;
       if (!data.user || !email || !data.session) return null;
-      recoveryClient = client;
-      return { userId: data.user.id, email, accessToken: data.session.access_token };
-    })();
-    return exchanged;
-  };
-  return {
-    async peekRecoveryToken(token) {
-      const who = await exchange(token);
-      return who ? { userId: who.userId, email: who.email } : null;
+      await writeRecoveryCookie(signRecoveryMarker(data.user.id));
+      return { userId: data.user.id, email };
     },
-    verifyRecoveryToken: exchange,
-    async isCurrentPassword(email, password) {
-      const { error } = await createStatelessClient().auth.signInWithPassword({ email, password });
-      if (!error) return true;
-      if (isRefusal(error)) return false;
-      throw error;
+    // Impossible de comparer un mot de passe sans signInWithPassword, que le captcha de Supabase
+    // bloque : le contrôle est fait par Supabase dans updatePassword (erreur same_password).
+    async isCurrentPassword() {
+      return false;
     },
-    async updatePassword(userId, password) {
-      const { error } = await admin.auth.admin.updateUserById(userId, { password });
+    async updatePassword(_userId, password) {
+      const { error } = await (await session()).auth.updateUser({ password });
+      if (error) {
+        if (error.code === 'same_password') {
+          apiError('VALIDATION_ERROR', { fields: { new_password: 'PASSWORD_SAME_AS_CURRENT' } });
+        }
+        throw error;
+      }
+    },
+    // Toutes les sessions du compte tombent (le client qui porte la récupération peut le faire).
+    async signOutAll() {
+      const { error } = await (await session()).auth.signOut({ scope: 'global' });
       if (error) throw error;
     },
-    // Après une réinitialisation, plus aucune session ancienne ne doit rester. Le signOut « admin »
-    // par jeton échoue (session déjà invalidée par le changement de mot de passe) ; le client qui
-    // a fait verifyOtp, lui, ferme bien toutes les sessions (vérifié sur Supabase local).
-    async signOutAll(accessToken) {
-      const { error } = recoveryClient
-        ? await recoveryClient.auth.signOut({ scope: 'global' })
-        : await admin.auth.admin.signOut(accessToken, 'global');
-      if (error) throw error;
+    async clearRecoverySession() {
+      await clearRecoveryCookie();
+      try {
+        // Efface aussi les cookies de session, même si la fermeture globale a échoué.
+        await (await session()).auth.signOut({ scope: 'local' });
+      } catch {
+        // Déjà fermée : rien de plus à faire.
+      }
     },
   };
 }

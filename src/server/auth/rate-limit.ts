@@ -16,7 +16,8 @@ const UNKNOWN_IP = 'unknown';
 // Valeur de repli pour les tests et le développement uniquement.
 const DEV_FALLBACK_SECRET = 'lyonpanel-dev-only-hash-secret';
 
-function hashSecret(): string {
+/** Secret des empreintes (HMAC) ; partagé avec les marqueurs de récupération (domaines distincts). */
+export function hashSecret(): string {
   const secret = process.env.AUTH_HASH_SECRET;
   if (secret) return secret;
   // En production, un hash sans secret se retrouve par force brute : on refuse de démarrer l'opération.
