@@ -45,79 +45,73 @@ export function RegisterForm({ referralCode }: { referralCode?: string }) {
   });
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
-      <Field
-        label={t('fields.email')}
-        name="email"
-        type="email"
-        inputMode="email"
-        autoComplete="email"
-        required
-        error={fieldErrors.email}
-      />
-      <Field
-        label={t('fields.phone')}
-        hint={t('fields.phoneHint')}
-        name="phone"
-        type="tel"
-        inputMode="tel"
-        autoComplete="tel"
-        required
-        error={fieldErrors.phone}
-      />
-      <Field
-        label={t('fields.password')}
-        hint={t('fields.passwordHint')}
-        name="password"
-        type="password"
-        autoComplete="new-password"
-        required
-        error={fieldErrors.password}
-      />
-      <SelectField
-        label={t('fields.country')}
-        name="country"
-        required
-        defaultValue=""
-        error={fieldErrors.country}
-      >
-        <option value="" disabled>
-          {t('fields.countryPlaceholder')}
-        </option>
-        {countries.map(({ code, name }) => (
-          <option key={code} value={code}>
-            {name}
-          </option>
-        ))}
-      </SelectField>
-      <SelectField
-        label={t('fields.currency')}
-        name="display_currency"
-        defaultValue="XAF"
-        error={fieldErrors.display_currency}
-      >
-        {CURRENCIES.map((code) => (
-          <option key={code} value={code}>
-            {tc(code)}
-          </option>
-        ))}
-      </SelectField>
-      <SelectField
-        label={t('fields.language')}
-        name="language"
-        defaultValue={locale}
-        error={fieldErrors.language}
-      >
-        <option value="fr">{tl('fr')}</option>
-        <option value="en">{tl('en')}</option>
-      </SelectField>
-      <Field
-        label={t('register.referralLabel')}
-        name="referral_code"
-        defaultValue={referralCode ?? ''}
-        autoComplete="off"
-        error={fieldErrors.referral_code}
-      />
+    <form onSubmit={handleSubmit} className="flex flex-col gap-3" noValidate>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <Field
+          label={t('fields.email')}
+          name="email"
+          type="email"
+          inputMode="email"
+          autoComplete="email"
+          required
+          error={fieldErrors.email}
+        />
+        <Field
+          label={t('fields.phone')}
+          name="phone"
+          type="tel"
+          inputMode="tel"
+          autoComplete="tel"
+          placeholder="+237612345678"
+          required
+          error={fieldErrors.phone}
+        />
+        <Field
+          label={t('fields.password')}
+          hint={t('fields.passwordHint')}
+          name="password"
+          type="password"
+          autoComplete="new-password"
+          required
+          error={fieldErrors.password}
+        />
+        <Field
+          label={t('register.referralLabel')}
+          name="referral_code"
+          defaultValue={referralCode ?? ''}
+          autoComplete="off"
+          error={fieldErrors.referral_code}
+        />
+      </div>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-[1.4fr_1fr_1fr]">
+        <SelectField
+          className="col-span-2 sm:col-span-1"
+          label={t('fields.country')}
+          name="country"
+          options={countries.map(({ code, name }) => ({ value: code, label: name }))}
+          placeholder={t('fields.countryPlaceholder')}
+          searchPlaceholder={t('fields.countrySearch')}
+          noResultsLabel={t('fields.countryNone')}
+          error={fieldErrors.country}
+        />
+        <SelectField
+          label={t('fields.currency')}
+          name="display_currency"
+          defaultValue="XAF"
+          options={CURRENCIES.map((code) => ({ value: code, label: tc(code) }))}
+          error={fieldErrors.display_currency}
+        />
+        <SelectField
+          label={t('fields.language')}
+          name="language"
+          defaultValue={locale}
+          options={[
+            { value: 'fr', label: tl('fr') },
+            { value: 'en', label: tl('en') },
+          ]}
+          error={fieldErrors.language}
+        />
+      </div>
       <TurnstileWidget />
       {formError ? <FormAlert kind="error">{formError}</FormAlert> : null}
       <Button type="submit" loading={pending} loadingLabel={t('submitting')}>

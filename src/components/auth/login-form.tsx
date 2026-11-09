@@ -25,7 +25,7 @@ export function LoginForm({ resetDone = false }: { resetDone?: boolean }) {
   });
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
+    <form onSubmit={handleSubmit} className="flex flex-col gap-3" noValidate>
       {resetDone ? <FormAlert kind="success">{t('reset.success')}</FormAlert> : null}
       <Field
         label={t('login.identifier')}

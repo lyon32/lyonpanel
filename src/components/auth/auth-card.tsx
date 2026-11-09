@@ -6,18 +6,20 @@ export function AuthCard({
   title,
   intro,
   children,
+  wide = false,
 }: {
   title: string;
   intro?: string;
   children: ReactNode;
+  wide?: boolean;
 }) {
   return (
-    <Card>
-      <CardHeader className="gap-2 p-6 pb-4">
-        <h1 className="text-encre text-[28px] leading-tight font-bold">{title}</h1>
+    <Card className={wide ? 'mx-auto w-full max-w-2xl' : 'mx-auto w-full max-w-md'}>
+      <CardHeader className="gap-1 p-5 pb-3 sm:px-6">
+        <h1 className="text-encre text-2xl leading-tight font-bold sm:text-[28px]">{title}</h1>
         {intro ? <CardDescription>{intro}</CardDescription> : null}
       </CardHeader>
-      <CardContent className="p-6 pt-2">{children}</CardContent>
+      <CardContent className="p-5 pt-1 sm:px-6 sm:pb-6">{children}</CardContent>
     </Card>
   );
 }

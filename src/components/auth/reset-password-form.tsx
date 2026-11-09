@@ -18,7 +18,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
   });
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
+    <form onSubmit={handleSubmit} className="flex flex-col gap-3" noValidate>
       <Field
         label={t('reset.newPassword')}
         hint={t('fields.passwordHint')}

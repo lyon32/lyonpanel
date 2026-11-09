@@ -22,7 +22,7 @@ export function ForgotPasswordForm() {
   });
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
+    <form onSubmit={handleSubmit} className="flex flex-col gap-3" noValidate>
       <Field
         label={t('fields.email')}
         name="email"
