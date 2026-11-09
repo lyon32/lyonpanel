@@ -24,7 +24,7 @@ Liés : `ARCHITECTURE.md`, `DATA_MODEL.md`, `API_SPEC.md`, `openapi.yaml`, `docs
 |---|---|
 | Framework | `next` (App Router), `react`, `typescript` |
 | Style | `tailwindcss`, `shadcn/ui` (Radix), `lucide-react`, `clsx`, `tailwind-merge` |
-| Mouvement | `gsap`, `lenis` |
+| Mouvement | `gsap`, `lenis`, `animejs` (4.5.0 exact) |
 | Langues | `next-intl` (adresses traduites incluses) |
 | Données serveur | `@supabase/supabase-js`, `@supabase/ssr` |
 | Données navigateur | `@tanstack/react-query` |
@@ -35,6 +35,8 @@ Liés : `ARCHITECTURE.md`, `DATA_MODEL.md`, `API_SPEC.md`, `openapi.yaml`, `docs
 | Tâches planifiées | `wrangler` (dev, pour le Worker Cloudflare) |
 | Suivi des erreurs | `@sentry/nextjs` (erreurs + traces, configuré selon le skill `sentry-instrument`) |
 | Qualité | `eslint`, `prettier` |
+
+`animejs` (ajout du 2026-11-09, autorisé par le propriétaire) : uniquement pour les transitions de mise en page et de panneaux des pages de compte, chargé en import dynamique. GSAP reste pour le défilement et la page d'accueil.
 
 Tout autre paquet = validation du propriétaire.
 
@@ -83,14 +85,15 @@ lyonpanel/
 │  │  │  └─ cron/{payments,orders,services}/route.ts
 │  │  ├─ robots.ts  sitemap.ts  not-found.tsx
 │  ├─ components/
-│  │  ├─ ui/                               # shadcn/ui (button, input, dialog…)
+│  │  ├─ ui/                               # shadcn/ui (button avec états loading / success, input, dialog…)
+│  │  ├─ auth/                             # auth-shell, auth-card, auth-language-switcher, formulaires de compte
 │  │  ├─ layout/                           # header, footer, sidebar, mobile-cta
 │  │  ├─ catalog/                          # platform-tabs, service-card, service-picker
 │  │  ├─ order/                            # order-form, quantity-input, comments-input, order-status-badge
 │  │  ├─ wallet/                           # balance-chip, add-funds-form, payment-status
 │  │  ├─ tickets/                          # ticket-thread, attachment-upload
 │  │  ├─ admin/                            # stats-cards, data-table, refund-dialog
-│  │  └─ shared/                           # money, currency-switcher, locale-switcher, empty-state, error-state
+│  │  └─ shared/                           # money, currency-switcher, locale-switcher, empty-state, error-state, greeting (bonjour selon l'heure)
 │  ├─ server/                              # code serveur uniquement (import "server-only")
 │  │  ├─ auth/          session.ts  require-user.ts  require-admin.ts  rate-limit.ts  turnstile.ts
 │  │  ├─ pricing/       compute-price.ts  discount.ts  margins.ts  fees.ts

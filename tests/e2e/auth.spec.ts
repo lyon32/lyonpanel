@@ -6,7 +6,7 @@ import { expect, test, type Page } from '@playwright/test';
  *   NEXT_PUBLIC_TURNSTILE_SITE_KEY=1x00000000000000000000AA
  *   TURNSTILE_SECRET_KEY=1x0000000000000000000000000000000AA
  * Sélecteurs attendus des formulaires (contrat avec lp-coder / lp-designer) :
- *   input[name=email|phone|password|identifier], select[name=country|display_currency],
+ *   input[name=email|phone|password|identifier], [data-field=country|display_currency] (liste maison),
  *   bouton d'envoi = button[type=submit], retour = [role=alert] (erreur) / [role=status] (succès),
  *   bouton de déconnexion = [data-testid=logout].
  */
@@ -37,6 +37,12 @@ async function waitTurnstile(page: Page) {
   await expect(page.locator('[name="cf-turnstile-response"]')).not.toHaveValue('', {
     timeout: 15_000,
   });
+}
+
+// Sur téléphone, l'inscription tient en deux étapes : on passe à la seconde si le bouton est affiché.
+async function nextStep(page: Page) {
+  const next = page.locator('[data-testid="register-next"]');
+  if (await next.isVisible()) await next.click();
 }
 
 async function noHorizontalScroll(page: Page) {
@@ -85,12 +91,19 @@ for (const locale of ['fr', 'en'] as const) {
       await page.locator('input[name="email"]').fill(email);
       await page.locator('input[name="phone"]').fill(phone);
       await page.locator('input[name="password"]').fill(PASSWORD);
-      await page.locator('select[name="country"]').selectOption('CM');
-      await page.locator('select[name="display_currency"]').selectOption('XAF');
+      await nextStep(page);
+      await page.locator('[data-field="country"]').click();
+      await page.locator('[role="option"][data-value="CM"]').click();
+      await page.locator('[data-field="display_currency"]').click();
+      await page.locator('[role="option"][data-value="XAF"]').click();
       await waitTurnstile(page);
       await page.locator('button[type="submit"]').click();
       // Première visite du tableau de bord : compilation à froid de `next dev`.
       await expect(page).toHaveURL(p.home, { timeout: 45_000 });
+      // Salutation selon l'heure locale de l'appareil (pas celle du serveur).
+      await expect(page.locator('h1').first()).toHaveText(
+        /^(Bonjour|Bon après-midi|Bonsoir|Good morning|Good afternoon|Good evening)$/,
+      );
 
       await page.locator('[data-testid="logout"]').click();
       await expect(page).not.toHaveURL(p.home);

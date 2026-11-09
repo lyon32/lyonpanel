@@ -39,6 +39,7 @@ export default async function LocaleLayout({ children, params }: Props) {
   return (
     <html
       lang={locale}
+      suppressHydrationWarning
       className={`${publicSans.variable} ${atkinson.variable} ${plexMono.variable}`}
     >
       <body>

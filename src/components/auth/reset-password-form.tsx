@@ -10,7 +10,7 @@ import { useRouter } from '@/i18n/navigation';
 export function ResetPasswordForm({ token }: { token: string }) {
   const t = useTranslations('auth');
   const router = useRouter();
-  const { pending, formError, fieldErrors, handleSubmit } = useAuthForm({
+  const { pending, success, formError, fieldErrors, handleSubmit } = useAuthForm({
     path: 'password/reset',
     buildBody: (form) => ({ token, new_password: textOf(form, 'new_password') }),
     // Toutes les sessions sont fermées : retour à la connexion avec un message.
@@ -18,7 +18,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
   });
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
+    <form onSubmit={handleSubmit} className="flex flex-col gap-3" noValidate>
       <Field
         label={t('reset.newPassword')}
         hint={t('fields.passwordHint')}
@@ -31,7 +31,13 @@ export function ResetPasswordForm({ token }: { token: string }) {
       {/* Un lien invalide ou expiré revient du serveur sur le champ « token ». */}
       {fieldErrors.token ? <FormAlert kind="error">{fieldErrors.token}</FormAlert> : null}
       {formError ? <FormAlert kind="error">{formError}</FormAlert> : null}
-      <Button type="submit" loading={pending} loadingLabel={t('submitting')}>
+      <Button
+        type="submit"
+        loading={pending}
+        loadingLabel={t('reset.loading')}
+        success={success}
+        successLabel={t('reset.done')}
+      >
         {t('reset.submit')}
       </Button>
     </form>

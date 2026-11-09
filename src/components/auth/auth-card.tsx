@@ -1,23 +1,34 @@
 import type { ReactNode } from 'react';
-import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
+import { cn } from '@/lib/cn';
 
-// Cadre commun des pages de compte : un seul h1, texte d'introduction, puis le formulaire.
+// Contenu commun des pages de compte : un seul h1, texte d'introduction, puis le formulaire.
+// La surface (feuille blanche ou panneau) est fournie par AuthShell.
 export function AuthCard({
   title,
   intro,
   children,
+  compactOnPhone = false,
 }: {
   title: string;
   intro?: string;
   children: ReactNode;
+  // Téléphone : masque l'introduction pour garder la place des messages d'erreur.
+  compactOnPhone?: boolean;
 }) {
   return (
-    <Card>
-      <CardHeader className="gap-2 p-6 pb-4">
-        <h1 className="text-encre text-[28px] leading-tight font-bold">{title}</h1>
-        {intro ? <CardDescription>{intro}</CardDescription> : null}
-      </CardHeader>
-      <CardContent className="p-6 pt-2">{children}</CardContent>
-    </Card>
+    <div className="flex w-full flex-col gap-4 lg:gap-5">
+      <div className="flex flex-col gap-1">
+        <h1 className="text-encre text-2xl leading-tight font-bold lg:text-[28px]">{title}</h1>
+        {intro ? (
+          <p
+            data-intro
+            className={cn('text-gris-600 text-sm lg:text-base', compactOnPhone && 'max-lg:hidden')}
+          >
+            {intro}
+          </p>
+        ) : null}
+      </div>
+      {children}
+    </div>
   );
 }

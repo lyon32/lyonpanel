@@ -111,6 +111,14 @@ Hauteur min 44 px. Après clic : désactivé + « Chargement… » (anti-double 
 - Lenis coupé sur petits téléphones et si `prefers-reduced-motion`.
 - Jamais d'animation sur les prix et le solde.
 
+## 6 bis. Mouvement et retour visuel (ajout du 2026-11-09, accord du propriétaire)
+
+- Toute action qui prend plus d'environ 300 ms montre un état de chargement **sur le bouton** : petit rond qui tourne, `aria-busy`, bouton désactivé, libellé en « …ant » (ex. « Connexion… »).
+- Puis un bref état de succès (coche, 600 ms au plus) avant la redirection.
+- Paiement (recharge SasPay) et commande : une progression visible, jamais un écran figé.
+- `prefers-reduced-motion` est toujours respecté : plus de glissement ni de rotation, un simple changement d'état.
+- Composant : `src/components/ui/button.tsx` (états `loading` et `success`).
+
 ## 7. Accessibilité
 
 - Contraste texte ≥ 4,5:1 (Bleu 600 sur blanc : OK ; Jaune 500 sur blanc : non → Jaune 700).
@@ -164,3 +172,23 @@ Dossier : `reference-design system/` (7 images fournies par le propriétaire le 
 4. **Statuts en pastilles** (couleurs §1 « Statuts »), jamais en texte seul.
 5. **Sur téléphone** : la barre latérale devient un menu du bas (Commander, Commandes, Recharger, Compte), les 4 cartes de chiffres passent en 2 × 2, la fiche du service passe **sous** le formulaire.
 6. **Formulaire de commande** : une colonne, libellés au-dessus des champs, min/max affichés dans le champ quantité, total en direct à côté du bouton.
+
+## 10. Pages de compte (ajout du 2026-11-09, décision explicite du propriétaire)
+
+Exception à « blanc, bleu, jaune » **pour les pages de compte seulement** (inscription, connexion, mot de passe oublié, nouveau mot de passe).
+
+**Fond** : dégradé doux relevé sur la référence `9.jpg`, 5 `radial-gradient` superposés (classe `.lp-auth-bg` dans `src/styles/globals.css`). Six couleurs :
+- bleu vif `#5597F7` (haut gauche)
+- bleu ciel `#78C3FD` (gauche)
+- bleu-violet `#6D7AFD` (bas gauche)
+- lavande `#B5ACFD` (bas)
+- cyan pâle `#CCE6F5` (droite)
+- cadre `#EDF4FE` (couleur de fond)
+
+**Panneau en verre** : bleu 600 à 82 % (`rgb(29 78 216 / 0.82)`) avec `backdrop-filter` (classe `.lp-auth-glass`). L'opacité garde un texte blanc à 4,5:1 sur tout le dégradé.
+
+**Deux écrans** :
+- Ordinateur : deux panneaux (verre bleu et feuille blanche) qui glissent l'un vers l'autre quand on passe de connexion à inscription.
+- Téléphone : bande bleue en haut et feuille blanche en dessous.
+- Inscription en 2 étapes (identité, puis pays, devise et mot de passe).
+

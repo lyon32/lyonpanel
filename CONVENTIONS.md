@@ -132,7 +132,8 @@ Rappel de `LLD.md §7`, plus :
 9. **Textes** : toujours via `next-intl`.
 10. **Montants** : entiers XAF, nom suffixé (`amountXaf`), affichage via `formatMoney`.
 11. **Idempotence** sur toute action qui coûte de l'argent.
-12. **Journal** : logger structuré, jamais de secret ni de mot de passe dans les journaux.
+12. **Retour visuel et animation** : toute action de plus de ~300 ms montre un chargement sur le bouton (`aria-busy`, désactivé), puis un bref succès (≤ 600 ms) avant la redirection ; aucun mouvement sans `prefers-reduced-motion` ; animations nettoyées au démontage du composant.
+13. **Journal** : logger structuré, jamais de secret ni de mot de passe dans les journaux.
 
 ## 7. Modèles interdits
 
@@ -153,6 +154,7 @@ Rappel de `LLD.md §7`, plus :
 | Code mort, `console.log`, fichier > 300 lignes | Supprimer, logger, découper |
 | Désactiver ESLint pour tout un fichier | Corriger le code |
 | Push direct sur `main`, `--no-verify` | PR + vérifications |
+| Action longue sans chargement, ou animation sans `prefers-reduced-motion` | Bouton avec état `loading` / `success` ; mouvement coupé si réduit |
 
 ## 8. Commentaires
 
