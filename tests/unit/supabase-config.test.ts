@@ -30,4 +30,15 @@ describe('supabase/config.toml (règles de SECURITY_NOTES §2)', () => {
   it('[auth.email] secure_password_change = true', () => {
     expect(tomlValue('auth.email', 'secure_password_change')).toBe('true');
   });
+
+  it('[auth.captcha] activé avec Turnstile : le captcha est vérifié par Supabase lui-même', () => {
+    expect(tomlValue('auth.captcha', 'enabled')).toBe('true');
+    expect(tomlValue('auth.captcha', 'provider')).toBe('"turnstile"');
+  });
+  it("[auth.captcha] le secret vient de l'environnement, aucune valeur écrite en dur", () => {
+    expect(tomlValue('auth.captcha', 'secret')).toBe('"env(SUPABASE_AUTH_CAPTCHA_SECRET)"');
+    const text = readFileSync(join(process.cwd(), 'supabase', 'config.toml'), 'utf8');
+    expect(text).not.toMatch(/0x[0-9A-Za-z_-]{20,}/);
+    expect(text).not.toMatch(/1x0{10,}[A-Za-z]*/);
+  });
 });

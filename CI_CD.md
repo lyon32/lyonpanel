@@ -73,6 +73,10 @@ Durée visée : < 12 min.
 - Variables d'environnement séparées Preview / Production (`ENV_SETUP.md §2`).
 - Tâches planifiées : **Cloudflare Worker** `workers/cron/` (Cron Triggers), déployé par `wrangler deploy` dans le workflow `deploy-cron.yml` ; il appelle seulement l'URL de Production. Pas de crons Vercel (offre gratuite = 1 par jour).
 
+Checklist de mise en ligne (Production) :
+
+- [ ] CAPTCHA Supabase activé : tableau de bord Supabase → Authentication → Attack Protection → CAPTCHA (Turnstile) avec la clé secrète de production. Contrôle : un appel direct à `/auth/v1/token` sans jeton captcha doit échouer (`captcha_failed`) ; s'il réussit, le captcha n'est pas actif.
+
 ## 6. Migrations de base de données (bouton manuel)
 
 1. Une migration arrive dans sa **propre PR** (`CONVENTIONS.md §4`), testée par la CI (§3 étape 11).

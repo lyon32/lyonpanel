@@ -142,7 +142,6 @@ describe('requestPasswordReset', () => {
   function makeResetDeps() {
     return {
       rateLimiter: createRateLimiter({ store: memoryStore().store }),
-      verifyTurnstile: vi.fn<PasswordResetDeps['verifyTurnstile']>(async () => true),
       sendReset: vi.fn<PasswordResetDeps['sendReset']>(async () => {}),
     } satisfies PasswordResetDeps;
   }
@@ -155,7 +154,7 @@ describe('requestPasswordReset', () => {
     await expect(
       requestPasswordReset({ email: 'a@b.co', turnstile_token: 't' }, IP, rdeps),
     ).resolves.toEqual({ ok: true });
-    expect(rdeps.sendReset).toHaveBeenCalledWith('a@b.co');
+    expect(rdeps.sendReset).toHaveBeenCalledWith('a@b.co', 't');
   });
 
   it("répond exactement pareil quand l'email n'existe pas (le fournisseur échoue)", async () => {
@@ -169,13 +168,19 @@ describe('requestPasswordReset', () => {
     expect(unknown).toEqual(exists);
   });
 
-  it('Turnstile invalide : TURNSTILE_FAILED et aucun email envoyé', async () => {
-    rdeps.verifyTurnstile.mockResolvedValue(false);
+  it('jeton Turnstile vide : TURNSTILE_FAILED 400 sans envoi ni appel réseau', async () => {
     const err = await failure(
-      requestPasswordReset({ email: 'a@b.co', turnstile_token: 't' }, IP, rdeps),
+      requestPasswordReset({ email: 'a@b.co', turnstile_token: '' }, IP, rdeps),
     );
     expect(err.code).toBe('TURNSTILE_FAILED');
+    expect(err.status).toBe(400);
     expect(rdeps.sendReset).not.toHaveBeenCalled();
+  });
+
+  it('le jeton Turnstile est transmis tel quel à sendReset (Supabase le vérifie, pas de siteverify en plus)', async () => {
+    expect('verifyTurnstile' in rdeps).toBe(false);
+    await requestPasswordReset({ email: 'a@b.co', turnstile_token: 'jeton-xyz' }, IP, rdeps);
+    expect(rdeps.sendReset).toHaveBeenCalledWith('a@b.co', 'jeton-xyz');
   });
 
   it("n'attend pas l'envoi avant de répondre : même durée que l'email existe ou non", async () => {
@@ -183,7 +188,7 @@ describe('requestPasswordReset', () => {
     await expect(
       requestPasswordReset({ email: 'a@b.co', turnstile_token: 't' }, IP, rdeps),
     ).resolves.toEqual({ ok: true });
-    expect(rdeps.sendReset).toHaveBeenCalledWith('a@b.co');
+    expect(rdeps.sendReset).toHaveBeenCalledWith('a@b.co', 't');
   });
 
   it("un envoi qui échoue après coup n'est ni visible ni une erreur non gérée", async () => {

@@ -9,6 +9,6 @@ export const POST = handler(async (req, ctx) => {
   const input = await parseBody(req, registerSchema);
   const result = await registerUser(input, clientIp(req), buildRegisterDeps());
   // Session ouverte tout de suite : le client arrive connecté (cookies posés par le client SSR).
-  await openSession(input.email, input.password);
+  await openSession(input.email);
   return Response.json(result, { status: 201, headers: { 'x-request-id': ctx.requestId } });
 });
