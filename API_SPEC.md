@@ -26,7 +26,7 @@ Liés : `ARCHITECTURE.md` (flux), `DATA_MODEL.md` (tables).
 - Base : `https://lyonpanel.com/api/v1` (routes Next.js sur Vercel). Préfixe `v1` pour changer l'API sans casser les anciens clients.
 - Format : JSON, UTF-8. Dates en ISO 8601 UTC (`2026-11-07T14:03:00Z`).
 - **Langue** : en-tête `Accept-Language: fr` ou `en` (sinon langue du profil, sinon `fr`). Le **code** d'erreur ne change jamais ; seul le message est traduit.
-- **Argent** : entiers en XAF, champs suffixés `_xaf` (`charged_xaf: 1155`). Jamais de décimales, jamais de prix JAP ni de marge côté client.
+- **Argent** : entiers en XAF, champs suffixés `_xaf` (`charged_xaf: 1155`). Jamais de décimales, jamais de prix fournisseur ni de marge côté client.
 - **Idempotence** : en-tête `Idempotency-Key` (UUID généré par le navigateur) **obligatoire** sur `POST /orders` et `POST /payments`. Même clé = même réponse, aucun double débit.
 - **Pagination** : par curseur. Requête `?limit=20&cursor=…` (limit max 100). Réponse `{ "data": [...], "next_cursor": "…" | null }`.
 - **Identifiant de requête** : chaque réponse a l'en-tête `X-Request-Id`, repris dans les erreurs (pour le support).
@@ -64,7 +64,7 @@ Liés : `ARCHITECTURE.md` (flux), `DATA_MODEL.md` (tables).
 - `message` : phrase claire pour l'utilisateur, dans sa langue.
 - `details` : facultatif, données utiles (champ fautif, montant manquant…). Pour les erreurs de formulaire : `{ "fields": { "phone": "PHONE_TAKEN" } }`.
 - `request_id` : à donner au support.
-- Jamais de trace technique, de requête SQL ou de message JAP/SasPay brut dans la réponse.
+- Jamais de trace technique, de requête SQL ou de message fournisseur/SasPay brut dans la réponse.
 
 ### Codes d'erreur
 
@@ -87,7 +87,7 @@ Liés : `ARCHITECTURE.md` (flux), `DATA_MODEL.md` (tables).
 | INSUFFICIENT_BALANCE | 422 | Solde client trop bas (`details.missing_xaf`) |
 | QUANTITY_OUT_OF_RANGE | 422 | Hors min/max (`details.min`, `details.max`) |
 | INVALID_LINK | 422 | Lien non accepté pour ce service |
-| SERVICE_UNAVAILABLE | 422 | Service inactif, retiré, ou solde JAP insuffisant |
+| SERVICE_UNAVAILABLE | 422 | Service inactif, retiré, ou solde fournisseur insuffisant |
 | PRICE_CHANGED | 422 | Prix modifié depuis le devis (`details.new_total_xaf`) |
 | DAILY_LIMIT_REACHED | 422 | Plafond de dépense sur 24 h atteint (`details.limit_xaf`) |
 | AMOUNT_BELOW_MINIMUM | 422 | Recharge sous le minimum (`details.min_xaf`) |
@@ -98,8 +98,8 @@ Liés : `ARCHITECTURE.md` (flux), `DATA_MODEL.md` (tables).
 | FILE_TOO_LARGE / FILE_TYPE_NOT_ALLOWED | 422 | Pièce jointe refusée |
 | RATE_LIMITED | 429 | Trop de requêtes (en-tête `Retry-After`) |
 | AUTH_LOCKED | 429 | 5 échecs de connexion, attendre 15 min |
-| PROVIDER_ERROR | 502 | SasPay ou JAP a répondu une erreur |
-| PROVIDER_TIMEOUT | 504 | SasPay ou JAP n'a pas répondu à temps |
+| PROVIDER_ERROR | 502 | SasPay ou fournisseur a répondu une erreur |
+| PROVIDER_TIMEOUT | 504 | SasPay ou fournisseur n'a pas répondu à temps |
 | INTERNAL_ERROR | 500 | Erreur inattendue (alerte Telegram envoyée) |
 
 ## 4. Codes HTTP utilisés
@@ -108,7 +108,7 @@ Liés : `ARCHITECTURE.md` (flux), `DATA_MODEL.md` (tables).
 |---|---|
 | 200 OK | Lecture ou modification réussie |
 | 201 Created | Création (compte, commande, paiement, ticket) |
-| 202 Accepted | Commande enregistrée mais envoi JAP en vérification (`to_review`) |
+| 202 Accepted | Commande enregistrée mais envoi fournisseur en vérification (`to_review`) |
 | 204 No Content | Suppression, déconnexion |
 | 400, 401, 403, 404, 409, 422, 429 | Erreurs client (voir §3) |
 | 500, 502, 504 | Erreurs serveur ou fournisseur |
@@ -159,7 +159,7 @@ Mot de passe : 8 caractères minimum (mon choix). Téléphone : format internati
 | GET | `/settings/public` | `{usd_xaf_rate, xof_xaf_rate: 1, min_recharge_xaf, currencies}` |
 
 `Service` = `{id, platform, category, name, description, price_xaf_1000, min_qty, max_qty, refill, cancel, guarantee_days?, avg_start?, type}`.
-Le client ne reçoit **jamais** `cost_usd`, `margin_pct` ni le nom JAP.
+Le client ne reçoit **jamais** `cost_usd`, `margin_pct` ni le nom fournisseur.
 
 ### 6.5 Commandes
 | Méthode | Chemin | Détail |
@@ -208,8 +208,8 @@ Correspondance avec la base : `amount_xaf` (API) = `payments.credited_xaf` ; `fe
 |---|---|---|---|
 | POST | `/api/webhooks/saspay` | signature SasPay | Confirme un paiement. Répond **200** même pour un doublon déjà traité ; **403** si signature ou horodatage invalide (comme l'attend SasPay) |
 | GET | `/api/cron/payments` | `CRON_SECRET` | Rattrapage des paiements en attente (5 min) |
-| GET | `/api/cron/orders` | `CRON_SECRET` | Statuts JAP par lots de 100 (10 min) |
-| GET | `/api/cron/services` | `CRON_SECRET` | Sync catalogue + solde JAP (1 h) |
+| GET | `/api/cron/orders` | `CRON_SECRET` | Statuts fournisseur par lots de 100 (10 min) |
+| GET | `/api/cron/services` | `CRON_SECRET` | Sync catalogue + solde fournisseur (1 h) |
 
 ## 8. Endpoints admin (`/api/v1/admin/*`)
 
@@ -218,18 +218,18 @@ Accès : admin + MFA (`aal2`). Toute personne non admin reçoit **404**. Chaque 
 | Méthode | Chemin | Rôle |
 |---|---|---|
 | POST | `/admin/mfa/verify` | `{code}` 6 chiffres → session `aal2` |
-| GET | `/admin/stats?from=&to=` | ventes, bénéfice, nb commandes, recharges, nouveaux clients, **répartition par pays**, solde JAP, réservations |
+| GET | `/admin/stats?from=&to=` | ventes, bénéfice, nb commandes, recharges, nouveaux clients, **répartition par pays**, solde fournisseur, réservations |
 | GET | `/admin/users?q=&country=&status=` | liste paginée |
 | GET | `/admin/users/{id}` | profil, solde, total rechargé, commandes, notes, filleuls |
 | PATCH | `/admin/users/{id}` | `{status?, blocked_reason?, custom_discount_pct?}` |
 | POST | `/admin/users/{id}/notes` | `{body}` → 201 |
 | POST | `/admin/users/{id}/adjust` | `{amount_xaf, note}` → ajustement manuel du solde |
-| GET | `/admin/orders?status=to_review` | liste paginée (avec coût JAP et bénéfice) |
+| GET | `/admin/orders?status=to_review` | liste paginée (avec coût fournisseur et bénéfice) |
 | POST | `/admin/orders/{id}/refund` | `{amount_xaf}` → remboursement total ou partiel |
-| POST | `/admin/orders/{id}/resend` | renvoie la commande à JAP |
+| POST | `/admin/orders/{id}/resend` | renvoie la commande à fournisseur |
 | POST | `/admin/orders/{id}/close` | `to_review` → `completed` sans remboursement |
 | GET | `/admin/payments?status=` | liste paginée |
-| GET | `/admin/services?platform=&active=` | catalogue complet (coût, marge, nom JAP) |
+| GET | `/admin/services?platform=&active=` | catalogue complet (coût, marge, nom fournisseur) |
 | PATCH | `/admin/services/{id}` | `{active?, name_fr?, margin_pct?, sort_order?}` |
 | GET / PATCH | `/admin/settings` | taux, marges, minimum, remise auto, parrainage, seuils |
 | GET | `/admin/tickets?status=` | liste paginée |
@@ -239,12 +239,12 @@ Accès : admin + MFA (`aal2`). Toute personne non admin reçoit **404**. Chaque 
 
 ## 9. API revendeurs (plus tard, non construite)
 
-Esquisse pour garder la place : `POST /api/reseller/v2` au **format JAP** (`key`, `action` = services, add, status, balance, refill, cancel) pour que les revendeurs branchent LyonPanel comme n'importe quel panel. Clé API par client, stockée hachée. Tant qu'elle n'est pas ouverte : **503** `{ "error": "Indisponible pour le moment / Unavailable for now" }`.
+Esquisse pour garder la place : `POST /api/reseller/v2` au **format fournisseur** (`key`, `action` = services, add, status, balance, refill, cancel) pour que les revendeurs branchent LyonPanel comme n'importe quel panel. Clé API par client, stockée hachée. Tant qu'elle n'est pas ouverte : **503** `{ "error": "Indisponible pour le moment / Unavailable for now" }`.
 
 ## 10. Règles pour qui construit l'API
 
 1. Toute route valide son entrée avec **Zod** et renvoie `VALIDATION_ERROR` au format §3.
 2. Une seule fonction `apiError(code, details?)` produit les erreurs ; les messages FR/EN viennent d'un seul fichier `messages/errors.{fr,en}.json`.
 3. L'argent ne bouge que par les fonctions SQL de `DATA_MODEL.md §6`.
-4. Ne jamais renvoyer de champ JAP (`cost_usd`, `jap_name`, `margin_pct`) hors `/admin`.
-5. Appels JAP et SasPay : délai max 10 s, une seule reprise pour les lectures, **aucune** reprise automatique pour `add` (risque de double commande).
+4. Ne jamais renvoyer de champ fournisseur (`cost_usd`, `jap_name`, `margin_pct`) hors `/admin`.
+5. Appels fournisseur et SasPay : délai max 10 s, une seule reprise pour les lectures, **aucune** reprise automatique pour `add` (risque de double commande).

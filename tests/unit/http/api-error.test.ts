@@ -91,12 +91,12 @@ describe("messages d'erreur FR/EN", () => {
     expect(Object.keys(FR).sort()).toEqual(Object.keys(EN).sort());
     expect(Object.keys(FR).sort()).toEqual(Object.keys(TABLE).sort());
   });
-  it('FORBIDDEN a un message dans chaque langue, sans mention du CSRF ni de JAP', () => {
+  it('FORBIDDEN a un message dans chaque langue, sans mention du CSRF ni du fournisseur', () => {
     expect(FR.FORBIDDEN).toBeTruthy();
     expect(EN.FORBIDDEN).toBeTruthy();
     expect(FR.FORBIDDEN).not.toBe(EN.FORBIDDEN);
   });
-  it('ne mentionnent jamais JAP', () => {
+  it('ne mentionnent jamais le fournisseur', () => {
     for (const msg of [...Object.values(FR), ...Object.values(EN)])
       expect(msg).not.toMatch(/\bJAP\b|JustAnotherPanel/i);
   });

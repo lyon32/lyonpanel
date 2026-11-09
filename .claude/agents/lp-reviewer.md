@@ -47,7 +47,7 @@ Un verdict écrit, **en tête** de réponse : `ACCEPTÉ` ou `À CORRIGER`, suivi
 - Tout mouvement passe par une fonction SQL (`place_order`, `credit_payment`, `refund_order`, `admin_adjust`).
 - Montants en entiers XAF ; aucun flottant ; noms suffixés.
 - Aucun prix venant du navigateur ; recalcul serveur ; `PRICE_CHANGED` géré.
-- Idempotence sur toute action payante ; webhook dédoublonné ; `jap.add` jamais relancé seul.
+- Idempotence sur toute action payante ; webhook dédoublonné ; `provider.add` jamais relancé seul.
 
 **C. Respect des documents**
 - Arborescence et noms de `LLD.md` ; signatures de `LLD.md §4`.

@@ -54,7 +54,7 @@
 - GitHub lance maintenant les tests de la base à chaque PR (étape à vérifier à l'ouverture de la PR).
 
 ### Sécurité
-- Un client ne voit que ses propres données. Il ne voit jamais le coût JAP, la marge ni les notes privées.
+- Un client ne voit que ses propres données. Il ne voit jamais le coût fournisseur, la marge ni les notes privées.
 - L'audit sécurité a trouvé 2 failles moyennes (quantités sans bornes, compte supprimé encore connecté). Elles sont corrigées et ré-attaquées sans succès.
 - Un paiement échoué ne peut plus être crédité.
 

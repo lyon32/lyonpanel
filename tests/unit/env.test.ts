@@ -7,19 +7,21 @@ vi.mock('server-only', () => ({}));
 import { MissingEnvError, loadServerEnv, requireEnv } from '@/server/env';
 
 describe('loadServerEnv', () => {
-  it('met JAP_MODE à mock et SASPAY_MODE à test par défaut', () => {
+  it('met PROVIDER_MODE à mock et SASPAY_MODE à test par défaut', () => {
     const env = loadServerEnv({});
-    expect(env.JAP_MODE).toBe('mock');
+    expect(env.PROVIDER_MODE).toBe('mock');
     expect(env.SASPAY_MODE).toBe('test');
   });
 
-  it('refuse JAP_MODE=live hors production', () => {
-    expect(() => loadServerEnv({ JAP_MODE: 'live', VERCEL_ENV: 'preview' })).toThrow(/JAP_MODE/);
+  it('refuse PROVIDER_MODE=live hors production', () => {
+    expect(() => loadServerEnv({ PROVIDER_MODE: 'live', VERCEL_ENV: 'preview' })).toThrow(
+      /PROVIDER_MODE/,
+    );
   });
 
-  it('accepte JAP_MODE=live en production', () => {
-    const env = loadServerEnv({ JAP_MODE: 'live', VERCEL_ENV: 'production' });
-    expect(env.JAP_MODE).toBe('live');
+  it('accepte PROVIDER_MODE=live en production', () => {
+    const env = loadServerEnv({ PROVIDER_MODE: 'live', VERCEL_ENV: 'production' });
+    expect(env.PROVIDER_MODE).toBe('live');
   });
 
   it('refuse SASPAY_MODE=live hors production', () => {
@@ -57,7 +59,7 @@ describe('loadServerEnv', () => {
   it('refuse les secrets NEXT_PUBLIC_ aux noms variés, sans tenir compte de la casse', () => {
     for (const name of [
       'NEXT_PUBLIC_SERVICE_KEY',
-      'NEXT_PUBLIC_JAP_API_KEY',
+      'NEXT_PUBLIC_PROVIDER_API_KEY',
       'NEXT_PUBLIC_SASPAY_API_KEY',
       'NEXT_PUBLIC_API_KEY',
       'NEXT_PUBLIC_PASSWORD',
@@ -89,9 +91,9 @@ describe('loadServerEnv', () => {
 
   it('requireEnv lève MissingEnvError avec le nom de la variable', () => {
     const env = loadServerEnv({});
-    expect(() => requireEnv(env, 'JAP_API_KEY')).toThrow(MissingEnvError);
-    expect(() => requireEnv(env, 'JAP_API_KEY')).toThrow(
-      "Variable d'environnement manquante : JAP_API_KEY",
+    expect(() => requireEnv(env, 'PROVIDER_API_KEY')).toThrow(MissingEnvError);
+    expect(() => requireEnv(env, 'PROVIDER_API_KEY')).toThrow(
+      "Variable d'environnement manquante : PROVIDER_API_KEY",
     );
   });
 });

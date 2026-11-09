@@ -98,12 +98,12 @@ lyonpanel/
 │  │  ├─ auth/          session.ts  require-user.ts  require-admin.ts  rate-limit.ts  turnstile.ts
 │  │  ├─ pricing/       compute-price.ts  discount.ts  margins.ts  fees.ts
 │  │  ├─ catalog/       sync-services.ts  build-name.ts  classify.ts
-│  │  ├─ orders/        place-order.ts  submit-to-jap.ts  sync-statuses.ts  validate-link.ts
+│  │  ├─ orders/        place-order.ts  submit-to-provider.ts  sync-statuses.ts  validate-link.ts
 │  │  ├─ payments/      create-payment.ts  handle-webhook.ts  reconcile.ts
 │  │  ├─ referral/      referral.ts
 │  │  ├─ tickets/       tickets.ts  attachments.ts
 │  │  ├─ admin/         stats.ts  users.ts  refunds.ts  settings.ts
-│  │  ├─ providers/     jap-client.ts  saspay-client.ts  telegram.ts
+│  │  ├─ providers/     provider-client.ts  saspay-client.ts  telegram.ts
 │  │  ├─ db/            supabase-server.ts  supabase-admin.ts  types.ts (généré)
 │  │  └─ http/          api-error.ts  handler.ts  idempotency.ts
 │  ├─ lib/                                 # partagé navigateur + serveur, sans secret
@@ -140,9 +140,9 @@ lyonpanel/
 
 **server/pricing** — Calcul **pur** (sans base ni réseau) du prix client, de la remise, des frais et du bonus de parrainage. Source unique de vérité pour les montants ; la fonction SQL `place_order` reproduit le même calcul et un test vérifie que les deux donnent le même résultat. 100 % testé.
 
-**server/catalog** — Synchronisation JAP → table `services` : classement par plateforme et type, nom reconstruit (jamais de prix dans le nom), nouveaux services inactifs, historique des prix, alertes d'écart.
+**server/catalog** — Synchronisation fournisseur → table `services` : classement par plateforme et type, nom reconstruit (jamais de prix dans le nom), nouveaux services inactifs, historique des prix, alertes d'écart.
 
-**server/orders** — Création de commande (fonction SQL `place_order`), envoi à JAP, suivi des statuts par lots, passage en `to_review` + alerte. Ne rembourse jamais tout seul.
+**server/orders** — Création de commande (fonction SQL `place_order`), envoi à fournisseur, suivi des statuts par lots, passage en `to_review` + alerte. Ne rembourse jamais tout seul.
 
 **server/payments** — Création du paiement SasPay, webhook (signature, montant, unicité), rattrapage des paiements en attente. Le crédit passe uniquement par `credit_payment`.
 
@@ -152,7 +152,7 @@ lyonpanel/
 
 **server/admin** — Statistiques (ventes, bénéfice, par pays), gestion des clients, remboursements, réglages. Écrit `audit_log` à chaque action.
 
-**server/providers** — **Seuls** clients autorisés à parler à JAP, SasPay et Telegram. Délai 10 s, journaux sans secret.
+**server/providers** — **Seuls** clients autorisés à parler à fournisseur, SasPay et Telegram. Délai 10 s, journaux sans secret.
 
 **server/http** — `apiError`, enveloppe commune des routes (`handler`), clés d'idempotence.
 
@@ -182,7 +182,7 @@ export function computePricePer1000Xaf(costUsdPer1000: number, marginPct: number
 /** Remise : la plus grande entre auto (si totalRecharged ≥ seuil) et personnalisée. Jamais cumulées. */
 export function resolveDiscountPct(totalRechargedXaf: number, auto: { thresholdXaf: number; pct: number }, customPct: number | null): number;
 
-/** Total : ceil5(prix × qté / 1000 × (1 − remise)), jamais sous coût JAP × (1 + marge minimale). */
+/** Total : ceil5(prix × qté / 1000 × (1 − remise)), jamais sous coût fournisseur × (1 + marge minimale). */
 export function computeOrderTotalXaf(input: {
   pricePer1000Xaf: number; quantity: number; discountPct: number;
   costUsdPer1000: number; usdXafRate: number; minMarginPct: number;
@@ -197,10 +197,10 @@ export function computeReferralBonusXaf(creditedXaf: number, pct: number): numbe
 
 ### 4.2 Catalogue — `server/catalog`
 ```ts
-export function classifyPlatform(japCategory: string): Platform;
-export function classifyCategory(japName: string, japCategory: string): 'followers' | 'likes' | 'views' | 'comments' | 'shares' | 'live' | 'other';
-/** Nom reconstruit depuis les champs API ; jamais de prix ni d'étiquettes JAP. */
-export function buildServiceName(s: JapService, locale: 'fr' | 'en'): string;
+export function classifyPlatform(providerCategory: string): Platform;
+export function classifyCategory(providerName: string, providerCategory: string): 'followers' | 'likes' | 'views' | 'comments' | 'shares' | 'live' | 'other';
+/** Nom reconstruit depuis les champs API ; jamais de prix ni d'étiquettes fournisseur. */
+export function buildServiceName(s: ProviderService, locale: 'fr' | 'en'): string;
 export async function syncServices(): Promise<{ added: number; removed: number; repriced: number; alerts: number }>;
 ```
 
@@ -208,9 +208,9 @@ export async function syncServices(): Promise<{ added: number; removed: number; 
 ```ts
 export async function placeOrder(userId: string, input: CreateOrderInput, idempotencyKey: string): Promise<Order>;
 // 1) lit service + réglages  2) computeOrderTotalXaf  3) ≠ expected_total_xaf → PRICE_CHANGED
-// 4) solde JAP disponible ?  5) rpc('place_order')  6) submitToJap  7) renvoie la commande
+// 4) solde fournisseur disponible ?  5) rpc('place_order')  6) submitToProvider  7) renvoie la commande
 
-export async function submitToJap(order: Order): Promise<'in_progress' | 'to_review'>;  // aucune reprise automatique
+export async function submitToProvider(order: Order): Promise<'in_progress' | 'to_review'>;  // aucune reprise automatique
 export async function syncOrderStatuses(batchSize?: number): Promise<{ updated: number; toReview: number }>;
 export function validateLink(platform: Platform, link: string): { ok: true } | { ok: false; reason: 'INVALID_LINK' };
 ```
@@ -224,11 +224,11 @@ export async function reconcilePendingPayments(olderThanMinutes?: number): Promi
 
 ### 4.5 Fournisseurs — `server/providers`
 ```ts
-export const jap: {
-  services(): Promise<JapService[]>;
+export const provider: {
+  services(): Promise<ProviderService[]>;  // API v2 : « rate » = coût en USD pour 1000
   balance(): Promise<{ balance: number; currency: 'USD' }>;
   add(p: { service: number; link: string; quantity: number; comments?: string }): Promise<{ order: number }>;
-  status(ids: number[]): Promise<Record<number, JapStatus>>;
+  status(ids: number[]): Promise<Record<number, ProviderStatus>>;
 };
 export const saspay: {
   createCheckoutSession(p: { amount: string; currency: 'XAF' | 'XOF'; customerEmail: string; customerName: string; customerPhone?: string; country?: string; returnUrl: string; metadata: { lyonpanel_payment_id: string }; feeChargeMode: 'ADD_ON'; expiresAt: string }): Promise<{ sessionId: string; checkoutUrl: string }>;
@@ -238,7 +238,7 @@ export const saspay: {
   verifyWebhook(rawBody: string, signature: string, timestamp: string): boolean; // HMAC-SHA256(timestamp + '.' + body), ± 300 s
 };
 export async function notifyOwner(
-  event: 'order_failed' | 'low_jap_balance' | 'price_jump' | 'payment_mismatch' | 'new_ticket' | 'internal_error',
+  event: 'order_failed' | 'low_provider_balance' | 'price_jump' | 'payment_mismatch' | 'new_ticket' | 'internal_error',
   data: Record<string, unknown>,
 ): Promise<void>;
 ```
@@ -315,7 +315,7 @@ Voir `DATA_MODEL.md §6` : `place_order`, `credit_payment`, `refund_order`, `adm
 | Montants | suffixe d'unité obligatoire | `amountXaf`, `costUsdPer1000` |
 | Codes d'erreur | SCREAMING_SNAKE_CASE | `INSUFFICIENT_BALANCE` |
 | Clés de traduction | par écran, séparées par des points | `order.form.quantity.label` |
-| Variables d'env | SCREAMING_SNAKE_CASE ; `NEXT_PUBLIC_` seulement sans secret | `JAP_API_KEY`, `NEXT_PUBLIC_TURNSTILE_SITE_KEY` |
+| Variables d'env | SCREAMING_SNAKE_CASE ; `NEXT_PUBLIC_` seulement sans secret | `PROVIDER_API_KEY`, `NEXT_PUBLIC_TURNSTILE_SITE_KEY` |
 | Branches Git | `type/sujet` | `feat/add-funds` |
 | Commits | Conventional Commits, en français (voir `CONVENTIONS.md`) | `feat(orders): ajouter la clé d'idempotence` |
 

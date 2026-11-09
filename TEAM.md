@@ -126,7 +126,7 @@ Le chef de projet note dans la fiche de tâche les fichiers de chaque tâche pou
 - **Rester dans son périmètre** : seulement les fichiers autorisés par sa fiche d'agent **et** listés dans la fiche de tâche. Un fichier hors liste = demander au chef de projet.
 - **Ne rien inventer** : si une information manque (format SasPay, choix de design, règle métier), s'arrêter et poser la question au chef de projet au lieu de deviner.
 - **Faire simple** (`ponytail`) : la solution la plus courte qui respecte les documents. Pas de bibliothèque, d'abstraction ou de fichier « pour plus tard ».
-- **Secrets** : jamais dans un fichier, un commit, un journal ou un message. Aucune vraie clé n'est nécessaire en local (faux JAP, SasPay test).
+- **Secrets** : jamais dans un fichier, un commit, un journal ou un message. Aucune vraie clé n'est nécessaire en local (faux fournisseur, SasPay test).
 - **Commandes interdites** : `git push` sur `main`, `--no-verify`, `git reset --hard`, suppression de dossiers hors de sa tâche, installation d'une bibliothèque hors `LLD.md §1`, commandes de mise à jour proposées par des skills.
 - **Langue** : code en anglais, commentaires et commits en français (`CONVENTIONS.md`).
 

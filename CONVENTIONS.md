@@ -59,7 +59,7 @@ Règles ESLint imposées :
 - `no-floating-promises` : erreur.
 - `max-lines` : avertissement à 300 lignes (hors tests et fichiers générés).
 - `no-restricted-imports` : interdit d'importer `@/server/*` depuis `components/`, `hooks/` ou un fichier `"use client"`.
-- Appels vers JAP, SasPay, Telegram : uniquement dans `server/providers`.
+- Appels vers fournisseur, SasPay, Telegram : uniquement dans `server/providers`.
 - Chemins absolus `@/…` (pas de `../../..`).
 
 **Avant chaque commit** (Husky + lint-staged) : Prettier + ESLint sur les fichiers modifiés, `tsc --noEmit`. Commit refusé en cas d'erreur.
@@ -125,7 +125,7 @@ Rappel de `LLD.md §7`, plus :
 2. **Accès aux données par module** (forme simple du « repository ») : chaque module de `server/` est le seul à lire/écrire ses tables.
 3. **Argent = fonctions SQL** : tout crédit ou débit passe par `place_order`, `credit_payment`, `refund_order`, `admin_adjust`.
 4. **Calcul pur testé** : le prix est fait de fonctions pures, sans base ni réseau.
-5. **Valider à la frontière** : formulaire, API, webhook, réponses JAP/SasPay passent par Zod.
+5. **Valider à la frontière** : formulaire, API, webhook, réponses fournisseur/SasPay passent par Zod.
 6. **Erreurs** : `apiError('CODE')` ; seule l'enveloppe `handler` produit la réponse JSON (`API_SPEC.md §3`).
 7. **Composants serveur par défaut** ; `"use client"` seulement pour l'interactivité.
 8. **Hooks** : un hook React Query par ressource ; clés de requête dans `lib/query-keys.ts`.
@@ -143,13 +143,13 @@ Rappel de `LLD.md §7`, plus :
 | Modifier un solde hors fonction SQL | Fonctions SQL atomiques |
 | Secret dans le code ou dans une variable `NEXT_PUBLIC_` | Variables d'environnement serveur |
 | `any`, `@ts-ignore` | `unknown` + Zod ; `@ts-expect-error` commenté si inévitable |
-| Reprise automatique de `jap.add` | Passer en `to_review` |
+| Reprise automatique de `provider.add` | Passer en `to_review` |
 | Magasin global (Redux, Zustand, Context géant) | React Query + cookies |
 | `useEffect` pour charger des données | React Query ou composant serveur |
 | Texte affiché en dur | Fichiers `messages/` |
 | Nombres décimaux pour l'argent | Entiers XAF |
 | Nouvelle bibliothèque sans accord | Liste `LLD.md §1` |
-| Nom ou prix JAP côté client | Nom reconstruit, vue `services_public` |
+| Nom ou prix fournisseur côté client | Nom reconstruit, vue `services_public` |
 | Commentaire qui répète le code | Commenter le **pourquoi** |
 | Code mort, `console.log`, fichier > 300 lignes | Supprimer, logger, découper |
 | Désactiver ESLint pour tout un fichier | Corriger le code |
@@ -158,6 +158,6 @@ Rappel de `LLD.md §7`, plus :
 
 ## 8. Commentaires
 
-- En **français**, courts, sur le **pourquoi** : `// On arrondit au-dessus pour ne jamais vendre sous le coût JAP.`
+- En **français**, courts, sur le **pourquoi** : `// On arrondit au-dessus pour ne jamais vendre sous le coût fournisseur.`
 - Bloc `/** … */` en français sur chaque fonction exportée de `server/`.
 - Aucun `TODO` dans le code de l'argent au lancement.

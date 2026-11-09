@@ -24,7 +24,7 @@ Liés : `API_SPEC.md` (auth, erreurs), `DATA_MODEL.md` (RLS, fonctions SQL), `do
 | Commander | — | ✅ | ❌ | — | — |
 | Ouvrir un ticket | — | ✅ | ✅ (pour contester) | — | — |
 | Supprimer son compte | — | ✅ | ✅ | — | — |
-| Voir coût JAP, marge, nom JAP | ❌ | ❌ | ❌ | ✅ | ✅ |
+| Voir coût fournisseur, marge, nom fournisseur | ❌ | ❌ | ❌ | ✅ | ✅ |
 | Rembourser, ajuster un solde, bloquer, remise perso, notes | ❌ | ❌ | ❌ | ✅ | ❌ |
 | Modifier taux, marges, services | ❌ | ❌ | ❌ | ✅ | sync catalogue |
 | Créditer un solde | ❌ | ❌ | ❌ | via `admin_adjust` | webhook vérifié / rattrapage |
@@ -71,7 +71,7 @@ Règles d'application :
 | Paramètres de liste | `limit` 1–100 ; curseur validé |
 | Réglages admin | schéma Zod par clé ; marges 0–500 %, taux > 0 |
 | Webhook SasPay | corps brut lu une fois ; `X-Webhook-Timestamp` à ± 300 s ; HMAC-SHA256 de `timestamp.corps` comparé en temps constant **avant** de lire le contenu ; puis Zod ; puis `verifyPayment` auprès de SasPay avant tout crédit |
-| Réponses JAP | validées par Zod ; réponse inattendue = `to_review` |
+| Réponses fournisseur | validées par Zod ; réponse inattendue = `to_review` |
 
 **Affichage** : React échappe le texte ; `dangerouslySetInnerHTML` interdit. Messages de tickets affichés en texte brut.
 **SQL** : requêtes paramétrées uniquement (client Supabase, fonctions SQL), jamais de SQL construit à la main.
@@ -100,8 +100,8 @@ Pour les services qui attendent un **nom d'utilisateur** (abonnés), on accepte 
 | Commandes | 10 / min / client |
 | Recharges | 5 / min / client |
 | Connexion | 3 échecs, puis pause progressive 15 min → 24 h (voir §2) |
-| Appels sortants vers JAP | ≤ 60 / min au total (mon choix) |
-| Solde JAP | commande refusée si solde JAP − réservations < coût ; alerte sous 5 $ |
+| Appels sortants vers fournisseur | ≤ 60 / min au total (mon choix) |
+| Solde fournisseur | commande refusée si solde fournisseur − réservations < coût ; alerte sous 5 $ |
 
 ## 6. Cas limites et comportement attendu
 
@@ -124,22 +124,22 @@ Pour les services qui attendent un **nom d'utilisateur** (abonnés), on accepte 
 | Double clic sur « Commander » | Même clé d'idempotence → une seule commande |
 | Prix changé entre le devis et le clic | `422 PRICE_CHANGED`, le client voit le nouveau prix |
 | Service désactivé ou retiré pendant la commande | `422 SERVICE_UNAVAILABLE`, aucun débit |
-| JAP répond une erreur | Commande `to_review`, alerte, remboursement après examen |
-| JAP ne répond pas (délai dépassé) | `to_review` ; **pas de renvoi automatique** (JAP a peut-être créé la commande) ; l'admin vérifie sur JAP avant de renvoyer |
-| JAP renvoie `Partial` ou `Canceled` | `to_review` + alerte ; remboursement décidé par l'admin |
-| Solde JAP insuffisant | Commande refusée avant débit, « momentanément indisponible », alerte |
-| Compte cible privé ou lien supprimé | Échec chez JAP → `to_review` ; message clair au client |
+| fournisseur répond une erreur | Commande `to_review`, alerte, remboursement après examen |
+| fournisseur ne répond pas (délai dépassé) | `to_review` ; **pas de renvoi automatique** (fournisseur a peut-être créé la commande) ; l'admin vérifie sur fournisseur avant de renvoyer |
+| fournisseur renvoie `Partial` ou `Canceled` | `to_review` + alerte ; remboursement décidé par l'admin |
+| Solde fournisseur insuffisant | Commande refusée avant débit, « momentanément indisponible », alerte |
+| Compte cible privé ou lien supprimé | Échec chez le fournisseur → `to_review` ; message clair au client |
 | Même lien + même service commandé deux fois rapidement | Avertissement avant validation (mon choix), autorisé si le client confirme |
 | Plafond journalier atteint | `422 DAILY_LIMIT_REACHED` |
 
 ### Catalogue et prix
 | Cas | Comportement |
 |---|---|
-| Coût JAP qui augmente fortement (> seuil) | Nouveau prix publié seulement après validation admin ; alerte |
+| Coût fournisseur qui augmente fortement (> seuil) | Nouveau prix publié seulement après validation admin ; alerte |
 | Prix calculé sous coût + marge minimale | Publication bloquée |
 | Taux de change modifié | S'applique aux nouvelles commandes ; les anciennes gardent leur prix |
-| Nouveau service JAP | Créé **inactif** |
-| JAP indisponible pendant la sync | Aucune modification, nouvel essai à l'heure suivante, alerte après 3 échecs |
+| Nouveau service fournisseur | Créé **inactif** |
+| fournisseur indisponible pendant la sync | Aucune modification, nouvel essai à l'heure suivante, alerte après 3 échecs |
 
 ### Comptes
 | Cas | Comportement |
@@ -153,12 +153,12 @@ Pour les services qui attendent un **nom d'utilisateur** (abonnés), on accepte 
 ## 7. Secrets et données
 
 - Secrets uniquement dans les variables d'environnement (Vercel, `.env.local`) ; jamais dans Git, les journaux, les captures ou une conversation.
-- **La clé JAP montrée en conversation doit être régénérée** avant toute recharge du compte JAP.
+- **La clé fournisseur montrée en conversation doit être régénérée** avant toute recharge du compte fournisseur.
 - Clé `service_role` Supabase utilisée uniquement dans `server/`.
 - **Règle des clés : tout secret reste sur le serveur.**
-  - **Côté serveur seulement** (routes API, actions serveur, Worker Cloudflare) : `JAP_API_KEY`, `SASPAY_API_KEY`, `SASPAY_WEBHOOK_SECRET`, `SUPABASE_SERVICE_ROLE_KEY`, `TELEGRAM_BOT_TOKEN`, `TURNSTILE_SECRET_KEY`, `CRON_SECRET`, `ADMIN_PATH`, `SENTRY_AUTH_TOKEN`.
+  - **Côté serveur seulement** (routes API, actions serveur, Worker Cloudflare) : `PROVIDER_API_KEY`, `SASPAY_API_KEY`, `SASPAY_WEBHOOK_SECRET`, `SUPABASE_SERVICE_ROLE_KEY`, `TELEGRAM_BOT_TOKEN`, `TURNSTILE_SECRET_KEY`, `CRON_SECRET`, `ADMIN_PATH`, `SENTRY_AUTH_TOKEN`.
   - **Visibles par le navigateur, publiques par conception** (seulement celles qui commencent par `NEXT_PUBLIC_`) : adresse du site, adresse et clé publique Supabase (protégée par la RLS), clé publique Turnstile, DSN Sentry, identifiant Google Analytics. Aucune ne permet de dépenser de l'argent ni de lire les données d'un autre client.
-  - Le navigateur ne parle **jamais** directement à JAP, SasPay ou Telegram : il appelle nos routes `/api/v1/*`, et c'est le serveur qui appelle ces services avec les clés.
+  - Le navigateur ne parle **jamais** directement à fournisseur, SasPay ou Telegram : il appelle nos routes `/api/v1/*`, et c'est le serveur qui appelle ces services avec les clés.
   - Protections : fichiers `src/server/**` marqués `import "server-only"` (le build échoue si un composant navigateur les importe) ; `src/server/env.ts` sépare variables serveur et publiques ; règle ESLint qui interdit `process.env.<SECRET>` hors de `src/server/` ; contrôle CI `check-client-bundle` (`CI_CD.md §3`) ; scan gitleaks ; audit `lp-security`.
 - Journaux : jamais de mot de passe, jeton ou clé ; téléphone et email masqués (`+2376****12`).
 - Données personnelles minimales : email, téléphone, pays.
@@ -180,6 +180,6 @@ Pour les services qui attendent un **nom d'utilisateur** (abonnés), on accepte 
 
 ## 9. Surveillance et réaction
 
-- Alertes Telegram : erreur 500, webhook invalide, montant incohérent, commande en échec, solde JAP bas, plafond atteint, 5 échecs de connexion admin.
+- Alertes Telegram : erreur 500, webhook invalide, montant incohérent, commande en échec, solde fournisseur bas, plafond atteint, 5 échecs de connexion admin.
 - Revue hebdomadaire de `audit_log` et des commandes `to_review` (mon choix).
 - En cas de fuite d'une clé : la régénérer, mettre à jour Vercel, redéployer, noter l'incident.

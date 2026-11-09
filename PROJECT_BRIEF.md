@@ -27,10 +27,10 @@ Pas la cible au lancement : les revendeurs (API revendeurs « indisponible pour 
 Concrètement, la première version est « finie » quand :
 1. Un client s'inscrit, recharge son solde en **Mobile Money (SasPay)** et voit son solde crédité automatiquement.
 2. Il commande un service TikTok, Instagram ou Facebook, avec un prix clair dans sa monnaie (XAF/XOF/USD).
-3. La commande part chez JAP, et le client **suit son statut** (en attente, en cours, terminé, partiel, annulé).
+3. La commande part chez le fournisseur, et le client **suit son statut** (en attente, en cours, terminé, partiel, annulé).
 4. Si un service ne livre pas, la commande passe « à examiner », le propriétaire est alerté sur Telegram, le client peut ouvrir un ticket et être remboursé après examen.
-5. Aucun paiement compté deux fois, aucune commande sans paiement, aucune commande acceptée si le solde JAP est vide.
-6. Le propriétaire voit dans l'admin : ventes, bénéfice, solde JAP, commandes à examiner, tickets.
+5. Aucun paiement compté deux fois, aucune commande sans paiement, aucune commande acceptée si le solde fournisseur est vide.
+6. Le propriétaire voit dans l'admin : ventes, bénéfice, solde fournisseur, commandes à examiner, tickets.
 
 Mesures à suivre après lancement (mon choix) : part des clients qui rechargent une 2e fois, taux de commandes livrées, nombre de tickets « pas reçu ».
 

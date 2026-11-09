@@ -3,7 +3,7 @@ import { loadServerEnv } from '@/server/env';
 
 export type OwnerEvent =
   | 'order_failed'
-  | 'low_jap_balance'
+  | 'low_provider_balance'
   | 'price_jump'
   | 'payment_mismatch'
   | 'new_ticket'

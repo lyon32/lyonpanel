@@ -122,22 +122,24 @@ Le solde ne se modifie **que** par les fonctions SQL (§6), qui écrivent aussi 
 | raw_webhook | jsonb | dernière charge reçue (sans données sensibles) |
 | created_at / succeeded_at | timestamptz | |
 
-### services — catalogue (copie travaillée de JAP)
+### services — catalogue (copie travaillée du fournisseur)
+
+> Les colonnes `jap_*` (et le réglage `jap_low_balance_usd`, la table `jap_balance_snapshots`) sont renommées `provider_*` par la migration de la phase 4.
 | Champ | Type | Contraintes |
 |---|---|---|
-| id | int | PK = id JAP |
+| id | int | PK = id fournisseur |
 | platform | text | non null (tiktok, instagram, facebook…) |
 | category | text | abonnés, likes, vues… |
 | name_fr | text | reconstruit (sans prix) |
 | jap_name | text | nom d'origine (admin seulement) |
 | jap_type | text | Default, Custom Comments… |
-| cost_usd_1000 | numeric(12,4) | coût JAP |
+| cost_usd_1000 | numeric(12,4) | coût fournisseur |
 | margin_pct | numeric(6,2) | null = règle par plateforme |
 | price_xaf_1000 | bigint | prix client calculé |
 | min_qty / max_qty | int | NOT NULL, > 0, min ≤ max |
 | refill / cancel / dripfeed | boolean | |
 | active | boolean | défaut false (activé par l'admin) |
-| available | boolean | false si retiré chez JAP |
+| available | boolean | false si retiré chez le fournisseur |
 | sort_order | int | |
 | updated_at | timestamptz | |
 
@@ -166,7 +168,7 @@ Le solde ne se modifie **que** par les fonctions SQL (§6), qui écrivent aussi 
 | price_xaf_1000 | bigint | prix au moment de la commande |
 | discount_pct | numeric(5,2) | remise appliquée |
 | charged_xaf | bigint | > 0, débité |
-| cost_usd | numeric(12,4) | coût JAP estimé (bénéfice admin) |
+| cost_usd | numeric(12,4) | coût fournisseur estimé (bénéfice admin) |
 | jap_order_id | bigint | unique, null |
 | status | order_status | défaut `pending` |
 | start_count / remains | int | null |
@@ -216,7 +218,7 @@ key uuid · user_id uuid · route text · request_hash text · response jsonb ·
 ### audit_log — actions sensibles
 id bigserial PK · actor_id uuid null · action text · target_table text · target_id text · details jsonb · created_at.
 
-### jap_balance_snapshots — suivi du solde JAP
+### jap_balance_snapshots — suivi du solde fournisseur
 id bigserial PK · balance_usd numeric(12,4) · reserved_usd numeric(12,4) · taken_at timestamptz.
 
 ## 4. Index

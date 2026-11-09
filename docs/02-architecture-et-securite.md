@@ -2,7 +2,7 @@
 
 ## 1. Vue d'ensemble
 
-Navigateur (Next.js sur Vercel) → routes serveur Next.js → Supabase (base + auth) ; routes serveur → API JAP ; SasPay → webhook → route serveur. Cloudflare devant le domaine. Les secrets (clé JAP, clé SasPay, clé service Supabase, jeton Telegram) sont des variables d'environnement serveur uniquement.
+Navigateur (Next.js sur Vercel) → routes serveur Next.js → Supabase (base + auth) ; routes serveur → API fournisseur ; SasPay → webhook → route serveur. Cloudflare devant le domaine. Les secrets (clé fournisseur, clé SasPay, clé service Supabase, jeton Telegram) sont des variables d'environnement serveur uniquement.
 
 ## 2. Données (Supabase / Postgres) — tables principales
 
@@ -10,8 +10,8 @@ Navigateur (Next.js sur Vercel) → routes serveur Next.js → Supabase (base + 
 - `wallets` : id utilisateur, solde (en unité minimale, par exemple XAF entier).
 - `wallet_transactions` : id, utilisateur, type (recharge, commande, remboursement, ajustement), montant, solde après, référence unique. Le solde est toujours déduit de ce journal.
 - `payments` : id, utilisateur, id SasPay, montant, devise, statut (créé, en attente, réussi, échoué), horodatages. **Contrainte d'unicité sur l'id SasPay** (anti-doublon).
-- `services` : id JAP, plateforme, type, nom FR, coût USD, prix client, min, max, options, actif, ordre.
-- `orders` : id, utilisateur, service, lien, quantité, prix débité, id JAP, statut (en attente, en cours, terminé, partiel, annulé, à examiner), reste, départ.
+- `services` : id fournisseur, plateforme, type, nom FR, coût USD, prix client, min, max, options, actif, ordre.
+- `orders` : id, utilisateur, service, lien, quantité, prix débité, id fournisseur, statut (en attente, en cours, terminé, partiel, annulé, à examiner), reste, départ.
 - `tickets` et `ticket_messages`.
 - `settings` : taux de change, paliers de marge, seuils d'alerte (lisibles par l'admin seulement).
 - `audit_log` : actions admin et événements sensibles.
@@ -29,20 +29,20 @@ Index sur : `orders(user_id, created_at)`, `orders(jap_order_id)`, `payments(pro
 ## 4. Flux de commande
 
 1. Le client choisit plateforme → service → lien → quantité.
-2. Le serveur **recalcule** le prix (ne fait jamais confiance au prix du navigateur), vérifie min/max, lien, solde client et solde JAP.
+2. Le serveur **recalcule** le prix (ne fait jamais confiance au prix du navigateur), vérifie min/max, lien, solde client et solde fournisseur.
 3. Transaction : débit du solde + création de la commande « en attente » (clé d'idempotence pour éviter le double envoi).
-4. Appel JAP `add`. Succès → enregistre l'id JAP. Échec ou délai dépassé → statut « à examiner », alerte Telegram, **pas de remboursement automatique** (décidé).
+4. Appel fournisseur `add`. Succès → enregistre l'id fournisseur. Échec ou délai dépassé → statut « à examiner », alerte Telegram, **pas de remboursement automatique** (décidé).
 5. Tâche de suivi : `multi-status` par lots pour mettre à jour les statuts, le reste à livrer et le départ.
 6. Le client suit ses commandes (liste paginée, filtres, statuts clairs).
 
 ## 5. Sécurité
 
 - **Anti-contrefaçon** : prix et marges calculés uniquement côté serveur ; règles RLS Supabase : un client ne lit que ses propres lignes ; aucune écriture directe de solde depuis le navigateur.
-- **Secrets** : jamais dans le code ni dans le navigateur. La clé JAP actuelle a été montrée en conversation : **à régénérer avant de recharger le compte JAP**.
+- **Secrets** : jamais dans le code ni dans le navigateur. La clé fournisseur actuelle a été montrée en conversation : **à régénérer avant de recharger le compte fournisseur**.
 - **Anti-bot** : Cloudflare Turnstile à l'inscription et à la connexion.
 - **Limitation de débit** : sur inscription, connexion, création de commande, recharge, tickets.
 - **Doublons** : idempotence sur commandes et paiements, bouton désactivé après clic, contrainte unique en base.
-- **Plafonds** : plafond de dépense journalier par client (valeur à définir), plafond d'appels sortants vers JAP.
+- **Plafonds** : plafond de dépense journalier par client (valeur à définir), plafond d'appels sortants vers fournisseur.
 - **Admin** : accès séparé, authentification renforcée (mot de passe fort + code à 6 chiffres sur 2 appareils, décidé — voir `SECURITY_NOTES.md`), journal d'audit.
 - **Données** : politique de confidentialité, minimisation des données personnelles.
 
@@ -52,7 +52,7 @@ Index sur : `orders(user_id, created_at)`, `orders(jap_order_id)`, `payments(pro
 |---|---|
 | Limites et plafonds d'API / de dépense | §5, middleware |
 | Gestion des erreurs, états de chargement, états vides | Toutes les pages |
-| Échecs de requêtes et délais dépassés (timeouts) | Appels JAP et SasPay : délai court, une reprise limitée |
+| Échecs de requêtes et délais dépassés (timeouts) | Appels fournisseur et SasPay : délai court, une reprise limitée |
 | Doublons de soumission et de paiement | §5 |
 | Requêtes optimisées, index, pagination | §2 |
 | Cache des requêtes répétées | Catalogue de services et taux de change |
@@ -63,7 +63,7 @@ Index sur : `orders(user_id, created_at)`, `orders(jap_order_id)`, `payments(pro
 
 ## 7. Admin (décidé : oui)
 
-Tableau de bord : ventes du jour, marge, solde JAP, solde SasPay, commandes « à examiner », paiements en attente, tickets ouverts. Gestion : services (masquer, renommer, prix), taux et paliers de marge, remises, clients, remboursements manuels, journal d'audit.
+Tableau de bord : ventes du jour, marge, solde fournisseur, solde SasPay, commandes « à examiner », paiements en attente, tickets ouverts. Gestion : services (masquer, renommer, prix), taux et paliers de marge, remises, clients, remboursements manuels, journal d'audit.
 
 ## 8. Support (décidé)
 

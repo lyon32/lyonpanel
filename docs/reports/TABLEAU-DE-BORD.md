@@ -1,17 +1,17 @@
 # Tableau de bord LyonPanel
 Mis à jour le 2026-11-09 (phase 3 : écrans refaits). Chiffres lus dans les comptes-rendus des phases 1 à 3.
 
-**En 5 secondes :** les phases 0, 1 et 2 sont validées. La phase 3 (comptes) est faite, en attente de ton « validé ». Écrans de compte refaits ; PR 7, 8 et 9 fusionnées, PR 10 (tests navigateur) ouverte. Points ouverts : 2 points importants du contrôle qualité en correction, build à refaire, tests de base de données pas relancés dans le dernier état. Ensuite : phase 4, prix et catalogue.
+**En 5 secondes :** les phases 0, 1, 2 et 3 sont validées (phase 3 le 2026-11-09). La phase 4 (prix et catalogue) est en cours. Écrans de compte refaits ; PR 7, 8 et 9 fusionnées, PR 10 (tests navigateur) ouverte. Points ouverts : 2 points importants du contrôle qualité en correction, build à refaire, tests de base de données pas relancés dans le dernier état. Ensuite : phase 4, prix et catalogue.
 
 ## 1. Avancement des phases
-Bleu : validée. Jaune : faite, en attente de validation. Gris : à faire. Dates réelles : phases 0 et 1 le 2026-11-07, phase 2 le 2026-11-08, phase 3 faite le 2026-11-08.
+Bleu : validée. Jaune : faite, en attente de validation. Gris : à faire. Dates réelles : phases 0 et 1 le 2026-11-07, phase 2 le 2026-11-08, phase 3 le 2026-11-09, phase 4 en cours.
 
 ```mermaid
 flowchart LR
   P0["Phase 0 Socle<br/>validée<br/>2026-11-07"] --> P1["Phase 1 Base de données<br/>validée<br/>2026-11-07"]
   P1 --> P2["Phase 2 Design system<br/>validée<br/>2026-11-08"]
-  P2 --> P3["Phase 3 Comptes<br/>faite, en attente<br/>2026-11-08"]
-  P3 --> P4["4 Prix et catalogue"]
+  P2 --> P3["Phase 3 Comptes<br/>validée<br/>2026-11-09"]
+  P3 --> P4["Phase 4 Prix et catalogue<br/>en cours"]
   P4 --> P5["5 Recharge SasPay"]
   P5 --> P6["6 Commande"]
   P6 --> P7["7 Suivi et alertes"]
@@ -27,9 +27,9 @@ flowchart LR
   classDef valide fill:#DBEAFE,stroke:#1D4ED8,color:#000
   classDef enattente fill:#FEF3C7,stroke:#B45309,color:#000
   classDef afaire fill:#E5E7EB,stroke:#6B7280,color:#000
-  class P0,P1,P2 valide
-  class P3 enattente
-  class P4,P5,P6,P7,P8,P9,P10,P11,P12,P13,P14,P15,P16 afaire
+  class P0,P1,P2,P3 valide
+  class P4 enattente
+  class P5,P6,P7,P8,P9,P10,P11,P12,P13,P14,P15,P16 afaire
 ```
 
 ## 2. Étapes de la phase 3 (tableau Kanban)

@@ -5,7 +5,7 @@
 ## Le projet en 5 lignes
 
 - **LyonPanel** (lyonpanel.com) : panel SMM pour l'Afrique (abonnés, likes, vues), « 1er panel SMM d'Afrique ».
-- Revend les services de **JustAnotherPanel (JAP)** via son API v2, avec une marge.
+- Revend les services d'**un fournisseur (API v2)** avec une marge.
 - Le client **recharge son solde** par **SasPay** (Mobile Money), puis chaque commande est débitée du solde.
 - Clients : créateurs TikTok et commerçants Instagram. Pire échec : **un client qui paie et ne reçoit rien**.
 - Stack : Next.js + TypeScript, Tailwind, shadcn/ui, GSAP, Lenis, Supabase, Vercel, Cloudflare. Site **en français et en anglais**.
@@ -84,24 +84,25 @@ Un agent ne démarre jamais avant ce dont il dépend ; ce qui est indépendant t
 5. Montants en **entiers XAF**, noms suffixés (`amountXaf`).
 6. Valider toute entrée avec **Zod** ; erreurs au format unique (`API_SPEC.md §3`), messages FR/EN.
 7. Écrire les **tests en même temps que le code** ; 100 % sur l'argent ; un bug corrigé = un test.
-8. Utiliser le **faux JAP** (`JAP_MODE=mock`) et **SasPay test** en local.
+8. Utiliser le **faux fournisseur** (`PROVIDER_MODE=mock`) et **SasPay test** en local.
 9. Respecter le design system : blanc, bleu `#1D4ED8`, jaune en accent, Public Sans, aucun look IA.
 10. Lancer lint, types et tests **avant** de dire qu'une tâche est finie, et montrer le résultat.
 11. **Demander avant d'agir** sur : prix et marges, sécurité, nouvelle bibliothèque, changement de schéma non prévu, tout ce qui coûte de l'argent réel.
 
 ## Jamais
 
-1. Écrire un secret (clé JAP, SasPay, Supabase, Telegram) dans le code, un commit, un journal ou une variable `NEXT_PUBLIC_`. **La clé JAP vue en conversation doit être régénérée.**
-2. Montrer au client le coût JAP, la marge ou le nom JAP d'un service.
-3. Relancer automatiquement `jap.add` (risque de double commande).
+1. Écrire un secret (clé fournisseur, SasPay, Supabase, Telegram) dans le code, un commit, un journal ou une variable `NEXT_PUBLIC_`. **La clé fournisseur vue en conversation doit être régénérée.**
+2. Montrer au client le coût fournisseur, la marge, le multiplicateur ou le nom du fournisseur.
+3. Relancer automatiquement `provider.add` (risque de double commande).
 4. Rembourser automatiquement : toujours après examen par le propriétaire.
 5. Modifier un solde avec un simple `update`.
 6. Ajouter une bibliothèque hors de `LLD.md §1`, changer de framework, ajouter un service externe.
 7. Utiliser `any`, `@ts-ignore`, `dangerouslySetInnerHTML`, `useEffect` pour charger des données, un magasin global.
 8. Pousser sur `main`, utiliser `--no-verify`, modifier une migration déjà appliquée.
 9. Toucher à un module hors de la tâche de la session, même pour « améliorer ».
-10. Utiliser le vrai JAP ou un vrai paiement hors de la phase 15.
+10. Utiliser le vrai fournisseur ou un vrai paiement hors de la phase 15.
 11. Dire « c'est fait » sans avoir lancé les vérifications.
+12. Faire apparaître le nom du fournisseur côté client (site, noms et descriptions de services, erreurs, URL publiques).
 
 ## Le propriétaire
 
@@ -115,24 +116,23 @@ Un agent ne démarre jamais avant ce dont il dépend ; ce qui est indépendant t
 
 > À mettre à jour au début de chaque phase (`ROADMAP.md`).
 
-**Phase en cours : Phase 3 — Comptes** (Phases 0 et 1 validées le 2026-11-07, phase 2 le 2026-11-08)
+**Phase en cours : Phase 4 — Prix + catalogue** (Phases 0 et 1 validées le 2026-11-07, phase 2 le 2026-11-08, phase 3 le 2026-11-09)
 
 **Périmètre (seulement ceci)**
-- Inscription (email, téléphone, pays, devise, langue, Turnstile), connexion par email **ou** téléphone, déconnexion, mot de passe oublié.
-- Règles de `SECURITY_NOTES.md §2` (mot de passe, sessions, 5 échecs = blocage 15 min, réponses identiques).
-- `handler`, `apiError`, messages d'erreur FR/EN (`API_SPEC.md §3`).
-- Écrans d'inscription, connexion et mot de passe oublié au design system de la phase 2.
+- (a) Prix = coût fournisseur en XAF × multiplicateur (départ ×3 partout). Multiplicateur réglable par catégorie (réseau × type), avec surcharge par service, jamais en dur ; structure et calcul en base maintenant (écran admin en phase 12). Taux 1 USD = 600 XAF réglable (réglage, pas en dur). Arrondi au multiple de 5 XAF supérieur (prix pour 1000 ET total de commande, minimum 5 XAF). Calculs côté serveur uniquement.
+- (b) Faux fournisseur (`PROVIDER_MODE=mock`) et client du vrai fournisseur (vrai appel seulement en phase 15).
+- (c) Catalogue de 2 188 services classés par règles sur le nom : d'abord le réseau (Instagram, TikTok, Facebook, YouTube, Telegram, Twitter/X, Kick, Threads, etc.), puis le type (abonnés, likes, vues, commentaires, partages, autres). TOUS les services sont vendus et actifs, sauf ceux que le fournisseur déclare indisponibles. Noms reconstruits (jamais le nom ni le prix du fournisseur).
+- (d) Pages catalogue et fiche service, prix en XAF/XOF/USD, prix de la commande minimum affiché.
 
 **Hors périmètre (ne pas toucher)**
-- Paiement, commandes, catalogue, toute logique d'argent ; admin (phase 10).
-- Migrations déjà appliquées (changement de schéma non prévu : demander d'abord).
-- Page d'accueil et SEO (phase 14) ; toute bibliothèque hors `LLD.md §1`.
+- Paiement, commande, admin (phases 11 et 12), écrans de compte, page d'accueil et SEO.
+- Migrations déjà appliquées (changement de schéma non prévu : demander d'abord) ; toute bibliothèque hors `LLD.md §1`.
 
 **Terminé quand (définition de « fini »)**
-- [ ] Tu crées un compte, te reconnectes par téléphone et réinitialises ton mot de passe.
-- [ ] Règles de `SECURITY_NOTES.md §2` testées ; `lp-security` ACCEPTÉ.
-- [ ] Lint, types, tests, build verts ; CI GitHub verte sur la PR.
-- [ ] Rapport dans `docs/reports/phase-3/` et résumé au propriétaire en français simple, avec ce qu'il doit tester.
+- [ ] Catalogue rangé (réseau puis type), tous les services actifs sauf indisponibles.
+- [ ] Les prix respectent les multiplicateurs ; aucun nom ne contient le fournisseur ni son prix.
+- [ ] Lint, types, tests, build verts ; CI GitHub verte sur la PR ; `lp-security` si pertinent.
+- [ ] Rapport dans `docs/reports/phase-4/` et résumé au propriétaire en français simple, avec ce qu'il doit tester.
 
 ## État des documents
 

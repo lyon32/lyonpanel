@@ -4,7 +4,7 @@ export type ServiceOverrides = Record<string, unknown>;
 
 let nextId = 9_000_000 + (Date.now() % 900_000);
 
-/** Insère un vrai service (id unique par appel, hors plage JAP réelle). */
+/** Insère un vrai service (id unique par appel, hors plage réelle du fournisseur). */
 export async function makeService(
   overrides: ServiceOverrides = {},
 ): Promise<{ id: number } & Record<string, unknown>> {

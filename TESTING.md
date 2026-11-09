@@ -10,7 +10,7 @@ Liés : `LLD.md §8`, `CONVENTIONS.md §2` (CI), `PRD.md §3` (cas limites), `EN
 | 1 | Couverture : **100 %** pour l'argent, **80 %** pour le reste de la logique serveur, pas de chiffre imposé pour l'affichage |
 | 2 | Tests de bout en bout sur **petit téléphone Android** (connexion lente simulée) + ordinateur |
 | 3 | **Faux clients uniquement** dans les tests, jamais de vraies données |
-| 4 | **Test final réel** avant lancement : 2–3 petites commandes avec le vrai JAP (≈ 0,50 $) |
+| 4 | **Test final réel** avant lancement : 2–3 petites commandes avec le vrai fournisseur (≈ 0,50 $) |
 | 5 | **Test de charge : 100 clients** simultanés avant lancement |
 | 6 | **Chaque bug corrigé = un test** qui le reproduit |
 
@@ -19,10 +19,10 @@ Liés : `LLD.md §8`, `CONVENTIONS.md §2` (CI), `PRD.md §3` (cas limites), `EN
 | Niveau | Outil | Ce qui est testé | Où | Durée visée |
 |---|---|---|---|---|
 | **Unitaire** | Vitest | Fonctions pures, sans base ni réseau | `tests/unit/` | < 10 s |
-| **Intégration** | Vitest + Supabase local (Docker) | Fonctions SQL, RLS, services `server/*`, routes API avec faux JAP/SasPay | `tests/db/`, `tests/integration/` | < 2 min |
+| **Intégration** | Vitest + Supabase local (Docker) | Fonctions SQL, RLS, services `server/*`, routes API avec faux fournisseur/SasPay | `tests/db/`, `tests/integration/` | < 2 min |
 | **Bout en bout (E2E)** | Playwright | Parcours complets dans un vrai navigateur | `tests/e2e/` | < 5 min |
 | **Charge** | k6, lancé via Docker (mon choix) | 100 clients simultanés | `tests/load/` | avant lancement |
-| **Réel** | À la main, checklist | Vrai JAP + vrai SasPay | `docs/checklist-lancement.md` | une fois avant lancement |
+| **Réel** | À la main, checklist | Vrai fournisseur + vrai SasPay | `docs/checklist-lancement.md` | une fois avant lancement |
 
 ## 2. Quoi tester à quel niveau
 
@@ -31,11 +31,11 @@ Liés : `LLD.md §8`, `CONVENTIONS.md §2` (CI), `PRD.md §3` (cas limites), `EN
 |---|---|
 | `pricing/compute-price` | marge TikTok 120 %, Instagram/Facebook 75 %, paliers 70/65/60 %, override service, arrondi au multiple de 5 supérieur, minimum 5 XAF |
 | `pricing/discount` | sous le seuil = 0 ; seuil atteint = 10 % ; remise perso plus grande / plus petite ; jamais cumulées |
-| Total commande | quantité min, max, non ronde (ex. 137) ; jamais sous coût JAP + marge minimale |
+| Total commande | quantité min, max, non ronde (ex. 137) ; jamais sous coût fournisseur + marge minimale |
 | `pricing/fees` | frais SasPay, arrondis |
 | Parrainage | 5 % arrondi à l'inférieur ; 3 000 → 150 ; 10 000 → 500 |
 | `catalog/classify` | chaque plateforme ; catégorie inconnue → `other` |
-| `catalog/build-name` | jamais de prix ni d'étiquette JAP ; min/max = champs API ; FR et EN |
+| `catalog/build-name` | jamais de prix ni d'étiquette fournisseur ; min/max = champs API ; FR et EN |
 | `orders/validate-link` | liens valides et invalides par plateforme |
 | `lib/money` | affichage XAF, XOF, USD au taux donné |
 | `lib/schemas/*` | entrées valides et refusées |
@@ -48,9 +48,9 @@ Liés : `LLD.md §8`, `CONVENTIONS.md §2` (CI), `PRD.md §3` (cas limites), `EN
 | `credit_payment` | crédit normal ; webhook reçu 2 fois = 1 crédit ; montant différent = refus ; 1re recharge d'un filleul = bonus parrain une seule fois ; `total_recharged_xaf` mis à jour ; seuil de remise franchi |
 | `refund_order` | total, partiel, double remboursement refusé, `audit_log` écrit |
 | `anonymize_user` | email/téléphone/messages effacés ; commandes et paiements gardés |
-| **RLS** | client A ne lit ni les commandes, ni le solde, ni les tickets de B ; client ne lit jamais `admin_notes`, `settings`, coûts JAP ; aucune écriture directe sur `wallets` |
+| **RLS** | client A ne lit ni les commandes, ni le solde, ni les tickets de B ; client ne lit jamais `admin_notes`, `settings`, coûts fournisseur ; aucune écriture directe sur `wallets` |
 | Webhook SasPay | signature fausse = 400 ; doublon = 200 sans crédit |
-| Envoi JAP (faux JAP) | succès → `in_progress` ; erreur ou délai → `to_review` + alerte ; aucune 2e tentative |
+| Envoi fournisseur (faux fournisseur) | succès → `in_progress` ; erreur ou délai → `to_review` + alerte ; aucune 2e tentative |
 | Sync statuts | `Completed`, `Partial`, `Canceled` bien traduits |
 | Sync catalogue | nouveau service inactif ; retiré → indisponible ; historique de prix écrit ; alerte écart |
 | Routes API | format d'erreur unique, codes HTTP, limite 10 commandes/min, admin = 404 pour un client |
@@ -75,7 +75,7 @@ Appareils (Playwright `projects`) :
 ### Ce qu'on ne teste pas automatiquement
 - Le style pur (couleurs, marges) : revue visuelle en PR avec captures.
 - Les animations GSAP / Lenis.
-- Les vraies API JAP et SasPay (seulement au test réel §6).
+- Les vraies API fournisseur et SasPay (seulement au test réel §6).
 
 ## 3. Couverture
 
@@ -91,7 +91,7 @@ Mesure : `vitest --coverage` (v8), seuils dans `vitest.config.ts`. Seuil non att
 
 ## 4. Données de test et fixtures
 
-**Règle : jamais de vraies données de clients**, ni de vraies clés, ni le vrai catalogue avec prix JAP dans le dépôt.
+**Règle : jamais de vraies données de clients**, ni de vraies clés, ni le vrai catalogue avec prix fournisseur dans le dépôt.
 
 | Élément | Approche |
 |---|---|
@@ -99,7 +99,7 @@ Mesure : `vitest --coverage` (v8), seuils dans `vitest.config.ts`. Seuil non att
 | Faux clients | emails `client-<n>@lyonpanel.test`, téléphones `+237600000<nnn>` (plage fictive, mon choix) |
 | Base locale | chaque test tourne dans une **transaction annulée à la fin** ; `db reset` avant la suite complète |
 | Données de départ | `supabase/seed.sql` : réglages par défaut + ~20 services fictifs (TikTok, Instagram, Facebook), prix inventés |
-| Faux JAP | `src/server/providers/jap-mock.ts` (si `JAP_MODE=mock`) : répond comme l'API v2 ; scénarios pilotés par le lien (`…/fail` → erreur, `…/slow` → délai dépassé, `…/partial` → Partial) |
+| faux fournisseur | `src/server/providers/fake-provider.ts` (si `PROVIDER_MODE=mock`) : répond comme l'API v2 ; scénarios pilotés par le lien (`…/fail` → erreur, `…/slow` → délai dépassé, `…/partial` → Partial) |
 | Faux SasPay | mode test SasPay pour l'E2E ; en intégration, webhooks signés générés par `tests/helpers/saspay-webhook.ts` |
 | Turnstile | clés de test Cloudflare (toujours « réussi ») |
 | Telegram | en test : messages capturés en mémoire, rien n'est envoyé |
@@ -115,14 +115,14 @@ Mesure : `vitest --coverage` (v8), seuils dans `vitest.config.ts`. Seuil non att
 
 ## 6. Avant le lancement
 
-**Test de charge** (k6, 100 clients virtuels, 10 min, environnement Preview avec faux JAP)
+**Test de charge** (k6, 100 clients virtuels, 10 min, environnement Preview avec faux fournisseur)
 - Parcours simulé : accueil → catalogue → connexion → devis → commande.
 - Objectifs (mon choix) : 95 % des réponses < 800 ms, 0 erreur 5xx, aucun solde négatif ni double débit en base après le test.
 
 **Test réel** (à la main, `docs/checklist-lancement.md`)
-1. Régénérer la clé JAP, la mettre dans Vercel Production.
+1. Régénérer la clé fournisseur, la mettre dans Vercel Production.
 2. Recharger 3 000 XAF par un vrai Mobile Money → solde crédité une fois.
-3. Passer 2–3 commandes minimales (vues TikTok, likes Instagram, likes Facebook), ≈ 0,50 $ JAP.
+3. Passer 2–3 commandes minimales (vues TikTok, likes Instagram, likes Facebook), ≈ 0,50 $ fournisseur.
 4. Vérifier : statuts mis à jour, bénéfice juste dans l'admin, alertes Telegram reçues.
 5. Rembourser une commande depuis l'admin → solde client correct.
 6. **Test de restauration** : restaurer une sauvegarde Supabase dans le projet test et vérifier les données.

@@ -29,7 +29,7 @@ flowchart LR
 
 ## 2. Environnements
 
-| Environnement | Déclencheur | Base | JAP | SasPay | Adresse |
+| Environnement | Déclencheur | Base | fournisseur | SasPay | Adresse |
 |---|---|---|---|---|---|
 | Local | `npm run dev` | Supabase local (Docker) | mock | test | localhost:3000 |
 | Preview | chaque push sur une branche / PR | Supabase **test** | mock | test | `lyonpanel-git-<branche>.vercel.app` (protégée par mot de passe Vercel, mon choix) |
@@ -51,7 +51,7 @@ Fichier `.github/workflows/ci.yml`, sur chaque PR et chaque push vers `main` :
 | 8. Construction | `npm run build` | oui |
 | 9. E2E | `npm run test:e2e` (Android + ordinateur) contre la version construite | oui |
 | 10. Sécurité | `npm audit --audit-level=high` + scan de secrets (gitleaks, mon choix) | oui |
-| 10 bis. Aucun secret envoyé au navigateur | Après le build, `scripts/check-client-bundle.mjs` cherche dans `.next/static/**` (fichiers envoyés au navigateur) : les **valeurs** des variables secrètes de la CI, et les motifs `sk_live_`, `sk_test_`, `service_role`, `JAP_API_KEY`, `SASPAY_`, `TELEGRAM_BOT_TOKEN`, `CRON_SECRET`, `SENTRY_AUTH_TOKEN`. Une seule trouvaille = échec | oui |
+| 10 bis. Aucun secret envoyé au navigateur | Après le build, `scripts/check-client-bundle.mjs` cherche dans `.next/static/**` (fichiers envoyés au navigateur) : les **valeurs** des variables secrètes de la CI, et les motifs `sk_live_`, `sk_test_`, `service_role`, `PROVIDER_API_KEY`, `SASPAY_`, `TELEGRAM_BOT_TOKEN`, `CRON_SECRET`, `SENTRY_AUTH_TOKEN`. Une seule trouvaille = échec | oui |
 | 11. Vérif migrations | toute nouvelle migration doit s'appliquer sur une base vide **et** sur la base précédente | oui |
 
 Résultats : rapport de couverture et traces Playwright gardés 7 jours en artefacts.
