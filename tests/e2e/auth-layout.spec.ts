@@ -313,3 +313,87 @@ test.describe('double clic sur le bouton de bascule', () => {
     });
   }
 });
+
+test.describe('bascule immédiate, indépendante du réseau', () => {
+  test.use({ viewport: { width: 1366, height: 768 } });
+
+  for (const [locale, login, register, phone, identifier] of [
+    [
+      'fr',
+      '/fr/connexion',
+      /\/fr\/inscription$/,
+      'input[name="phone"]',
+      'input[name="identifier"]',
+    ],
+    ['en', '/en/login', /\/en\/register$/, 'input[name="phone"]', 'input[name="identifier"]'],
+  ] as const) {
+    test(`le panneau part au clic et le formulaire apparaît sans attendre le serveur (${locale})`, async ({
+      page,
+    }) => {
+      await page.goto(login);
+      await ready(page);
+      // Navigation ralentie : toute requête de page Next (RSC) attend 2 s.
+      await page.route(/_rsc=/, async (route) => {
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        await route.continue();
+      });
+      // Mesure dans la page (sans le délai de Playwright) : temps entre le clic et le premier déplacement.
+      await page.evaluate(() => {
+        const panel = document.querySelector('.lp-auth-panel') as HTMLElement;
+        const start = panel.getBoundingClientRect().left;
+        const win = window as unknown as { __firstMove?: number };
+        document.querySelector('.lp-auth-panel a')?.addEventListener(
+          'click',
+          () => {
+            const t0 = performance.now();
+            const tick = () => {
+              if (Math.abs(panel.getBoundingClientRect().left - start) > 20) {
+                win.__firstMove = performance.now() - t0;
+              } else requestAnimationFrame(tick);
+            };
+            requestAnimationFrame(tick);
+          },
+          true,
+        );
+      });
+      await page.locator('.lp-auth-panel a').click();
+      const t0 = Date.now();
+      // Le panneau part au clic. Seuil large : `next dev` (rendu non optimisé) ajoute du délai ; 90 à 250 ms mesurés.
+      await expect
+        .poll(() =>
+          page.evaluate(() => (window as unknown as { __firstMove?: number }).__firstMove ?? 9999),
+        )
+        .toBeLessThan(400);
+      // Fin du mouvement (~1 s) : le formulaire d'inscription est là, l'adresse n'a pas besoin d'avoir changé.
+      await expect(page.locator(phone)).toBeVisible({ timeout: 1200 });
+      await expect(page.locator(identifier)).toHaveCount(0);
+      expect(Date.now() - t0).toBeLessThan(1500);
+      await expect(page.locator('input[name="email"]')).toBeFocused();
+      // La navigation se termine ensuite : même formulaire, bonne adresse, un seul formulaire.
+      await expect(page).toHaveURL(register, { timeout: 15_000 });
+      await expect(page.locator('.lp-auth-pane form')).toHaveCount(1);
+    });
+  }
+
+  test('sens : « S’inscrire » va vers la gauche, « Se connecter » vers la droite', async ({
+    page,
+  }) => {
+    await page.goto('/fr/connexion');
+    await ready(page);
+    const left = () =>
+      page.locator('.lp-auth-panel').evaluate((el) => el.getBoundingClientRect().left);
+    const cardLeft = await page
+      .locator('.lp-auth-shell main > div')
+      .evaluate((el) => el.getBoundingClientRect().left);
+    expect(await left()).toBeGreaterThan(cardLeft + 500);
+    await page.locator('.lp-auth-panel a').click();
+    await expect.poll(left, { timeout: 5000 }).toBeLessThan(cardLeft + 2);
+    // Le formulaire d'inscription est à droite du panneau.
+    const form = await page.locator('input[name="email"]').boundingBox();
+    expect(form?.x ?? 0).toBeGreaterThan(cardLeft + 400);
+    await page.locator('.lp-auth-panel a').click();
+    await expect.poll(left, { timeout: 5000 }).toBeGreaterThan(cardLeft + 500);
+    const login = await page.locator('input[name="identifier"]').boundingBox();
+    expect(login?.x ?? 9999).toBeLessThan(cardLeft + 400);
+  });
+});

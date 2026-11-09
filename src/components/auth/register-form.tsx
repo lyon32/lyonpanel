@@ -1,7 +1,7 @@
 'use client';
 
 import { useLocale, useTranslations } from 'next-intl';
-import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from 'react';
 import { FormAlert } from './form-alert';
 import { SelectField } from './select-field';
 import { TurnstileWidget } from './turnstile-widget';
@@ -43,10 +43,13 @@ export function RegisterForm({ referralCode }: { referralCode?: string }) {
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const [step, setStep] = useState<1 | 2>(1);
-  const names = new Intl.DisplayNames([locale], { type: 'region' });
-  const countries = AFRICAN_COUNTRIES.map((code) => ({ code, name: names.of(code) ?? code })).sort(
-    (a, b) => a.name.localeCompare(b.name, locale),
-  );
+  // Calculé une seule fois par langue : la liste des pays ne change pas.
+  const countries = useMemo(() => {
+    const names = new Intl.DisplayNames([locale], { type: 'region' });
+    return AFRICAN_COUNTRIES.map((code) => ({ code, name: names.of(code) ?? code })).sort((a, b) =>
+      a.name.localeCompare(b.name, locale),
+    );
+  }, [locale]);
 
   const { pending, success, formError, fieldErrors, setFieldErrors, fieldMessage, handleSubmit } =
     useAuthForm({
