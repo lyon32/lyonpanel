@@ -31,7 +31,12 @@ export async function userClient(userId: string): Promise<SupabaseClient> {
     requireEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY'),
     authOptions,
   );
-  const { error } = await client.auth.signInWithPassword({ email, password: TEST_PASSWORD });
+  const { error } = await client.auth.signInWithPassword({
+    email,
+    password: TEST_PASSWORD,
+    // Jeton factice accepté par la clé secrète de test Turnstile (le captcha est vérifié par Supabase)
+    options: { captchaToken: 'XXXX.DUMMY.TOKEN.XXXX' },
+  });
   if (error) throw new Error(`Connexion de test impossible : ${error.message}`);
   return client;
 }
