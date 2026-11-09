@@ -52,6 +52,7 @@ Modèle : [`.env.example`](.env.example). En local : copier en `.env.local` (ign
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | non | Widget anti-bot | Cloudflare → Turnstile | clé de test publique Cloudflare |
 | `TURNSTILE_SECRET_KEY` | **oui** | Vérification serveur Turnstile | idem | clé de test publique Cloudflare |
 | `CRON_SECRET` | **oui** | Protéger `/api/cron/*` ; même valeur dans Vercel et dans le Worker Cloudflare (`wrangler secret put`) | `openssl rand -hex 32` | une valeur au choix |
+| `AUTH_HASH_SECRET` | **oui** | Clé des empreintes (HMAC) des emails/IP dans `login_attempts` ; obligatoire en production (sans elle, les connexions échouent) | `openssl rand -hex 32` | vide (valeur de repli de test) |
 | `NEXT_PUBLIC_SENTRY_DSN` | non (public par nature) | Adresse d'envoi des erreurs à Sentry | Sentry → projet → Client Keys (DSN) ; **fournie par le propriétaire**, déjà dans `.env.local` | la valeur fournie |
 | `SENTRY_AUTH_TOKEN` | **oui** | Envoi des « source maps » (traces lisibles) au build | Sentry → Settings → Auth Tokens | vide en local ; seulement dans Vercel et la CI |
 | `SENTRY_ORG`, `SENTRY_PROJECT` | non | Identifiants pour l'envoi des source maps | Sentry → Settings | à remplir en Phase 0 |
@@ -129,6 +130,17 @@ Ensuite activer le code à 6 chiffres sur `http://localhost:3000/<ADMIN_PATH>/lo
 | `npm run db:migration -- nom` | Créer une migration |
 | `npm run db:types` | Régénérer `src/server/db/types.ts` |
 | `npm run admin:promote -- email` | Donner le rôle admin en local |
+
+## 5 bis. Email de réinitialisation du mot de passe (Supabase)
+
+- Supabase → Authentication → Email Templates → « Reset Password » : le lien doit être
+  `{{ .SiteURL }}/fr/nouveau-mot-de-passe?token_hash={{ .TokenHash }}&type=recovery` (FR) et `{{ .SiteURL }}/en/reset-password?token_hash={{ .TokenHash }}&type=recovery` (EN).
+- Authentication → URL Configuration : « Site URL » = `NEXT_PUBLIC_SITE_URL` ; « Redirect URLs » = les deux pages ci-dessus.
+- En local, `supabase/config.toml` et `supabase/templates/recovery.html` règlent cela. Le modèle choisit la langue du lien avec `{{ .Data.language }}` (la langue enregistrée à l'inscription dans les métadonnées de l'utilisateur) ; le mail est bilingue (français puis anglais dans le corps, sujet bilingue, car le sujet ne peut pas dépendre de la langue) ; le lien mène à la page de la bonne langue.
+- **Réglages Authentication du tableau de bord Supabase hébergé (Preview et Production)**, identiques à `config.toml` : « Allow new users to sign up » = **désactivé** (les comptes se créent par notre route, via `admin.createUser`), longueur minimale du mot de passe = **8**, « Secure password change » = **activé**.
+
+- **Tests de navigateur (Playwright)** : le port se règle avec `PLAYWRIGHT_PORT` (3000 par défaut), par exemple `PLAYWRIGHT_PORT=3190 npx playwright test` si le port 3000 est pris.
+- **CLI Supabase 3** : selon la version, `supabase start` ou `status` refuse `[inbucket]` et veut `[local_smtp]`. Si cela arrive, tester sur une copie temporaire du dossier `supabase` avec cette section renommée ; la version 3.0.0 testée ici accepte encore `[inbucket]`.
 
 ## 6. Dépendances
 

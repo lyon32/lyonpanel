@@ -115,26 +115,24 @@ Un agent ne démarre jamais avant ce dont il dépend ; ce qui est indépendant t
 
 > À mettre à jour au début de chaque phase (`ROADMAP.md`).
 
-**Phase en cours : Phase 2 — Design system + mise en page** (Phases 0 et 1 validées le 2026-11-07)
+**Phase en cours : Phase 3 — Comptes** (Phases 0 et 1 validées le 2026-11-07, phase 2 le 2026-11-08)
 
 **Périmètre (seulement ceci)**
-- Variables de `docs/05-design-system.md` (couleurs, Public Sans, espacements, arrondis) et composants shadcn/ui adaptés : bouton, champ, carte, badge, tableau, dialogue.
-- `next-intl` FR/EN avec adresses traduites (`LLD.md §6`), choix de langue et de devise mémorisés par cookies.
-- En-tête, pied de page, barre latérale (menu du bas sur téléphone), états vide / chargement / erreur.
-- Logo et favicon de `brand/lyonpanel-v2/`.
-- Page de démonstration montrant tous les composants en FR et EN, téléphone et ordinateur.
+- Inscription (email, téléphone, pays, devise, langue, Turnstile), connexion par email **ou** téléphone, déconnexion, mot de passe oublié.
+- Règles de `SECURITY_NOTES.md §2` (mot de passe, sessions, 5 échecs = blocage 15 min, réponses identiques).
+- `handler`, `apiError`, messages d'erreur FR/EN (`API_SPEC.md §3`).
+- Écrans d'inscription, connexion et mot de passe oublié au design system de la phase 2.
 
 **Hors périmètre (ne pas toucher)**
-- Comptes, paiement, commandes, toute logique métier ; base de données (migrations de la phase 1 intactes).
-- Page d'accueil finale et SEO complet (phase 14) ; tout texte ou chiffre inventé.
-- Toute bibliothèque hors `LLD.md §1` : demander d'abord.
+- Paiement, commandes, catalogue, toute logique d'argent ; admin (phase 10).
+- Migrations déjà appliquées (changement de schéma non prévu : demander d'abord).
+- Page d'accueil et SEO (phase 14) ; toute bibliothèque hors `LLD.md §1`.
 
 **Terminé quand (définition de « fini »)**
-- [ ] Une page de démonstration montre tous les composants en FR et EN, sur téléphone (360 px) et ordinateur.
-- [ ] Adresses traduites et choix de langue/devise (cookies) fonctionnent et sont testés.
-- [ ] Aucun mode sombre, aucun look « IA » (`antislop-ui`, `antislop-layoutmobile`) ; contraste et clavier vérifiés.
+- [ ] Tu crées un compte, te reconnectes par téléphone et réinitialises ton mot de passe.
+- [ ] Règles de `SECURITY_NOTES.md §2` testées ; `lp-security` ACCEPTÉ.
 - [ ] Lint, types, tests, build verts ; CI GitHub verte sur la PR.
-- [ ] Rapport dans `docs/reports/phase-2/` et résumé au propriétaire en français simple, avec ce qu'il doit tester.
+- [ ] Rapport dans `docs/reports/phase-3/` et résumé au propriétaire en français simple, avec ce qu'il doit tester.
 
 ## État des documents
 

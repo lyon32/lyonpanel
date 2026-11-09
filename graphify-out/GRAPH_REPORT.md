@@ -1,17 +1,17 @@
-# Graph Report - phase-2-design-system-55cfa1  (2026-11-07)
+# Graph Report - phase-2-design-system-55cfa1  (2026-11-08)
 
 ## Corpus Check
-- 431 files · ~372,368 words
+- 493 files · ~391,732 words
 - Verdict: corpus is large enough that graph structure adds value.
-- Unclassified: 50 file(s) not represented in the graph (top: (none) 45, .example 1, .ico 1)
+- Unclassified: 50 file(s) not represented in the graph (top: (none) 44, .toml 2, .example 1)
 
 ## Summary
-- 3395 nodes · 4782 edges · 294 communities (272 shown, 22 thin omitted)
-- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 45 edges (avg confidence: 0.94)
+- 3634 nodes · 5562 edges · 293 communities (277 shown, 16 thin omitted)
+- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 61 edges (avg confidence: 0.93)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `07144d64`
+- Built from commit: `76a6c29a`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -32,18 +32,17 @@
 - 3. Schémas des tables
 - the-menu-bar.md
 - Détail des phases
-- layout.md
-- useMotionLevel
-- hig-lookup.md
+- react
+- designing-for-games.md
 - Widgets
 - Content Research Writer
 - LyonPanel — Spécification de l'API
 - Apple Pay
 - Unslop
-- Logo
+- rate-limit.ts
 - demo-basics.tsx
 - designing-for-games.md
-- next-intl
+- demo/page.tsx
 - dependencies
 - compilerOptions
 - Group 1: Hard Gate (absolute, no exceptions)
@@ -61,7 +60,8 @@
 - LyonPanel — Conception détaillée (LLD)
 - demo-track-e.tsx
 - lp-reporter — Superviseur des rapports
-- playing-haptics.md
+- text-fields.md
+- gyro-and-accelerometer.md
 - Standard icons
 - quick reference
 - LyonPanel — Règlement de l'équipe
@@ -69,17 +69,17 @@
 - LyonPanel — Sécurité et cas limites
 - Color
 - Ordre et parallélisme
-- add-funds/page.tsx
+- auth.ts
 - LyonPanel — Contexte pour l'IA
 - Buttons
 - Liquid Glass
 - Sign in with Apple
 - quick reference
 - LyonPanel — Document de conception
-- smooth-tab.tsx
+- api-error.ts
 - Bilan — Phase 2 : Design system + mise en page
 - scripts
-- react
+- Button
 - LyonPanel — CI / CD (vérification et mise en ligne)
 - lp-coder — Développeur Next.js / TypeScript
 - lp-db — Ingénieur base de données
@@ -102,7 +102,7 @@
 - Toolbars
 - Create DESIGN.md
 - Référencement Afrique et design
-- env.ts
+- supabase-deps.ts
 - Ordre et parallélisme
 - Bilan — Phase 0 : Socle du projet
 - Signs of slop
@@ -131,7 +131,7 @@
 - LyonPanel — Conventions
 - Bilan — Phase 1 : Base de données
 - LyonPanel — Mise en place de l'environnement
-- rls.test.ts
+- server-only
 - types.ts
 - Group 3: Quality Locks (consistency)
 - AirPlay
@@ -169,7 +169,7 @@
 - Tâche 1.3 — `credit_payment` (créditer un paiement)
 - Tâche 1.7 — Seed, types TypeScript, CI
 - Tâche 2.2 — Langues, adresses traduites, cookies
-- Tâche 2.5 — États vide, chargement, erreur
+- next.config.ts
 - @playwright/test
 - credit-payment.test.ts
 - antislop
@@ -251,9 +251,9 @@
 - Undo and redo
 - VoiceOver
 - Writing
-- demo-lazy.tsx
+- Tâche 2.6 — Page de démonstration FR + EN
 - [locale]/layout.tsx
-- refund-order.test.ts
+- hardening.test.ts
 - Prompt de référence du logo LyonPanel
 - Delivery Gate (Mandatory)
 - Action sheets
@@ -268,7 +268,7 @@
 - Printing
 - Rating indicators
 - Steppers
-- token-fields.md
+- eslint.config.mjs
 - ponytail-audit/SKILL.md
 - Ponytail Gain
 - ponytail-review/SKILL.md
@@ -278,7 +278,7 @@
 - Part 3: Liveliness Toolkit
 - Structural & Flow
 - Cross-platform translation
-- Combo boxes
+- login-form.test.tsx
 - Ratings and reviews
 - Web views
 - firecrawl crawl
@@ -292,33 +292,33 @@
 - firecrawl-seo-audit/SKILL.md
 - postcss.config.mjs
 - Effects
-- order/page.tsx
-- transactions/page.tsx
+- turnstile.ts
+- log-mask.ts
+- auth-attempts.test.ts
 - Visuals
-- terms/page.tsx
+- Column views
 - interface
-- privacy/page.tsx
-- error-page.test.tsx
-- services/page.tsx
-- parallax-cards.test.tsx
+- NFC
+- Outline views
+- status-bars.md
 
 ## God Nodes (most connected - your core abstractions)
-1. `cn()` - 64 edges
-2. `vitest` - 51 edges
-3. `next-intl` - 47 edges
-4. `react` - 41 edges
-5. `ComingSoon()` - 35 edges
-6. `next` - 30 edges
-7. `@testing-library/react` - 26 edges
-8. `adminClient()` - 25 edges
-9. `DemoBasics()` - 22 edges
-10. `lucide-react` - 20 edges
+1. `vitest` - 70 edges
+2. `cn()` - 66 edges
+3. `next-intl` - 56 edges
+4. `react` - 49 edges
+5. `next` - 41 edges
+6. `ComingSoon()` - 29 edges
+7. `@testing-library/react` - 27 edges
+8. `apiError()` - 26 edges
+9. `Button()` - 26 edges
+10. `adminClient()` - 26 edges
 
 ## Surprising Connections (you probably didn't know these)
+- `1. Qui peut faire quoi` --references--> `requireUser()`  [INFERRED]
+  SECURITY_NOTES.md → src/server/auth/require-user.ts
 - `Tâche 0.2 — Vérification des variables d'environnement` --references--> `MissingEnvError`  [INFERRED]
   docs/plans/phase-0.md → src/server/env.ts
-- `Stack` --references--> `cn()`  [INFERRED]
-  .claude/skills/baseline-ui/SKILL.md → src/lib/cn.ts
 - `Ce qui a été fait` --references--> `Reveal()`  [INFERRED]
   docs/reports/phase-2/2026-11-07-tache-2.8.md → src/components/motion/reveal.tsx
 - `Ce qui reste ouvert` --references--> `Reveal()`  [INFERRED]
@@ -329,11 +329,11 @@
 ## Import Cycles
 - None detected.
 
-## Communities (294 total, 22 thin omitted)
+## Communities (293 total, 16 thin omitted)
 
 ### Community 0 - "ComingSoon"
-Cohesion: 0.09
-Nodes (16): DashboardPage(), Props, FavoritesPage(), Props, OrdersPage(), Props, Props, ReferralPage() (+8 more)
+Cohesion: 0.05
+Nodes (28): AccountPage(), Props, AddfundsPage(), Props, DashboardPage(), Props, FavoritesPage(), Props (+20 more)
 
 ### Community 1 - "Accessibility Code Patterns"
 Cohesion: 0.04
@@ -345,19 +345,19 @@ Nodes (20): contrast_ratio(), linearize(), luminance(), main(), parse_hex(), par
 
 ### Community 3 - "button.tsx"
 Cohesion: 0.14
-Nodes (16): Tâche 2.5 — États vide, chargement, erreur, Ce qui a été fait, NotFound(), Loading(), DemoStates(), EmptyState(), EmptyStateProps, ErrorState() (+8 more)
+Nodes (14): Ce que tu peux tester toi-même, Ce qui a été fait, Ce qui reste / réserves, Corrections demandées puis faites, En une phrase, Fichiers modifiés, Tâche 2.5 — États vide, chargement, erreur, Vérifications (résultats réels) (+6 more)
 
 ### Community 4 - "Tone & Voice"
 Cohesion: 0.05
 Nodes (41): Actorless Passive, All-Caps Emphasis, antislop-copywriting, Aphorism Formulas, Boldface Overuse, Chatbot Closers, Copywriting Skill Checklist, Draft, audit, final (+33 more)
 
 ### Community 5 - "vitest"
-Cohesion: 0.23
-Nodes (8): @testing-library/react, @testing-library/user-event, vitest, renderIntl(), testMessages, buildNavigationMock(), navState, replaceSpy
+Cohesion: 0.16
+Nodes (13): @testing-library/react, @testing-library/user-event, ErrorPage(), ErrorState(), ErrorStateProps, Input(), renderIntl(), testMessages (+5 more)
 
 ### Community 6 - "package.json"
 Cohesion: 0.07
-Nodes (41): clientServerImport, devDependencies, eslint@9.39.5, eslint-config-next@16.4.5, husky@9.1.7, jsdom@29.1.1, lint-staged@17.6.0, prettier@3.9.10 (+33 more)
+Nodes (36): devDependencies, husky@9.1.7, jsdom@29.1.1, lint-staged@17.6.0, prettier@3.9.10, prettier-plugin-tailwindcss@0.8.1, tailwindcss@4.3.5, @tailwindcss/postcss@4.3.5 (+28 more)
 
 ### Community 7 - "Typography"
 Cohesion: 0.06
@@ -388,24 +388,16 @@ Cohesion: 0.07
 Nodes (27): 0. Décisions du propriétaire prises en compte, 1. Diagramme entité-relation, 2. Types énumérés, 3. Schémas des tables, 4. Index, 5. Sécurité des lignes (RLS), 6. Fonctions SQL atomiques (seules à toucher l'argent), 7. Migrations et versions (+19 more)
 
 ### Community 14 - "the-menu-bar.md"
-Cohesion: 0.11
-Nodes (15): Best practices, Dock menus, Platform considerations, Related guidelines, Best practices, Home Screen quick actions, Platform considerations, Related guidelines (+7 more)
+Cohesion: 0.12
+Nodes (12): Best practices, Dock menus, Platform considerations, Related guidelines, Best practices, Home Screen quick actions, Platform considerations, Related guidelines (+4 more)
 
 ### Community 15 - "Détail des phases"
-Cohesion: 0.07
-Nodes (25): Roadmap, Après le lancement (non planifié), Détail des phases, LyonPanel — Roadmap de réalisation, Outil à évaluer plus tard : context-mode, Phase 0 — Socle du projet, Phase 10 — Parrainage + remises, Phase 11 — Admin (1) : accès, stats, clients (+17 more)
+Cohesion: 0.08
+Nodes (24): Roadmap, Après le lancement (non planifié), Détail des phases, LyonPanel — Roadmap de réalisation, Outil à évaluer plus tard : context-mode, Phase 0 — Socle du projet, Phase 10 — Parrainage + remises, Phase 11 — Admin (1) : accès, stats, clients (+16 more)
 
-### Community 16 - "layout.md"
-Cohesion: 0.15
-Nodes (8): Best practices, Column views, Platform considerations, Related guidelines, Best practices, Outline views, Platform considerations, Related guidelines
-
-### Community 17 - "useMotionLevel"
-Cohesion: 0.12
-Nodes (17): motion, FloatingCards(), FloatingCardsProps, HeroStage(), loadFeatures(), MotionLazy(), Reveal(), RevealProps (+9 more)
-
-### Community 18 - "hig-lookup.md"
-Cohesion: 0.16
-Nodes (4): Background tag reading, In-app tag reading, NFC, Platform considerations
+### Community 17 - "react"
+Cohesion: 0.06
+Nodes (41): Composants copiés de Kokonut UI et d'Aceternity : à quoi ils servent ensuite, motion@14.10.1, motion, react, AttractButton(), AttractButtonCanvas, AttractButtonCanvas(), Controls (+33 more)
 
 ### Community 19 - "Widgets"
 Cohesion: 0.08
@@ -427,25 +419,25 @@ Nodes (23): Apple Pay, Apple Pay button, Apple Pay mark, Black, Button size and 
 Cohesion: 0.12
 Nodes (16): 1. Spacing, 2. Color, 3. Icons, 4. Copy, 5. Type, 6. Layout, 7. Details, 8. Visuals (+8 more)
 
-### Community 24 - "Logo"
-Cohesion: 0.33
-Nodes (5): Tâche 2.1 — Variables, police, logo, favicon, Ce qui a été fait, Logo(), LogoProps, SOURCES
+### Community 24 - "rate-limit.ts"
+Cohesion: 0.12
+Nodes (20): LoginDeps, PasswordResetDeps, AttemptStore, createLoginLimiter(), createRateLimiter(), hashIdentifier(), hashIp(), hashSecret() (+12 more)
 
 ### Community 25 - "demo-basics.tsx"
-Cohesion: 0.20
-Nodes (21): Block(), DemoBasics(), Card(), CardContent(), CardDescription(), CardFooter(), CardHeader(), CardTitle() (+13 more)
+Cohesion: 0.15
+Nodes (26): ForgotPasswordPage(), Props, AuthCard(), HoverCards(), HoverCardsProps, Block(), DemoBasics(), Card() (+18 more)
 
 ### Community 26 - "designing-for-games.md"
-Cohesion: 0.19
-Nodes (6): Best practices, Designing for iOS, Best practices, Designing for iPadOS, Best practices, Designing for macOS
+Cohesion: 0.14
+Nodes (8): Best practices, Designing for iPadOS, Best practices, Designing for macOS, Best practices, Feedback, Platform considerations, Related guidelines
 
-### Community 27 - "next-intl"
-Cohesion: 0.09
-Nodes (39): gsap, lucide-react, next-intl, DemoPage(), Props, SectionTitle(), HomePage(), BottomNav() (+31 more)
+### Community 27 - "demo/page.tsx"
+Cohesion: 0.11
+Nodes (32): lucide-react, DemoPage(), Props, SectionTitle(), HomePage(), FaqAccordion(), FaqAccordionProps, FeatureTabs() (+24 more)
 
 ### Community 28 - "dependencies"
-Cohesion: 0.10
-Nodes (20): dependencies, class-variance-authority@0.7.1, clsx@2.1.1, gsap@3.15.1, lucide-react@1.70.0, motion@14.10.1, next@16.4.5, next-intl@4.14.9 (+12 more)
+Cohesion: 0.08
+Nodes (24): dependencies, class-variance-authority@0.7.1, clsx@2.1.1, gsap@3.15.1, lucide-react@1.70.0, next@16.4.5, next-intl@4.14.9, @radix-ui/react-dialog@1.3.1 (+16 more)
 
 ### Community 29 - "compilerOptions"
 Cohesion: 0.10
@@ -480,8 +472,8 @@ Cohesion: 0.14
 Nodes (14): Accent, App layout, Buttons, Dark, Depth, Icons, Light, Motion (+6 more)
 
 ### Community 37 - "adminClient"
-Cohesion: 0.19
-Nodes (12): connected(), created, db, funded(), adminClient(), authOptions, requireEnv(), userClient() (+4 more)
+Cohesion: 0.21
+Nodes (10): adminClient(), authOptions, requireEnv(), userClient(), created, db, getSetting(), SeedService (+2 more)
 
 ### Community 38 - "Comments That Add Nothing"
 Cohesion: 0.11
@@ -504,16 +496,20 @@ Cohesion: 0.11
 Nodes (17): 0. Décisions prises en compte, 1. Bibliothèques autorisées, 2. Arborescence, 3. Responsabilités des modules, 4.1 Prix — `server/pricing`, 4.2 Catalogue — `server/catalog`, 4.3 Commandes — `server/orders`, 4.4 Paiements — `server/payments` (+9 more)
 
 ### Community 43 - "demo-track-e.tsx"
-Cohesion: 0.09
-Nodes (27): Composants copiés de Kokonut UI et d'Aceternity : à quoi ils servent ensuite, band(), EASE_IN_OUT, EASE_OUT, Phase, SlideToConfirm(), SlideToConfirmProps, wait() (+19 more)
+Cohesion: 0.07
+Nodes (36): band(), EASE_IN_OUT, EASE_OUT, Phase, SlideToConfirm(), SlideToConfirmProps, wait(), clamp() (+28 more)
 
 ### Community 44 - "lp-reporter — Superviseur des rapports"
 Cohesion: 0.12
 Nodes (16): 10. Compte-rendu au chef de projet, 11. Skills à utiliser, 12. Règles communes, 1. Qui tu es et pourquoi tu existes, 2. Ce que tu reçois, 3. Ce que tu livres, 4. Méthode, pas à pas, 5. Obsidian (serveur MCP `mcp-tools-istefox`) (+8 more)
 
-### Community 46 - "playing-haptics.md"
-Cohesion: 0.15
-Nodes (8): Best practices, Feedback, Platform considerations, Related guidelines, Best practices, Gyroscope and accelerometer, Platform considerations, Related guidelines
+### Community 45 - "text-fields.md"
+Cohesion: 0.17
+Nodes (8): Best practices, Combo boxes, Platform considerations, Related guidelines, Best practices, Platform considerations, Related guidelines, Token fields
+
+### Community 46 - "gyro-and-accelerometer.md"
+Cohesion: 0.40
+Nodes (4): Best practices, Gyroscope and accelerometer, Platform considerations, Related guidelines
 
 ### Community 47 - "Standard icons"
 Cohesion: 0.12
@@ -543,9 +539,13 @@ Nodes (15): App accent colors, Best practices, Change log, Color, Color manageme
 Cohesion: 0.13
 Nodes (14): Ce que le propriétaire testera à la fin, Contraintes globales, Décisions à valider par le propriétaire (questions posées avant de coder), Ordre et parallélisme, Phase 1 — Base de données : plan d'exécution, Tâche 1.1 — Outillage de test base de données, Tâche 1.2 — Schéma : types, tables, index, contraintes, Tâche 1.3 — `credit_payment` (+6 more)
 
+### Community 54 - "auth.ts"
+Cohesion: 0.13
+Nodes (20): AFRICAN_COUNTRIES, AfricanCountry, isAfricanCountry(), emailSchema, ForgotPasswordInput, forgotPasswordSchema, identifierSchema, LoginInput (+12 more)
+
 ### Community 55 - "LyonPanel — Contexte pour l'IA"
 Cohesion: 0.14
-Nodes (13): graphify, Jamais, Le projet en 5 lignes, Le propriétaire, LyonPanel — Contexte pour l'IA, Outils de mémoire et de vue d'ensemble, Où trouver quoi, Serveurs MCP (+5 more)
+Nodes (13): graphify, Jamais, Le projet en 5 lignes, Le propriétaire, LyonPanel — Contexte pour l'IA, Outils de mémoire et de vue d'ensemble, Où trouver quoi, Rappels pour plus tard (+5 more)
 
 ### Community 56 - "Buttons"
 Cohesion: 0.14
@@ -567,9 +567,9 @@ Nodes (13): 1. correctness and duplication (critical), 2. title and description 
 Cohesion: 0.14
 Nodes (13): 1. Intention, 2. Objectifs, 3. Hors périmètre (pour l'instant), 4. Anti-objectifs (ce qui serait un échec même si ça marche), 5. Décisions du propriétaire, 6. Pile technique et hébergement (décidé, avec précisions de mon côté), 7. Règles métier clés, 8 bis. Précisions issues de la relecture (mes choix, à vérifier) (+5 more)
 
-### Community 61 - "smooth-tab.tsx"
-Cohesion: 0.24
-Nodes (11): clamp(), Drag, EASE_OUT, indicatorRect(), lerp(), rubberBand(), SmoothTab(), SmoothTabProps (+3 more)
+### Community 61 - "api-error.ts"
+Cohesion: 0.16
+Nodes (14): zod, ApiError, ERROR_STATUS, ErrorCode, ErrorLocale, formatDuration(), getErrorMessage(), MESSAGES (+6 more)
 
 ### Community 62 - "Bilan — Phase 2 : Design system + mise en page"
 Cohesion: 0.17
@@ -579,9 +579,9 @@ Nodes (12): Bilan — Phase 2 : Design system + mise en page, Ce que le proprié
 Cohesion: 0.14
 Nodes (14): scripts, build, check:bundle, db:types, dev, format, format:check, lint (+6 more)
 
-### Community 64 - "react"
-Cohesion: 0.12
-Nodes (19): react, AttractButton(), AttractButtonCanvas, AttractButtonCanvas(), Controls, Filing, lineDelta(), smoothstep() (+11 more)
+### Community 64 - "Button"
+Cohesion: 0.11
+Nodes (36): Props, ResetPasswordPage(), ForgotPasswordForm(), FormAlert(), LoginForm(), LogoutButton(), logout(), CURRENCIES (+28 more)
 
 ### Community 65 - "LyonPanel — CI / CD (vérification et mise en ligne)"
 Cohesion: 0.15
@@ -620,12 +620,12 @@ Cohesion: 0.15
 Nodes (12): 1. Fonctions, par priorité, 2. User stories, 3. Parcours clés, 4. Contraintes, A. Inscription, B. Dépôt, Bien à avoir (après le lancement, mon choix), C. Commande (paiement d'un service) (+4 more)
 
 ### Community 74 - "check-client-bundle.mjs"
-Cohesion: 0.15
-Nodes (11): findSecrets(), listFiles(), main(), PATTERNS, SECRET_VARIABLES, css, expectTokens(), tokenValue() (+3 more)
+Cohesion: 0.12
+Nodes (12): vitest, findSecrets(), listFiles(), main(), PATTERNS, SECRET_VARIABLES, css, expectTokens() (+4 more)
 
 ### Community 75 - "sentry-scrub.ts"
-Cohesion: 0.08
-Nodes (27): Ce que le propriétaire testera à la fin, Contraintes globales (valables pour toutes les tâches), Décision D1 — versions : ✅ ACCEPTÉE par le propriétaire le 2026-11-07, Ordre et parallélisme, Phase 0 — Socle du projet : plan d'exécution, Points de vigilance (testés dans la tâche indiquée), Tâche 0.1 — Projet Next.js et outils de qualité, Tâche 0.2 — Vérification des variables d'environnement (+19 more)
+Cohesion: 0.09
+Nodes (25): Ce que le propriétaire testera à la fin, Contraintes globales (valables pour toutes les tâches), Décision D1 — versions : ✅ ACCEPTÉE par le propriétaire le 2026-11-07, Ordre et parallélisme, Phase 0 — Socle du projet : plan d'exécution, Points de vigilance (testés dans la tâche indiquée), Tâche 0.1 — Projet Next.js et outils de qualité, Tâche 0.2 — Vérification des variables d'environnement (+17 more)
 
 ### Community 76 - "LyonPanel — Stratégie de tests"
 Cohesion: 0.15
@@ -671,13 +671,13 @@ Nodes (11): 1. Choose the mode, 2. Trace the evidence, 3. Decide what belongs, 4
 Cohesion: 0.17
 Nodes (10): 1. Positionnement, 2. Pages publiques, 3 bis. Technique SEO, 3. Liste SEO (tes points, rattachés à une action), 3 ter. Indexation et métadonnées (règles obligatoires), 4. Design, 5. À éviter pour ne pas avoir un look « généré par IA », 6. Textes (+2 more)
 
-### Community 88 - "env.ts"
-Cohesion: 0.21
-Nodes (10): server-only@0.0.1, zod@4.6.7, server-only, zod, envSchema, loadServerEnv(), MissingEnvError, optionalString (+2 more)
+### Community 88 - "supabase-deps.ts"
+Cohesion: 0.14
+Nodes (23): @supabase/supabase-js, createAttemptStore(), LOGIN_PATH, requireUser(), buildForgotDeps(), buildLoginDeps(), buildRegisterDeps(), buildResetDeps() (+15 more)
 
 ### Community 89 - "Ordre et parallélisme"
-Cohesion: 0.18
-Nodes (10): Contraintes globales, Décisions à valider par le propriétaire (questions posées avant de coder), Ordre et parallélisme, Phase 2 — Design system + mise en page : plan d'exécution, Tâche 2.2 — Langues, adresses traduites, cookies, Tâche 2.3 — Composants de base, Tâche 2.4 — Mise en page : en-tête, pied de page, barre latérale, Tâche 2.6 — Page de démonstration FR + EN (+2 more)
+Cohesion: 0.15
+Nodes (12): Contraintes globales, Décisions à valider par le propriétaire (questions posées avant de coder), Ordre et parallélisme, Phase 2 — Design system + mise en page : plan d'exécution, Tâche 2.1 — Variables, police, logo, favicon, Tâche 2.2 — Langues, adresses traduites, cookies, Tâche 2.3 — Composants de base, Tâche 2.4 — Mise en page : en-tête, pied de page, barre latérale (+4 more)
 
 ### Community 90 - "Bilan — Phase 0 : Socle du projet"
 Cohesion: 0.17
@@ -688,16 +688,16 @@ Cohesion: 0.18
 Nodes (11): Components, Copy, Icons, Landing pages and heroes, Motion, Signs of slop, Spacing, Surfaces and color (+3 more)
 
 ### Community 92 - "schema.test.ts"
-Cohesion: 0.21
-Nodes (6): created, db, message(), user(), OrderOverrides, PaymentOverrides
+Cohesion: 0.33
+Nodes (4): created, db, message(), user()
 
 ### Community 93 - "next"
 Cohesion: 0.13
-Nodes (7): next, AccountPage(), Props, LoginPage(), Props, Props, RegisterPage()
+Nodes (24): Tâche de la session, Décisions du propriétaire (2026-11-08), Phase 3 — Comptes : plan, Périmètre, Rappels, Tâches (ordre de `TEAM.md`), À vérifier avant de coder, next (+16 more)
 
 ### Community 94 - "anonymize-user.test.ts"
-Cohesion: 0.27
-Nodes (9): 4. Données de test et fixtures, created, db, fullClient(), paidOrder(), seed(), makeOrder(), makePayment() (+1 more)
+Cohesion: 0.16
+Nodes (16): 5. Méthode, pas à pas, 4. Données de test et fixtures, created, db, fullClient(), paidOrder(), CLIENT_COLS, created (+8 more)
 
 ### Community 95 - "Journal des changements LyonPanel"
 Cohesion: 0.18
@@ -784,12 +784,12 @@ Cohesion: 0.18
 Nodes (11): Bilan — Phase 1 : Base de données, Carte du code, Ce que le propriétaire doit préparer pour la phase suivante, Ce que vous devez tester (pas à pas), Chiffres réels (relancés après `supabase db reset`), Décision attendue : « validé » ou corrections, Décisions et points pour le propriétaire, Objectif de la phase (ROADMAP.md) (+3 more)
 
 ### Community 116 - "LyonPanel — Mise en place de l'environnement"
-Cohesion: 0.18
-Nodes (10): 0. Décisions du propriétaire, 1. Outils sur le PC (vérifiés le 2026-11-07), 2. Variables d'environnement, 3. Installation locale (Windows, première fois), 4. Services externes à préparer, 5. Scripts npm, 6 bis. Outils optionnels (plus tard), 6. Dépendances (+2 more)
+Cohesion: 0.17
+Nodes (11): 0. Décisions du propriétaire, 1. Outils sur le PC (vérifiés le 2026-11-07), 2. Variables d'environnement, 3. Installation locale (Windows, première fois), 4. Services externes à préparer, 5 bis. Email de réinitialisation du mot de passe (Supabase), 5. Scripts npm, 6 bis. Outils optionnels (plus tard) (+3 more)
 
-### Community 117 - "rls.test.ts"
-Cohesion: 0.20
-Nodes (8): @supabase/supabase-js, TEST_PASSWORD, CLIENT_COLS, created, db, ids, TestUser, UserOverrides
+### Community 117 - "server-only"
+Cohesion: 0.28
+Nodes (6): server-only, POST, isCommonPassword(), loadCommon(), resetPassword(), ResetPasswordDeps
 
 ### Community 118 - "types.ts"
 Cohesion: 0.18
@@ -808,7 +808,7 @@ Cohesion: 0.20
 Nodes (10): Alerts, Anatomy, Best practices, Buttons, Change log, Content, Desktop (macOS), Mobile (iOS, iPadOS) (+2 more)
 
 ### Community 122 - "image-views.md"
-Cohesion: 0.20
+Cohesion: 0.22
 Nodes (4): Best practices, Image wells, Platform considerations, Related guidelines
 
 ### Community 123 - "App icons"
@@ -836,16 +836,16 @@ Cohesion: 0.20
 Nodes (9): Prerequisites, Semantic conventions, Sentry Instrument, Step 1 — Set the scope, Step 2 — Detect setup ownership and install, Step 3 — Wire the signal(s), Step 4 — Verify it landed, Step 5 — Suggest next (don’t pick for them) (+1 more)
 
 ### Community 129 - "(app)/layout.tsx"
-Cohesion: 0.17
-Nodes (19): AppLayout(), PublicLayout(), BalanceBadge(), CurrencySwitcher(), Props, LanguageSwitcher(), SiteFooter(), links (+11 more)
+Cohesion: 0.11
+Nodes (30): next-intl, AppLayout(), AuthLayout(), PublicLayout(), BalanceBadge(), BottomNav(), items, CurrencySwitcher() (+22 more)
 
 ### Community 130 - "Catalogue et prix"
 Cohesion: 0.20
 Nodes (9): 1. Source, 2 bis. Prix client avec marge (décidé), 2. Classement par plateforme (provisoire, à affiner), 3. Réorganisation du catalogue sur le site, 4 bis. Quantité, minimum et calcul du total, 4. Méthode de prix (à valider avec toi), 5. Synchronisation, 6. Cohérence entre nom, prix et formulaire (décidé) (+1 more)
 
 ### Community 131 - "makeUser"
-Cohesion: 0.28
-Nodes (7): 5. Méthode, pas à pas, client(), created, db, expectUntouched(), wallet(), makeUser()
+Cohesion: 0.20
+Nodes (9): client(), created, db, expectUntouched(), wallet(), TEST_PASSWORD, removeUser(), TestUser (+1 more)
 
 ### Community 132 - "Accessibility"
 Cohesion: 0.22
@@ -936,16 +936,16 @@ Cohesion: 0.22
 Nodes (8): Ce que tu peux tester toi-même, Ce qui a été fait, Ce qui reste / réserves, Corrections demandées puis faites, En une phrase, Fichiers modifiés, Tâche 1.7 — Seed, types TypeScript, CI, Vérifications (résultats réels)
 
 ### Community 155 - "Tâche 2.2 — Langues, adresses traduites, cookies"
-Cohesion: 0.25
+Cohesion: 0.22
 Nodes (8): Ce que tu peux tester toi-même, Ce qui a été fait, Ce qui reste / réserves, Corrections demandées puis faites, En une phrase, Fichiers modifiés, Tâche 2.2 — Langues, adresses traduites, cookies, Vérifications (résultats réels)
 
-### Community 156 - "Tâche 2.5 — États vide, chargement, erreur"
+### Community 156 - "next.config.ts"
 Cohesion: 0.25
-Nodes (7): Ce que tu peux tester toi-même, Ce qui reste / réserves, Corrections demandées puis faites, En une phrase, Fichiers modifiés, Tâche 2.5 — États vide, chargement, erreur, Vérifications (résultats réels)
+Nodes (7): nextConfig, withNextIntl, buildSecurityHeaders(), Options, originOf(), SecurityHeader, headers()
 
 ### Community 157 - "@playwright/test"
-Cohesion: 0.22
-Nodes (4): @playwright/test@1.65.0, @playwright/test, LOCALES, locales
+Cohesion: 0.14
+Nodes (6): @playwright/test@1.65.0, @playwright/test, PATHS, PRIVATE, LOCALES, locales
 
 ### Community 158 - "credit-payment.test.ts"
 Cohesion: 0.25
@@ -1068,19 +1068,19 @@ Cohesion: 0.25
 Nodes (8): `admin_adjust` — `admin-adjust.test.ts`, `anonymize_user` — `anonymize-user.test.ts` (l.52-101), `credit_payment` — `credit-payment.test.ts` (l.65-240), Matrice : cas d'argent de `TESTING.md §2` et test qui les prouve, `place_order` — `place-order.test.ts` (l.71-204), `refund_order` — `refund-order.test.ts` (l.59-148), Schéma — `schema.test.ts` (11 groupes), Sécurité des lignes (RLS) — `rls.test.ts` (l.120-585)
 
 ### Community 188 - "Tâche 2.1 — Variables, polices, logo, favicon"
-Cohesion: 0.25
-Nodes (7): Ce que tu peux tester toi-même, Ce qui reste / réserves, Corrections demandées puis faites, En une phrase, Fichiers modifiés, Tâche 2.1 — Variables, polices, logo, favicon, Vérifications (résultats réels)
+Cohesion: 0.22
+Nodes (8): Ce que tu peux tester toi-même, Ce qui a été fait, Ce qui reste / réserves, Corrections demandées puis faites, En une phrase, Fichiers modifiés, Tâche 2.1 — Variables, polices, logo, favicon, Vérifications (résultats réels)
 
 ### Community 189 - "Tâche 2.3 — Composants de base"
 Cohesion: 0.25
 Nodes (8): Ce que tu peux tester toi-même, Ce qui a été fait, Ce qui reste / réserves, Corrections demandées puis faites, En une phrase, Fichiers modifiés, Tâche 2.3 — Composants de base, Vérifications (résultats réels)
 
 ### Community 190 - "Tâche 2.4 — Mise en page : en-tête, pied de page, barre latérale"
-Cohesion: 0.25
+Cohesion: 0.22
 Nodes (8): Ce que tu peux tester toi-même, Ce qui a été fait, Ce qui reste / réserves, Corrections demandées puis faites, En une phrase, Fichiers modifiés, Tâche 2.4 — Mise en page : en-tête, pied de page, barre latérale, Vérifications (résultats réels)
 
 ### Community 191 - "Tâche 2.7 — Contrôles finaux et performance"
-Cohesion: 0.22
+Cohesion: 0.25
 Nodes (8): Ce que tu peux tester toi-même, Ce qui a été fait, Ce qui reste / réserves, Corrections demandées puis faites, En une phrase, Fichiers modifiés, Tâche 2.7 — Contrôles finaux et performance, Vérifications (résultats réels)
 
 ### Community 192 - "Tableau de bord LyonPanel"
@@ -1188,8 +1188,8 @@ Cohesion: 0.29
 Nodes (6): 1. Problème (quelle douleur, pour qui), 2. Clients cibles, 3. Critères de réussite (à quoi ressemble « c'est fini »), 4. Non-objectifs (ce qu'on ne construit PAS en version 1), 5. Documents liés, LyonPanel — Project Brief
 
 ### Community 218 - "place-order.test.ts"
-Cohesion: 0.29
-Nodes (3): client(), created, db
+Cohesion: 0.22
+Nodes (4): client(), created, db, OrderOverrides
 
 ### Community 219 - "The Craftsmanship Standard"
 Cohesion: 0.33
@@ -1267,17 +1267,17 @@ Nodes (6): Change log, Descriptions, Navigation, Platform considerations, Relate
 Cohesion: 0.33
 Nodes (6): Best practices, Change log, Getting started, Platform considerations, Related guidelines, Writing
 
-### Community 239 - "demo-lazy.tsx"
-Cohesion: 0.33
-Nodes (9): Timeline(), TimelineEntry, LazyTimeline(), LazyTrackE(), LazyTrackF(), OnVisible(), TimelineLazy, TrackE (+1 more)
+### Community 239 - "Tâche 2.6 — Page de démonstration FR + EN"
+Cohesion: 0.22
+Nodes (8): Ce que tu peux tester toi-même, Ce qui a été fait, Ce qui reste / réserves, Corrections demandées puis faites, En une phrase, Fichiers modifiés, Tâche 2.6 — Page de démonstration FR + EN, Vérifications (résultats réels)
 
 ### Community 240 - "[locale]/layout.tsx"
-Cohesion: 0.07
-Nodes (26): Ce que tu peux tester toi-même, Ce qui a été fait, Ce qui reste / réserves, Corrections demandées puis faites, En une phrase, Fichiers modifiés, Tâche 2.6 — Page de démonstration FR + EN, Vérifications (résultats réels) (+18 more)
+Cohesion: 0.06
+Nodes (32): generateMetadata(), generateMetadata(), LoginPage(), Props, generateMetadata(), Props, RegisterPage(), generateMetadata() (+24 more)
 
-### Community 241 - "refund-order.test.ts"
+### Community 241 - "hardening.test.ts"
 Cohesion: 0.33
-Nodes (3): created, db, removeUser()
+Nodes (4): connected(), created, db, funded()
 
 ### Community 242 - "Prompt de référence du logo LyonPanel"
 Cohesion: 0.40
@@ -1335,9 +1335,9 @@ Nodes (5): Best practices, Change log, Platform considerations, Rating indicator
 Cohesion: 0.40
 Nodes (5): Best practices, Desktop (macOS), Platform considerations, Related guidelines, Steppers
 
-### Community 256 - "token-fields.md"
-Cohesion: 0.40
-Nodes (4): Best practices, Platform considerations, Related guidelines, Token fields
+### Community 256 - "eslint.config.mjs"
+Cohesion: 0.33
+Nodes (5): clientServerImport, eslint@9.39.5, eslint-config-next@16.4.5, eslint, eslint-config-next
 
 ### Community 257 - "ponytail-audit/SKILL.md"
 Cohesion: 0.40
@@ -1375,10 +1375,6 @@ Nodes (4): Dead Navigation, Non-Functional Controls, Sections That Fill a Templa
 Cohesion: 0.50
 Nodes (3): Conventions to check, Cross-platform translation, Vocabulary
 
-### Community 268 - "Combo boxes"
-Cohesion: 0.50
-Nodes (4): Best practices, Combo boxes, Platform considerations, Related guidelines
-
 ### Community 269 - "Ratings and reviews"
 Cohesion: 0.50
 Nodes (4): Best practices, Change log, Platform considerations, Ratings and reviews
@@ -1407,35 +1403,59 @@ Nodes (3): Boundaries, Output, Scan
 Cohesion: 0.29
 Nodes (7): Dithering, Duotone, Effects, Glyphs, Halftone dots, Implementation, Performance
 
+### Community 284 - "turnstile.ts"
+Cohesion: 0.53
+Nodes (3): requireTurnstile(), verifyTurnstile(), fetchMock
+
+### Community 285 - "log-mask.ts"
+Cohesion: 0.53
+Nodes (4): maskEmail(), maskPhone(), redactSecrets(), SECRET_KEYS
+
+### Community 286 - "auth-attempts.test.ts"
+Cohesion: 0.40
+Nodes (5): db, hashes, run, sha(), tag()
+
 ### Community 287 - "Visuals"
 Cohesion: 0.29
 Nodes (7): Decide what the visual is, Generate it, Objects for moments, Prompt recipe, Put it on the page, Styles that work, Visuals
+
+### Community 288 - "Column views"
+Cohesion: 0.50
+Nodes (4): Best practices, Column views, Platform considerations, Related guidelines
 
 ### Community 289 - "interface"
 Cohesion: 0.40
 Nodes (4): interface, default_prompt, display_name, short_description
 
-### Community 291 - "error-page.test.tsx"
-Cohesion: 0.67
-Nodes (3): ErrorPage(), messages, setup()
+### Community 290 - "NFC"
+Cohesion: 0.50
+Nodes (4): Background tag reading, In-app tag reading, NFC, Platform considerations
+
+### Community 291 - "Outline views"
+Cohesion: 0.50
+Nodes (4): Best practices, Outline views, Platform considerations, Related guidelines
+
+### Community 292 - "status-bars.md"
+Cohesion: 0.50
+Nodes (3): Best practices, Platform considerations, Status bars
 
 ## Knowledge Gaps
-- **22 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **16 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `vitest` connect `vitest` to `ComingSoon`, `(app)/layout.tsx`, `makeUser`, `button.tsx`, `package.json`, `useMotionLevel`, `demo-basics.tsx`, `ref_node_url`, `credit-payment.test.ts`, `error-page.test.tsx`, `adminClient`, `parallax-cards.test.tsx`, `demo-track-e.tsx`, `check-client-bundle.mjs`, `sentry-scrub.ts`, `env.ts`, `place-order.test.ts`, `schema.test.ts`, `anonymize-user.test.ts`, `[locale]/layout.tsx`, `refund-order.test.ts`, `rls.test.ts`?**
-  _High betweenness centrality (0.026) - this node is a cross-community bridge._
+- **Why does `vitest` connect `check-client-bundle.mjs` to `ComingSoon`, `(app)/layout.tsx`, `makeUser`, `button.tsx`, `vitest`, `package.json`, `login-form.test.tsx`, `react`, `rate-limit.ts`, `demo-basics.tsx`, `turnstile.ts`, `log-mask.ts`, `credit-payment.test.ts`, `auth-attempts.test.ts`, `next.config.ts`, `adminClient`, `demo-track-e.tsx`, `auth.ts`, `api-error.ts`, `Button`, `sentry-scrub.ts`, `supabase-deps.ts`, `place-order.test.ts`, `schema.test.ts`, `next`, `anonymize-user.test.ts`, `[locale]/layout.tsx`, `hardening.test.ts`, `server-only`?**
+  _High betweenness centrality (0.055) - this node is a cross-community bridge._
 - **Should `ComingSoon` be split into smaller, more focused modules?**
-  _Cohesion score 0.09274193548387097 - nodes in this community are weakly interconnected._
-- **Why does `react` connect `react` to `(app)/layout.tsx`, `button.tsx`, `vitest`, `package.json`, `card-stack.tsx`, `sentry-scrub.ts`, `demo-track-e.tsx`, `demo-lazy.tsx`, `[locale]/layout.tsx`, `useMotionLevel`, `demo-basics.tsx`, `next-intl`, `dependencies`, `smooth-tab.tsx`?**
-  _High betweenness centrality (0.014) - this node is a cross-community bridge._
+  _Cohesion score 0.053246753246753244 - nodes in this community are weakly interconnected._
+- **Why does `next` connect `next` to `ComingSoon`, `(app)/layout.tsx`, `Button`, `package.json`, `dependencies`, `[locale]/layout.tsx`, `Référencement Afrique et design`, `supabase-deps.ts`, `demo-basics.tsx`, `demo/page.tsx`, `next.config.ts`, `api-error.ts`?**
+  _High betweenness centrality (0.023) - this node is a cross-community bridge._
 - **Should `Accessibility Code Patterns` be split into smaller, more focused modules?**
   _Cohesion score 0.041666666666666664 - nodes in this community are weakly interconnected._
-- **Why does `next-intl` connect `next-intl` to `ComingSoon`, `(app)/layout.tsx`, `button.tsx`, `vitest`, `package.json`, `card-stack.tsx`, `demo-basics.tsx`, `dependencies`, `order/page.tsx`, `transactions/page.tsx`, `terms/page.tsx`, `privacy/page.tsx`, `error-page.test.tsx`, `services/page.tsx`, `demo-track-e.tsx`, `add-funds/page.tsx`, `sentry-scrub.ts`, `next`, `[locale]/layout.tsx`?**
-  _High betweenness centrality (0.014) - this node is a cross-community bridge._
+- **Why does `Reveal()` connect `demo/page.tsx` to `Tâche 2.8 — Système de mouvement`, `react`, `Bilan — Phase 2 : Design system + mise en page`, `demo-basics.tsx`?**
+  _High betweenness centrality (0.016) - this node is a cross-community bridge._
 - **Should `contrast-check.py` be split into smaller, more focused modules?**
   _Cohesion score 0.07751937984496124 - nodes in this community are weakly interconnected._
 - **Should `button.tsx` be split into smaller, more focused modules?**
-  _Cohesion score 0.14245014245014245 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.13852813852813853 - nodes in this community are weakly interconnected._

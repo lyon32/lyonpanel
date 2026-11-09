@@ -44,7 +44,7 @@ Règles d'application :
 | Mot de passe | 8 à 72 caractères ; refus des 10 000 mots de passe les plus courants (liste dans le dépôt, mon choix) et d'un mot de passe égal à l'email ou au téléphone |
 | Stockage | Haché **bcrypt** par Supabase Auth ; jamais lu, jamais journalisé, jamais envoyé par email |
 | Session client | Cookies `httpOnly`, `Secure`, `SameSite=Lax` ; 7 jours d'inactivité |
-| Échecs de connexion | 5 échecs → blocage 15 min (par identifiant **et** par IP) |
+| Échecs de connexion | 3 échecs gratuits, puis pause progressive : 15 min, 30 min, 1 h, 2 h… (doublée à chaque échec, plafond 24 h), par identifiant **et** par IP ; les échecs de plus de 24 h sont oubliés ; un refus ne rallonge pas la pause (accord du propriétaire, 2026-11-08) |
 | Anti-bot | Turnstile à l'inscription, à la connexion et au mot de passe oublié |
 | Mot de passe oublié | Réponse identique que l'email existe ou non ; lien valable 1 h, usage unique |
 | Changement de mot de passe | Déconnecte les autres sessions (mon choix) |
@@ -99,7 +99,7 @@ Pour les services qui attendent un **nom d'utilisateur** (abonnés), on accepte 
 | Recharge par paiement | ≤ 1 000 000 XAF (mon choix) |
 | Commandes | 10 / min / client |
 | Recharges | 5 / min / client |
-| Connexion | 5 échecs / 15 min |
+| Connexion | 3 échecs, puis pause progressive 15 min → 24 h (voir §2) |
 | Appels sortants vers JAP | ≤ 60 / min au total (mon choix) |
 | Solde JAP | commande refusée si solde JAP − réservations < coût ; alerte sous 5 $ |
 

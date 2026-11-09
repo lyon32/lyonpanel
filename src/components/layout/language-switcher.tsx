@@ -23,7 +23,7 @@ export function LanguageSwitcher() {
           aria-current={code === locale ? 'true' : undefined}
           onClick={() => router.replace(pathname as never, { locale: code })}
           className={cn(
-            'focus-visible:ring-bleu-100 min-h-11 rounded-lg px-3 text-sm font-semibold uppercase outline-none focus-visible:ring-4',
+            'focus-visible:ring-bleu-100 min-h-11 min-w-11 rounded-lg px-3 text-sm font-semibold uppercase outline-none focus-visible:ring-4',
             code === locale ? 'bg-bleu-50 text-bleu-600' : 'text-gris-600 hover:bg-gris-50',
           )}
         >

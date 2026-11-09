@@ -268,5 +268,73 @@
     "terms": "Terms of use",
     "services": "Services",
     "blog": "Blog"
+  },
+  "auth": {
+    "brandAlt": "LyonPanel",
+    "submitting": "Loading…",
+    "networkError": "Can't reach the server. Check your connection and try again.",
+    "logout": "Log out",
+    "turnstileLabel": "Anti-bot check",
+    "fieldErrors": {
+      "INVALID_EMAIL": "Invalid email address.",
+      "INVALID_PHONE": "Invalid number. Use the international format, for example +237612345678.",
+      "INVALID_COUNTRY": "Choose an African country.",
+      "INVALID_IDENTIFIER": "Enter a valid email or phone number.",
+      "PASSWORD_TOO_SHORT": "The password must be at least 8 characters long.",
+      "PASSWORD_TOO_LONG": "The password must not exceed 72 characters.",
+      "PASSWORD_TOO_WEAK": "This password is too easy to guess.",
+      "PASSWORD_REQUIRED": "Enter your password.",
+      "TURNSTILE_REQUIRED": "Complete the anti-bot check.",
+      "TOKEN_INVALID": "This link is invalid or has expired. Request a new one.",
+      "PASSWORD_SAME_AS_CURRENT": "Choose a password different from your current one.",
+      "PASSWORD_TOO_COMMON": "This password is too common. Choose another one.",
+      "INVALID_JSON": "The request could not be read. Please try again.",
+      "TOKEN_REQUIRED": "Invalid or expired link.",
+      "EMAIL_TAKEN": "This email is already in use.",
+      "PHONE_TAKEN": "This phone number is already in use."
+    },
+    "register": {
+      "title": "Create an account",
+      "intro": "It takes a minute.",
+      "submit": "Create my account",
+      "haveAccount": "Already have an account?",
+      "loginLink": "Log in",
+      "referralLabel": "Referral code (optional)"
+    },
+    "login": {
+      "title": "Log in",
+      "intro": "Good to see you again.",
+      "submit": "Log in",
+      "identifier": "Email or phone",
+      "forgot": "Forgot your password?",
+      "noAccount": "No account yet?",
+      "registerLink": "Create an account"
+    },
+    "forgot": {
+      "title": "Forgot your password",
+      "intro": "Enter your email and we'll send you a link.",
+      "submit": "Send the link",
+      "success": "If this email matches an account, a reset link has just been sent.",
+      "back": "Back to log in"
+    },
+    "reset": {
+      "title": "New password",
+      "submit": "Save",
+      "newPassword": "New password",
+      "success": "Password changed. You can now log in.",
+      "missingToken": "This link is invalid or has expired.",
+      "toLogin": "Go to log in"
+    },
+    "fields": {
+      "email": "Email",
+      "phone": "Phone",
+      "phoneHint": "International format, for example +237612345678.",
+      "password": "Password",
+      "passwordHint": "At least 8 characters.",
+      "country": "Country",
+      "countryPlaceholder": "Choose a country",
+      "currency": "Display currency",
+      "language": "Language"
+    }
   }
 }
