@@ -53,11 +53,17 @@ async function waitTurnstile(page: Page) {
   });
 }
 
+async function nextStep(page: Page) {
+  const next = page.locator('[data-testid="register-next"]');
+  if (await next.isVisible()) await next.click();
+}
+
 async function register(page: Page, locale: Locale, user: { email: string; phone: string }) {
   await page.goto(PATHS[locale].register);
   await page.locator('input[name="email"]').fill(user.email);
   await page.locator('input[name="phone"]').fill(user.phone);
   await page.locator('input[name="password"]').fill(PASSWORD);
+  await nextStep(page);
   await page.locator('[data-field="country"]').click();
   await page.locator('[role="option"][data-value="CM"]').click();
   await page.locator('[data-field="display_currency"]').click();

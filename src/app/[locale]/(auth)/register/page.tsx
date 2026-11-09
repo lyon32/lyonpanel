@@ -22,7 +22,7 @@ export default async function RegisterPage({ params, searchParams }: Props) {
   const { ref } = await searchParams;
   const referralCode = typeof ref === 'string' ? ref.slice(0, 32) : undefined;
   return (
-    <AuthCard wide title={t('register.title')} intro={t('register.intro')}>
+    <AuthCard compactOnPhone title={t('register.title')} intro={t('register.intro')}>
       <RegisterForm referralCode={referralCode} />
     </AuthCard>
   );

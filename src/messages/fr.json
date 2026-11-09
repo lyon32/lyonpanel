@@ -251,6 +251,13 @@
     "layoutTitle": "Mise en page de l’espace client",
     "layoutText": "Barre latérale sur grand écran, menu du bas sur mobile."
   },
+  "dashboard": {
+    "greeting": {
+      "morning": "Bonjour",
+      "afternoon": "Bon après-midi",
+      "evening": "Bonsoir"
+    }
+  },
   "pages": {
     "order": "Commander",
     "orders": "Mes commandes",
@@ -299,7 +306,12 @@
       "submit": "Créer mon compte",
       "haveAccount": "Déjà un compte ?",
       "loginLink": "Se connecter",
-      "referralLabel": "Code de parrainage (facultatif)"
+      "referralLabel": "Code de parrainage (facultatif)",
+      "loading": "Création…",
+      "done": "Compte créé",
+      "step": "Étape {current} sur {total}",
+      "next": "Continuer",
+      "back": "Retour"
     },
     "login": {
       "title": "Connexion",
@@ -308,14 +320,18 @@
       "identifier": "Email ou téléphone",
       "forgot": "Mot de passe oublié ?",
       "noAccount": "Pas encore de compte ?",
-      "registerLink": "Créer un compte"
+      "registerLink": "Créer un compte",
+      "loading": "Connexion…",
+      "done": "Connecté"
     },
     "forgot": {
       "title": "Mot de passe oublié",
       "intro": "Saisissez votre email, nous vous enverrons un lien.",
       "submit": "Envoyer le lien",
       "success": "Si cet email correspond à un compte, un lien de réinitialisation vient d'être envoyé.",
-      "back": "Retour à la connexion"
+      "back": "Retour à la connexion",
+      "loading": "Envoi…",
+      "done": "Lien envoyé"
     },
     "reset": {
       "title": "Nouveau mot de passe",
@@ -323,7 +339,9 @@
       "newPassword": "Nouveau mot de passe",
       "success": "Mot de passe modifié. Vous pouvez vous connecter.",
       "missingToken": "Ce lien est invalide ou a expiré.",
-      "toLogin": "Aller à la connexion"
+      "toLogin": "Aller à la connexion",
+      "loading": "Enregistrement…",
+      "done": "Mot de passe modifié"
     },
     "fields": {
       "email": "Email",
@@ -337,6 +355,24 @@
       "countryNone": "Aucun pays trouvé.",
       "currency": "Devise d'affichage",
       "language": "Langue"
-    }
+    },
+    "panel": {
+      "login": {
+        "heading": "Pas encore de compte ?",
+        "text": "Créez le vôtre en une minute et passez votre première commande.",
+        "cta": "S'inscrire"
+      },
+      "register": {
+        "heading": "Déjà inscrit ?",
+        "text": "Connectez-vous pour retrouver votre solde et vos commandes.",
+        "cta": "Se connecter"
+      },
+      "recover": {
+        "heading": "Vous vous souvenez ?",
+        "text": "Retournez à la page de connexion.",
+        "cta": "Se connecter"
+      }
+    },
+    "homeLabel": "Retour à l'accueil"
   }
 }

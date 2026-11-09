@@ -33,6 +33,10 @@ Voir aussi : `PROJECT_BRIEF.md`, `docs/00` à `docs/05`.
 ### Futur (décidé hors périmètre v1)
 - Paiement pour pays anglophones, crypto, API revendeurs, mise à jour automatique du taux, application mobile. Autres idées : « on verra » (décidé).
 
+### Espace client : bonjour et suggestion de commande (ajout du 2026-11-09)
+- Bonjour selon l'heure du navigateur (Bonjour / Bon après-midi / Bonsoir) sur le tableau de bord (phase 3).
+- Suggestion de commande (phase 8) : une carte discrète calculée par le serveur depuis les commandes du client, avec bouton « Commander » (formulaire pré-rempli) et croix pour fermer ; désactivable ; jamais de fournisseur ni de marge.
+
 ## 2. User stories
 
 **Créateur TikTok (Persona 1)**

@@ -10,7 +10,8 @@ Remplace `docs/04-roadmap.md`. S'appuie sur : `PRD.md`, `ARCHITECTURE.md`, `DATA
 3. **Validation obligatoire** : à la fin de chaque phase, le propriétaire teste et dit « validé » avant la phase suivante.
 4. Chaque phase = **une branche + une PR** (`CONVENTIONS.md`), CI verte, tests de la phase écrits avec le code.
 5. **🧑 À faire par toi** : préparatifs à finir **avant** la phase indiquée.
-6. **Lancement en deux temps** : version limitée (toi + quelques proches, 1 à 2 semaines), puis ouverture à tous.
+6. **Retour visuel** (ajout du 2026-11-09) : toute phase qui contient une action asynchrone inclut ses états de chargement et de succès (`docs/05-design-system.md §6 bis`).
+7. **Lancement en deux temps** : version limitée (toi + quelques proches, 1 à 2 semaines), puis ouverture à tous.
 
 ## Vue d'ensemble
 
@@ -64,6 +65,7 @@ Remplace `docs/04-roadmap.md`. S'appuie sur : `PRD.md`, `ARCHITECTURE.md`, `DATA
 - Inscription (email, téléphone, pays, devise, langue, Turnstile), connexion email **ou** téléphone, déconnexion, mot de passe oublié.
 - Règles de `SECURITY_NOTES.md §2`.
 - `handler`, `apiError`, messages d'erreur FR/EN.
+- Écrans refaits (2026-11-09) : fond dégradé, deux panneaux sur ordinateur, bande bleue sur téléphone, inscription en 2 étapes, boutons avec chargement et succès, bonjour selon l'heure du navigateur (Bonjour / Bon après-midi / Bonsoir) sur le tableau de bord actuel.
 - **Terminé quand** : tu crées un compte, te reconnectes par téléphone et réinitialises ton mot de passe.
 - 🧑 Créer un widget Turnstile (sinon on garde les clés de test).
 
@@ -76,22 +78,26 @@ Remplace `docs/04-roadmap.md`. S'appuie sur : `PRD.md`, `ARCHITECTURE.md`, `DATA
 - Lire la documentation SasPay (paiements, webhooks, signature, frais) et compléter `saspay-client.ts`.
 - Devis avec frais, création du paiement, webhook signé, rattrapage cron, page de retour.
 - **Page de paiement dynamique** (demande du propriétaire, 2026-11-07) : pas de page statique ni d'étapes figées ; l'état du paiement se met à jour en direct sous les yeux du client (en attente, confirmé, échoué, délai dépassé) ; téléphone d'abord puis ordinateur ; maquette inspirée des 6 images de `payment page reference/` (à étudier au début de la phase). Le propriétaire teste lui-même en mode test avant toute mise en ligne.
+- Progression visible de la recharge (chargement sur le bouton, puis étapes du paiement).
 - `SASPAY_MODE=live` refusé hors production (décision du propriétaire, déjà dans `src/server/env.ts`).
 - **Terminé quand** : en mode test, tu recharges 3 000 XAF ; le solde est crédité **une seule fois** même si le webhook est renvoyé.
 - 🧑 Compte marchand SasPay, clés de **test**, secret de webhook ; installer `cloudflared`.
 
 ### Phase 6 — Commande
 - Formulaire (service, lien, quantité, commentaires perso), devis en direct, liens par plateforme, plafond journalier, clé d'idempotence.
+- Progression par étapes de la commande (envoi, débit, transmission).
 - `placeOrder` → `place_order` → `submitToJap` (faux JAP) ; échec → `to_review`.
 - **Terminé quand** : tu commandes, le solde baisse du bon montant ; double clic = une commande ; solde insuffisant = message clair.
 
 ### Phase 7 — Suivi des commandes + alertes
-- Cron des statuts par lots, polling 30 s, badges de statut.
+- Cron des statuts par lots, polling 30 s, badges de statut, barre de progression de la commande.
 - `notifyOwner` Telegram, préfixe `[TEST]` hors production.
 - **Terminé quand** : une commande passe seule de « en cours » à « terminée » ; un échec t'envoie une alerte.
 - 🧑 Créer le bot avec @BotFather, récupérer jeton et `chat_id` (`ENV_SETUP.md §4`).
 
 ### Phase 8 — Espace client
+- États de chargement et de succès sur toutes les actions du tableau de bord.
+- **Suggestion de commande** (décidée avec le propriétaire le 2026-11-09) : le serveur la calcule à partir de la table des commandes (aucune nouvelle table). À partir de 3 commandes : le service le plus commandé ou le plus récent. Moins de 3 commandes : suggestion générale (service le plus vendu). Jamais de nom du fournisseur ni de marge. UNE carte discrète sur le tableau de bord (« Besoin d'abonnés TikTok aujourd'hui ? ») avec un bouton « Commander » qui pré-remplit le formulaire et une croix pour fermer. Le client peut la désactiver. Aucune fenêtre qui s'ouvre à la connexion. Textes FR/EN (`antislop-copywriting`).
 - Tableau de bord, historiques commandes et transactions, favoris, page compte (devise, langue, téléphone, suppression).
 - **Terminé quand** : tout l'espace client fonctionne sur petit téléphone.
 

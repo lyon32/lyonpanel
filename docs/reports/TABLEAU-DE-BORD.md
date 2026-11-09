@@ -1,7 +1,7 @@
 # Tableau de bord LyonPanel
-Mis à jour le 2026-11-08 (fin de la phase 3). Chiffres lus dans les comptes-rendus des phases 1 à 3.
+Mis à jour le 2026-11-09 (phase 3 : écrans refaits). Chiffres lus dans les comptes-rendus des phases 1 à 3.
 
-**En 5 secondes :** les phases 0, 1 et 2 sont validées. La phase 3 (comptes) est faite, en attente de ton « validé ». Points ouverts : tests de base de données pas relancés dans le dernier état, le problème QA « session coupée = page d'erreur » corrigé et vérifié par le développeur, CI GitHub pas encore passée sur la PR. Ensuite : phase 4, prix et catalogue.
+**En 5 secondes :** les phases 0, 1 et 2 sont validées. La phase 3 (comptes) est faite, en attente de ton « validé ». Écrans de compte refaits ; PR 7, 8 et 9 fusionnées, PR 10 (tests navigateur) ouverte. Points ouverts : 2 points importants du contrôle qualité en correction, build à refaire, tests de base de données pas relancés dans le dernier état. Ensuite : phase 4, prix et catalogue.
 
 ## 1. Avancement des phases
 Bleu : validée. Jaune : faite, en attente de validation. Gris : à faire. Dates réelles : phases 0 et 1 le 2026-11-07, phase 2 le 2026-11-08, phase 3 faite le 2026-11-08.
@@ -54,7 +54,7 @@ flowchart LR
   end
   subgraph E["À corriger"]
     direction TB
-    e1["Session coupée : page d erreur, à confirmer"]
+    e1["2 points importants du contrôle qualité"]
   end
   subgraph F["Acceptée"]
     direction TB
@@ -86,14 +86,14 @@ pie showData
 ```
 
 ## 4. Qui fait quoi maintenant
-Aucun agent n'est actif. Reste : confirmer le point QA, relancer les tests de base de données, ouvrir la PR et vérifier la CI (chef de projet), puis le propriétaire.
+Corrections des 2 points importants du contrôle qualité en cours. Reste : refaire le build, relancer les tests de base de données, fusionner la PR 10 et vérifier la CI (chef de projet), puis le propriétaire.
 
 ```mermaid
 flowchart TD
   TS["Tests des comptes<br/>fait"] --> CO["Code et routes<br/>fait"]
   CO --> DE["Écrans FR et EN<br/>fait"]
   DE --> SE["Sécurité 3e passe<br/>acceptée avec réserves"]
-  DE --> QA["QA 3e passe<br/>1 point à confirmer"]
+  DE --> QA["QA écrans refaits<br/>2 points en correction"]
   SE --> RA["Rapport de phase<br/>fait"]
   QA --> RA
   RA --> DB["Tests base de données<br/>à relancer"]
@@ -116,7 +116,7 @@ flowchart TD
 | 0 | 29 (28 Vitest + 1 Playwright) | 29 | sans objet | 2 correctifs après audit sécurité |
 | 1 | 253 (225 base + 28 Vitest) | 253 | un test nommé par cas d'argent, pas de pourcentage | 2 failles moyennes, 1 fuite de colonnes, 1 paiement failed, tous corrigés |
 | 2 | 270 (247 Vitest + 23 Playwright) | 270 | sans objet (aucun module d'argent) | 2 verdicts À CORRIGER (relecture, QA), corrigés |
-| 3 | 457 (439 Vitest + 18 Playwright) | 457 (tests de base non relancés) | sans objet (aucun module d'argent) | sécurité : 2 passes À CORRIGER puis acceptée avec réserves ; QA : 2 passes À CORRIGER, 1 point restant à confirmer |
+| 3 | 543 (488 Vitest + 55 Playwright) | 543 (tests de base non relancés) | sans objet (aucun module d'argent) | sécurité : 2 passes À CORRIGER puis acceptée avec réserves ; QA : 2 passes À CORRIGER, puis écrans refaits OK sauf 2 points importants en correction |
 
 Lire chaque ligne comme « état de la phase », pas comme un cumul : les suites des phases précédentes sont comptées de nouveau. Les 225 tests de la base (phase 1) ne sont pas dans la ligne de la phase 3 car ils n'ont pas été relancés dans le dernier état.
 
@@ -127,7 +127,7 @@ xychart-beta
   title "Tests par phase"
   x-axis ["Phase 0", "Phase 1", "Phase 2", "Phase 3"]
   y-axis "Nombre de tests" 0 --> 500
-  bar [29, 253, 270, 457]
-  bar [29, 253, 270, 457]
+  bar [29, 253, 270, 543]
+  bar [29, 253, 270, 543]
 ```
 Première barre : tests écrits. Deuxième barre : tests verts. Phase 3 : Vitest et Playwright seulement.

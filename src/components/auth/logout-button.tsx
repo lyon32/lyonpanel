@@ -28,9 +28,10 @@ export function LogoutButton() {
       loading={pending}
       loadingLabel={t('submitting')}
       onClick={logout}
+      className="max-sm:w-11 max-sm:px-0"
     >
       <LogOut size={18} aria-hidden="true" />
-      {t('logout')}
+      <span className="max-sm:sr-only">{t('logout')}</span>
     </Button>
   );
 }

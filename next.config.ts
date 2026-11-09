@@ -2,7 +2,7 @@ import type { NextConfig } from 'next';
 import { withSentryConfig } from '@sentry/nextjs/config';
 import createNextIntlPlugin from 'next-intl/plugin';
 
-import { buildSecurityHeaders } from './src/lib/security-headers';
+import { buildPrivateCacheRules, buildSecurityHeaders } from './src/lib/security-headers';
 
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
@@ -17,6 +17,8 @@ const nextConfig: NextConfig = {
           sentryDsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
         }),
       },
+      // La zone privée n'est jamais gardée par le navigateur (bouton Retour après déconnexion).
+      ...buildPrivateCacheRules(),
     ];
   },
   // La liste des mots de passe courants est lue à l'exécution : Vercel doit l'embarquer avec les routes d'authentification.

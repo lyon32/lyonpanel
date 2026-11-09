@@ -89,3 +89,31 @@ describe('next.config.ts', () => {
     expect(src).toMatch(/source:\s*'\/\(\.\*\)'/);
   });
 });
+
+describe('zone privée : Cache-Control no-store', () => {
+  it('chaque adresse privée (FR et EN) reçoit no-store', async () => {
+    const { buildPrivateCacheRules } = await import('@/lib/security-headers');
+    const rules = buildPrivateCacheRules();
+    const sources = rules.map((rule) => rule.source);
+    expect(sources).toContain('/fr/tableau-de-bord');
+    expect(sources).toContain('/en/dashboard');
+    for (const rule of rules) {
+      expect(rule.headers).toEqual([
+        { key: 'Cache-Control', value: expect.stringContaining('no-store') },
+      ]);
+    }
+  });
+  it('reste aligné sur les adresses traduites du routage', async () => {
+    const { PRIVATE_PATHS } = await import('@/lib/security-headers');
+    const { pathnames } = await import('@/i18n/routing');
+    const translated = Object.values(pathnames).map((p) => `${p.fr}|${p.en}`);
+    for (const [fr, en] of PRIVATE_PATHS) expect(translated).toContain(`${fr}|${en}`);
+  });
+  it("les pages publiques et de compte n'ont pas no-store", async () => {
+    const { buildPrivateCacheRules } = await import('@/lib/security-headers');
+    const sources = buildPrivateCacheRules().map((rule) => rule.source);
+    for (const open of ['/fr', '/fr/connexion', '/fr/inscription', '/en/login', '/fr/services']) {
+      expect(sources).not.toContain(open);
+    }
+  });
+});

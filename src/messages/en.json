@@ -251,6 +251,13 @@
     "layoutTitle": "Customer area layout",
     "layoutText": "Sidebar on large screens, bottom menu on mobile."
   },
+  "dashboard": {
+    "greeting": {
+      "morning": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening"
+    }
+  },
   "pages": {
     "order": "Order",
     "orders": "My orders",
@@ -299,7 +306,12 @@
       "submit": "Create my account",
       "haveAccount": "Already have an account?",
       "loginLink": "Log in",
-      "referralLabel": "Referral code (optional)"
+      "referralLabel": "Referral code (optional)",
+      "loading": "Creating…",
+      "done": "Account created",
+      "step": "Step {current} of {total}",
+      "next": "Continue",
+      "back": "Back"
     },
     "login": {
       "title": "Log in",
@@ -308,14 +320,18 @@
       "identifier": "Email or phone",
       "forgot": "Forgot your password?",
       "noAccount": "No account yet?",
-      "registerLink": "Create an account"
+      "registerLink": "Create an account",
+      "loading": "Logging in…",
+      "done": "Logged in"
     },
     "forgot": {
       "title": "Forgot your password",
       "intro": "Enter your email and we'll send you a link.",
       "submit": "Send the link",
       "success": "If this email matches an account, a reset link has just been sent.",
-      "back": "Back to log in"
+      "back": "Back to log in",
+      "loading": "Sending…",
+      "done": "Link sent"
     },
     "reset": {
       "title": "New password",
@@ -323,7 +339,9 @@
       "newPassword": "New password",
       "success": "Password changed. You can now log in.",
       "missingToken": "This link is invalid or has expired.",
-      "toLogin": "Go to log in"
+      "toLogin": "Go to log in",
+      "loading": "Saving…",
+      "done": "Password changed"
     },
     "fields": {
       "email": "Email",
@@ -337,6 +355,24 @@
       "countryNone": "No country found.",
       "currency": "Display currency",
       "language": "Language"
-    }
+    },
+    "panel": {
+      "login": {
+        "heading": "New to LyonPanel?",
+        "text": "Create yours in a minute and place your first order.",
+        "cta": "Sign up"
+      },
+      "register": {
+        "heading": "Already registered?",
+        "text": "Log in to see your balance and your orders.",
+        "cta": "Log in"
+      },
+      "recover": {
+        "heading": "Remembered it?",
+        "text": "Go back to the login page.",
+        "cta": "Log in"
+      }
+    },
+    "homeLabel": "Back to home"
   }
 }

@@ -4,7 +4,8 @@ import { Check, ChevronDown, Search } from 'lucide-react';
 import * as React from 'react';
 import { cn } from '@/lib/cn';
 
-export type SelectOption = { value: string; label: string };
+// `short` : texte court affiché dans le bouton fermé (la liste garde le libellé complet).
+export type SelectOption = { value: string; label: string; short?: string };
 
 type Props = {
   label: string;
@@ -150,7 +151,7 @@ export function SelectField({
         )}
       >
         <span className={cn('truncate', selected ? 'text-encre' : 'text-gris-600')}>
-          {selected?.label ?? placeholder}
+          {selected?.short ?? selected?.label ?? placeholder}
         </span>
         <ChevronDown
           aria-hidden="true"

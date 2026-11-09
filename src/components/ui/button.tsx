@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { Loader2 } from 'lucide-react';
+import { Check, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/cn';
 
 const buttonVariants = cva(
@@ -25,6 +25,9 @@ export interface ButtonProps
   loading?: boolean;
   // Libellé affiché pendant le chargement (fourni par l'appelant, déjà traduit).
   loadingLabel?: string;
+  // Succès : coche + libellé bref avant une redirection (l'appelant gère le délai).
+  success?: boolean;
+  successLabel?: string;
 }
 
 function Button({
@@ -33,6 +36,8 @@ function Button({
   asChild = false,
   loading = false,
   loadingLabel,
+  success = false,
+  successLabel,
   disabled,
   children,
   ...props
@@ -40,12 +45,21 @@ function Button({
   const Comp = asChild ? Slot : 'button';
   return (
     <Comp
-      className={cn(buttonVariants({ variant }), className)}
-      disabled={disabled || loading}
+      className={cn(
+        buttonVariants({ variant }),
+        (loading || success) && 'disabled:opacity-100',
+        className,
+      )}
+      disabled={disabled || loading || success}
       aria-busy={loading || undefined}
       {...props}
     >
-      {loading && !asChild ? (
+      {success && !asChild ? (
+        <>
+          <Check className="size-5" aria-hidden="true" />
+          {successLabel}
+        </>
+      ) : loading && !asChild ? (
         <>
           <Loader2 className="size-4 animate-spin motion-reduce:animate-none" aria-hidden="true" />
           {loadingLabel}

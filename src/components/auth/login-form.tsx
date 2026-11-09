@@ -11,7 +11,7 @@ import { Link, useRouter } from '@/i18n/navigation';
 export function LoginForm({ resetDone = false }: { resetDone?: boolean }) {
   const t = useTranslations('auth');
   const router = useRouter();
-  const { pending, formError, fieldErrors, handleSubmit } = useAuthForm({
+  const { pending, success, formError, fieldErrors, handleSubmit } = useAuthForm({
     path: 'login',
     buildBody: (form) => ({
       identifier: textOf(form, 'identifier'),
@@ -47,7 +47,13 @@ export function LoginForm({ resetDone = false }: { resetDone?: boolean }) {
       />
       <TurnstileWidget />
       {formError ? <FormAlert kind="error">{formError}</FormAlert> : null}
-      <Button type="submit" loading={pending} loadingLabel={t('submitting')}>
+      <Button
+        type="submit"
+        loading={pending}
+        loadingLabel={t('login.loading')}
+        success={success}
+        successLabel={t('login.done')}
+      >
         {t('login.submit')}
       </Button>
       <p className="text-sm">
@@ -56,15 +62,6 @@ export function LoginForm({ resetDone = false }: { resetDone?: boolean }) {
           className="text-bleu-600 hover:text-bleu-700 -my-2 inline-flex min-h-11 min-w-11 items-center justify-center font-semibold underline-offset-4 hover:underline"
         >
           {t('login.forgot')}
-        </Link>
-      </p>
-      <p className="text-gris-600 text-sm">
-        {t('login.noAccount')}{' '}
-        <Link
-          href="/register"
-          className="text-bleu-600 hover:text-bleu-700 -my-2 inline-flex min-h-11 min-w-11 items-center justify-center font-semibold underline-offset-4 hover:underline"
-        >
-          {t('login.registerLink')}
         </Link>
       </p>
     </form>

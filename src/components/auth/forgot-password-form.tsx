@@ -12,13 +12,14 @@ import { Link } from '@/i18n/navigation';
 export function ForgotPasswordForm() {
   const t = useTranslations('auth');
   const [sent, setSent] = useState(false);
-  const { pending, formError, fieldErrors, handleSubmit } = useAuthForm({
+  const { pending, success, formError, fieldErrors, handleSubmit } = useAuthForm({
     path: 'password/forgot',
     buildBody: (form) => ({
       email: textOf(form, 'email'),
       turnstile_token: textOf(form, 'cf-turnstile-response'),
     }),
     onSuccess: () => setSent(true),
+    keepSuccess: false,
   });
 
   return (
@@ -36,7 +37,13 @@ export function ForgotPasswordForm() {
       {formError ? <FormAlert kind="error">{formError}</FormAlert> : null}
       {/* Même message que l'email existe ou non : on ne révèle rien. */}
       {sent ? <FormAlert kind="success">{t('forgot.success')}</FormAlert> : null}
-      <Button type="submit" loading={pending} loadingLabel={t('submitting')}>
+      <Button
+        type="submit"
+        loading={pending}
+        loadingLabel={t('forgot.loading')}
+        success={success}
+        successLabel={t('forgot.done')}
+      >
         {t('forgot.submit')}
       </Button>
       <p className="text-sm">

@@ -10,13 +10,19 @@ type Options = {
   // Construit le corps snake_case de l'API à partir des champs du formulaire.
   buildBody: (form: FormData, locale: string) => Record<string, unknown>;
   onSuccess: () => void;
+  // Faux pour un formulaire qui reste affiché après succès (le bouton se réactive).
+  keepSuccess?: boolean;
 };
 
+// Durée de la coche avant la suite (redirection) : sous les 600 ms demandés.
+const SUCCESS_DELAY_MS = 450;
+
 // Logique commune des formulaires : envoi, état d'attente, erreurs par champ.
-export function useAuthForm({ path, buildBody, onSuccess }: Options) {
+export function useAuthForm({ path, buildBody, onSuccess, keepSuccess = true }: Options) {
   const t = useTranslations('auth');
   const locale = useLocale();
   const [pending, setPending] = useState(false);
+  const [success, setSuccess] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
@@ -34,7 +40,11 @@ export function useAuthForm({ path, buildBody, onSuccess }: Options) {
     const result = await postAuth(path, body, locale);
     setPending(false);
     if (result.ok) {
-      onSuccess();
+      setSuccess(true);
+      window.setTimeout(() => {
+        onSuccess();
+        if (!keepSuccess) setSuccess(false);
+      }, SUCCESS_DELAY_MS);
       return;
     }
     resetTurnstile();
@@ -56,7 +66,7 @@ export function useAuthForm({ path, buildBody, onSuccess }: Options) {
     else if (names.length === 0) setFormError(error.message || t('networkError'));
   }
 
-  return { pending, formError, fieldErrors, handleSubmit };
+  return { pending, success, formError, fieldErrors, setFieldErrors, fieldMessage, handleSubmit };
 }
 
 export function textOf(form: FormData, name: string): string {

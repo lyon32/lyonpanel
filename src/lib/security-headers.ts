@@ -65,3 +65,30 @@ export function buildSecurityHeaders({
       : []),
   ];
 }
+
+// Zone privée : adresses (FR puis EN) des pages réservées aux clients connectés.
+// Doit rester alignée sur src/i18n/routing.ts (un test unitaire le vérifie).
+export const PRIVATE_PATHS: readonly (readonly [string, string])[] = [
+  ['/tableau-de-bord', '/dashboard'],
+  ['/commander', '/order'],
+  ['/commandes', '/orders'],
+  ['/recharger', '/add-funds'],
+  ['/transactions', '/transactions'],
+  ['/favoris', '/favorites'],
+  ['/support', '/support'],
+  ['/parrainage', '/referral'],
+  ['/compte', '/account'],
+];
+
+/**
+ * Règles `headers()` pour la zone privée : `no-store` empêche le navigateur de garder la page
+ * (bouton Retour après déconnexion) ; il doit alors la redemander, et le serveur renvoie vers la connexion.
+ */
+export function buildPrivateCacheRules(): { source: string; headers: SecurityHeader[] }[] {
+  const headers = [
+    { key: 'Cache-Control', value: 'private, no-store, max-age=0, must-revalidate' },
+  ];
+  return (['fr', 'en'] as const).flatMap((locale, index) =>
+    PRIVATE_PATHS.map((paths) => ({ source: `/${locale}${paths[index]}`, headers })),
+  );
+}

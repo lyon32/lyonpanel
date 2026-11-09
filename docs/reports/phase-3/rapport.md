@@ -1,5 +1,5 @@
 # Rapport — Phase 3 : Comptes
-Date : 2026-11-08 · Statut : faite – en attente de validation du propriétaire
+Date : 2026-11-09 (mis à jour) · Statut : faite – en attente de validation du propriétaire (2 points importants du contrôle qualité en cours de correction)
 
 ## En une phrase
 Un client peut maintenant créer un compte, se connecter par email ou par téléphone, se déconnecter et refaire son mot de passe ; la zone privée (tableau de bord) est fermée aux visiteurs non connectés.
@@ -12,6 +12,16 @@ Un client peut maintenant créer un compte, se connecter par email ou par télé
 - **Zone privée protégée** : `/fr/tableau-de-bord` et `/en/dashboard` renvoient vers la connexion si on n'est pas connecté.
 - **Socle technique** : une seule façon de gérer les routes API (`handler`) et les erreurs (`apiError`), messages d'erreur FR/EN, journaux sans données sensibles, en-têtes de sécurité (CSP, protection contre l'intégration dans un autre site), protection contre les requêtes venues d'un autre site.
 - **Écrans** : inscription, connexion, mot de passe oublié, nouveau mot de passe, en FR et EN, sur téléphone (360 px) et ordinateur, au design system de la phase 2. Pages privées cachées de Google.
+
+## Mise à jour du 2026-11-09
+- **Demandes de modification (PR)** : les PR 7, 8 et 9 sont fusionnées. La PR 10 (tests de parcours dans le navigateur) est ouverte, pas encore fusionnée.
+- **Écrans de compte refaits** : fond en dégradé doux, ordinateur à deux panneaux qui glissent, téléphone avec bande bleue et feuille blanche, inscription en 2 étapes, liste de pays avec recherche, boutons avec rond de chargement puis coche de succès, bonjour selon l'heure du navigateur (Bonjour / Bon après-midi / Bonsoir) sur le tableau de bord actuel.
+- **Nouvelle bibliothèque autorisée par toi : `animejs` 4.5.0** (version exacte). Elle sert seulement aux glissements de panneaux des pages de compte, chargée à la demande. GSAP reste pour le défilement et l'accueil.
+- **Documents validés modifiés avec ton accord** : `docs/05-design-system.md` (fond des pages de compte, nouvelle section « Mouvement et retour visuel »), `LLD.md §1`, `CONVENTIONS.md`, `ROADMAP.md`, `PRD.md`.
+- **Décision pour la phase 8** : une carte « suggestion de commande » discrète sur le tableau de bord (voir `ROADMAP.md`).
+- **Résultats connus** : Vitest 488 verts ; tests navigateur des comptes 55 verts ; contrôle qualité sur le parcours complet FR/EN, téléphone et ordinateur : OK sauf 2 points importants, en cours de correction.
+- **Limites connues** : téléphone en paysage avec défilement interne de la feuille ; Turnstile en clés de test seulement ; pas de test sur un vrai téléphone, ni sur Safari ou Firefox ; le lien de réinitialisation local pointe vers le port 3000 (réglage `site_url` de Supabase) ; le build de production est à refaire.
+- Les chiffres plus bas dans ce rapport (439 tests, 18 navigateur) datent du 2026-11-08 et sont remplacés par ceux-ci.
 
 ## Décisions du propriétaire (2026-11-08)
 - **Blocage progressif** : 3 échecs, puis 15 min, 30 min, 1 h… plafond 24 h par identifiant.
@@ -29,12 +39,12 @@ Un client peut maintenant créer un compte, se connecter par email ou par télé
 - Aucune migration de base de données ajoutée : la table `login_attempts` de la phase 1 suffit.
 
 ## Vérifications (résultats réels)
-- **Tests unitaires** : 439 passés, dans 54 fichiers.
-- **Navigateur (Playwright, parcours comptes)** : 18 sur 18 passés (dernier lancement du contrôle qualité, build de production, 42,9 s).
-- **Types (`tsc`)** : 0 erreur. **Build** : OK.
+- **Tests unitaires** (2026-11-09) : Vitest, 488 verts. (Avant : 439 passés, dans 54 fichiers, le 2026-11-08.)
+- **Navigateur (Playwright, parcours comptes)** (2026-11-09) : 55 verts. (Avant : 18 sur 18, le 2026-11-08.)
+- **Types (`tsc`)** : 0 erreur. **Build** : OK le 2026-11-08, **à refaire** dans l'état actuel.
 - **Lint** : 0 erreur, 6 avertissements `max-lines` qui ne viennent pas de la phase 3 (5 composants de mouvement de la phase 2 et `types.ts`).
 - **Tests de base de données (`test:db`)** : **non relancés dans le dernier état du code**. Le fichier `tests/db/auth-attempts.test.ts` existe, mais je n'ai pas de résultat récent à te donner. À relancer avant la PR.
-- **CI GitHub** : pas encore passée sur la PR (la PR n'est pas ouverte dans ce rapport).
+- **CI GitHub** : PR 7, 8 et 9 fusionnées ; PR 10 ouverte, CI non relevée ici.
 - Couverture en pourcentage : non mesurée.
 - Contrôles :
   - Sécurité (`lp-security`) : 1re et 2e passes **À CORRIGER**, 3e passe **ACCEPTÉ avec réserves documentées** (voir `securite-comptes.md`).
@@ -90,6 +100,9 @@ Prérequis : Docker et Supabase local démarrés, puis `npm run dev` (ou le buil
 ## Ce que tu dois préparer pour la phase suivante
 - Créer ton widget Cloudflare Turnstile et mettre les clés dans `.env.local` (jamais dans le dépôt, jamais `NEXT_PUBLIC_` pour la clé secrète).
 - Définir `AUTH_HASH_SECRET` (valeur longue et aléatoire) en local, puis sur Vercel avant la mise en ligne.
+
+## Rappel
+Je ne marque jamais la phase « validée ». Pas de CHANGELOG de fin de phase tant que tu n'as pas validé.
 
 ## Décision attendue : « validé » ou corrections
 Seul le propriétaire valide. Tant que tu n'as pas écrit « validé », la phase 3 reste « faite – en attente de validation ».

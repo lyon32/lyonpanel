@@ -39,6 +39,12 @@ async function waitTurnstile(page: Page) {
   });
 }
 
+// Sur téléphone, l'inscription tient en deux étapes : on passe à la seconde si le bouton est affiché.
+async function nextStep(page: Page) {
+  const next = page.locator('[data-testid="register-next"]');
+  if (await next.isVisible()) await next.click();
+}
+
 async function noHorizontalScroll(page: Page) {
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth - window.innerWidth,
@@ -85,6 +91,7 @@ for (const locale of ['fr', 'en'] as const) {
       await page.locator('input[name="email"]').fill(email);
       await page.locator('input[name="phone"]').fill(phone);
       await page.locator('input[name="password"]').fill(PASSWORD);
+      await nextStep(page);
       await page.locator('[data-field="country"]').click();
       await page.locator('[role="option"][data-value="CM"]').click();
       await page.locator('[data-field="display_currency"]').click();
@@ -93,6 +100,10 @@ for (const locale of ['fr', 'en'] as const) {
       await page.locator('button[type="submit"]').click();
       // Première visite du tableau de bord : compilation à froid de `next dev`.
       await expect(page).toHaveURL(p.home, { timeout: 45_000 });
+      // Salutation selon l'heure locale de l'appareil (pas celle du serveur).
+      await expect(page.locator('h1').first()).toHaveText(
+        /^(Bonjour|Bon après-midi|Bonsoir|Good morning|Good afternoon|Good evening)$/,
+      );
 
       await page.locator('[data-testid="logout"]').click();
       await expect(page).not.toHaveURL(p.home);

@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { cookies } from 'next/headers';
+import { getTranslations } from 'next-intl/server';
 import { LogoutButton } from '@/components/auth/logout-button';
 import { BalanceBadge } from '@/components/layout/balance-badge';
 import { BottomNav } from '@/components/layout/bottom-nav';
@@ -8,6 +9,8 @@ import { LanguageSwitcher } from '@/components/layout/language-switcher';
 import { Sidebar } from '@/components/layout/sidebar';
 import { setCurrencyCookie } from '@/lib/actions/currency';
 import { CURRENCY_COOKIE, parseCurrency } from '@/lib/currency';
+import { Logo } from '@/components/shared/logo';
+import { Link } from '@/i18n/navigation';
 import { requireUser } from '@/server/auth/require-user';
 
 export default async function AppLayout({
@@ -20,17 +23,27 @@ export default async function AppLayout({
   // Zone privée : sans session valide, redirection vers la connexion avant tout affichage.
   const { locale } = await params;
   await requireUser(locale === 'en' ? 'en' : 'fr');
+  const t = await getTranslations({ locale, namespace: 'auth' });
   const currency = parseCurrency((await cookies()).get(CURRENCY_COOKIE)?.value);
   return (
     <div className="flex min-h-screen">
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="border-gris-200 bg-blanc flex items-center justify-end gap-2 border-b px-4 py-2">
-          <LanguageSwitcher />
-          <CurrencySwitcher value={currency} setCurrencyCookie={setCurrencyCookie} />
-          {/* Solde réel branché plus tard ; ici un tiret, rien n'est calculé. */}
-          <BalanceBadge balanceLabel="—" />
-          <LogoutButton />
+        <header className="border-gris-200 bg-blanc flex items-center justify-between gap-2 border-b px-3 py-2 md:justify-end md:px-4">
+          {/* Téléphone : la barre latérale est masquée, le logo vient ici. */}
+          <Link
+            href="/dashboard"
+            className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center md:hidden"
+          >
+            <Logo variant="icon" alt={t('brandAlt')} className="size-8" />
+          </Link>
+          <div className="flex items-center gap-1.5 md:gap-2">
+            <LanguageSwitcher />
+            <CurrencySwitcher value={currency} setCurrencyCookie={setCurrencyCookie} />
+            {/* Solde réel branché plus tard ; ici un tiret, rien n'est calculé. */}
+            <BalanceBadge balanceLabel="—" />
+            <LogoutButton />
+          </div>
         </header>
         {/* pb-20 : laisse la place à la barre du bas sur mobile */}
         <main className="flex-1 px-4 pt-6 pb-20 md:pb-6">{children}</main>

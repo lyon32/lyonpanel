@@ -160,12 +160,53 @@ h3 {
   }
 }
 
-/* Fond des pages de compte : dégradé bleu/blanc très doux, sans image ni animation. */
+/* Fond des pages de compte : dégradé flou relevé sur la référence (pixels échantillonnés).
+   Bleu vif #5597F7 (gauche), bleu ciel #78C3FD, bleu-violet #6D7AFD (bas gauche),
+   lavande #B5ACFD (bas), cyan pâle #CCE6F5 (droite), cadre #EDF4FE. CSS seul, aucune image. */
 .lp-auth-bg {
-  background-color: var(--bleu-50);
+  background-color: #edf4fe;
   background-image:
-    radial-gradient(60% 50% at 8% 0%, var(--bleu-100) 0%, transparent 70%),
-    radial-gradient(55% 45% at 100% 100%, var(--bleu-100) 0%, transparent 70%),
-    radial-gradient(40% 30% at 90% 5%, var(--jaune-50) 0%, transparent 70%),
-    linear-gradient(180deg, var(--bleu-50) 0%, var(--blanc) 100%);
+    radial-gradient(70% 60% at 0% 18%, #5597f7 0%, rgb(85 151 247 / 0) 72%),
+    radial-gradient(45% 40% at 4% 48%, #78c3fd 0%, rgb(120 195 253 / 0) 72%),
+    radial-gradient(65% 55% at 22% 100%, #6d7afd 0%, rgb(109 122 253 / 0) 75%),
+    radial-gradient(40% 35% at 56% 104%, #b5acfd 0%, rgb(181 172 253 / 0) 75%),
+    radial-gradient(65% 65% at 100% 32%, #cce6f5 0%, rgb(204 230 245 / 0) 78%);
+}
+
+/* Bande bleue du haut sur téléphone et panneau de verre sur ordinateur : bleu 600 à 82 %,
+   assez opaque pour garder un texte blanc à 4,5:1 sur toute la zone du dégradé. */
+.lp-auth-glass {
+  background-color: rgb(29 78 216 / 0.82);
+  -webkit-backdrop-filter: blur(14px) saturate(1.15);
+  backdrop-filter: blur(14px) saturate(1.15);
+}
+
+@media (min-width: 1024px) {
+  .lp-auth-band {
+    background: none;
+  }
+}
+@media (max-width: 1023.98px) {
+  .lp-auth-band {
+    background-color: rgb(29 78 216 / 0.82);
+    -webkit-backdrop-filter: blur(14px) saturate(1.15);
+    backdrop-filter: blur(14px) saturate(1.15);
+  }
+}
+
+@media (min-width: 1024px) {
+  .lp-auth-glass {
+    border: 1px solid rgb(255 255 255 / 0.4);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.3);
+  }
+  /* Position de départ de chaque côté (sans JavaScript, donc sans saut au chargement). */
+  .lp-auth-panel {
+    translate: 150% 0;
+  }
+  .lp-auth-shell[data-side='left'] .lp-auth-panel {
+    translate: 0 0;
+  }
+  .lp-auth-shell[data-side='left'] .lp-auth-pane {
+    translate: 66.6667% 0;
+  }
 }
