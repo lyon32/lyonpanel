@@ -408,7 +408,7 @@ describe('tables internes illisibles pour un client', () => {
     'audit_log',
     'referral_rewards',
     'service_price_history',
-    'jap_balance_snapshots',
+    'provider_balance_snapshots',
     'login_attempts',
     'rate_limits',
     'allowed_signups',
@@ -421,14 +421,15 @@ describe('tables internes illisibles pour un client', () => {
 });
 
 describe('vue services_public', () => {
-  it('n expose ni jap_name, ni cost_usd_1000, ni margin_pct', async () => {
+  it('n expose ni provider_name, ni provider_type, ni cost_usd_1000, ni multiplier', async () => {
     const { data, error } = await a.client.from('services_public').select('*').limit(1);
     expect(error).toBeNull();
     expect(data?.length).toBeGreaterThan(0);
     const cols = Object.keys(data![0]);
-    expect(cols).not.toContain('jap_name');
+    expect(cols).not.toContain('provider_name');
+    expect(cols).not.toContain('provider_type');
     expect(cols).not.toContain('cost_usd_1000');
-    expect(cols).not.toContain('margin_pct');
+    expect(cols).not.toContain('multiplier');
     expect(cols).toContain('price_xaf_1000');
   });
 
@@ -516,7 +517,7 @@ describe('visiteur anonyme', () => {
     'audit_log',
     'referral_rewards',
     'service_price_history',
-    'jap_balance_snapshots',
+    'provider_balance_snapshots',
     'login_attempts',
     'rate_limits',
     'allowed_signups',

@@ -169,27 +169,6 @@ export type Database = {
         };
         Relationships: [];
       };
-      jap_balance_snapshots: {
-        Row: {
-          balance_usd: number;
-          id: number;
-          reserved_usd: number | null;
-          taken_at: string;
-        };
-        Insert: {
-          balance_usd: number;
-          id?: number;
-          reserved_usd?: number | null;
-          taken_at?: string;
-        };
-        Update: {
-          balance_usd?: number;
-          id?: number;
-          reserved_usd?: number | null;
-          taken_at?: string;
-        };
-        Relationships: [];
-      };
       login_attempts: {
         Row: {
           created_at: string;
@@ -224,9 +203,9 @@ export type Database = {
           error: string | null;
           id: string;
           idem_key: string;
-          jap_order_id: number | null;
           link: string;
           price_xaf_1000: number;
+          provider_order_id: number | null;
           quantity: number;
           remains: number | null;
           service_id: number;
@@ -245,9 +224,9 @@ export type Database = {
           error?: string | null;
           id?: string;
           idem_key: string;
-          jap_order_id?: number | null;
           link: string;
           price_xaf_1000: number;
+          provider_order_id?: number | null;
           quantity: number;
           remains?: number | null;
           service_id: number;
@@ -266,9 +245,9 @@ export type Database = {
           error?: string | null;
           id?: string;
           idem_key?: string;
-          jap_order_id?: number | null;
           link?: string;
           price_xaf_1000?: number;
+          provider_order_id?: number | null;
           quantity?: number;
           remains?: number | null;
           service_id?: number;
@@ -361,6 +340,27 @@ export type Database = {
           },
         ];
       };
+      price_multipliers: {
+        Row: {
+          category: string;
+          multiplier: number;
+          platform: string;
+          updated_at: string;
+        };
+        Insert: {
+          category: string;
+          multiplier: number;
+          platform: string;
+          updated_at?: string;
+        };
+        Update: {
+          category?: string;
+          multiplier?: number;
+          platform?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       profiles: {
         Row: {
           blocked_reason: string | null;
@@ -425,6 +425,27 @@ export type Database = {
             referencedColumns: ['id'];
           },
         ];
+      };
+      provider_balance_snapshots: {
+        Row: {
+          balance_usd: number;
+          id: number;
+          reserved_usd: number | null;
+          taken_at: string;
+        };
+        Insert: {
+          balance_usd: number;
+          id?: number;
+          reserved_usd?: number | null;
+          taken_at?: string;
+        };
+        Update: {
+          balance_usd?: number;
+          id?: number;
+          reserved_usd?: number | null;
+          taken_at?: string;
+        };
+        Relationships: [];
       };
       rate_limits: {
         Row: {
@@ -498,7 +519,7 @@ export type Database = {
           changed_at: string;
           cost_usd_1000: number | null;
           id: number;
-          margin_pct: number | null;
+          multiplier: number | null;
           price_xaf_1000: number | null;
           reason: string | null;
           service_id: number;
@@ -508,7 +529,7 @@ export type Database = {
           changed_at?: string;
           cost_usd_1000?: number | null;
           id?: number;
-          margin_pct?: number | null;
+          multiplier?: number | null;
           price_xaf_1000?: number | null;
           reason?: string | null;
           service_id: number;
@@ -518,7 +539,7 @@ export type Database = {
           changed_at?: string;
           cost_usd_1000?: number | null;
           id?: number;
-          margin_pct?: number | null;
+          multiplier?: number | null;
           price_xaf_1000?: number | null;
           reason?: string | null;
           service_id?: number;
@@ -550,14 +571,14 @@ export type Database = {
           cost_usd_1000: number | null;
           dripfeed: boolean;
           id: number;
-          jap_name: string | null;
-          jap_type: string | null;
-          margin_pct: number | null;
           max_qty: number;
           min_qty: number;
+          multiplier: number | null;
           name_fr: string | null;
           platform: string;
           price_xaf_1000: number | null;
+          provider_name: string | null;
+          provider_type: string | null;
           refill: boolean;
           sort_order: number;
           updated_at: string;
@@ -570,14 +591,14 @@ export type Database = {
           cost_usd_1000?: number | null;
           dripfeed?: boolean;
           id: number;
-          jap_name?: string | null;
-          jap_type?: string | null;
-          margin_pct?: number | null;
           max_qty: number;
           min_qty: number;
+          multiplier?: number | null;
           name_fr?: string | null;
           platform: string;
           price_xaf_1000?: number | null;
+          provider_name?: string | null;
+          provider_type?: string | null;
           refill?: boolean;
           sort_order?: number;
           updated_at?: string;
@@ -590,14 +611,14 @@ export type Database = {
           cost_usd_1000?: number | null;
           dripfeed?: boolean;
           id?: number;
-          jap_name?: string | null;
-          jap_type?: string | null;
-          margin_pct?: number | null;
           max_qty?: number;
           min_qty?: number;
+          multiplier?: number | null;
           name_fr?: string | null;
           platform?: string;
           price_xaf_1000?: number | null;
+          provider_name?: string | null;
+          provider_type?: string | null;
           refill?: boolean;
           sort_order?: number;
           updated_at?: string;
@@ -835,7 +856,6 @@ export type Database = {
           category: string | null;
           dripfeed: boolean | null;
           id: number | null;
-          jap_type: string | null;
           max_qty: number | null;
           min_qty: number | null;
           name_fr: string | null;
@@ -849,7 +869,6 @@ export type Database = {
           category?: string | null;
           dripfeed?: boolean | null;
           id?: number | null;
-          jap_type?: string | null;
           max_qty?: number | null;
           min_qty?: number | null;
           name_fr?: string | null;
@@ -863,7 +882,6 @@ export type Database = {
           category?: string | null;
           dripfeed?: boolean | null;
           id?: number | null;
-          jap_type?: string | null;
           max_qty?: number | null;
           min_qty?: number | null;
           name_fr?: string | null;
@@ -919,9 +937,9 @@ export type Database = {
           error: string | null;
           id: string;
           idem_key: string;
-          jap_order_id: number | null;
           link: string;
           price_xaf_1000: number;
+          provider_order_id: number | null;
           quantity: number;
           remains: number | null;
           service_id: number;
@@ -949,9 +967,9 @@ export type Database = {
           error: string | null;
           id: string;
           idem_key: string;
-          jap_order_id: number | null;
           link: string;
           price_xaf_1000: number;
+          provider_order_id: number | null;
           quantity: number;
           remains: number | null;
           service_id: number;

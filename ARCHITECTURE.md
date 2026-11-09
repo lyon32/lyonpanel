@@ -345,7 +345,7 @@ erDiagram
     text link
     int quantity
     int charged_xaf
-    text jap_order_id
+    text provider_order_id
     text status
     text idem_key_unique
   }

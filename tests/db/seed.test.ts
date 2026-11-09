@@ -11,7 +11,7 @@ type SeedService = {
   id: number;
   platform: string;
   name_fr: string;
-  jap_name: string;
+  provider_name: string;
   cost_usd_1000: number;
   price_xaf_1000: number;
   min_qty: number;
@@ -47,7 +47,7 @@ describe('seed : réglages par défaut', () => {
     ['usd_xaf_rate', 600],
     ['min_recharge_xaf', 3000],
     ['referral_pct', 5],
-    ['jap_low_balance_usd', 5],
+    ['provider_low_balance_usd', 5],
     ['limited_launch', false],
   ])('le réglage %s vaut %j', async (key, expected) => {
     expect(await getSetting(key)).toEqual(expected);
@@ -55,13 +55,6 @@ describe('seed : réglages par défaut', () => {
 
   it('auto_discount vaut 50 000 XAF et 10 %', async () => {
     expect(await getSetting('auto_discount')).toEqual({ threshold_xaf: 50000, pct: 10 });
-  });
-
-  it('margins contient les marges par plateforme et les paliers de docs/01', async () => {
-    expect(await getSetting('margins')).toEqual({
-      platforms: { tiktok: 120, instagram: 75, facebook: 75 },
-      tiers: [{ below_usd: 1, pct: 70 }, { below_usd: 5, pct: 65 }, { pct: 60 }],
-    });
   });
 
   it('saspay_fee_pct et price_alert_pct existent et sont des nombres positifs', async () => {
@@ -86,14 +79,9 @@ describe('seed : services fictifs', () => {
     for (const p of ['tiktok', 'instagram', 'facebook']) expect(platforms.has(p), p).toBe(true);
   });
 
-  it('active environ la moitié des services (actifs et disponibles), le reste inactif', async () => {
+  it('active tous les services (actifs et disponibles)', async () => {
     const rows = await seedServices();
-    const live = rows.filter((r) => r.active && r.available);
-    expect(live.length).toBeGreaterThanOrEqual(Math.floor(rows.length * 0.35));
-    expect(live.length).toBeLessThanOrEqual(Math.ceil(rows.length * 0.65));
-    expect(rows.some((r) => !r.active)).toBe(true);
-    // jamais « actif mais indisponible »
-    expect(rows.filter((r) => r.active && !r.available)).toEqual([]);
+    expect(rows.filter((r) => !r.active || !r.available)).toEqual([]);
   });
 
   it('a des quantités cohérentes : 0 < min_qty <= max_qty', async () => {
@@ -103,23 +91,22 @@ describe('seed : services fictifs', () => {
     }
   });
 
-  it('ne vend jamais sous le coût JAP (prix XAF entier >= coût × taux, marge de 60 % visée)', async () => {
+  it('applique le prix = coût × taux × 3, arrondi aux 5 XAF supérieurs', async () => {
     const rate = (await getSetting('usd_xaf_rate')) as number;
+    const mult = (await getSetting('default_multiplier')) as number;
     for (const r of await seedServices()) {
       const costXaf = Number(r.cost_usd_1000) * rate;
-      expect(r.price_xaf_1000, `service ${r.id}`).toBeGreaterThan(0);
       expect(Number.isInteger(Number(r.price_xaf_1000)), `service ${r.id}`).toBe(true);
       expect(Number(r.price_xaf_1000), `service ${r.id}`).toBeGreaterThanOrEqual(costXaf);
-      // marge minimale décidée = 60 %, tolérance d'arrondi de 10 XAF
-      expect(Number(r.price_xaf_1000), `service ${r.id}`).toBeGreaterThanOrEqual(
-        costXaf * 1.6 - 10,
+      expect(Number(r.price_xaf_1000), `service ${r.id}`).toBe(
+        Math.ceil(Math.round(costXaf * mult * 1e6) / 1e6 / 5) * 5,
       );
     }
   });
 
-  it('utilise des noms JAP fictifs et des noms FR sans prix ni étiquette JAP', async () => {
+  it('utilise des noms fournisseur fictifs et des noms FR sans prix ni étiquette JAP', async () => {
     for (const r of await seedServices()) {
-      expect(r.jap_name, `service ${r.id}`).toMatch(/SEED|TEST/);
+      expect(r.provider_name, `service ${r.id}`).toMatch(/SEED|TEST/);
       expect(r.name_fr, `service ${r.id}`).not.toMatch(/\d\s*(\$|usd|xaf|fcfa)|\$|JAP|SEED|TEST/i);
     }
   });

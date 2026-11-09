@@ -46,7 +46,7 @@ erDiagram
   ORDERS ||--o{ WALLET_TRANSACTIONS : "1-N"
 ```
 
-Tables isolées : `settings`, `audit_log`, `jap_balance_snapshots`, `login_attempts`, `rate_limits`, `allowed_signups`, `idempotency_keys`.
+Tables isolées : `settings`, `audit_log`, `provider_balance_snapshots`, `login_attempts`, `rate_limits`, `allowed_signups`, `idempotency_keys`.
 
 ## 2. Types énumérés
 
@@ -124,17 +124,16 @@ Le solde ne se modifie **que** par les fonctions SQL (§6), qui écrivent aussi 
 
 ### services — catalogue (copie travaillée du fournisseur)
 
-> Les colonnes `jap_*` (et le réglage `jap_low_balance_usd`, la table `jap_balance_snapshots`) sont renommées `provider_*` par la migration de la phase 4.
 | Champ | Type | Contraintes |
 |---|---|---|
 | id | int | PK = id fournisseur |
 | platform | text | non null (tiktok, instagram, facebook…) |
 | category | text | abonnés, likes, vues… |
 | name_fr | text | reconstruit (sans prix) |
-| jap_name | text | nom d'origine (admin seulement) |
-| jap_type | text | Default, Custom Comments… |
+| provider_name | text | nom d'origine (admin seulement) |
+| provider_type | text | Default, Custom Comments… |
 | cost_usd_1000 | numeric(12,4) | coût fournisseur |
-| margin_pct | numeric(6,2) | null = règle par plateforme |
+| multiplier | numeric(8,2) | null = règle par catégorie (`price_multipliers`) puis `default_multiplier` ; check > 0 |
 | price_xaf_1000 | bigint | prix client calculé |
 | min_qty / max_qty | int | NOT NULL, > 0, min ≤ max |
 | refill / cancel / dripfeed | boolean | |
@@ -150,7 +149,7 @@ Le solde ne se modifie **que** par les fonctions SQL (§6), qui écrivent aussi 
 | service_id | int FK → services |
 | cost_usd_1000 | numeric(12,4) |
 | price_xaf_1000 | bigint |
-| margin_pct | numeric(6,2) |
+| multiplier | numeric(8,2) |
 | usd_xaf_rate | numeric(10,2) |
 | reason | text (`sync`, `admin`, `taux`) |
 | changed_at | timestamptz |
@@ -169,7 +168,7 @@ Le solde ne se modifie **que** par les fonctions SQL (§6), qui écrivent aussi 
 | discount_pct | numeric(5,2) | remise appliquée |
 | charged_xaf | bigint | > 0, débité |
 | cost_usd | numeric(12,4) | coût fournisseur estimé (bénéfice admin) |
-| jap_order_id | bigint | unique, null |
+| provider_order_id | bigint | unique, null |
 | status | order_status | défaut `pending` |
 | start_count / remains | int | null |
 | idem_key | text | **unique** |
@@ -201,7 +200,7 @@ id uuid PK · user_id FK → profiles · body text · created_at. **Jamais lisib
 
 ### settings — réglages (admin seulement)
 key text PK · value jsonb · updated_at.
-Clés : `usd_xaf_rate` (600), `margins` (par plateforme + paliers), `min_recharge_xaf` (3000), `auto_discount` ({threshold_xaf: 50000, pct: 10}), `referral_pct` (5), `jap_low_balance_usd` (5), `saspay_fee_pct` (3), `price_alert_pct` (20). Les deux dernières valeurs sont provisoires (seed), confirmées par le propriétaire le 2026-11-07 ; ajustables.
+Clés : `usd_xaf_rate` (600), `default_multiplier` (3), `min_recharge_xaf` (3000), `auto_discount` ({threshold_xaf: 50000, pct: 10}), `referral_pct` (5), `provider_low_balance_usd` (5), `saspay_fee_pct` (3), `price_alert_pct` (20). Les deux dernières valeurs sont provisoires (seed), confirmées par le propriétaire le 2026-11-07 ; ajustables.
 
 ### login_attempts — essais de connexion (blocage 5 échecs / 15 min)
 id bigserial PK · identifier_hash text (email/téléphone haché) · ip_hash text · success bool · created_at. Index (identifier_hash, created_at), (ip_hash, created_at). Purge après 30 jours.
@@ -218,14 +217,23 @@ key uuid · user_id uuid · route text · request_hash text · response jsonb ·
 ### audit_log — actions sensibles
 id bigserial PK · actor_id uuid null · action text · target_table text · target_id text · details jsonb · created_at.
 
-### jap_balance_snapshots — suivi du solde fournisseur
+### price_multipliers — multiplicateur par catégorie
+| Colonne | Type |
+|---|---|
+| platform, category | text, clé primaire (platform, category) |
+| multiplier | numeric(8,2), check > 0 |
+| updated_at | timestamptz |
+
+Accès service_role seulement (RLS activée, aucune politique, aucun droit client). Prix = coût × taux × multiplicateur (service, sinon catégorie, sinon `default_multiplier`), arrondi aux 5 XAF supérieurs. `services.active` vaut true par défaut.
+
+### provider_balance_snapshots — suivi du solde fournisseur
 id bigserial PK · balance_usd numeric(12,4) · reserved_usd numeric(12,4) · taken_at timestamptz.
 
 ## 4. Index
 
 | Table | Index |
 |---|---|
-| orders | (user_id, created_at desc) · (status) where status in ('pending','in_progress','to_review') · unique(jap_order_id) · unique(idem_key) |
+| orders | (user_id, created_at desc) · (status) where status in ('pending','in_progress','to_review') · unique(provider_order_id) · unique(idem_key) |
 | payments | unique(saspay_session_id) · unique(saspay_transaction_id) · (status, created_at) where status='pending' · (user_id, created_at desc) |
 | wallet_transactions | (user_id, created_at desc) · unique(ref) |
 | services | (platform, category, active) · (active, available) |
@@ -242,13 +250,13 @@ Pagination par curseur (`created_at`, `id`) sur commandes, transactions, tickets
 |---|---|---|
 | profiles | lire/modifier **sa** ligne (sauf status, is_admin, custom_discount_pct, referred_by) | tout |
 | wallets, wallet_transactions, payments, orders | **lire** ses lignes ; aucune écriture directe | tout |
-| services | via la vue `services_public` : actifs et disponibles, sans `jap_name`, `cost_usd_1000`, `margin_pct` | tout |
+| services | via la vue `services_public` : actifs et disponibles, sans `provider_name`, `provider_type`, `cost_usd_1000`, `multiplier` | tout |
 | favorites, tickets, ticket_messages, ticket_attachments | ses lignes | tout |
-| admin_notes, settings, audit_log, referral_rewards, service_price_history, jap_balance_snapshots, login_attempts, rate_limits, allowed_signups, idempotency_keys | **aucun accès** | tout |
+| admin_notes, settings, price_multipliers, audit_log, referral_rewards, service_price_history, provider_balance_snapshots, login_attempts, rate_limits, allowed_signups, idempotency_keys | **aucun accès** | tout |
 
 Client bloqué (`blocked`) : peut lire et écrire au support, mais ne peut pas commander (contrôlé dans les fonctions).
 Compte supprimé (`deleted`) : ne lit et n'écrit plus rien (profil masqué ; insertions tickets, messages, favoris et pièces jointes refusées).
-Colonnes cachées au client : `orders.cost_usd`, `orders.error`, `orders.jap_order_id`, `orders.idem_key`, `payments.raw_webhook`, `payments.saspay_transaction_id`, `payments.idem_key`, `profiles.blocked_reason`, `custom_discount_pct`, `is_admin`. Le client lit par colonnes explicites, jamais `select *`.
+Colonnes cachées au client : `orders.cost_usd`, `orders.error`, `orders.provider_order_id`, `orders.idem_key`, `payments.raw_webhook`, `payments.saspay_transaction_id`, `payments.idem_key`, `profiles.blocked_reason`, `custom_discount_pct`, `is_admin`. Le client lit par colonnes explicites, jamais `select *`.
 
 ## 6. Fonctions SQL atomiques (seules à toucher l'argent)
 

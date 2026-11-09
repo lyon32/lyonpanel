@@ -304,10 +304,10 @@ describe('commandes', () => {
     await expect(makeOrder(u.id, s.id, { charged_xaf: 0 })).rejects.toThrow();
   });
 
-  it.each(['idem_key', 'jap_order_id'])('refuse un doublon de %s', async (col) => {
+  it.each(['idem_key', 'provider_order_id'])('refuse un doublon de %s', async (col) => {
     const u = await user();
     const s = await makeService();
-    const v = col === 'jap_order_id' ? Math.floor(Math.random() * 1e9) : randomUUID();
+    const v = col === 'provider_order_id' ? Math.floor(Math.random() * 1e9) : randomUUID();
     await makeOrder(u.id, s.id, { [col]: v });
     await expect(makeOrder(u.id, s.id, { [col]: v })).rejects.toThrow(/duplicate|unique|23505/i);
   });

@@ -183,30 +183,28 @@ paths:
     get:
       tags: [catalog]
       security: []
+      description: Catalogue groupé réseau puis type. Mis en cache 5 min. Jamais de coût, multiplicateur, marge ni nom fournisseur.
       parameters:
-        - { name: platform, in: query, schema: { type: string } }
-        - { name: category, in: query, schema: { type: string } }
-        - { name: q, in: query, schema: { type: string } }
-        - $ref: '#/components/parameters/Limit'
-        - $ref: '#/components/parameters/Cursor'
+        - { name: currency, in: query, schema: { type: string, enum: [XAF, XOF, USD], default: XAF } }
+        - { name: locale, in: query, schema: { type: string, enum: [fr, en] } }
       responses:
         '200':
-          description: Services
+          description: Catalogue public
           content:
             application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/Page'
-                  - type: object
-                    properties:
-                      data: { type: array, items: { $ref: '#/components/schemas/Service' } }
+              schema: { $ref: '#/components/schemas/PublicCatalog' }
+        '400': { $ref: '#/components/responses/Error' }
   /services/{id}:
     get:
       tags: [catalog]
       security: []
-      parameters: [ { $ref: '#/components/parameters/IntId' } ]
+      parameters:
+        - $ref: '#/components/parameters/IntId'
+        - { name: currency, in: query, schema: { type: string, enum: [XAF, XOF, USD], default: XAF } }
+        - { name: locale, in: query, schema: { type: string, enum: [fr, en] } }
       responses:
-        '200': { description: Service, content: { application/json: { schema: { $ref: '#/components/schemas/Service' } } } }
+        '200': { description: Service, content: { application/json: { schema: { $ref: '#/components/schemas/PublicService' } } } }
+        '400': { $ref: '#/components/responses/Error' }
         '404': { $ref: '#/components/responses/Error' }
   /settings/public:
     get:
@@ -373,7 +371,7 @@ paths:
     get:
       tags: [favorites]
       responses:
-        '200': { description: Favoris, content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/Service' } } } } }
+        '200': { description: Favoris, content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/PublicService' } } } } }
   /favorites/{service_id}:
     parameters:
       - { name: service_id, in: path, required: true, schema: { type: integer } }
@@ -868,23 +866,43 @@ components:
         balance_after_xaf: { type: integer }
         order_short_id: { type: [integer, 'null'] }
         created_at: { type: string, format: date-time }
-    Service:
+    PublicService:
       type: object
-      description: Jamais de coût fournisseur, marge ni nom fournisseur.
+      description: Jamais de coût fournisseur, multiplicateur, marge ni nom fournisseur.
       properties:
         id: { type: integer }
-        platform: { type: string }
-        category: { type: string }
-        type: { type: string, description: 'default, custom_comments, ...' }
         name: { type: string }
-        description: { type: string }
-        price_xaf_1000: { type: integer }
-        min_qty: { type: integer }
-        max_qty: { type: integer }
+        network: { type: string, example: tiktok }
+        type: { type: string, enum: [followers, likes, views, comments, shares, other] }
+        priceXaf1000: { type: integer, description: Prix de 1 000 en XAF, multiple de 5 }
+        minQty: { type: integer }
+        maxQty: { type: integer }
+        minOrderXaf: { type: integer, description: Prix de la commande minimum, en XAF }
         refill: { type: boolean }
         cancel: { type: boolean }
-        guarantee_days: { type: [integer, 'null'] }
-        avg_start: { type: [string, 'null'] }
+        dripfeed: { type: boolean }
+        displayPrice1000: { type: number, description: Dans la devise demandée (affichage seulement) }
+        displayMinOrder: { type: number }
+    PublicCatalog:
+      type: object
+      properties:
+        currency: { type: string, enum: [XAF, XOF, USD] }
+        locale: { type: string, enum: [fr, en] }
+        networks:
+          type: array
+          items:
+            type: object
+            properties:
+              network: { type: string }
+              label: { type: string }
+              types:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type: { type: string }
+                    label: { type: string }
+                    services: { type: array, items: { $ref: '#/components/schemas/PublicService' } }
     CreateOrderRequest:
       type: object
       required: [service_id, link, quantity, expected_total_xaf]

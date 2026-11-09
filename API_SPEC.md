@@ -154,12 +154,13 @@ Mot de passe : 8 caractères minimum (mon choix). Téléphone : format internati
 ### 6.4 Catalogue (public, mis en cache 5 min)
 | GET | `/platforms` | `[{slug, name, service_count}]` |
 |---|---|---|
-| GET | `/services?platform=tiktok&category=followers&q=` | liste paginée de `Service` |
-| GET | `/services/{id}` | `Service` |
+| GET | `/services?currency=&locale=` | catalogue groupé réseau → type (forme ci-dessous) |
+| GET | `/services/{id}?currency=&locale=` | `Service` (forme ci-dessous) |
 | GET | `/settings/public` | `{usd_xaf_rate, xof_xaf_rate: 1, min_recharge_xaf, currencies}` |
 
-`Service` = `{id, platform, category, name, description, price_xaf_1000, min_qty, max_qty, refill, cancel, guarantee_days?, avg_start?, type}`.
-Le client ne reçoit **jamais** `cost_usd`, `margin_pct` ni le nom fournisseur.
+**Catalogue — forme de la phase 4.** `GET /services?currency=XAF|XOF|USD&locale=fr|en` renvoie le catalogue groupé : `{ currency, locale, networks: [{ network, label, types: [{ type, label, services: [...] }] }] }`. Chaque service : `{ id, name, network, type, priceXaf1000, minQty, maxQty, minOrderXaf, refill, cancel, dripfeed, displayPrice1000, displayMinOrder }`. `price…Xaf…` et `minOrderXaf` sont des entiers XAF ; `display…` est dans la devise demandée (XOF = XAF ; USD = XAF ÷ `usd_xaf_rate`, 2 décimales, affichage seulement). `GET /services/{id}` renvoie un service (même forme), ou `404 NOT_FOUND` (identifiant inconnu ou invalide). Devise ou langue inconnue : `400 VALIDATION_ERROR`. Jamais de coût, multiplicateur, marge ni nom fournisseur. Cache 5 min.
+
+`Service` = `{id, name, network, type, priceXaf1000, minQty, maxQty, minOrderXaf, refill, cancel, dripfeed, displayPrice1000, displayMinOrder}` (camelCase). Le client ne reçoit **jamais** le coût, le multiplicateur, la marge ni le nom du fournisseur ; la réponse est construite champ par champ (liste blanche). Réponses en `Cache-Control: public, s-maxage=300`.
 
 ### 6.5 Commandes
 | Méthode | Chemin | Détail |

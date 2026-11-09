@@ -165,33 +165,33 @@ lyonpanel/
 ## 4. Fonctions clés (signatures)
 
 ### 4.1 Prix — `server/pricing`
+Prix client = coût fournisseur en XAF × **multiplicateur** (départ ×3). Le taux (`usd_xaf_rate`, 600) et le multiplicateur par défaut (`default_multiplier`, 3) viennent des réglages et sont toujours passés en paramètre : aucun 600 ni 3 dans les calculs. Calcul en **entiers** (coût en dix-millièmes de dollar), aucune erreur de virgule flottante.
 ```ts
-type Platform = 'tiktok' | 'instagram' | 'facebook' | 'youtube' | 'telegram' | 'x' | 'spotify' | 'other';
+// pricing/multipliers.ts
+interface MultiplierRule { platform: string; category: string; multiplier: number }   // table price_multipliers
 
-interface MarginRules {
-  byPlatform: Partial<Record<Platform, number>>;      // { tiktok: 120, instagram: 75, facebook: 75 }
-  tiers: { maxUsd: number | null; pct: number }[];   // [{maxUsd:1,pct:70},{maxUsd:5,pct:65},{maxUsd:null,pct:60}]
-}
-
-/** Marge : override du service > plateforme > palier selon le coût USD. */
-export function resolveMarginPct(platform: Platform, costUsdPer1000: number, rules: MarginRules, override?: number | null): number;
-
-/** Prix client pour 1 000 en XAF, arrondi au multiple de 5 supérieur, minimum 5. */
-export function computePricePer1000Xaf(costUsdPer1000: number, marginPct: number, usdXafRate: number): number;
-
-/** Remise : la plus grande entre auto (si totalRecharged ≥ seuil) et personnalisée. Jamais cumulées. */
-export function resolveDiscountPct(totalRechargedXaf: number, auto: { thresholdXaf: number; pct: number }, customPct: number | null): number;
-
-/** Total : ceil5(prix × qté / 1000 × (1 − remise)), jamais sous coût fournisseur × (1 + marge minimale). */
-export function computeOrderTotalXaf(input: {
-  pricePer1000Xaf: number; quantity: number; discountPct: number;
-  costUsdPer1000: number; usdXafRate: number; minMarginPct: number;
+/** Multiplicateur : surcharge du service > règle (réseau, type) > multiplicateur par défaut. Erreur si ≤ 0 ou NaN. */
+export function resolveMultiplier(input: {
+  override?: number | null; platform: string; category: string;
+  rules: readonly MultiplierRule[]; defaultMultiplier: number;
 }): number;
 
-/** Frais SasPay payés par le client. */
-export function computeTopUpFees(amountXaf: number, feePct: number): { amountXaf: number; feeXaf: number; totalToPay: number };
+// pricing/compute-price.ts
+/** Prix client pour 1 000 : ceil5(coûtUsd × taux × multiplicateur), minimum 5. Erreur si coût < 0, taux ≤ 0 ou multiplicateur ≤ 0. */
+export function computePricePer1000Xaf(costUsd1000: number | string, usdXafRate: number, multiplier: number): number;
 
-/** Bonus de parrainage : floor(pct % du premier crédit). */
+/** Total : max(5, ceil5(prix × quantité / 1000)). Erreur si prix ou quantité ne sont pas des entiers > 0. */
+export function computeOrderTotalXaf(pricePer1000Xaf: number, quantity: number): number;
+
+/** Prix de la commande minimum : total avec la quantité minimale du service. */
+export function computeMinOrderXaf(pricePer1000Xaf: number, minQty: number): number;
+```
+Valeurs de référence (taux 600, ×3) : 0.756 $ → 1365 ; 1.61 $ → 2900 ; 4.2 $ → 7560 ; 1.008 $ → 1815 ; 0.0012 $ → 5 ; 4838.4 $ → 8 709 120. Prix 1365 × quantité 10 → 15 ; prix 1815 × quantité 1000 → 1815.
+
+Hors phase 4 (inchangé, repris plus tard avec les phases remises, parrainage et frais) :
+```ts
+export function resolveDiscountPct(totalRechargedXaf: number, auto: { thresholdXaf: number; pct: number }, customPct: number | null): number;
+export function computeTopUpFees(amountXaf: number, feePct: number): { amountXaf: number; feeXaf: number; totalToPay: number };
 export function computeReferralBonusXaf(creditedXaf: number, pct: number): number;
 ```
 
