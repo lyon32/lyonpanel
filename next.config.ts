@@ -7,6 +7,8 @@ import { buildPrivateCacheRules, buildSecurityHeaders } from './src/lib/security
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
 const nextConfig: NextConfig = {
+  // Dev seulement : autorise le test depuis un téléphone du même réseau (sinon la page ne s'anime pas : JS bloqué).
+  allowedDevOrigins: (process.env.DEV_LAN_ORIGINS ?? '192.168.100.243').split(','),
   async headers() {
     return [
       {

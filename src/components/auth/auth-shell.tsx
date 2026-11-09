@@ -242,10 +242,10 @@ export function AuthShell({ children }: { children: ReactNode }) {
         <header className="mx-auto flex h-16 w-full max-w-[1100px] items-center justify-between px-4 lg:h-20 lg:px-8">
           <Link
             href="/"
-            className="bg-blanc/90 focus-visible:ring-bleu-100 inline-flex min-h-11 items-center gap-2 rounded-full py-1 pr-4 pl-1.5 shadow-[0_1px_3px_rgba(14,23,38,0.12)] outline-none focus-visible:ring-4"
+            className="focus-visible:ring-blanc inline-flex min-h-11 items-center gap-2 rounded-full outline-none focus-visible:ring-4"
           >
             <Logo variant="icon" alt="" className="size-8" />
-            <span className="text-bleu-700 text-lg font-bold">{t('brandAlt')}</span>
+            <span className="text-blanc lg:text-bleu-700 text-lg font-bold">{t('brandAlt')}</span>
             <span className="sr-only">{t('homeLabel')}</span>
           </Link>
           <AuthLanguageSwitcher />
