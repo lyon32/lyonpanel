@@ -1,5 +1,6 @@
 'use client';
 
+import { useParams } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import { usePathname, useRouter } from '@/i18n/navigation';
 import { routing } from '@/i18n/routing';
@@ -12,10 +13,11 @@ export function AuthLanguageSwitcher() {
   const locale = useLocale();
   const pathname = usePathname();
   const router = useRouter();
+  const { locale: _locale, ...params } = useParams();
 
   function change(code: (typeof routing.locales)[number]) {
     const query = Object.fromEntries(new URLSearchParams(window.location.search));
-    router.replace({ pathname, query }, { locale: code });
+    router.replace({ pathname, params, query } as never, { locale: code });
   }
 
   return (

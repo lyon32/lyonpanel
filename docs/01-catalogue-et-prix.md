@@ -1,100 +1,259 @@
 # Catalogue et prix
 
+Ce document explique d'où viennent les services, comment ils sont rangés, nommés et vendus, et comment le prix est calculé. Les chiffres sont ceux du catalogue fourni par le fournisseur au moment de la phase 4 (2 188 services). La liste complète, service par service, est dans `data/catalogue-services.csv`.
+
 ## 1. Source
 
-API JAP v2, action `services` : 5 740 services, 241 catégories JAP. Fichier produit : `data/catalogue-jap-usd-xaf.csv` (colonnes : id, plateforme, catégorie JAP, nom JAP, type, prix USD et XAF pour 1 000, min, max, dripfeed, refill, annulation). **Aucune marge n'est appliquée dans ce fichier.**
+- Le catalogue vient de l'API v2 du fournisseur, action `services`. Chaque service a un numéro, un nom, un type, un prix **en USD pour 1 000 unités**, une quantité minimum et maximum, et trois options : recharge, annulation, goutte-à-goutte.
+- Le taux de change est **1 USD = 600 XAF**. Il est réglable (réglage `usd_xaf_rate`, écran admin en phase 12). Le XOF suit le même taux que le XAF (parité fixe).
+- Le fichier `data/catalogue-services.csv` est **généré** par `npm run catalogue:build` à partir du fichier brut. Il contient les prix du fournisseur et nos prix de vente. Il ne contient jamais le nom d'origine d'un service. Ces chiffres sont internes : le client ne voit que son prix de vente.
+- Résumé chiffré : `data/catalogue-resume.json`.
 
-Taux provisoire : **1 USD = 600 XAF** (modifiable). XOF suit le même taux que XAF (parité fixe).
+## 2. Classement par réseau et par type
 
-## 2. Classement par plateforme (provisoire, à affiner)
+Le fournisseur range ses services à sa façon. Nous les reclassons avec des règles sur le nom, dans `src/server/catalog/classify.ts`.
 
-| Plateforme | Services | Min qté médian | Prix min (USD / XAF) | Médiane (USD / XAF) | Max (USD / XAF) |
-|---|---|---|---|---|---|
-| Instagram | 1509 | 10 | 0 $ / 1 | 2,75 $ / 1 648 | 6 875 $ / 4 125 000 |
-| Trafic web / SEO | 991 | 500 | 0,15 $ / 90 | 0,44 $ / 263 | 375 000 $ / 225 000 000 |
-| YouTube | 655 | 100 | 0,05 $ / 29 | 3 $ / 1 800 | 540 $ / 324 000 |
-| TikTok | 647 | 50 | 0,01 $ / 3 | 0,88 $ / 525 | 156,25 $ / 93 750 |
-| Facebook | 488 | 10 | 0,02 $ / 12 | 2,25 $ / 1 350 | 1 121,54 $ / 672 923 |
-| Autres | 351 | 50 | 0,01 $ / 4 | 6,25 $ / 3 750 | 5 625 $ / 3 375 000 |
-| Spotify | 311 | 500 | 0,13 $ / 75 | 0,63 $ / 378 | 1 275 $ / 765 000 |
-| X (Twitter) | 265 | 50 | 0 $ / 2 | 3,75 $ / 2 250 | 437,5 $ / 262 500 |
-| Telegram | 257 | 20 | 0 $ / 2 | 0,29 $ / 173 | 36 $ / 21 600 |
-| Snapchat | 71 | 50 | 2,87 $ / 1 722 | 5,69 $ / 3 413 | 151,88 $ / 91 125 |
-| Shopee | 58 | 10 | 0,23 $ / 135 | 10,5 $ / 6 300 | 5 400 $ / 3 240 000 |
-| Twitch | 49 | 10 | 0,08 $ / 48 | 5 $ / 3 000 | 262,5 $ / 157 500 |
-| SoundCloud | 29 | 20 | 0,28 $ / 169 | 6,5 $ / 3 900 | 62,5 $ / 37 500 |
-| LinkedIn | 27 | 10 | 4,38 $ / 2 625 | 50 $ / 30 000 | 25 000 $ / 15 000 000 |
-| WhatsApp | 18 | 10 | 2,5 $ / 1 500 | 6,56 $ / 3 938 | 6,56 $ / 3 938 |
-| Discord | 14 | 1 | 5,63 $ / 3 375 | 192,5 $ / 115 500 | 7 500 $ / 4 500 000 |
+**Réseau.** Le texte est mis en minuscules, sans accent ni lettres stylisées. On cherche dans le **nom** du service le premier mot-clé de réseau (Instagram, Insta ou IG en mot entier, TikTok, Facebook ou FB, YouTube ou YT, Telegram, X ou Twitter, Kick, Threads, Twitch, LinkedIn, Pinterest, Spotify, WhatsApp, Discord, SoundCloud, trafic web). **Le mot-clé qui apparaît le plus tôt dans le nom gagne.** S'il n'y en a aucun, on regarde la catégorie du fournisseur. Sinon : « Autres réseaux ».
 
-Tous les prix sont **pour 1 000 unités**, au taux provisoire de 600 XAF pour 1 USD, sans marge. Répartition des minimums de commande (tous services) : 10 ou moins = 2 051 ; 11 à 100 = 2 006 ; 101 à 500 = 1 178 ; 1 000 = 355 ; plus de 1 000 = 149 ; médiane = 50 unités.
+**Type.** Mots-clés dans le nom : abonnés (followers, subscribers, members), J'aime (likes), vues (views, plays, watch time), commentaires, partages (shares, reposts, saves). Le premier mot-clé du nom gagne. Deux types du fournisseur priment sur le nom : « commentaires personnalisés » devient Commentaires, « likes de commentaires » devient J'aime. Sans mot-clé : « Autres services ».
 
-Remarques :
-- La plateforme est déduite du nom de catégorie JAP par mots-clés. 351 services tombent dans « Autres » et 991 dans « Trafic web / SEO » (le mot « Google » ou « website » y a peut-être attiré des services qui n'en sont pas) : **à relire**.
-- Des prix extrêmes (375 000 $ pour 1 000) existent : ce sont sans doute des forfaits ou des unités spéciales. À examiner avant publication.
-- Mise en avant au lancement : Facebook, TikTok, Instagram (décidé).
+## 3. Noms reconstruits
 
-## 2 bis. Prix client avec marge (décidé)
+Le nom affiché est **fabriqué** à partir de champs propres : type, réseau, quelques qualificatifs, options (Recharge, Annulable, Goutte-à-goutte), puis le numéro. Exemple : « Abonnés Instagram · Réel · États-Unis · Garantie 30 j · Recharge #35452 ».
 
-**Marge par plateforme (prioritaire)** : TikTok +120 %, Instagram +75 %, Facebook +75 %.
-**Autres plateformes** : entre 60 % et 70 % selon le prix JAP : +70 % sous 1 $, +65 % de 1 à 5 $, +60 % au-dessus de 5 $ (paliers exacts = mon choix).
-Taux provisoire 600 XAF pour 1 USD, prix client arrondis au multiple de 5 XAF (minimum 5 XAF), pour 1 000 unités.
+Les qualificatifs (4 au maximum, dans cet ordre fixe) sont : cible (Story, Reel, Live, Post, Profil, Page), qualité (Réel, Haute qualité, Premium, Mixte, Économique, Organique), origine (pays ou région, ou Mondial), garantie (« Garantie à vie » ou « Garantie 30 j »), chute (Sans chute, Chute faible), Départ instantané. Ils sont cherchés dans le nom et la catégorie du fournisseur, mais **réécrits en mots propres** (FR/EN) : aucun texte du fournisseur n'est recopié. Le nom fait 95 caractères au plus avant le numéro.
 
-Bénéfice sur 1 000 unités au prix médian de chaque plateforme :
+Il ne reprend **jamais** le nom du fournisseur, ni ses étiquettes (`[Max: 1M]`, `[Start Time…]`), ni un prix, ni une promesse de qualité. Le client ne doit pas pouvoir deviner d'où vient le service. Avec les qualificatifs, le catalogue de 2 188 services compte **1 051 noms distincts** avant le numéro (au lieu d'une poignée), le plus répété l'étant 39 fois.
 
-- **Instagram** : JAP 1 648 XAF, client 2 885 XAF, **bénéfice 1 237 XAF** (+75 %)
-- **Trafic web / SEO** : JAP 263 XAF, client 445 XAF, **bénéfice 182 XAF** (+69 %)
-- **YouTube** : JAP 1 800 XAF, client 2 970 XAF, **bénéfice 1 170 XAF** (+65 %)
-- **TikTok** : JAP 525 XAF, client 1 155 XAF, **bénéfice 630 XAF** (+120 %)
-- **Facebook** : JAP 1 350 XAF, client 2 365 XAF, **bénéfice 1 015 XAF** (+75 %)
-- **Autres** : JAP 3 750 XAF, client 6 000 XAF, **bénéfice 2 250 XAF** (+60 %)
+Un service déjà présent n'est jamais renommé par la synchronisation.
 
-Le détail de chaque service (marge, prix client) est dans le CSV. Ces chiffres sont internes : le client ne voit que son prix. La marge d'un service peut être changée à la main dans l'admin (elle prime sur la règle par plateforme).
+## 4. Règle du prix
 
-## 3. Réorganisation du catalogue sur le site
+1. Coût en XAF pour 1 000 = prix du fournisseur en USD × 600.
+2. Prix de vente pour 1 000 = coût en XAF × **multiplicateur**.
+3. Arrondi **au multiple de 5 XAF supérieur**, minimum 5 XAF.
 
-Chaque service est présenté ainsi : **Plateforme → Type de service** (Abonnés, Likes, Vues, Commentaires, Partages, Direct/Live, Autres) **→ Qualité** (garantie / non garantie / ciblée par pays).
-- Noms réécrits simplement en français (décidé), par exemple : « Abonnés Instagram — qualité garantie, recharge 30 jours ».
-- Les étiquettes JAP (`[Max: 1M] [Start Time…]`) deviennent des champs lisibles : délai de départ, vitesse, garantie, minimum, maximum.
-- Types spéciaux (commentaires personnalisés, abonnements, mentions, sondages, trafic) ont un formulaire de commande adapté.
-- Les services doublons ou clairement trop chers peuvent être masqués côté admin (« on prend tout mais on arrange » — décidé).
+Le multiplicateur est **3 au départ**. Il se choisit dans cet ordre : la surcharge du service s'il y en a une, sinon la règle du couple réseau × type, sinon le réglage par défaut (`default_multiplier`). Tout est réglable dans l'admin (phase 12). Quand le taux ou un multiplicateur change, tous les prix sont recalculés.
 
-## 4. Méthode de prix (à valider avec toi)
+Exemple : un service à 1,50 $ les 1 000 coûte 900 XAF. Avec ×3 : 2 700 XAF les 1 000.
 
-1. Table USD : prix JAP pour 1 000 (déjà faite).
-2. Conversion XAF au taux choisi (déjà faite, provisoire).
-3. **Marge par paliers** (décidée par le propriétaire) : plus le prix JAP est bas, plus le pourcentage est élevé, pour que le prix final reste cohérent :
+## 5. Total, minimum et maximum
 
-| Prix JAP (USD/1000) | Marge |
-|---|---|
-| moins de 1 $ | +70 % |
-| 1 à 5 $ | +65 % |
-| plus de 5 $ | +60 % |
+- **Total d'une commande** = prix pour 1 000 × quantité ÷ 1 000, calculé **par le serveur**, arrondi lui aussi au multiple de 5 XAF supérieur, minimum 5 XAF. Le navigateur n'envoie jamais de prix.
+- **Commande minimum** = total pour la quantité minimum du service.
+- Chaque service a sa quantité minimum et maximum, reprises du fournisseur. Elles varient beaucoup d'un service à l'autre, et le formulaire de commande les affiche pour chaque service.
+- Exemple : 100 abonnés à 2 700 XAF les 1 000 = 270 XAF.
 
-Fourchette décidée : 60 % à 70 %. Ces paliers sont **validés**.
-4. Arrondi : au multiple de 5 ou 10 XAF pour un prix net.
-5. Contrôle de cohérence : un contrôle automatique vérifie qu'aucun prix client n'est inférieur au coût JAP et qu'aucun service similaire n'a un prix plus élevé pour une qualité plus basse.
-6. Remises gros clients : en plus de la marge, appliquées sur le prix client, jamais sous le coût JAP + marge minimale.
+## 6. Quels services sont vendus
 
-## 4 bis. Quantité, minimum et calcul du total
+**Tous** les services sont vendus et actifs, sauf ceux qui disparaissent de la liste du fournisseur (ils passent « indisponibles », sans être supprimés, car des commandes passées y renvoient). L'administrateur peut aussi désactiver un service à la main ; la synchronisation ne le réactive pas.
 
-- Le prix JAP est exprimé **pour 1 000 unités**, mais chaque service a son propre minimum et maximum. Les minimums varient beaucoup : seuls 355 services sur 5 740 (environ 6 %) ont un minimum de 1 000. Médiane : 50 unités. 2 051 services ont un minimum de 10 ou moins, 2 006 entre 11 et 100, 1 178 entre 101 et 500, 149 au-dessus de 1 000.
-- **Formule** : `total client = prix client pour 1000 × quantité ÷ 1000`, calculée côté serveur, arrondie au multiple de 5 ou 10 XAF. La marge s'applique au prix pour 1 000 avant ce calcul.
-- Exemple : 100 followers à 5 $ les 1 000 chez JAP = 0,50 $ de coût, plus la marge.
-- Le coût d'une commande minimale est faible : médiane de 0,11 $ chez JAP, 90 % des services sous 1,75 $. Beaucoup de commandes seront petites, d'où le minimum de recharge distinct du prix d'une commande.
-- Le formulaire de commande affiche le prix pour 1 000 comme repère, recalcule le total en direct pendant la saisie de la quantité, et refuse toute quantité hors du min/max du service. Le serveur revérifie.
-- Les colonnes `min` et `max` du CSV sont celles de chaque service.
+## 7. Synchronisation
 
-## 5. Synchronisation
+Le serveur compare régulièrement la liste du fournisseur à notre base :
 
-- Tâche planifiée (par exemple toutes les heures) : récupère `services` chez JAP, met à jour les coûts, détecte les services ajoutés ou retirés, recalcule les prix clients.
-- Un service retiré chez JAP passe en « indisponible » sur LyonPanel.
-- Si le coût JAP change de plus de X % (à fixer), alerte Telegram avant publication du nouveau prix.
+- nouveau service : il est ajouté, classé, nommé et prix calculé ;
+- prix, minimum, maximum ou options modifiés : mise à jour, historique des prix conservé ;
+- service disparu : marqué indisponible.
 
-## 6. Cohérence entre nom, prix et formulaire (décidé)
+**Garde-fous.** Si le fournisseur répond par une erreur ou une **liste vide**, on n'écrit rien : sinon tout le catalogue deviendrait indisponible d'un coup. **Alerte** au propriétaire (Telegram) quand le prix de vente d'un service varie de plus de `price_alert_pct` %.
 
-Chez JAP, le prix est écrit dans le nom du service (par exemple « … - $1.00 ») et le nom contient des étiquettes qui peuvent contredire les champs de l'API (par exemple « Max: 10K » dans le nom alors que l'API donne un maximum de 100 000). Chez LyonPanel :
-- Le **prix n'est jamais écrit dans le nom**. Il est calculé et affiché séparément, avec notre marge, dans la devise du client.
-- Le **nom est reconstruit** à partir des champs de l'API (plateforme, type, qualité, minimum, maximum, garantie, vitesse, délai), jamais copié tel quel avec ses étiquettes.
-- Le formulaire, la fiche à droite et le total affichent **les mêmes chiffres** : min et max viennent des champs `min` et `max` de l'API, et le total vient de la formule de la section 4 bis.
-- Un test automatique vérifie qu'aucun nom publié ne contient un prix JAP ni un min/max différent des champs.
+## 8. Cohérence nom, prix, formulaire
+
+Le nom, le prix et le formulaire viennent de la **même ligne** de la base. Si le fournisseur change un service (type, options, minimum), la synchronisation met tout à jour d'un seul coup : on ne peut pas afficher un nom qui promet « Recharge » avec un prix ou un formulaire d'un autre service. Les formulaires spéciaux (commentaires personnalisés, par exemple) suivent le type fournisseur.
+
+## 9. Contrôle des prix extrêmes (pour information)
+
+À regarder avant la mise en ligne. Ces services sont vendus comme les autres ; le propriétaire peut les désactiver ou changer leur multiplicateur.
+
+### Services à plus de 100 $ les 1 000 chez le fournisseur (11)
+
+| Numéro | Nom | Prix de vente pour 1 000 (XAF) | Commande minimum (XAF) |
+|---:|---|---:|---:|
+| 30786 | Commentaires Autres réseaux · Mondial · Garantie 7 j #30786 | 8 709 120 | 8 710 |
+| 36540 | Commentaires Instagram · Réel · Europe #36540 | 973 730 | 3 895 |
+| 28486 | Autres services Telegram · Story · Premium · Annulable #28486 | 503 970 | 5 040 |
+| 22623 | Commentaires Instagram · Réel · États-Unis · Sans chute #22623 | 451 475 | 2 260 |
+| 36046 | Commentaires Instagram · États-Unis #36046 | 320 635 | 1 605 |
+| 36047 | Commentaires Instagram · États-Unis #36047 | 320 635 | 1 605 |
+| 36048 | Commentaires Instagram · États-Unis #36048 | 320 635 | 1 605 |
+| 27594 | Vues YouTube · Live #27594 | 319 335 | 15 970 |
+| 31603 | Autres services Telegram · Annulable #31603 | 204 750 | 205 |
+| 35464 | Commentaires Instagram · Haute qualité #35464 | 194 750 | 195 |
+| 32563 | Commentaires Instagram · Réel #32563 | 189 000 | 945 |
+
+### Services dont la commande minimum dépasse 5 000 XAF (12)
+
+| Numéro | Nom | Prix de vente pour 1 000 (XAF) | Commande minimum (XAF) |
+|---:|---|---:|---:|
+| 27913 | Vues YouTube · Garantie à vie · Sans chute #27913 | 2 295 | 22 950 |
+| 27594 | Vues YouTube · Live #27594 | 319 335 | 15 970 |
+| 30786 | Commentaires Autres réseaux · Mondial · Garantie 7 j #30786 | 8 709 120 | 8 710 |
+| 34592 | Vues YouTube · Garantie à vie · Annulable #34592 | 8 130 | 8 130 |
+| 28717 | Abonnés YouTube · Réel · États-Unis · Garantie 30 j · Sans chute #28717 | 78 750 | 7 875 |
+| 32025 | Vues YouTube · États-Unis #32025 | 7 530 | 7 530 |
+| 30754 | Vues YouTube · Réel · Départ instantané #30754 | 14 490 | 7 245 |
+| 33511 | Vues YouTube · Garantie à vie · Recharge · Annulable #33511 | 1 350 | 6 750 |
+| 34607 | Vues YouTube · États-Unis · Garantie à vie #34607 | 11 560 | 5 780 |
+| 33621 | Vues YouTube · Garantie 30 j · Sans chute #33621 | 56 855 | 5 690 |
+| 30848 | Vues YouTube · Garantie 30 j #30848 | 53 225 | 5 325 |
+| 28486 | Autres services Telegram · Story · Premium · Annulable #28486 | 503 970 | 5 040 |
+
+## 10. Récapitulatif réseau × type
+
+Nombre de services par réseau et par type (2 188 au total).
+
+| Réseau | Abonnés | J'aime | Vues | Commentaires | Partages | Autres services | Total |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Instagram | 215 | 269 | 184 | 64 | 64 | 26 | 822 |
+| TikTok | 119 | 183 | 211 | 17 | 13 | 4 | 547 |
+| Facebook | 99 | 96 | 59 | 14 | 2 | 38 | 308 |
+| YouTube | 29 | 64 | 119 | 30 | 2 | 17 | 261 |
+| Telegram | 59 | 1 | 49 | 0 | 1 | 34 | 144 |
+| X | 11 | 7 | 29 | 1 | 0 | 9 | 57 |
+| Kick | 2 | 0 | 9 | 0 | 0 | 0 | 11 |
+| Threads | 3 | 1 | 0 | 0 | 3 | 0 | 7 |
+| Twitch | 1 | 0 | 5 | 0 | 0 | 0 | 6 |
+| LinkedIn | 2 | 1 | 0 | 0 | 1 | 0 | 4 |
+| Pinterest | 1 | 1 | 1 | 0 | 1 | 0 | 4 |
+| Spotify | 0 | 0 | 3 | 0 | 0 | 0 | 3 |
+| WhatsApp | 2 | 1 | 0 | 0 | 0 | 0 | 3 |
+| Trafic web | 0 | 0 | 0 | 0 | 0 | 8 | 8 |
+| Autres réseaux | 1 | 0 | 1 | 1 | 0 | 0 | 3 |
+| **Total** | 544 | 624 | 670 | 127 | 87 | 136 | **2188** |
+
+## 11. Détail par réseau
+
+Pour chaque type : nombre de services, prix de vente médian pour 1 000 unités, et prix médian de la commande minimum. Au taux de 600 XAF et avec le multiplicateur de départ (×3).
+
+#### Instagram (822 services)
+
+| Type | Services | Prix de vente médian pour 1 000 (XAF) | Commande minimum médiane (XAF) |
+|---|---:|---:|---:|
+| Abonnés | 215 | 4 665 | 85 |
+| J'aime | 269 | 775 | 10 |
+| Vues | 184 | 25 | 5 |
+| Commentaires | 64 | 15 120 | 145 |
+| Partages | 64 | 313 | 5 |
+| Autres services | 26 | 123 | 8 |
+
+#### TikTok (547 services)
+
+| Type | Services | Prix de vente médian pour 1 000 (XAF) | Commande minimum médiane (XAF) |
+|---|---:|---:|---:|
+| Abonnés | 119 | 3 730 | 45 |
+| J'aime | 183 | 1 390 | 15 |
+| Vues | 211 | 125 | 15 |
+| Commentaires | 17 | 8 720 | 105 |
+| Partages | 13 | 230 | 5 |
+| Autres services | 4 | 3 655 | 58 |
+
+#### Facebook (308 services)
+
+| Type | Services | Prix de vente médian pour 1 000 (XAF) | Commande minimum médiane (XAF) |
+|---|---:|---:|---:|
+| Abonnés | 99 | 885 | 40 |
+| J'aime | 96 | 873 | 15 |
+| Vues | 59 | 1 260 | 30 |
+| Commentaires | 14 | 8 065 | 45 |
+| Partages | 2 | 17 663 | 180 |
+| Autres services | 38 | 485 | 5 |
+
+#### YouTube (261 services)
+
+| Type | Services | Prix de vente médian pour 1 000 (XAF) | Commande minimum médiane (XAF) |
+|---|---:|---:|---:|
+| Abonnés | 29 | 6 175 | 65 |
+| J'aime | 64 | 2 345 | 35 |
+| Vues | 119 | 2 280 | 260 |
+| Commentaires | 30 | 5 933 | 43 |
+| Partages | 2 | 2 280 | 798 |
+| Autres services | 17 | 3 025 | 155 |
+
+#### Telegram (144 services)
+
+| Type | Services | Prix de vente médian pour 1 000 (XAF) | Commande minimum médiane (XAF) |
+|---|---:|---:|---:|
+| Abonnés | 59 | 1 480 | 25 |
+| J'aime | 1 | 235 | 5 |
+| Vues | 49 | 50 | 5 |
+| Partages | 1 | 35 | 5 |
+| Autres services | 34 | 475 | 15 |
+
+#### X (57 services)
+
+| Type | Services | Prix de vente médian pour 1 000 (XAF) | Commande minimum médiane (XAF) |
+|---|---:|---:|---:|
+| Abonnés | 11 | 8 470 | 440 |
+| J'aime | 7 | 17 695 | 180 |
+| Vues | 29 | 15 | 5 |
+| Commentaires | 1 | 71 125 | 75 |
+| Autres services | 9 | 560 | 60 |
+
+#### Kick (11 services)
+
+| Type | Services | Prix de vente médian pour 1 000 (XAF) | Commande minimum médiane (XAF) |
+|---|---:|---:|---:|
+| Abonnés | 2 | 1 248 | 8 |
+| Vues | 9 | 885 | 10 |
+
+#### Threads (7 services)
+
+| Type | Services | Prix de vente médian pour 1 000 (XAF) | Commande minimum médiane (XAF) |
+|---|---:|---:|---:|
+| Abonnés | 3 | 9 955 | 100 |
+| J'aime | 1 | 3 315 | 35 |
+| Partages | 3 | 4 990 | 50 |
+
+#### Twitch (6 services)
+
+| Type | Services | Prix de vente médian pour 1 000 (XAF) | Commande minimum médiane (XAF) |
+|---|---:|---:|---:|
+| Abonnés | 1 | 2 520 | 55 |
+| Vues | 5 | 8 540 | 90 |
+
+#### LinkedIn (4 services)
+
+| Type | Services | Prix de vente médian pour 1 000 (XAF) | Commande minimum médiane (XAF) |
+|---|---:|---:|---:|
+| Abonnés | 2 | 21 170 | 215 |
+| J'aime | 1 | 81 970 | 410 |
+| Partages | 1 | 132 065 | 665 |
+
+#### Pinterest (4 services)
+
+| Type | Services | Prix de vente médian pour 1 000 (XAF) | Commande minimum médiane (XAF) |
+|---|---:|---:|---:|
+| Abonnés | 1 | 9 940 | 100 |
+| J'aime | 1 | 3 315 | 35 |
+| Vues | 1 | 3 315 | 35 |
+| Partages | 1 | 3 315 | 35 |
+
+#### Spotify (3 services)
+
+| Type | Services | Prix de vente médian pour 1 000 (XAF) | Commande minimum médiane (XAF) |
+|---|---:|---:|---:|
+| Vues | 3 | 845 | 845 |
+
+#### WhatsApp (3 services)
+
+| Type | Services | Prix de vente médian pour 1 000 (XAF) | Commande minimum médiane (XAF) |
+|---|---:|---:|---:|
+| Abonnés | 2 | 7 828 | 83 |
+| J'aime | 1 | 105 | 5 |
+
+#### Trafic web (8 services)
+
+| Type | Services | Prix de vente médian pour 1 000 (XAF) | Commande minimum médiane (XAF) |
+|---|---:|---:|---:|
+| Autres services | 8 | 505 | 148 |
+
+#### Autres réseaux (3 services)
+
+| Type | Services | Prix de vente médian pour 1 000 (XAF) | Commande minimum médiane (XAF) |
+|---|---:|---:|---:|
+| Abonnés | 1 | 8 820 | 180 |
+| Vues | 1 | 1 260 | 30 |
+| Commentaires | 1 | 8 709 120 | 8 710 |
+
+La liste complète des 2 188 services est dans `data/catalogue-services.csv`.

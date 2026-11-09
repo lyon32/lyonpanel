@@ -70,6 +70,25 @@ describe('syncServices : nouveaux services', () => {
     expect(row.name_fr).toContain('#1000');
   });
 
+  it('construit name_fr avec les qualificatifs du nom fournisseur, sans le recopier', async () => {
+    const store = createMemoryStore();
+    await syncServices(
+      deps(store, [
+        tiktok({
+          name: 'TikTok - Followers | USA | MQ 100K | Real | R30 | SecretNom',
+          refill: true,
+          cancel: true,
+        }),
+      ]),
+    );
+    const row = store.services.get(1000)!;
+    expect(row.name_fr).toBe(
+      'Abonnés TikTok · Réel · États-Unis · Garantie 30 j · Recharge · Annulable #1000',
+    );
+    expect(row.name_fr).not.toMatch(/secretnom|MQ/i);
+    expect(row.provider_name).toContain('SecretNom');
+  });
+
   it('importe toute la fixture : tous actifs et disponibles, prix entiers multiples de 5, aucun nom ne cite le fournisseur', async () => {
     const store = createMemoryStore();
     const raw = loadProviderFixture();

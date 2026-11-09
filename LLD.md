@@ -200,7 +200,17 @@ export function computeReferralBonusXaf(creditedXaf: number, pct: number): numbe
 export function classifyPlatform(providerCategory: string): Platform;
 export function classifyCategory(providerName: string, providerCategory: string): 'followers' | 'likes' | 'views' | 'comments' | 'shares' | 'live' | 'other';
 /** Nom reconstruit depuis les champs API ; jamais de prix ni d'étiquettes fournisseur. */
-export function buildServiceName(s: ProviderService, locale: 'fr' | 'en'): string;
+export function buildServiceName(
+  s: { id: number; platform: Network; category: ServiceType; refill: boolean; cancel: boolean; dripfeed: boolean;
+       min_qty: number; max_qty: number; providerName?: string; providerCategory?: string },
+  locale: 'fr' | 'en',
+): string;
+// Format : <Type> <Réseau> · <qualificatifs> · Recharge · Annulable · Goutte-à-goutte #id
+// Qualificatifs extraits de providerName / providerCategory (entrée serveur seulement, jamais renvoyés),
+// exprimés en mots propres FR/EN, jamais recopiés. Ordre fixe, 4 au maximum : cible (Story, Reel, Live, Post,
+// Profil, Page) · qualité (Réel, Haute qualité, Premium, Mixte, Économique, Organique) · origine (pays/région,
+// Mondial) · garantie (Garantie à vie / Garantie N j) · chute (Sans chute, Chute faible) · Départ instantané.
+// Sans providerName/providerCategory : pas de qualificatif. Au plus 95 caractères avant « #id ».
 export async function syncServices(): Promise<{ added: number; removed: number; repriced: number; alerts: number }>;
 ```
 
@@ -294,6 +304,12 @@ Voir `DATA_MODEL.md §6` : `place_order`, `credit_payment`, `refund_order`, `adm
 | `/account` | `/compte` | `/account` |
 | `/privacy` | `/confidentialite` | `/privacy` |
 | `/terms` | `/conditions` | `/terms` |
+| `/services` | `/services` | `/services` |
+| `/services/[network]` | `/services/[network]` | `/services/[network]` |
+| `/services/[network]/[type]` | `/services/[network]/[type]` | `/services/[network]/[type]` |
+| `/services/[network]/[type]/[id]` | idem | idem |
+
+Réseau et type sont des identifiants de code (`tiktok`, `followers`…), identiques dans les deux langues.
 
 - Première visite : `Accept-Language` → `fr` ou `en` ; toute autre langue → `fr`. Choix gardé dans `NEXT_LOCALE`.
 - Balises `hreflang` fr/en + `x-default` → fr.

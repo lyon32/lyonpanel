@@ -71,6 +71,7 @@ const GOLDEN: [number, string, string][] = [
   [29792, 'youtube', 'comments'],
   [30211, 'youtube', 'followers'], // « Subscribe »
   [30619, 'instagram', 'followers'], // « İnstagram » (I majuscule pointé)
+  [30639, 'instagram', 'likes'], // « İG » (I pointé) = Instagram
   [30688, 'instagram', 'followers'],
   [30761, 'threads', 'shares'], // Reposts
   [30766, 'pinterest', 'followers'],
@@ -255,5 +256,27 @@ describe('classifyType', () => {
 
   it('ignore la casse', () => {
     expect(classifyType('INSTAGRAM FOLLOWERS', 'Default')).toBe('followers');
+  });
+});
+
+describe('classifyNetwork : abréviation IG', () => {
+  it('reconnaît « İG » (I turc pointé) et « IG » comme mot entier', () => {
+    expect(classifyNetwork('İG Followers', '')).toBe('instagram');
+    expect(classifyNetwork('✨❤️IG Turkey Like 1.000', '')).toBe('instagram');
+    expect(classifyNetwork('IG Likes', '')).toBe('instagram');
+    expect(classifyNetwork('Likes ig real', '')).toBe('instagram');
+    expect(classifyNetwork('Followers', 'IG - Followers')).toBe('instagram');
+  });
+
+  it('ne confond pas « ig » à l intérieur d un mot', () => {
+    expect(classifyNetwork('Big Digital Views', '')).toBe('other');
+    expect(classifyNetwork('Bigo Live Gifts', '')).toBe('other');
+  });
+
+  it('garde Audiomack en « other » et un nom explicite prioritaire sur IG', () => {
+    expect(classifyNetwork('Audiomack Slow Plays US+EU (Min:20/Max:1m)', 'Audiomack')).toBe(
+      'other',
+    );
+    expect(classifyNetwork('TikTok Likes (IG style)', '')).toBe('tiktok');
   });
 });

@@ -108,4 +108,4 @@ LyonPanel est un panel SMM (vente de followers, likes, vues, etc.) pensé pour l
 - `03-seo-et-design.md` : référencement Afrique, pages, design et règles anti-« look IA ».
 - `04-roadmap.md` : renvoie vers `../ROADMAP.md`.
 - `05-design-system.md` : couleurs, polices, composants.
-- `../data/catalogue-jap-usd-xaf.csv` : les 5 740 services classés avec prix en USD et XAF (sans marge).
+- `../data/catalogue-services.csv` : les 2 188 services classés, avec prix du fournisseur et prix de vente (généré par `npm run catalogue:build`).

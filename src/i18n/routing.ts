@@ -25,7 +25,11 @@ export const routing = defineRouting({
   // L'accueil « / » n'a pas de traduction : il garde la même adresse.
   pathnames: {
     '/': '/',
+    // Réseau, type et numéro sont des identifiants de code : mêmes adresses en FR et EN (LLD §6).
     '/services': '/services',
+    '/services/[network]': '/services/[network]',
+    '/services/[network]/[type]': '/services/[network]/[type]',
+    '/services/[network]/[type]/[id]': '/services/[network]/[type]/[id]',
     '/blog': '/blog',
     // Page interne de démonstration (noindex), même adresse dans les deux langues.
     '/demo': '/demo',

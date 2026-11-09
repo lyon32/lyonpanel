@@ -1,12 +1,12 @@
 import type { Network, ServiceType } from './labels';
 
 // Normalise : lettres stylisées et pleine chasse -> ASCII (NFKD), marques retirées, minuscules.
-function normalize(text: string): string {
+export function normalize(text: string): string {
   return text.normalize('NFKD').replace(/\p{M}/gu, '').toLowerCase();
 }
 
 const NETWORK_PATTERNS: [Network, RegExp][] = [
-  ['instagram', /\b(instagram|insta)\b/],
+  ['instagram', /\b(instagram|insta|ig)\b/],
   ['tiktok', /\btik\s?tok\b/],
   ['facebook', /\b(facebook|fb)\b/],
   ['youtube', /\b(youtube|yt)\b/],

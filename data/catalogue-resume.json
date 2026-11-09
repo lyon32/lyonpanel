@@ -1,0 +1,144 @@
+{
+  "total": 2188,
+  "countsByNetworkAndType": {
+    "instagram": {
+      "followers": 215,
+      "views": 184,
+      "likes": 269,
+      "comments": 64,
+      "shares": 64,
+      "other": 26
+    },
+    "tiktok": {
+      "views": 211,
+      "likes": 183,
+      "comments": 17,
+      "followers": 119,
+      "shares": 13,
+      "other": 4
+    },
+    "youtube": {
+      "likes": 64,
+      "other": 17,
+      "views": 119,
+      "comments": 30,
+      "shares": 2,
+      "followers": 29
+    },
+    "telegram": {
+      "views": 49,
+      "followers": 59,
+      "other": 34,
+      "shares": 1,
+      "likes": 1
+    },
+    "twitch": {
+      "views": 5,
+      "followers": 1
+    },
+    "other": {
+      "views": 1,
+      "followers": 1,
+      "comments": 1
+    },
+    "facebook": {
+      "followers": 99,
+      "other": 38,
+      "likes": 96,
+      "shares": 2,
+      "comments": 14,
+      "views": 59
+    },
+    "kick": {
+      "followers": 2,
+      "views": 9
+    },
+    "pinterest": {
+      "likes": 1,
+      "shares": 1,
+      "views": 1,
+      "followers": 1
+    },
+    "threads": {
+      "likes": 1,
+      "shares": 3,
+      "followers": 3
+    },
+    "x": {
+      "followers": 11,
+      "views": 29,
+      "likes": 7,
+      "other": 9,
+      "comments": 1
+    },
+    "spotify": {
+      "views": 3
+    },
+    "web_traffic": {
+      "other": 8
+    },
+    "whatsapp": {
+      "followers": 2,
+      "likes": 1
+    },
+    "linkedin": {
+      "likes": 1,
+      "shares": 1,
+      "followers": 2
+    }
+  },
+  "cheapest": [
+    {
+      "id": 36125,
+      "name": "Vues Instagram · Départ instantané · Annulable #36125",
+      "priceXaf1000": 5
+    },
+    {
+      "id": 36126,
+      "name": "Vues Instagram · Départ instantané · Annulable #36126",
+      "priceXaf1000": 5
+    },
+    {
+      "id": 36148,
+      "name": "Vues Instagram · Départ instantané · Annulable #36148",
+      "priceXaf1000": 5
+    },
+    {
+      "id": 36143,
+      "name": "Vues Instagram · Départ instantané · Annulable #36143",
+      "priceXaf1000": 5
+    },
+    {
+      "id": 36223,
+      "name": "Partages Instagram · Annulable #36223",
+      "priceXaf1000": 5
+    }
+  ],
+  "mostExpensive": [
+    {
+      "id": 30786,
+      "name": "Commentaires Autres réseaux · Mondial · Garantie 7 j #30786",
+      "priceXaf1000": 8709120
+    },
+    {
+      "id": 36540,
+      "name": "Commentaires Instagram · Réel · Europe #36540",
+      "priceXaf1000": 973730
+    },
+    {
+      "id": 28486,
+      "name": "Autres services Telegram · Story · Premium · Annulable #28486",
+      "priceXaf1000": 503970
+    },
+    {
+      "id": 22623,
+      "name": "Commentaires Instagram · Réel · États-Unis · Sans chute #22623",
+      "priceXaf1000": 451475
+    },
+    {
+      "id": 36048,
+      "name": "Commentaires Instagram · États-Unis #36048",
+      "priceXaf1000": 320635
+    }
+  ]
+}

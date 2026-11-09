@@ -1,5 +1,6 @@
 'use client';
 
+import { useParams } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import { usePathname, useRouter } from '@/i18n/navigation';
 import { routing } from '@/i18n/routing';
@@ -11,6 +12,8 @@ export function LanguageSwitcher() {
   const locale = useLocale();
   const pathname = usePathname();
   const router = useRouter();
+  // Pages à paramètres (/services/[network]) : on rend les valeurs de l'adresse à next-intl.
+  const { locale: _locale, ...params } = useParams() ?? {};
 
   return (
     <div role="group" aria-label={t('label')} className="flex items-center gap-1">
@@ -21,7 +24,11 @@ export function LanguageSwitcher() {
           lang={code}
           aria-label={t(code)}
           aria-current={code === locale ? 'true' : undefined}
-          onClick={() => router.replace(pathname as never, { locale: code })}
+          onClick={() =>
+            router.replace((pathname.includes('[') ? { pathname, params } : pathname) as never, {
+              locale: code,
+            })
+          }
           className={cn(
             'focus-visible:ring-bleu-100 min-h-11 min-w-11 rounded-lg px-3 text-sm font-semibold uppercase outline-none focus-visible:ring-4',
             code === locale ? 'bg-bleu-50 text-bleu-600' : 'text-gris-600 hover:bg-gris-50',

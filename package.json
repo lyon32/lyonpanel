@@ -15,6 +15,8 @@
     "test:db": "vitest run --config vitest.db.config.ts",
     "db:types": "supabase gen types typescript --local > src/server/db/types.ts",
     "test:e2e": "playwright test",
+    "catalogue:build": "vitest run --config scripts/catalogue/vitest.config.ts build.script",
+    "catalogue:import-local": "vitest run --config scripts/catalogue/vitest.config.ts import.script",
     "check:bundle": "node scripts/check-client-bundle.mjs",
     "prepare": "husky"
   },

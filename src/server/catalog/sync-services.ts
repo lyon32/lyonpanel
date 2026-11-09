@@ -138,6 +138,8 @@ export async function syncServices(deps: SyncDeps): Promise<SyncResult> {
             dripfeed: item.dripfeed,
             min_qty: item.min,
             max_qty: item.max,
+            providerName: item.name,
+            providerCategory: item.category,
           },
           'fr',
         ),
