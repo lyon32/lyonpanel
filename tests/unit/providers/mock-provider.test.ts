@@ -30,6 +30,14 @@ describe('schéma des services du fournisseur (Zod)', () => {
     expect(providerServicesSchema.safeParse([sansRate]).success).toBe(false);
   });
 
+  it('refuse un coût au-dessus du plafond (100 000 USD pour 1 000)', () => {
+    const ok = providerServicesSchema.safeParse([makeProviderService({ rate: '100000' })]);
+    expect(ok.success).toBe(true);
+    expect(
+      providerServicesSchema.safeParse([makeProviderService({ rate: '100000.01' })]).success,
+    ).toBe(false);
+  });
+
   it.each(['abc', '', '-1', 'NaN'])('refuse un coût illisible ou négatif (%j)', (rate) => {
     expect(providerServicesSchema.safeParse([makeProviderService({ rate })]).success).toBe(false);
   });

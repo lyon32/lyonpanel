@@ -1008,8 +1008,17 @@ describe('buildServiceName : qualificatifs extraits du nom fournisseur (cas dor�
 
 describe('buildServiceName : providerName / providerCategory facultatifs', () => {
   const g = GOLDEN.find((x) => x.id === 31581)!;
-  const { providerName: _n, providerCategory: _c, ...rest } = nameable(g);
-  const bare = { ...rest, refill: true, cancel: true };
+  const full = nameable(g);
+  const bare = {
+    id: full.id,
+    platform: full.platform,
+    category: full.category,
+    dripfeed: full.dripfeed,
+    min_qty: full.min_qty,
+    max_qty: full.max_qty,
+    refill: true,
+    cancel: true,
+  };
 
   it('sans providerName ni providerCategory, le nom ne contient aucun qualificatif', () => {
     expect(buildServiceName(bare, 'fr')).toBe('Abonnés Telegram · Recharge · Annulable #31581');

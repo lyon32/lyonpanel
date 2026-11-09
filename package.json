@@ -17,6 +17,7 @@
     "test:e2e": "playwright test",
     "catalogue:build": "vitest run --config scripts/catalogue/vitest.config.ts build.script",
     "catalogue:import-local": "vitest run --config scripts/catalogue/vitest.config.ts import.script",
+    "catalogue:verify-local": "vitest run --config scripts/catalogue/vitest.config.ts verify.script",
     "check:bundle": "node scripts/check-client-bundle.mjs",
     "prepare": "husky"
   },

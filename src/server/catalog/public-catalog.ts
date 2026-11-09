@@ -1,4 +1,5 @@
 import 'server-only';
+import { unstable_cache } from 'next/cache';
 import { z } from 'zod';
 import { createAdminClient } from '@/server/db/supabase-admin';
 import { createStatelessClient } from '@/server/db/supabase-server';
@@ -76,3 +77,15 @@ export async function getUsdXafRate(): Promise<number> {
   if (error) throw new Error(`settings: ${error.message}`);
   return z.coerce.number().positive().parse(data.value);
 }
+
+// Données publiques identiques pour tous : on peut les garder 5 minutes sans risque de fuite.
+// La devise et la langue (cookie) restent lues hors du cache.
+export const CATALOG_CACHE = { revalidate: 300, tags: ['catalog'] };
+
+export const listPublicServicesCached = unstable_cache(
+  listPublicServices,
+  ['public-services'],
+  CATALOG_CACHE,
+);
+
+export const getUsdXafRateCached = unstable_cache(getUsdXafRate, ['usd-xaf-rate'], CATALOG_CACHE);

@@ -65,3 +65,10 @@ describe('formatCatalogMoney', () => {
     expect(formatCatalogMoney(1800, 'USD', 'en', 550)).toBe('$3.27');
   });
 });
+
+describe('format USD identique partout (bloc prix et exemple de la fiche)', () => {
+  it('FR : « $US » ; EN : « $ » devant', () => {
+    expect(formatCatalogMoney(88_000, 'USD', 'fr', 600).replace(/\s/g, ' ')).toBe('146,67 $US');
+    expect(formatCatalogMoney(88_000, 'USD', 'en', 600)).toBe('$146.67');
+  });
+});

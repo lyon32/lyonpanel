@@ -11,17 +11,17 @@ import {
 } from '@/server/catalog/present-catalog';
 import {
   getPublicService,
-  getUsdXafRate,
-  listPublicServices,
+  getUsdXafRateCached,
+  listPublicServicesCached,
 } from '@/server/catalog/public-catalog';
 
-// Une seule lecture de la vue par requête, même si plusieurs composants la demandent.
-const rowsOfRequest = cache(listPublicServices);
+// Lecture en cache (300 s) ; une seule par requête même si plusieurs composants la demandent.
+const rowsOfRequest = cache(listPublicServicesCached);
 
 /** Devise du cookie et taux d'affichage (1 hors USD). Les prix restent calculés par le serveur. */
 async function readDisplay(): Promise<{ currency: Currency; usdXafRate: number }> {
   const currency = parseCurrency((await cookies()).get(CURRENCY_COOKIE)?.value);
-  return { currency, usdXafRate: currency === 'USD' ? await getUsdXafRate() : 1 };
+  return { currency, usdXafRate: currency === 'USD' ? await getUsdXafRateCached() : 1 };
 }
 
 export interface CatalogView {

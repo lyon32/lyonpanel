@@ -18,10 +18,12 @@ import { EmptyState } from '@/components/shared/empty-state';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Link } from '@/i18n/navigation';
+import { Link, redirect } from '@/i18n/navigation';
 import { networkLabel, typeLabel } from '@/server/catalog/labels';
 import { loadCatalogView } from '@/server/catalog/load-catalog';
 import { asCatalogLocale, parseNetwork, parseType } from '@/server/catalog/page-params';
+import { resolvePage } from '@/server/catalog/resolve-page';
+import { searchServices } from '@/server/catalog/search';
 
 type Props = {
   params: Promise<{ locale: string; network: string; type: string }>;
@@ -69,15 +71,21 @@ export default async function TypePage({ params, searchParams }: Props) {
   if (!networkEntry || !typeEntry) notFound();
 
   // Recherche et découpage en pages faits ici, côté serveur.
-  const needle = q.toLowerCase().replace('#', '');
-  const matches = needle
-    ? typeEntry.services.filter(
-        (s) => s.name.toLowerCase().includes(needle) || String(s.id) === needle,
-      )
-    : typeEntry.services;
+  const matches = searchServices(typeEntry.services, q);
   const totalPages = Math.max(1, Math.ceil(matches.length / PAGE_SIZE));
-  const requested = Number(sp.page);
-  const page = Number.isInteger(requested) ? Math.min(Math.max(requested, 1), totalPages) : 1;
+  const { page, canonical } = resolvePage(sp.page, totalPages);
+  // Adresse en double (page=0, abc, page 1, trop grande) : 307 vers l'adresse canonique.
+  if (!canonical && sp.page !== undefined) {
+    redirect({
+      href: {
+        pathname: '/services/[network]/[type]',
+        params: { network, type },
+        // Seulement les paramètres utiles : une valeur undefined s'écrirait « undefined » dans l'adresse.
+        query: { ...(page > 1 && { page }), ...(q && { q }) },
+      },
+      locale,
+    });
+  }
   const visible = matches.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   const lang = asLang(locale);
@@ -136,13 +144,17 @@ export default async function TypePage({ params, searchParams }: Props) {
         <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {visible.map((s) => (
             <li key={s.id}>
-              <Card data-testid="service-row" className="flex h-full flex-col gap-3 p-4">
+              <Card
+                data-testid="service-row"
+                className="focus-within:ring-bleu-100 hover:border-bleu-600 relative flex h-full flex-col gap-3 p-4 transition-colors duration-150 focus-within:ring-4"
+              >
+                {/* Lien étendu : after:inset-0 rend toute la carte cliquable sans imbriquer de liens. */}
                 <Link
                   href={{
                     pathname: '/services/[network]/[type]/[id]',
                     params: { network, type, id: s.id },
                   }}
-                  className="hover:text-bleu-600 focus-visible:ring-bleu-100 -m-1 rounded-lg p-1 outline-none focus-visible:ring-4"
+                  className="hover:text-bleu-600 block min-h-11 rounded-lg outline-none after:absolute after:inset-0 after:rounded-xl"
                 >
                   <ServiceTitle name={s.name} />
                 </Link>

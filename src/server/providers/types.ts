@@ -7,7 +7,9 @@ const numberLike = z
   .pipe(z.number().finite());
 
 const positiveInt = numberLike.pipe(z.number().int().positive());
-const cost = numberLike.pipe(z.number().nonnegative());
+// Plafond : un coût aberrant (erreur du fournisseur) est refusé au lieu de produire un prix absurde.
+export const MAX_RATE_USD_1000 = 100_000;
+const cost = numberLike.pipe(z.number().nonnegative().max(MAX_RATE_USD_1000));
 
 /** Un service tel que l'API v2 le renvoie ; `rate` = coût en USD pour 1 000. */
 export const providerServiceSchema = z
