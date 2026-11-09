@@ -333,6 +333,8 @@
       "passwordHint": "At least 8 characters.",
       "country": "Country",
       "countryPlaceholder": "Choose a country",
+      "countrySearch": "Search a country",
+      "countryNone": "No country found.",
       "currency": "Display currency",
       "language": "Language"
     }

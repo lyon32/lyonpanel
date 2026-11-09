@@ -333,6 +333,8 @@
       "passwordHint": "8 caractères minimum.",
       "country": "Pays",
       "countryPlaceholder": "Choisir un pays",
+      "countrySearch": "Rechercher un pays",
+      "countryNone": "Aucun pays trouvé.",
       "currency": "Devise d'affichage",
       "language": "Langue"
     }

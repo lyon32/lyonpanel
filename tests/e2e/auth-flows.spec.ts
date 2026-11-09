@@ -58,8 +58,10 @@ async function register(page: Page, locale: Locale, user: { email: string; phone
   await page.locator('input[name="email"]').fill(user.email);
   await page.locator('input[name="phone"]').fill(user.phone);
   await page.locator('input[name="password"]').fill(PASSWORD);
-  await page.locator('select[name="country"]').selectOption('CM');
-  await page.locator('select[name="display_currency"]').selectOption('XAF');
+  await page.locator('[data-field="country"]').click();
+  await page.locator('[role="option"][data-value="CM"]').click();
+  await page.locator('[data-field="display_currency"]').click();
+  await page.locator('[role="option"][data-value="XAF"]').click();
   await waitTurnstile(page);
   await page.locator('button[type="submit"]').click();
   await expect(page).toHaveURL(PATHS[locale].home, { timeout: 45_000 });

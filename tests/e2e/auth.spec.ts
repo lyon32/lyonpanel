@@ -6,7 +6,7 @@ import { expect, test, type Page } from '@playwright/test';
  *   NEXT_PUBLIC_TURNSTILE_SITE_KEY=1x00000000000000000000AA
  *   TURNSTILE_SECRET_KEY=1x0000000000000000000000000000000AA
  * Sélecteurs attendus des formulaires (contrat avec lp-coder / lp-designer) :
- *   input[name=email|phone|password|identifier], select[name=country|display_currency],
+ *   input[name=email|phone|password|identifier], [data-field=country|display_currency] (liste maison),
  *   bouton d'envoi = button[type=submit], retour = [role=alert] (erreur) / [role=status] (succès),
  *   bouton de déconnexion = [data-testid=logout].
  */
@@ -85,8 +85,10 @@ for (const locale of ['fr', 'en'] as const) {
       await page.locator('input[name="email"]').fill(email);
       await page.locator('input[name="phone"]').fill(phone);
       await page.locator('input[name="password"]').fill(PASSWORD);
-      await page.locator('select[name="country"]').selectOption('CM');
-      await page.locator('select[name="display_currency"]').selectOption('XAF');
+      await page.locator('[data-field="country"]').click();
+      await page.locator('[role="option"][data-value="CM"]').click();
+      await page.locator('[data-field="display_currency"]').click();
+      await page.locator('[role="option"][data-value="XAF"]').click();
       await waitTurnstile(page);
       await page.locator('button[type="submit"]').click();
       // Première visite du tableau de bord : compilation à froid de `next dev`.
