@@ -116,7 +116,7 @@ Un agent ne démarre jamais avant ce dont il dépend ; ce qui est indépendant t
 
 > À mettre à jour au début de chaque phase (`ROADMAP.md`).
 
-**Phase en cours : Phase 4 — Prix + catalogue** (Phases 0 et 1 validées le 2026-11-07, phase 2 le 2026-11-08, phase 3 le 2026-11-09)
+**Phase en cours : Phase 4 — Prix + catalogue** (Phases 0 et 1 validées le 2026-11-07, phase 2 le 2026-11-08, phase 3 le 2026-11-09, phase 4 le 2026-11-10)
 
 **Périmètre (seulement ceci)**
 - (a) Prix = coût fournisseur en XAF × multiplicateur (départ ×3 partout). Multiplicateur réglable par catégorie (réseau × type), avec surcharge par service, jamais en dur ; structure et calcul en base maintenant (écran admin en phase 12). Taux 1 USD = 600 XAF réglable (réglage, pas en dur). Arrondi au multiple de 5 XAF supérieur (prix pour 1000 ET total de commande, minimum 5 XAF). Calculs côté serveur uniquement.

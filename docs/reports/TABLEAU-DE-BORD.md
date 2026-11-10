@@ -1,17 +1,17 @@
 # Tableau de bord LyonPanel
 Mis à jour le 2026-11-10 (phase 4 faite). Chiffres lus dans les comptes-rendus des phases 1 à 4.
 
-**En 5 secondes :** les phases 0 à 3 sont validées. La phase 4 (prix et catalogue) est faite et attend ta validation. Rien ne bloque. Points à regarder : services à prix extrêmes (à traiter en phase 12), mesure des boutons de 44 px non refaite dans un navigateur. Ensuite : phase 5, recharge SasPay (il faut préparer le compte marchand de test).
+**En 5 secondes :** les phases 0 à 4 sont validées (prix et catalogue, fusionnée dans main). Rien ne bloque. Points à regarder : services à prix extrêmes (à traiter en phase 12), mesure des boutons de 44 px non refaite dans un navigateur. Ensuite : phase 5, recharge SasPay (il faut préparer le compte marchand de test).
 
 ## 1. Avancement des phases
-Bleu : validée. Jaune : faite, en attente de validation. Gris : à faire. Dates réelles : phases 0 et 1 le 2026-11-07, phase 2 le 2026-11-08, phase 3 le 2026-11-09, phase 4 faite le 2026-11-10 (en attente).
+Bleu : validée. Jaune : faite, en attente de validation. Gris : à faire. Dates réelles : phases 0 et 1 le 2026-11-07, phase 2 le 2026-11-08, phase 3 le 2026-11-09, phase 4 le 2026-11-10.
 
 ```mermaid
 flowchart LR
   P0["Phase 0 Socle<br/>validée<br/>2026-11-07"] --> P1["Phase 1 Base de données<br/>validée<br/>2026-11-07"]
   P1 --> P2["Phase 2 Design system<br/>validée<br/>2026-11-08"]
   P2 --> P3["Phase 3 Comptes<br/>validée<br/>2026-11-09"]
-  P3 --> P4["Phase 4 Prix et catalogue<br/>faite, en attente<br/>2026-11-10"]
+  P3 --> P4["Phase 4 Prix et catalogue<br/>validée<br/>2026-11-10"]
   P4 --> P5["5 Recharge SasPay"]
   P5 --> P6["6 Commande"]
   P6 --> P7["7 Suivi et alertes"]
@@ -27,8 +27,7 @@ flowchart LR
   classDef valide fill:#DBEAFE,stroke:#1D4ED8,color:#000
   classDef enattente fill:#FEF3C7,stroke:#B45309,color:#000
   classDef afaire fill:#E5E7EB,stroke:#6B7280,color:#000
-  class P0,P1,P2,P3 valide
-  class P4 enattente
+  class P0,P1,P2,P3,P4 valide
   class P5,P6,P7,P8,P9,P10,P11,P12,P13,P14,P15,P16 afaire
 ```
 
