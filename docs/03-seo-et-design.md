@@ -95,4 +95,4 @@ Compétences de design à utiliser au moment de construire (demandées) : emilko
 
 ## 6. Textes
 
-Français simple, ton direct. Garanties affichées seulement si JAP les propose réellement pour le service (refill 30 jours, etc.).
+Français simple, ton direct. Garanties affichées seulement si fournisseur les propose réellement pour le service (refill 30 jours, etc.).

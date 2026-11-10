@@ -98,12 +98,12 @@ lyonpanel/
 │  │  ├─ auth/          session.ts  require-user.ts  require-admin.ts  rate-limit.ts  turnstile.ts
 │  │  ├─ pricing/       compute-price.ts  discount.ts  margins.ts  fees.ts
 │  │  ├─ catalog/       sync-services.ts  build-name.ts  classify.ts
-│  │  ├─ orders/        place-order.ts  submit-to-jap.ts  sync-statuses.ts  validate-link.ts
+│  │  ├─ orders/        place-order.ts  submit-to-provider.ts  sync-statuses.ts  validate-link.ts
 │  │  ├─ payments/      create-payment.ts  handle-webhook.ts  reconcile.ts
 │  │  ├─ referral/      referral.ts
 │  │  ├─ tickets/       tickets.ts  attachments.ts
 │  │  ├─ admin/         stats.ts  users.ts  refunds.ts  settings.ts
-│  │  ├─ providers/     jap-client.ts  saspay-client.ts  telegram.ts
+│  │  ├─ providers/     provider-client.ts  saspay-client.ts  telegram.ts
 │  │  ├─ db/            supabase-server.ts  supabase-admin.ts  types.ts (généré)
 │  │  └─ http/          api-error.ts  handler.ts  idempotency.ts
 │  ├─ lib/                                 # partagé navigateur + serveur, sans secret
@@ -140,9 +140,9 @@ lyonpanel/
 
 **server/pricing** — Calcul **pur** (sans base ni réseau) du prix client, de la remise, des frais et du bonus de parrainage. Source unique de vérité pour les montants ; la fonction SQL `place_order` reproduit le même calcul et un test vérifie que les deux donnent le même résultat. 100 % testé.
 
-**server/catalog** — Synchronisation JAP → table `services` : classement par plateforme et type, nom reconstruit (jamais de prix dans le nom), nouveaux services inactifs, historique des prix, alertes d'écart.
+**server/catalog** — Synchronisation fournisseur → table `services` : classement par plateforme et type, nom reconstruit (jamais de prix dans le nom), nouveaux services inactifs, historique des prix, alertes d'écart.
 
-**server/orders** — Création de commande (fonction SQL `place_order`), envoi à JAP, suivi des statuts par lots, passage en `to_review` + alerte. Ne rembourse jamais tout seul.
+**server/orders** — Création de commande (fonction SQL `place_order`), envoi à fournisseur, suivi des statuts par lots, passage en `to_review` + alerte. Ne rembourse jamais tout seul.
 
 **server/payments** — Création du paiement SasPay, webhook (signature, montant, unicité), rattrapage des paiements en attente. Le crédit passe uniquement par `credit_payment`.
 
@@ -152,7 +152,7 @@ lyonpanel/
 
 **server/admin** — Statistiques (ventes, bénéfice, par pays), gestion des clients, remboursements, réglages. Écrit `audit_log` à chaque action.
 
-**server/providers** — **Seuls** clients autorisés à parler à JAP, SasPay et Telegram. Délai 10 s, journaux sans secret.
+**server/providers** — **Seuls** clients autorisés à parler à fournisseur, SasPay et Telegram. Délai 10 s, journaux sans secret.
 
 **server/http** — `apiError`, enveloppe commune des routes (`handler`), clés d'idempotence.
 
@@ -165,42 +165,52 @@ lyonpanel/
 ## 4. Fonctions clés (signatures)
 
 ### 4.1 Prix — `server/pricing`
+Prix client = coût fournisseur en XAF × **multiplicateur** (départ ×3). Le taux (`usd_xaf_rate`, 600) et le multiplicateur par défaut (`default_multiplier`, 3) viennent des réglages et sont toujours passés en paramètre : aucun 600 ni 3 dans les calculs. Calcul en **entiers** (coût en dix-millièmes de dollar), aucune erreur de virgule flottante.
 ```ts
-type Platform = 'tiktok' | 'instagram' | 'facebook' | 'youtube' | 'telegram' | 'x' | 'spotify' | 'other';
+// pricing/multipliers.ts
+interface MultiplierRule { platform: string; category: string; multiplier: number }   // table price_multipliers
 
-interface MarginRules {
-  byPlatform: Partial<Record<Platform, number>>;      // { tiktok: 120, instagram: 75, facebook: 75 }
-  tiers: { maxUsd: number | null; pct: number }[];   // [{maxUsd:1,pct:70},{maxUsd:5,pct:65},{maxUsd:null,pct:60}]
-}
-
-/** Marge : override du service > plateforme > palier selon le coût USD. */
-export function resolveMarginPct(platform: Platform, costUsdPer1000: number, rules: MarginRules, override?: number | null): number;
-
-/** Prix client pour 1 000 en XAF, arrondi au multiple de 5 supérieur, minimum 5. */
-export function computePricePer1000Xaf(costUsdPer1000: number, marginPct: number, usdXafRate: number): number;
-
-/** Remise : la plus grande entre auto (si totalRecharged ≥ seuil) et personnalisée. Jamais cumulées. */
-export function resolveDiscountPct(totalRechargedXaf: number, auto: { thresholdXaf: number; pct: number }, customPct: number | null): number;
-
-/** Total : ceil5(prix × qté / 1000 × (1 − remise)), jamais sous coût JAP × (1 + marge minimale). */
-export function computeOrderTotalXaf(input: {
-  pricePer1000Xaf: number; quantity: number; discountPct: number;
-  costUsdPer1000: number; usdXafRate: number; minMarginPct: number;
+/** Multiplicateur : surcharge du service > règle (réseau, type) > multiplicateur par défaut. Erreur si ≤ 0 ou NaN. */
+export function resolveMultiplier(input: {
+  override?: number | null; platform: string; category: string;
+  rules: readonly MultiplierRule[]; defaultMultiplier: number;
 }): number;
 
-/** Frais SasPay payés par le client. */
-export function computeTopUpFees(amountXaf: number, feePct: number): { amountXaf: number; feeXaf: number; totalToPay: number };
+// pricing/compute-price.ts
+/** Prix client pour 1 000 : ceil5(coûtUsd × taux × multiplicateur), minimum 5. Erreur si coût < 0, taux ≤ 0 ou multiplicateur ≤ 0. */
+export function computePricePer1000Xaf(costUsd1000: number | string, usdXafRate: number, multiplier: number): number;
 
-/** Bonus de parrainage : floor(pct % du premier crédit). */
+/** Total : max(5, ceil5(prix × quantité / 1000)). Erreur si prix ou quantité ne sont pas des entiers > 0. */
+export function computeOrderTotalXaf(pricePer1000Xaf: number, quantity: number): number;
+
+/** Prix de la commande minimum : total avec la quantité minimale du service. */
+export function computeMinOrderXaf(pricePer1000Xaf: number, minQty: number): number;
+```
+Valeurs de référence (taux 600, ×3) : 0.756 $ → 1365 ; 1.61 $ → 2900 ; 4.2 $ → 7560 ; 1.008 $ → 1815 ; 0.0012 $ → 5 ; 4838.4 $ → 8 709 120. Prix 1365 × quantité 10 → 15 ; prix 1815 × quantité 1000 → 1815.
+
+Hors phase 4 (inchangé, repris plus tard avec les phases remises, parrainage et frais) :
+```ts
+export function resolveDiscountPct(totalRechargedXaf: number, auto: { thresholdXaf: number; pct: number }, customPct: number | null): number;
+export function computeTopUpFees(amountXaf: number, feePct: number): { amountXaf: number; feeXaf: number; totalToPay: number };
 export function computeReferralBonusXaf(creditedXaf: number, pct: number): number;
 ```
 
 ### 4.2 Catalogue — `server/catalog`
 ```ts
-export function classifyPlatform(japCategory: string): Platform;
-export function classifyCategory(japName: string, japCategory: string): 'followers' | 'likes' | 'views' | 'comments' | 'shares' | 'live' | 'other';
-/** Nom reconstruit depuis les champs API ; jamais de prix ni d'étiquettes JAP. */
-export function buildServiceName(s: JapService, locale: 'fr' | 'en'): string;
+export function classifyPlatform(providerCategory: string): Platform;
+export function classifyCategory(providerName: string, providerCategory: string): 'followers' | 'likes' | 'views' | 'comments' | 'shares' | 'live' | 'other';
+/** Nom reconstruit depuis les champs API ; jamais de prix ni d'étiquettes fournisseur. */
+export function buildServiceName(
+  s: { id: number; platform: Network; category: ServiceType; refill: boolean; cancel: boolean; dripfeed: boolean;
+       min_qty: number; max_qty: number; providerName?: string; providerCategory?: string },
+  locale: 'fr' | 'en',
+): string;
+// Format : <Type> <Réseau> · <qualificatifs> · Recharge · Annulable · Goutte-à-goutte #id
+// Qualificatifs extraits de providerName / providerCategory (entrée serveur seulement, jamais renvoyés),
+// exprimés en mots propres FR/EN, jamais recopiés. Ordre fixe, 4 au maximum : cible (Story, Reel, Live, Post,
+// Profil, Page) · qualité (Réel, Haute qualité, Premium, Mixte, Économique, Organique) · origine (pays/région,
+// Mondial) · garantie (Garantie à vie / Garantie N j) · chute (Sans chute, Chute faible) · Départ instantané.
+// Sans providerName/providerCategory : pas de qualificatif. Au plus 95 caractères avant « #id ».
 export async function syncServices(): Promise<{ added: number; removed: number; repriced: number; alerts: number }>;
 ```
 
@@ -208,9 +218,9 @@ export async function syncServices(): Promise<{ added: number; removed: number; 
 ```ts
 export async function placeOrder(userId: string, input: CreateOrderInput, idempotencyKey: string): Promise<Order>;
 // 1) lit service + réglages  2) computeOrderTotalXaf  3) ≠ expected_total_xaf → PRICE_CHANGED
-// 4) solde JAP disponible ?  5) rpc('place_order')  6) submitToJap  7) renvoie la commande
+// 4) solde fournisseur disponible ?  5) rpc('place_order')  6) submitToProvider  7) renvoie la commande
 
-export async function submitToJap(order: Order): Promise<'in_progress' | 'to_review'>;  // aucune reprise automatique
+export async function submitToProvider(order: Order): Promise<'in_progress' | 'to_review'>;  // aucune reprise automatique
 export async function syncOrderStatuses(batchSize?: number): Promise<{ updated: number; toReview: number }>;
 export function validateLink(platform: Platform, link: string): { ok: true } | { ok: false; reason: 'INVALID_LINK' };
 ```
@@ -224,11 +234,11 @@ export async function reconcilePendingPayments(olderThanMinutes?: number): Promi
 
 ### 4.5 Fournisseurs — `server/providers`
 ```ts
-export const jap: {
-  services(): Promise<JapService[]>;
+export const provider: {
+  services(): Promise<ProviderService[]>;  // API v2 : « rate » = coût en USD pour 1000
   balance(): Promise<{ balance: number; currency: 'USD' }>;
   add(p: { service: number; link: string; quantity: number; comments?: string }): Promise<{ order: number }>;
-  status(ids: number[]): Promise<Record<number, JapStatus>>;
+  status(ids: number[]): Promise<Record<number, ProviderStatus>>;
 };
 export const saspay: {
   createCheckoutSession(p: { amount: string; currency: 'XAF' | 'XOF'; customerEmail: string; customerName: string; customerPhone?: string; country?: string; returnUrl: string; metadata: { lyonpanel_payment_id: string }; feeChargeMode: 'ADD_ON'; expiresAt: string }): Promise<{ sessionId: string; checkoutUrl: string }>;
@@ -238,7 +248,7 @@ export const saspay: {
   verifyWebhook(rawBody: string, signature: string, timestamp: string): boolean; // HMAC-SHA256(timestamp + '.' + body), ± 300 s
 };
 export async function notifyOwner(
-  event: 'order_failed' | 'low_jap_balance' | 'price_jump' | 'payment_mismatch' | 'new_ticket' | 'internal_error',
+  event: 'order_failed' | 'low_provider_balance' | 'price_jump' | 'payment_mismatch' | 'new_ticket' | 'internal_error',
   data: Record<string, unknown>,
 ): Promise<void>;
 ```
@@ -294,6 +304,12 @@ Voir `DATA_MODEL.md §6` : `place_order`, `credit_payment`, `refund_order`, `adm
 | `/account` | `/compte` | `/account` |
 | `/privacy` | `/confidentialite` | `/privacy` |
 | `/terms` | `/conditions` | `/terms` |
+| `/services` | `/services` | `/services` |
+| `/services/[network]` | `/services/[network]` | `/services/[network]` |
+| `/services/[network]/[type]` | `/services/[network]/[type]` | `/services/[network]/[type]` |
+| `/services/[network]/[type]/[id]` | idem | idem |
+
+Réseau et type sont des identifiants de code (`tiktok`, `followers`…), identiques dans les deux langues.
 
 - Première visite : `Accept-Language` → `fr` ou `en` ; toute autre langue → `fr`. Choix gardé dans `NEXT_LOCALE`.
 - Balises `hreflang` fr/en + `x-default` → fr.
@@ -315,7 +331,7 @@ Voir `DATA_MODEL.md §6` : `place_order`, `credit_payment`, `refund_order`, `adm
 | Montants | suffixe d'unité obligatoire | `amountXaf`, `costUsdPer1000` |
 | Codes d'erreur | SCREAMING_SNAKE_CASE | `INSUFFICIENT_BALANCE` |
 | Clés de traduction | par écran, séparées par des points | `order.form.quantity.label` |
-| Variables d'env | SCREAMING_SNAKE_CASE ; `NEXT_PUBLIC_` seulement sans secret | `JAP_API_KEY`, `NEXT_PUBLIC_TURNSTILE_SITE_KEY` |
+| Variables d'env | SCREAMING_SNAKE_CASE ; `NEXT_PUBLIC_` seulement sans secret | `PROVIDER_API_KEY`, `NEXT_PUBLIC_TURNSTILE_SITE_KEY` |
 | Branches Git | `type/sujet` | `feat/add-funds` |
 | Commits | Conventional Commits, en français (voir `CONVENTIONS.md`) | `feat(orders): ajouter la clé d'idempotence` |
 

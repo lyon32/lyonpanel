@@ -11,7 +11,7 @@ flowchart LR
   A[Propriétaire<br/>admin] -->|HTTPS| CF
   CF --> V[Next.js sur Vercel<br/>pages + routes serveur]
   V -->|SQL + Auth| S[(Supabase<br/>Postgres + Auth)]
-  V -->|API v2| J[JustAnotherPanel]
+  V -->|API v2| J[le fournisseur]
   V -->|créer paiement| P[SasPay]
   P -->|webhook signé| V
   V -->|alertes| T[Bot Telegram]
@@ -22,7 +22,7 @@ flowchart LR
 Version texte :
 ```
 Client/Admin --HTTPS--> Cloudflare --> Next.js (Vercel) --> Supabase (DB + Auth) --> SMTP Hostinger
-                                          |-- JAP API (commandes, services, statuts)
+                                          |-- fournisseur API (commandes, services, statuts)
                                           |-- SasPay (paiements) <-- webhook
                                           |-- Telegram (alertes propriétaire)
                                           +-- Cloudflare Worker cron (sync, rattrapage)
@@ -44,7 +44,7 @@ flowchart LR
     U5[Suivre commandes et paiements]
     U6[Ouvrir un ticket]
     U7[Choisir sa devise]
-    A1[Voir ventes, bénéfice, solde JAP]
+    A1[Voir ventes, bénéfice, solde fournisseur]
     A2[Examiner commandes en échec]
     A3[Rembourser manuellement]
     A4[Répondre aux tickets]
@@ -55,7 +55,7 @@ flowchart LR
   Owner --> A1 & A2 & A3 & A4 & A5 & A6
 ```
 
-Acteurs systèmes : SasPay (confirme les paiements), JAP (exécute les commandes), Cloudflare Worker cron (déclenche les tâches).
+Acteurs systèmes : SasPay (confirme les paiements), fournisseur (exécute les commandes), Cloudflare Worker cron (déclenche les tâches).
 
 ## 3. Composants et communication
 
@@ -64,9 +64,9 @@ Acteurs systèmes : SasPay (confirme les paiements), JAP (exécute les commandes
 | **Pages publiques** (Next.js, rendu serveur) | Accueil, plateformes, FAQ, légal (SEO) | Supabase (catalogue en lecture, cache) |
 | **Espace client** | Tableau de bord, commander, recharger, historique, tickets | Routes serveur |
 | **Admin** `/admin` | Tableau de bord du propriétaire | Routes serveur (rôle admin) |
-| **Routes serveur** (Route Handlers / Server Actions) | Toute la logique : prix, débit, appels JAP/SasPay | Supabase, JAP, SasPay, Telegram |
+| **Routes serveur** (Route Handlers / Server Actions) | Toute la logique : prix, débit, appels fournisseur/SasPay | Supabase, fournisseur, SasPay, Telegram |
 | **Webhook SasPay** `/api/webhooks/saspay` | Reçoit les confirmations de paiement | Supabase |
-| **Tâches planifiées** `/api/cron/*` | Sync services, statuts, rattrapage paiements, solde JAP | JAP, SasPay, Supabase, Telegram |
+| **Tâches planifiées** `/api/cron/*` | Sync services, statuts, rattrapage paiements, solde fournisseur | fournisseur, SasPay, Supabase, Telegram |
 | **Supabase Postgres** | Données + fonctions SQL atomiques (débit, crédit) + RLS | — |
 | **Supabase Auth** | Comptes, sessions, mot de passe oublié | SMTP Hostinger |
 
@@ -85,7 +85,7 @@ flowchart TB
     RS[Routes serveur]
     WH[Webhook SasPay]
     CRON[Tâches cron]
-    LIB[lib : prix, jap, saspay, telegram]
+    LIB[lib : prix, fournisseur, saspay, telegram]
   end
   subgraph Supabase
     AUTH[Auth]
@@ -99,7 +99,7 @@ flowchart TB
   CRON --> LIB
   LIB --> DB
   CLI --> AUTH
-  LIB --> JAP[JAP API]
+  LIB --> fournisseur[fournisseur API]
   LIB --> SAS[SasPay API]
   LIB --> TG[Telegram]
 ```
@@ -115,7 +115,7 @@ flowchart TB
 | **Vercel** | Hébergement gratuit, Cron intégré | VPS, Docker |
 | **Cloudflare** | DNS, protection, Turnstile gratuit | reCAPTCHA |
 | **SasPay** | Mobile Money Afrique de l'Ouest et du Centre | Stripe, PayPal (v1) |
-| **JAP API v2** | Fournisseur unique des services | — |
+| **fournisseur API v2** | Fournisseur unique des services | — |
 | **Telegram Bot API** | Alertes propriétaire, gratuit | Email, Slack |
 | **SMTP Hostinger** | Emails depuis support@lyonpanel.com (décidé) | Resend, SendGrid (v1) |
 | **Zod** (mon choix) | Validation des entrées côté serveur | — |
@@ -188,12 +188,12 @@ sequenceDiagram
   actor C as Client
   participant N as Next.js
   participant DB as Postgres
-  participant J as JAP
+  participant J as fournisseur
   participant T as Telegram
   C->>N: Service, lien, quantité (+ clé d'idempotence)
   N->>DB: Lire service (prix, min, max, actif)
   N->>N: Recalculer total, vérifier min/max et lien
-  N->>DB: Vérifier solde JAP disponible (moins réservations)
+  N->>DB: Vérifier solde fournisseur disponible (moins réservations)
   N->>DB: place_order() : débit + commande en attente (1 transaction)
   alt solde insuffisant
     DB-->>N: refus
@@ -202,7 +202,7 @@ sequenceDiagram
   N->>J: action=add (service, link, quantity)
   alt succès
     J-->>N: order id
-    N->>DB: commande en cours, id JAP
+    N->>DB: commande en cours, id fournisseur
     N-->>C: Commande envoyée
   else erreur ou délai dépassé
     N->>DB: commande à examiner
@@ -217,7 +217,7 @@ sequenceDiagram
   participant CR as Cloudflare Worker cron
   participant N as Next.js
   participant DB as Postgres
-  participant J as JAP
+  participant J as fournisseur
   participant T as Telegram
   CR->>N: /api/cron/orders
   N->>DB: commandes en cours (lot de 100)
@@ -247,12 +247,12 @@ sequenceDiagram
   N-->>C: Ticket répondu, solde remboursé
 ```
 
-### 5.7 Synchronisation du catalogue et solde JAP
+### 5.7 Synchronisation du catalogue et solde fournisseur
 ```mermaid
 sequenceDiagram
   participant CR as Cloudflare Worker cron
   participant N as Next.js
-  participant J as JAP
+  participant J as fournisseur
   participant DB as Postgres
   participant T as Telegram
   CR->>N: /api/cron/services
@@ -263,7 +263,7 @@ sequenceDiagram
     N->>T: Alerte écart de prix
   end
   N->>J: action=balance
-  alt solde JAP sous le seuil
+  alt solde fournisseur sous le seuil
     N->>T: Alerte solde bas
   end
 ```
@@ -275,9 +275,9 @@ Fréquences (mon choix) : paiements 5 min, statuts 10 min, services 1 h.
 ```mermaid
 stateDiagram-v2
   [*] --> EnAttente: débit du solde
-  EnAttente --> EnCours: JAP accepte
-  EnAttente --> AExaminer: erreur JAP
-  EnCours --> Terminee: JAP Completed
+  EnAttente --> EnCours: fournisseur accepte
+  EnAttente --> AExaminer: erreur fournisseur
+  EnCours --> Terminee: fournisseur Completed
   EnCours --> AExaminer: Partial ou Canceled
   AExaminer --> Remboursee: propriétaire rembourse
   AExaminer --> EnCours: renvoyée
@@ -329,7 +329,7 @@ erDiagram
     text status
   }
   SERVICES {
-    int jap_id
+    int provider_id
     text platform
     text type
     text name_fr
@@ -345,7 +345,7 @@ erDiagram
     text link
     int quantity
     int charged_xaf
-    text jap_order_id
+    text provider_order_id
     text status
     text idem_key_unique
   }
@@ -378,11 +378,11 @@ flowchart LR
 ```
 
 - Deux projets Supabase : **test** et **production** (mon choix ; l'offre gratuite en permet 2).
-- Secrets uniquement dans les variables Vercel : `JAP_API_KEY`, `SASPAY_*`, `SUPABASE_SERVICE_ROLE_KEY`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `TURNSTILE_SECRET`, `CRON_SECRET`.
+- Secrets uniquement dans les variables Vercel : `PROVIDER_API_KEY`, `SASPAY_*`, `SUPABASE_SERVICE_ROLE_KEY`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `TURNSTILE_SECRET`, `CRON_SECRET`.
 - Migrations SQL versionnées dans `supabase/migrations`.
 - **Vercel gratuit (Hobby) pour le moment** (décidé). Conséquences :
   - crons faits par un **Cloudflare Worker** gratuit (`workers/cron/`), pas par Vercel ;
-  - fonctions limitées en durée : chaque appel JAP/SasPay a un délai de 10 s, la sync du catalogue se fait par lots ;
+  - fonctions limitées en durée : chaque appel fournisseur/SasPay a un délai de 10 s, la sync du catalogue se fait par lots ;
   - l'offre Hobby est prévue pour un usage **non commercial** : passer à **Vercel Pro** (≈ 20 $/mois) dès que le site gagne de l'argent régulièrement ou si Vercel le demande. À revoir après le lancement limité.
 
 ## 9. Intégrations tierces
@@ -390,7 +390,7 @@ flowchart LR
 | Service | Usage | État |
 |---|---|---|
 | **SasPay** | Recharges Mobile Money + carte, webhooks | Compte marchand + mode test à obtenir |
-| **JAP API v2** | Services, commandes, statuts, solde | Compte existant ; **clé à régénérer** |
+| **fournisseur API v2** | Services, commandes, statuts, solde | Compte existant ; **clé à régénérer** |
 | **Supabase Auth** | Comptes email + mot de passe, sessions | Compte existant |
 | **SMTP Hostinger** | Emails (mot de passe oublié) depuis support@lyonpanel.com | Boîte à créer après achat du domaine |
 | **Cloudflare** | Domaine, DNS, Turnstile | Domaine **à acheter** (conseil : Cloudflare Registrar) |

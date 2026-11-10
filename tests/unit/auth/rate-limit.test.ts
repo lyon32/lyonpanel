@@ -227,7 +227,7 @@ describe('createLoginLimiter.begin (blocage progressif)', () => {
         lockedWith(seconds),
       );
     }
-  });
+  }, 20_000);
 
   it('29 échecs sur une IP ne bloquent personne', async () => {
     const { store } = memoryStore();

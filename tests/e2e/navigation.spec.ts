@@ -86,8 +86,13 @@ test('une adresse inconnue affiche le 404 du site, avec la bonne langue', async 
 
 test('la devise reste choisie en passant de /fr à /en', async ({ page }) => {
   await page.goto('/fr/demo');
-  await page.getByRole('combobox', { name: 'Devise' }).first().selectOption('USD');
-  await expect(page.getByRole('combobox', { name: 'Devise' }).first()).toHaveValue('USD');
+  // Avant que la page soit active, le choix est perdu : on réessaie jusqu'à ce qu'il prenne.
+  await expect(async () => {
+    await page.getByRole('combobox', { name: 'Devise' }).first().selectOption('USD');
+    await expect(page.getByRole('combobox', { name: 'Devise' }).first()).toHaveValue('USD', {
+      timeout: 2_000,
+    });
+  }).toPass({ timeout: 20_000 });
   await page.goto('/en/demo');
   await expect(page.getByRole('combobox', { name: 'Currency' }).first()).toHaveValue('USD');
 });

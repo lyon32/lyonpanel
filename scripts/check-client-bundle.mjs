@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 
 const SECRET_VARIABLES = [
   'SUPABASE_SERVICE_ROLE_KEY',
-  'JAP_API_KEY',
+  'PROVIDER_API_KEY',
   'SASPAY_API_KEY',
   'SASPAY_WEBHOOK_SECRET',
   'TELEGRAM_BOT_TOKEN',
@@ -18,7 +18,7 @@ const PATTERNS = [
   'sk_live_',
   'sk_test_',
   'service_role',
-  'JAP_API_KEY',
+  'PROVIDER_API_KEY',
   'SASPAY_API_KEY',
   'SASPAY_WEBHOOK_SECRET',
   'TELEGRAM_BOT_TOKEN',

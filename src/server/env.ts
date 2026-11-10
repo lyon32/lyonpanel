@@ -1,7 +1,7 @@
 import 'server-only';
 import { z } from 'zod';
 
-// Une variable vide dans .env.local (ex. `JAP_API_KEY=`) équivaut à « absente ».
+// Une variable vide dans .env.local (ex. `PROVIDER_API_KEY=`) équivaut à « absente ».
 const optionalString = z.preprocess(
   (value) => (value === '' ? undefined : value),
   z.string().optional(),
@@ -14,9 +14,9 @@ const envSchema = z
     NEXT_PUBLIC_SUPABASE_URL: optionalString,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: optionalString,
     SUPABASE_SERVICE_ROLE_KEY: optionalString,
-    JAP_API_URL: optionalString,
-    JAP_API_KEY: optionalString,
-    JAP_MODE: z.enum(['mock', 'live']).default('mock'),
+    PROVIDER_API_URL: optionalString,
+    PROVIDER_API_KEY: optionalString,
+    PROVIDER_MODE: z.enum(['mock', 'live']).default('mock'),
     SASPAY_API_URL: optionalString,
     SASPAY_API_KEY: optionalString,
     SASPAY_WEBHOOK_SECRET: optionalString,
@@ -35,12 +35,12 @@ const envSchema = z
     VERCEL_ENV: optionalString,
   })
   .superRefine((env, ctx) => {
-    // Le vrai JAP coûte de l'argent : interdit hors production.
-    if (env.JAP_MODE === 'live' && env.VERCEL_ENV !== 'production') {
+    // Le vrai fournisseur coûte de l'argent : interdit hors production.
+    if (env.PROVIDER_MODE === 'live' && env.VERCEL_ENV !== 'production') {
       ctx.addIssue({
         code: 'custom',
-        path: ['JAP_MODE'],
-        message: 'JAP_MODE=live est réservé à la production',
+        path: ['PROVIDER_MODE'],
+        message: 'PROVIDER_MODE=live est réservé à la production',
       });
     }
     // Les vrais paiements SasPay sont interdits hors production.
@@ -75,7 +75,8 @@ export class MissingEnvError extends Error {
 }
 
 // Insensible à la casse : un secret mal nommé ne doit jamais partir au navigateur.
-const SECRET_NAME = /SECRET|TOKEN|PASSWORD|PRIVATE|SERVICE|JAP_|SASPAY_|API_KEY|CRON|TELEGRAM/i;
+const SECRET_NAME =
+  /SECRET|TOKEN|PASSWORD|PRIVATE|SERVICE|PROVIDER_|SASPAY_|API_KEY|CRON|TELEGRAM/i;
 
 export function loadServerEnv(source: Record<string, string | undefined> = process.env): ServerEnv {
   // Tout ce qui est NEXT_PUBLIC_ part dans le navigateur : aucun secret ne doit y être.

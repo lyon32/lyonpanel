@@ -2,6 +2,25 @@
 
 Écrit pour le propriétaire. Une section par phase. Seul le propriétaire valide une phase.
 
+## Phase 4 — Prix et catalogue (2026-11-10) — faite, en attente de validation
+
+### Nouveau
+- Catalogue de 2 188 services rangés par réseau (Instagram, TikTok, YouTube, Facebook, Telegram, X, etc.) et par type (abonnés, likes, vues, commentaires, partages, autres). Données issues d'un faux fournisseur : le vrai n'est pas encore branché.
+- Prix calculés côté serveur : coût du fournisseur converti en XAF (1 USD = 600 XAF, réglable) × multiplicateur (×3 au départ, réglable par catégorie et par service), arrondi aux 5 XAF supérieurs, minimum 5 XAF.
+- Pages publiques FR et EN : réseaux, types, liste paginée avec recherche (sans accents ni majuscules), fiche de service. Prix en XAF, XOF ou USD.
+- Fichier de travail `data/catalogue-services.csv` et règles chiffrées dans `docs/01-catalogue-et-prix.md`.
+- Tous les services sont actifs, sauf ceux que le fournisseur retire.
+
+### Sécurité
+- Aucun nom de fournisseur, coût ni multiplicateur côté client. Contrôle sécurité accepté ; 2 remarques corrigées (cache de 300 s, plafond de 100 000 USD sur le prix fournisseur).
+
+### Chiffres
+- 1 048 tests unitaires verts, 13 tests de navigateur verts sur le catalogue, 273 tests de base sur 278 (5 échecs de stockage de fichiers, conteneur local arrêté). Types sans erreur, build OK, lint sans erreur (8 avertissements de taille).
+
+### À surveiller
+- Services à prix extrêmes (le plus cher : 8 709 120 XAF les 1 000), à traiter en phase 12.
+- Fiches de service en `noindex` pour l'instant. Mesure des boutons de 44 px non refaite dans un navigateur.
+
 ## Phase 3 — Comptes (2026-11-08) — faite, en attente de validation
 
 ### Nouveau
@@ -54,7 +73,7 @@
 - GitHub lance maintenant les tests de la base à chaque PR (étape à vérifier à l'ouverture de la PR).
 
 ### Sécurité
-- Un client ne voit que ses propres données. Il ne voit jamais le coût JAP, la marge ni les notes privées.
+- Un client ne voit que ses propres données. Il ne voit jamais le coût fournisseur, la marge ni les notes privées.
 - L'audit sécurité a trouvé 2 failles moyennes (quantités sans bornes, compte supprimé encore connecté). Elles sont corrigées et ré-attaquées sans succès.
 - Un paiement échoué ne peut plus être crédité.
 

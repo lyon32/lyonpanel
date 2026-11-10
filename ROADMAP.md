@@ -21,9 +21,9 @@ Remplace `docs/04-roadmap.md`. S'appuie sur : `PRD.md`, `ARCHITECTURE.md`, `DATA
 | 1 | Base de données | Tables, RLS, fonctions SQL testées | — |
 | 2 | Design system + mise en page | Composants aux couleurs, en-tête, pied, FR/EN | — |
 | 3 | Comptes | Inscription, connexion email/téléphone, mot de passe oublié | Widget Turnstile (ou clés de test) |
-| 4 | Prix + catalogue (faux JAP) | Catalogue rangé, prix en XAF/XOF/USD | — |
+| 4 | Prix + catalogue (faux fournisseur) | Catalogue rangé, prix en XAF/XOF/USD | — |
 | 5 | Recharge SasPay (test) | Recharger en mode test, solde crédité | Compte SasPay + clés de test |
-| 6 | Commande | Commander, solde débité, envoi au faux JAP | — |
+| 6 | Commande | Commander, solde débité, envoi au faux fournisseur | — |
 | 7 | Suivi + alertes | Statuts qui bougent, alertes Telegram | Bot Telegram |
 | 8 | Espace client | Tableau de bord, historiques, favoris, compte | — |
 | 9 | Support | Tickets avec captures d'écran | — |
@@ -32,7 +32,7 @@ Remplace `docs/04-roadmap.md`. S'appuie sur : `PRD.md`, `ARCHITECTURE.md`, `DATA
 | 12 | Admin (2) | Remboursements, services, réglages, journal | — |
 | 13 | Mise en ligne de test | Vercel Preview + Supabase test | Domaine, Supabase, Vercel, email Hostinger |
 | 14 | Accueil soigné + SEO | Accueil final, pages plateformes, FAQ, légal | Textes légaux relus |
-| 15 | Vrai JAP + lancement limité | Test réel, charge, lancement limité | Nouvelle clé JAP, SasPay en production |
+| 15 | Vrai fournisseur + lancement limité | Test réel, charge, lancement limité | Nouvelle clé fournisseur, SasPay en production |
 | 16 | Ouverture publique | Site ouvert à tous | Bilan du lancement limité |
 
 ## Détail des phases
@@ -69,10 +69,10 @@ Remplace `docs/04-roadmap.md`. S'appuie sur : `PRD.md`, `ARCHITECTURE.md`, `DATA
 - **Terminé quand** : tu crées un compte, te reconnectes par téléphone et réinitialises ton mot de passe.
 - 🧑 Créer un widget Turnstile (sinon on garde les clés de test).
 
-### Phase 4 — Prix + catalogue (faux JAP)
-- `server/pricing` (100 % testé), faux JAP, `syncServices` : classement, noms reconstruits, nouveaux services inactifs, historique de prix.
+### Phase 4 — Prix + catalogue (faux fournisseur)
+- `server/pricing` (100 % testé), faux fournisseur, `syncServices` : classement, noms reconstruits, nouveaux services inactifs, historique de prix.
 - Pages catalogue par plateforme, fiche service, prix en XAF/XOF/USD.
-- **Terminé quand** : le catalogue s'affiche rangé, les prix respectent les marges, aucun nom ne contient de prix JAP.
+- **Terminé quand** : le catalogue s'affiche rangé, les prix respectent les marges, aucun nom ne contient de prix fournisseur.
 
 ### Phase 5 — Recharge SasPay (mode test)
 - Lire la documentation SasPay (paiements, webhooks, signature, frais) et compléter `saspay-client.ts`.
@@ -86,7 +86,7 @@ Remplace `docs/04-roadmap.md`. S'appuie sur : `PRD.md`, `ARCHITECTURE.md`, `DATA
 ### Phase 6 — Commande
 - Formulaire (service, lien, quantité, commentaires perso), devis en direct, liens par plateforme, plafond journalier, clé d'idempotence.
 - Progression par étapes de la commande (envoi, débit, transmission).
-- `placeOrder` → `place_order` → `submitToJap` (faux JAP) ; échec → `to_review`.
+- `placeOrder` → `place_order` → `submitToProvider` (faux fournisseur) ; échec → `to_review`.
 - **Terminé quand** : tu commandes, le solde baisse du bon montant ; double clic = une commande ; solde insuffisant = message clair.
 
 ### Phase 7 — Suivi des commandes + alertes
@@ -111,7 +111,7 @@ Remplace `docs/04-roadmap.md`. S'appuie sur : `PRD.md`, `ARCHITECTURE.md`, `DATA
 
 ### Phase 11 — Admin (1) : accès, stats, clients
 - `ADMIN_PATH` secret, code à 6 chiffres sur **2 appareils** (secours), `/admin` = 404, `noindex`.
-- Tableau de bord : ventes, bénéfice, solde JAP, répartition par pays.
+- Tableau de bord : ventes, bénéfice, solde fournisseur, répartition par pays.
 - Clients : recherche, fiche, blocage, remise perso, plafond journalier, notes privées.
 - **Terminé quand** : tu entres dans l'admin avec ton code, vois tes chiffres et bloques un client de test.
 - 🧑 Installer une appli d'authentification (Google Authenticator ou autre).
@@ -137,12 +137,12 @@ Remplace `docs/04-roadmap.md`. S'appuie sur : `PRD.md`, `ARCHITECTURE.md`, `DATA
 - 🧑 Relire les textes légaux ; décider s'il faut une immatriculation.
 - 🔔 **RAPPEL À LA FIN DE LA PHASE 14 (obligatoire)** : quand la page d'accueil est complètement finie, **rappeler au propriétaire** de proposer **2 à 3 prototypes de page d'accueil complètement différents** (seules les couleurs du design system sont gardées : blanc, bleu, jaune en accent). S'appuyer sur plusieurs images de `reference-design system/` comme inspiration (sans les copier, viser mieux) et utiliser tous les skills de design du projet (`unslop`, `antislop`, `antislop-ui`, `antislop-layoutmobile`, `baseline-ui`, `improve-ui`, `impeccable`, `ui-ux-pro-max`, etc.). Le propriétaire choisit, puis on garde la feuille de route. Ne rien lancer sans lui avoir posé la question.
 
-### Phase 15 — Vrai JAP, tests finaux, lancement limité
+### Phase 15 — Vrai fournisseur, tests finaux, lancement limité
 - Test de charge 100 clients, test de restauration de sauvegarde (`TESTING.md §6`).
-- `JAP_MODE=live`, SasPay production ; test réel : 1 recharge Mobile Money + 2–3 commandes (≈ 0,50 $) + 1 remboursement.
+- `PROVIDER_MODE=live`, SasPay production ; test réel : 1 recharge Mobile Money + 2–3 commandes (≈ 0,50 $) + 1 remboursement.
 - Ouverture **limitée** : inscription réservée à une liste d'emails (mon choix), 1 à 2 semaines.
 - **Terminé quand** : test réel réussi, aucun bug bloquant pendant la période limitée.
-- 🧑 Régénérer la clé JAP et la mettre dans Vercel Production, passer SasPay en production, recharger 20 $ sur JAP.
+- 🧑 Régénérer la clé fournisseur et la mettre dans Vercel Production, passer SasPay en production, recharger 20 $ sur fournisseur.
 
 ### Phase 16 — Ouverture publique
 - Corriger les retours, retirer la liste d'emails autorisés, vérifier alertes et surveillance.
@@ -167,8 +167,8 @@ Pages par pays, blog, commandes en lot, notifications client, email « nouvelle 
 | 0 | validée | 2026-11-07 |
 | 1 | validée | 2026-11-07 |
 | 2 | validée | 2026-11-08 |
-| 3 | faite – en attente de validation (2026-11-08) | — |
-| 4 | à faire | — |
+| 3 | validée | 2026-11-09 |
+| 4 | faite – en attente de validation (2026-11-10) | — |
 | 5 | à faire | — |
 | 6 | à faire | — |
 | 7 | à faire | — |

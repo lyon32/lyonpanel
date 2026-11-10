@@ -4,7 +4,7 @@ export type ServiceOverrides = Record<string, unknown>;
 
 let nextId = 9_000_000 + (Date.now() % 900_000);
 
-/** Insère un vrai service (id unique par appel, hors plage JAP réelle). */
+/** Insère un vrai service (id unique par appel, hors plage réelle du fournisseur). */
 export async function makeService(
   overrides: ServiceOverrides = {},
 ): Promise<{ id: number } & Record<string, unknown>> {
@@ -14,8 +14,8 @@ export async function makeService(
     platform: 'tiktok',
     category: 'followers',
     name_fr: 'Abonnés TikTok (test)',
-    jap_name: 'JAP test service',
-    jap_type: 'Default',
+    provider_name: 'PROVIDER test service',
+    provider_type: 'Default',
     cost_usd_1000: 1.5,
     price_xaf_1000: 1500,
     min_qty: 10,

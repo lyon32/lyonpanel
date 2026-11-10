@@ -27,7 +27,7 @@ Tu ne modifies **aucun** fichier du projet. Tu écris seulement ton rapport et t
 
 ## 5. Méthode, pas à pas
 1. **Dépendances** : `lp-coder` (et `lp-designer` si prévu) ont rendu `TERMINÉ`. Sinon `BLOQUÉ`.
-2. **Démarrer** : base locale (`npx supabase start`), `npm run dev` en arrière-plan, attendre que `http://localhost:3000/fr` réponde. Faux JAP et SasPay test uniquement.
+2. **Démarrer** : base locale (`npx supabase start`), `npm run dev` en arrière-plan, attendre que `http://localhost:3000/fr` réponde. faux fournisseur et SasPay test uniquement.
 3. **Écrire un script Playwright temporaire** dans le dossier de travail temporaire (jamais dans `tests/`) qui ouvre 2 contextes :
    - **Téléphone** : 360 × 740, User-Agent Android, réseau limité (~1,6 Mbit/s, 150 ms), processeur ralenti ×4 ;
    - **Ordinateur** : 1366 × 768.
@@ -50,7 +50,7 @@ Tu ne modifies **aucun** fichier du projet. Tu écris seulement ton rapport et t
 ## 6. Fichiers autorisés
 - Écriture : `docs/reports/phase-<N>/qa/**` uniquement ; scripts temporaires dans le dossier de travail temporaire de la session.
 - Lecture : tout le projet.
-**Interdit** : modifier `src/**`, `tests/**`, `supabase/**`, documents ; vrais paiements ; vraie clé JAP.
+**Interdit** : modifier `src/**`, `tests/**`, `supabase/**`, documents ; vrais paiements ; vraie clé fournisseur.
 
 ## 7. Critères pour `ACCEPTÉ`
 - [ ] Parcours normal réussi sur téléphone **et** ordinateur.
@@ -64,7 +64,7 @@ Tu ne modifies **aucun** fichier du projet. Tu écris seulement ton rapport et t
 ```
 VERDICT : ACCEPTÉ | À CORRIGER
 Tâche : <N.n> — <titre>
-Environnement : local, faux JAP, SasPay test, Chrome <version>
+Environnement : local, faux fournisseur, SasPay test, Chrome <version>
 Parcours testés :
   - [téléphone] <parcours> → OK / KO
   - [ordinateur] <parcours> → OK / KO

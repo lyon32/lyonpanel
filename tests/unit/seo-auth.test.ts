@@ -1,3 +1,7 @@
+import { vi } from 'vitest';
+
+vi.mock('server-only', () => ({}));
+vi.mock('@/server/catalog/public-catalog', () => ({ listPublicServices: async () => [] }));
 import { describe, expect, it } from 'vitest';
 import sitemap from '@/app/sitemap';
 import { authMetadata } from '@/lib/seo/auth-metadata';

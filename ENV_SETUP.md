@@ -12,7 +12,7 @@ Liés : `.env.example`, `CONVENTIONS.md` (versions), `LLD.md` (bibliothèques).
 | 3 | Éditeur : **VS Code** |
 | 4 | Dépôt : **https://github.com/lyon32/lyonpanel.git** |
 | 5 | SasPay en **mode test** pendant le développement |
-| 6 | **Faux JAP** (simulation) en local ; vrai JAP seulement pour le test final |
+| 6 | **faux fournisseur** (simulation) en local ; vrai fournisseur seulement pour le test final |
 | 7 | **Un seul bot Telegram** ; les messages de test portent `[TEST]` et sont supprimés ensuite |
 
 ## 1. Outils sur le PC (vérifiés le 2026-11-07)
@@ -40,9 +40,9 @@ Modèle : [`.env.example`](.env.example). En local : copier en `.env.local` (ign
 | `NEXT_PUBLIC_SUPABASE_URL` | non | Adresse Supabase | Supabase → Settings → API | donnée par `supabase start` |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | non | Clé publique (protégée par RLS) | idem | donnée par `supabase start` |
 | `SUPABASE_SERVICE_ROLE_KEY` | **oui** | Clé serveur (fonctions d'argent, admin) | idem | donnée par `supabase start` |
-| `JAP_API_URL` | non | Adresse API JAP | — | valeur du modèle |
-| `JAP_API_KEY` | **oui** | Clé JAP (**à régénérer** avant usage) | JAP → compte → API | vide (mode mock) |
-| `JAP_MODE` | non | `mock` = faux JAP, `live` = vrai | — | `mock` |
+| `PROVIDER_API_URL` | non | Adresse de l’API du fournisseur | — | valeur du modèle |
+| `PROVIDER_API_KEY` | **oui** | Clé fournisseur (**à régénérer** avant usage) | fournisseur → compte → API | vide (mode mock) |
+| `PROVIDER_MODE` | non | `mock` = faux fournisseur, `live` = vrai | — | `mock` |
 | `SASPAY_API_URL` | non | Adresse API SasPay (même pour test et prod) | `docs/06-saspay.md` | `https://api.saspay.me/api/v1` |
 | `SASPAY_API_KEY` | **oui** | Clé marchand, portée PAYIN | SasPay → Développeur | `sk_test_...` |
 | `SASPAY_WEBHOOK_SECRET` | **oui** | Vérifier la signature des webhooks | SasPay → Webhooks (affiché **une seule fois**) | secret du webhook de test |
@@ -63,7 +63,7 @@ Clés de test Turnstile : Cloudflare publie des clés factices qui répondent to
 
 **Règles**
 - Le serveur vérifie toutes les variables au démarrage (`src/server/env.ts`, schéma Zod) et refuse de démarrer s'il en manque une.
-- `JAP_MODE=live` et `SASPAY_MODE=live` : **interdits** hors Production, sauf le test final avant lancement.
+- `PROVIDER_MODE=live` et `SASPAY_MODE=live` : **interdits** hors Production, sauf le test final avant lancement.
 - Hors production, chaque message Telegram commence par `[TEST]`.
 - Jamais de secret dans Git, une capture d'écran ou une conversation. Si une clé fuit : la régénérer immédiatement.
 
@@ -108,7 +108,7 @@ Ensuite activer le code à 6 chiffres sur `http://localhost:3000/<ADMIN_PATH>/lo
 |---|---|---|
 | **Bot Telegram** | @BotFather → `/newbot` → copier le jeton ; envoyer un message au bot ; ouvrir `https://api.telegram.org/bot<JETON>/getUpdates` et noter `chat.id` | Avant l'étape « alertes » |
 | **SasPay** | Compte marchand, clés de test, URL de webhook (en local : tunnel `cloudflared tunnel --url http://localhost:3000`) | Avant l'étape « recharge » |
-| **JAP** | Régénérer la clé ; la mettre seulement dans Vercel Production | Avant le test final |
+| **Fournisseur** | Peakerr, API v2, `POST https://peakerr.com/api/v2`, actions `services` / `add` / `status` / `refill` / `refill_status` / `cancel` / `balance`, prix et solde en USD, clé dans le champ `key`. Mettre la clé seulement dans Vercel Production | Avant le test final |
 | **Supabase** | 2 projets : `lyonpanel-test` et `lyonpanel-prod` ; SMTP Hostinger dans Auth → SMTP | Avant la 1re mise en ligne |
 | **Cloudflare** | Acheter `lyonpanel.com`, créer un widget Turnstile | Avant la 1re mise en ligne |
 | **Hostinger** | Boîte `support@lyonpanel.com` + enregistrements MX/SPF/DKIM dans Cloudflare | Après l'achat du domaine |
