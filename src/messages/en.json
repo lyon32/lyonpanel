@@ -430,5 +430,24 @@
     "typeMetaDescriptionLong": "{network} {type}: price in XAF per 1,000, minimum quantity and order. Top up by Mobile Money and track your orders live on LyonPanel.",
     "typeMetaDescriptionLonger": "{network} {type}: price in XAF per 1,000, minimum quantity and order. Top up by Mobile Money and track your orders live on LyonPanel. Built for Africa.",
     "typeMetaDescriptionLongest": "{network} {type}: price in XAF per 1,000, minimum quantity and order. Top up by Mobile Money and track your orders live on LyonPanel. Built for African creators and shops."
+  },
+  "wallet": {
+    "title": "Add funds",
+    "amountLabel": "Amount to add (XAF)",
+    "amountHint": "Payment fees are added on top. Your balance receives the exact amount.",
+    "fee": "Payment fee",
+    "total": "Total to pay",
+    "pay": "Pay",
+    "redirecting": "Redirecting…",
+    "invalidAmount": "Enter a whole amount in XAF.",
+    "networkError": "Connection failed. Please try again.",
+    "returnTitle": "Your top-up",
+    "statusPending": "Waiting for payment confirmation. This page updates by itself.",
+    "statusTimedOut": "Confirmation is taking longer than expected. Come back in a few minutes or contact support.",
+    "statusSucceeded": "Payment confirmed: {amount} added to your balance.",
+    "statusFailed": "The payment failed. Nothing was taken from your balance.",
+    "balance": "Current balance:",
+    "retry": "Try again",
+    "newTopUp": "New top-up"
   }
 }

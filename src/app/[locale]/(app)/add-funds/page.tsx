@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import { ComingSoon } from '@/components/shared/coming-soon';
+import { AddFundsForm } from '@/components/wallet/add-funds-form';
 
 type Props = { params: Promise<{ locale: string }> };
 
@@ -10,9 +10,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title: t('addFunds'), robots: { index: false, follow: false } };
 }
 
-// Page provisoire : le contenu réel arrive dans une phase suivante.
-export default async function AddfundsPage({ params }: Props) {
+export default async function AddFundsPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
-  return <ComingSoon />;
+  const t = await getTranslations({ locale, namespace: 'wallet' });
+  return (
+    <section className="flex flex-col gap-4">
+      <h1 className="text-encre text-2xl font-bold">{t('title')}</h1>
+      <AddFundsForm />
+    </section>
+  );
 }
