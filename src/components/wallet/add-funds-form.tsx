@@ -10,7 +10,7 @@ import { Field } from '@/components/ui/field';
 const QUOTE_DELAY_MS = 350;
 const QUICK_AMOUNTS = [1000, 3000, 5000, 10000];
 
-export function AddFundsForm() {
+export function AddFundsForm({ minXaf, maxXaf }: { minXaf: number; maxXaf: number }) {
   const t = useTranslations('wallet');
   const locale = useLocale();
   const [quote, setQuote] = useState<Quote | null>(null);
@@ -25,11 +25,23 @@ export function AddFundsForm() {
   const format = new Intl.NumberFormat(locale, { maximumFractionDigits: 0 });
   const xaf = (value: number) => `${format.format(value)} XAF`;
 
+  // Renvoie le message d'erreur à afficher, ou null si le montant peut être envoyé au serveur.
+  function checkAmount(raw: string, amount: number, onSubmit: boolean): string | null {
+    if (!raw.trim() || !Number.isInteger(amount)) {
+      return onSubmit ? t('enterAmount') : null;
+    }
+    if (amount < minXaf) return t('minAmount', { min: format.format(minXaf) });
+    if (amount > maxXaf) return t('maxAmount', { max: format.format(maxXaf) });
+    return null;
+  }
+
   async function refreshQuote(raw: string, ticket: number): Promise<Quote | null> {
     const amount = Number(raw);
-    if (!raw.trim() || !Number.isInteger(amount)) {
+    // Bornes vérifiées avant tout appel réseau ; le serveur reste la source de vérité.
+    const problem = checkAmount(raw, amount, true);
+    if (problem) {
       setQuote(null);
-      setError(raw.trim() ? t('invalidAmount') : null);
+      setError(problem);
       return null;
     }
     const result = await fetchQuote(amount, locale);
@@ -56,10 +68,18 @@ export function AddFundsForm() {
   }
 
   function scheduleQuote(raw: string) {
-    setLoadingQuote(Boolean(raw.trim()));
     latest.current += 1;
     const ticket = latest.current;
     window.clearTimeout(timer.current);
+    const amount = Number(raw);
+    // Saisie vide, non numérique ou hors bornes : pas de devis, erreur affichée tout de suite.
+    if (!raw.trim() || !Number.isInteger(amount) || amount < minXaf || amount > maxXaf) {
+      setQuote(null);
+      setLoadingQuote(false);
+      setError(checkAmount(raw, amount, false));
+      return;
+    }
+    setLoadingQuote(true);
     timer.current = window.setTimeout(() => {
       void refreshQuote(raw, ticket).finally(() => {
         if (ticket === latest.current) setLoadingQuote(false);

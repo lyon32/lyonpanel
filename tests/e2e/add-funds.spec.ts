@@ -116,17 +116,43 @@ test.describe('page de recharge', () => {
     await expect(page.locator('[data-testid="quote-total"]')).toContainText(/3\D?090/);
   });
 
-  test('refuse un montant sous le minimum (499 XAF) sans envoyer de paiement', async ({ page }) => {
+  for (const [amount, message] of [
+    ['499', /minimum est de 500 XAF/],
+    ['500001', /maximum est de 500\D{1,2}000 XAF/],
+  ] as const) {
+    test(`refuse ${amount} XAF avec un message précis, sans aucun appel devis/paiement ni erreur console`, async ({
+      page,
+    }) => {
+      await signedUp(page);
+      await page.goto('/fr/recharger');
+      const calls: string[] = [];
+      const consoleErrors: string[] = [];
+      page.on('request', (r) => {
+        if (r.url().includes('/api/v1/payments')) calls.push(`${r.method()} ${r.url()}`);
+      });
+      page.on('console', (m) => {
+        if (m.type() === 'error') consoleErrors.push(m.text());
+      });
+      await page.locator('[data-testid="amount-input"]').fill(amount);
+      await page.locator('[data-testid="pay-submit"]').click();
+      await expect(page.getByText(message)).toBeVisible();
+      await expect(page.getByText(/Calcul du total/)).toHaveCount(0);
+      await page.waitForTimeout(800);
+      expect(calls).toEqual([]);
+      expect(consoleErrors).toEqual([]);
+    });
+  }
+
+  test('champ vide + Payer : message « Entrez un montant » sans appel réseau', async ({ page }) => {
     await signedUp(page);
     await page.goto('/fr/recharger');
-    let sent = false;
+    let called = false;
     page.on('request', (r) => {
-      if (r.method() === 'POST' && r.url().endsWith('/api/v1/payments')) sent = true;
+      if (r.url().includes('/api/v1/payments')) called = true;
     });
-    await page.locator('[data-testid="amount-input"]').fill('499');
     await page.locator('[data-testid="pay-submit"]').click();
-    await expect(page.getByText(/500/)).toBeVisible();
-    expect(sent).toBe(false);
+    await expect(page.getByText(/Entrez un montant/)).toBeVisible();
+    expect(called).toBe(false);
   });
 
   test('le bouton Payer envoie le montant seul, avec une clé d idempotence', async ({ page }) => {
