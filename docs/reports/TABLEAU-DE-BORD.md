@@ -4,7 +4,7 @@ Mis à jour le 2026-11-10 (phase 6 faite). Chiffres lus dans les comptes-rendus 
 **En 5 secondes :** les phases 0 à 5 sont validées. La phase 6 (commande avec le faux fournisseur) est faite et attend ta validation. Rien ne bloque, sauf la CI GitHub à lire sur la PR. Ensuite : phase 7, suivi et alertes (le bot Telegram est à créer par toi).
 
 ## 1. Avancement des phases
-Bleu : validée. Jaune : faite, en attente de validation. Gris : à faire. Dates réelles : phases 0 et 1 le 2026-11-07, phase 2 le 2026-11-08, phase 3 le 2026-11-09, phase 4 le 2026-11-10. Phase 5 validée le 2026-11-10. Phase 6 faite le 2026-11-10, pas encore validée.
+Bleu : validée. Jaune : faite, en attente de validation. Gris : à faire. Dates réelles : phases 0 et 1 le 2026-11-07, phase 2 le 2026-11-08, phase 3 le 2026-11-09, phase 4 le 2026-11-10. Phase 5 validée le 2026-11-10. Phase 6 validée le 2026-11-10.
 
 ```mermaid
 flowchart LR

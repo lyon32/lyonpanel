@@ -49,7 +49,7 @@ Suivi des statuts et alertes Telegram réelles (phase 7 : ici `notifyOwner` ne f
 « graphify : si `graphify-out/graph.json` existe, lancer `graphify query "<question>"` avant votre premier grep ou lecture de code ; lire un fichier brut seulement pour les lignes déjà repérées. Après toute modification de code, lancer `graphify update .`. »
 
 ## Terminé quand
-Statut : faite – en attente de validation (2026-11-10).
+Statut : validée par le propriétaire (2026-11-10).
 - [x] Une commande débite le bon montant (ex. 1 000 abonnés à 1 155 XAF → solde −1 155 XAF).
 - [x] Double clic = une seule commande, un seul débit.
 - [x] Solde insuffisant = « Il vous manque X XAF » + bouton vers la recharge.
@@ -58,4 +58,4 @@ Statut : faite – en attente de validation (2026-11-10).
 - [x] Lint, types, tests, build verts ; `lp-security` accepté.
 - [x] CI GitHub lue sur la PR (vraie CI, pas supposée) et verte : exécution 42855000877, job `ci` réussi (12 min 57 s), Vercel vert.
 - [x] Rapport dans `docs/reports/phase-6/` et résumé en français simple (`bilan.md`).
-- [ ] Validation du propriétaire (« validé », écrit par lui).
+- [x] Validation du propriétaire (« valide », écrit par lui dans la session, 2026-11-10).

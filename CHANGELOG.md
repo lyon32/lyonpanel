@@ -2,7 +2,7 @@
 
 Écrit pour le propriétaire. Une section par phase. Seul le propriétaire valide une phase.
 
-## Phase 6 — Commande avec le faux fournisseur (2026-11-10) — faite, en attente de validation
+## Phase 6 — Commande avec le faux fournisseur (2026-11-10) — validée
 
 ### Nouveau
 - Page de commande (FR et EN) : service, lien, quantité, commentaires si le service les accepte. Le prix s'affiche avant de commander. Exemple : 1 000 abonnés à 1 155 XAF, solde 5 000 puis 3 845.

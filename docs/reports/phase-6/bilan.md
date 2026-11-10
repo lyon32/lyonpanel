@@ -1,5 +1,5 @@
 # Bilan — Phase 6 : Commande
-Date : 2026-11-10 · Statut : faite – en attente de validation
+Date : 2026-11-10 · Statut : validée par le propriétaire (2026-11-10)
 
 ## Objectif de la phase (ROADMAP.md)
 Commander : le solde baisse du bon montant, un double clic = une seule commande, solde insuffisant = message clair. Tout avec le faux fournisseur, sans argent réel.
@@ -37,7 +37,7 @@ Commander : le solde baisse du bon montant, un double clic = une seule commande,
 - Lint : 0 erreur. Types : propres. Build : réussi.
 - Couverture : pas 100 % strict. `place-order.ts` : 97,5 % des lignes (les lignes 95 et 225 sont des protections qui ne devraient jamais servir). `submit-to-provider.ts` : pas 100 % strict non plus. La règle « 100 % sur l'argent » n'est donc pas tenue à la lettre.
 - `npm audit` : 7 vulnérabilités modérées dans des outils de développement, aucune haute ni critique.
-- Durée de la CI : non connue, la CI GitHub n'est pas encore lue.
+- CI GitHub lue sur la PR 15 : job `ci` réussi (environ 12 minutes), Vercel vert.
 
 ## Problèmes rencontrés et solutions
 - Contrôle sécurité, 1er passage : 5 failles Basses. Trois corrigées (limite des commentaires, limite de débit du devis, valeur explicite de `PROVIDER_MODE` en production). Deux acceptées pour la phase 6 et reportées (voir plus bas).
@@ -50,9 +50,9 @@ Commander : le solde baisse du bon montant, un double clic = une seule commande,
 - Sécurité : ACCEPTÉ au 2e passage, aucune faille critique, haute ou moyenne. Essais : 10 commandes simultanées pour un solde qui n'en couvre qu'une, une seule passe ; même clé 10 fois, un seul débit.
 
 ## Ce qui n'a PAS été fait ou testé
-- La CI GitHub n'a pas encore été lue sur la PR. À vérifier avant ton « validé ».
+- Rien de bloquant côté CI : elle est lue et verte (voir plus haut).
 - Aucun vrai fournisseur, aucun vrai paiement (phase 15).
-- Obsidian (serveur `mcp-tools-istefox`) est indisponible, connexion refusée : aucune note n'y a été écrite. Les fichiers du projet sont à jour.
+- Obsidian : le serveur était injoignable pendant la phase ; les notes ont été écrites après sa reconnexion (dossier LyonPanel/Phase 6).
 - La carte du code (graphify) a été mise à jour localement, sans lancer d'analyse payante.
 
 ## Points ouverts reportés en phase 7
@@ -76,4 +76,4 @@ Commander : le solde baisse du bon montant, un double clic = une seule commande,
 - Phase 7 : créer le bot Telegram avec @BotFather, récupérer le jeton et le `chat_id` (`ENV_SETUP.md §4`).
 
 ## Décision attendue : « validé » ou corrections
-Rien n'est validé tant que tu n'as pas écrit « validé ». La CI GitHub reste à lire sur la PR.
+Validé par le propriétaire le 2026-11-10 (message « valide » dans la session).
