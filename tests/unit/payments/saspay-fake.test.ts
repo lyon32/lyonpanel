@@ -117,6 +117,16 @@ describe('faux SasPay', () => {
     expect((await fake.verifyPayment(transactionId)).netAmount).toBe('2500.00');
   });
 
+  it('verifyPayment connaît les transactions réglées par settle et refuse les autres (PROVIDER_ERROR)', async () => {
+    const fake = createFakeSaspay();
+    const { sessionId } = await fake.createCheckoutSession(params('pay-1'));
+    await expect(fake.verifyPayment('txn_pas_encore_reglee')).rejects.toMatchObject({
+      code: 'PROVIDER_ERROR',
+    });
+    const { transactionId } = fake.settle(sessionId, 'FAILED');
+    expect((await fake.verifyPayment(transactionId)).status).toBe('FAILED');
+  });
+
   it('une session inconnue donne une erreur PROVIDER_ERROR', async () => {
     await expect(createFakeSaspay().getCheckoutSessionStatus('cs_inconnue')).rejects.toMatchObject({
       code: 'PROVIDER_ERROR',

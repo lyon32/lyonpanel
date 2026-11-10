@@ -8,7 +8,7 @@ import {
   setupFakeSaspayEnv,
   walletOf,
 } from '../helpers/payments-db';
-import { buildWebhook, webhookRequest, type WebhookData } from '../helpers/saspay-webhook';
+import { buildWebhook, webhookData, webhookRequest, type WebhookData } from '../helpers/saspay-webhook';
 
 vi.mock('server-only', () => ({}));
 vi.mock('@/server/providers/telegram', () => ({ notifyOwner: vi.fn(async () => {}) }));
@@ -22,7 +22,10 @@ import { getFakeSaspay } from '@/server/providers/saspay-client';
 // Modules attendus :
 //   handleSaspayWebhook(rawBody, headers): 'credited' | 'duplicate' | 'failed' | 'rejected'
 //     - 'rejected' = signature ou horodatage invalide (la route répond 403) ; les autres cas répondent 200
-//     - crédit uniquement par la fonction SQL credit_payment, du `net_amount` (jamais `amount` ni `charged`)
+//     - DÉCISION 2026-11-10 (SECURITY_NOTES §3) : après la signature, appelle saspay.verifyPayment(data.id),
+//       exige status SUCCESS et utilise le netAmount RENVOYÉ PAR verifyPayment (jamais celui du corps du webhook)
+//     - verifyPayment en panne : l'erreur remonte (la route répond 502), aucun crédit, SasPay renverra le webhook
+//     - crédit uniquement par la fonction SQL credit_payment, du net vérifié (jamais `amount` ni `charged`)
 //     - paiement retrouvé par data.metadata.lyonpanel_payment_id, sinon par saspay_transaction_id via le statut de session
 //     - net_amount ≠ montant demandé : alerte notifyOwner('payment_mismatch'), aucun crédit
 //   POST /api/webhooks/saspay (src/app/api/webhooks/saspay/route.ts)
@@ -196,6 +199,116 @@ describe('handleSaspayWebhook : montant différent', () => {
       );
     },
   );
+});
+
+describe('handleSaspayWebhook : vérification auprès de SasPay (verifyPayment)', () => {
+  it('appelle verifyPayment avec l identifiant de transaction du webhook', async () => {
+    const pay = await paidPayment();
+    const spy = vi.spyOn(getFakeSaspay(), 'verifyPayment');
+    const w = buildWebhook({ event: pay.event, data: pay.withMeta });
+    await handleSaspayWebhook(w.rawBody, w.headers);
+    expect(spy).toHaveBeenCalledWith(pay.transactionId);
+  });
+
+  it('webhook « success » mais SasPay dit FAILED : aucun crédit', async () => {
+    const pay = await paidPayment(3000, 'FAILED');
+    const w = buildWebhook({
+      event: 'transaction.success',
+      data: { ...pay.withMeta, status: 'SUCCESS' },
+    });
+    const result = await handleSaspayWebhook(w.rawBody, w.headers);
+    expect(result).not.toBe('credited');
+    expect(result).not.toBe('rejected');
+    expect((await walletOf(pay.user.id)).balance_xaf).toBe(0);
+    expect(await journalOf(pay.id)).toHaveLength(0);
+  });
+
+  it('webhook « success » mais SasPay dit PENDING : aucun crédit', async () => {
+    const pay = await paidPayment();
+    vi.spyOn(getFakeSaspay(), 'verifyPayment').mockResolvedValue({ status: 'PENDING', netAmount: '3000.00', fee: '90.00', charged: '3090.00', currency: 'XAF' });
+    const w = buildWebhook({ event: pay.event, data: pay.withMeta });
+    expect(await handleSaspayWebhook(w.rawBody, w.headers)).not.toBe('credited');
+    expect((await walletOf(pay.user.id)).balance_xaf).toBe(0);
+    expect((await paymentOf(pay.id)).status).toBe('pending');
+  });
+
+  it('webhook signé qui annonce 9 000 alors que SasPay confirme 3 000 : crédit de 3 000 seulement', async () => {
+    const pay = await paidPayment();
+    const w = buildWebhook({
+      event: pay.event,
+      data: { ...pay.withMeta, net_amount: '9000.00', amount: '9000.00' },
+    });
+    expect(await handleSaspayWebhook(w.rawBody, w.headers)).toBe('credited');
+    expect((await walletOf(pay.user.id)).balance_xaf).toBe(3000);
+  });
+
+  it('webhook annonce 3 000 mais SasPay confirme 2 500 : payment_mismatch, aucun crédit', async () => {
+    const pay = await paidPayment(3000, 'SUCCESS', { netAmount: '2500.00' });
+    const w = buildWebhook({ event: pay.event, data: { ...pay.withMeta, net_amount: '3000.00' } });
+    expect(await handleSaspayWebhook(w.rawBody, w.headers)).not.toBe('credited');
+    expect((await walletOf(pay.user.id)).balance_xaf).toBe(0);
+    expect(notifyOwner).toHaveBeenCalledWith(
+      'payment_mismatch',
+      expect.objectContaining({ payment_id: pay.id }),
+    );
+  });
+
+  it('transaction jamais réglée côté SasPay : aucun crédit', async () => {
+    const u = await newUser();
+    const { id } = await createPayment(u.id, 3000, randomUUID());
+    const w = buildWebhook({
+      event: 'transaction.success',
+      data: webhookData({ id: 'txn_jamais_regle', metadata: { lyonpanel_payment_id: id } }),
+    });
+    await handleSaspayWebhook(w.rawBody, w.headers).catch(() => 'error');
+    expect((await walletOf(u.id)).balance_xaf).toBe(0);
+    expect((await paymentOf(id)).status).toBe('pending');
+  });
+
+  it('panne de verifyPayment : l erreur remonte, aucun crédit ; le renvoi crédite une seule fois', async () => {
+    const pay = await paidPayment();
+    const spy = vi
+      .spyOn(getFakeSaspay(), 'verifyPayment')
+      .mockRejectedValueOnce(new Error('SasPay indisponible'));
+    const w = buildWebhook({ event: pay.event, data: pay.withMeta });
+
+    await expect(handleSaspayWebhook(w.rawBody, w.headers)).rejects.toThrow();
+    expect((await walletOf(pay.user.id)).balance_xaf).toBe(0);
+    expect((await paymentOf(pay.id)).status).toBe('pending');
+
+    spy.mockRestore();
+    expect(await handleSaspayWebhook(w.rawBody, w.headers)).toBe('credited');
+    expect(await handleSaspayWebhook(w.rawBody, w.headers)).toBe('duplicate');
+    expect((await walletOf(pay.user.id)).balance_xaf).toBe(3000);
+    expect(await journalOf(pay.id)).toHaveLength(1);
+  });
+
+  it('route : panne de verifyPayment -> 5xx sans crédit ; renvoi -> 200 et 3 000 XAF une seule fois', async () => {
+    const pay = await paidPayment();
+    const spy = vi
+      .spyOn(getFakeSaspay(), 'verifyPayment')
+      .mockRejectedValueOnce(new Error('SasPay indisponible'));
+    const w = buildWebhook({ event: pay.event, data: pay.withMeta });
+
+    const down = await webhookRoute(webhookRequest(w));
+    expect(down.status).toBeGreaterThanOrEqual(500);
+    expect(down.status).toBeLessThan(600);
+    expect((await walletOf(pay.user.id)).balance_xaf).toBe(0);
+
+    spy.mockRestore();
+    expect((await webhookRoute(webhookRequest(w))).status).toBe(200);
+    expect((await webhookRoute(webhookRequest(w))).status).toBe(200);
+    expect((await walletOf(pay.user.id)).balance_xaf).toBe(3000);
+    expect(await journalOf(pay.id)).toHaveLength(1);
+  });
+
+  it('signature fausse : verifyPayment n est même pas appelé', async () => {
+    const pay = await paidPayment();
+    const spy = vi.spyOn(getFakeSaspay(), 'verifyPayment');
+    const w = buildWebhook({ event: pay.event, data: pay.withMeta, signature: 'd'.repeat(64) });
+    expect(await handleSaspayWebhook(w.rawBody, w.headers)).toBe('rejected');
+    expect(spy).not.toHaveBeenCalled();
+  });
 });
 
 describe('handleSaspayWebhook : échecs et événements ignorés', () => {

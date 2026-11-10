@@ -1,4 +1,6 @@
 import { requireApiUser } from '@/server/auth/require-api-user';
+import { createAttemptStore, createRateLimiter } from '@/server/auth/rate-limit';
+import { createAdminClient } from '@/server/db/supabase-admin';
 import { createSessionClient } from '@/server/db/supabase-server';
 import { handler } from '@/server/http/handler';
 import { assertSameOrigin, parseBody } from '@/server/http/request';
@@ -12,6 +14,13 @@ import {
 export const POST = handler(async (req, ctx) => {
   assertSameOrigin(req);
   const user = await requireApiUser();
+  // API_SPEC §5 : 5 créations / minute / client, avant tout appel à SasPay.
+  await createRateLimiter({ store: createAttemptStore(createAdminClient()) }).consume({
+    scope: 'payments',
+    key: user.id,
+    max: 5,
+    windowSeconds: 60,
+  });
   // Absent -> VALIDATION_ERROR (Zod), comme tout champ obligatoire.
   const idempotencyKey = idempotencyKeySchema.parse(
     req.headers.get('idempotency-key') ?? undefined,

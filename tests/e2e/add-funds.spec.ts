@@ -7,6 +7,12 @@ import { expect, test, type APIRequestContext, type Page } from '@playwright/tes
  *   SASPAY_MODE=test, SASPAY_API_KEY vide, SASPAY_WEBHOOK_SECRET=<même valeur que dans ce processus>.
  * Les webhooks sont signés ici avec ce secret (SASPAY_WEBHOOK_SECRET), comme le ferait SasPay.
  *
+ * Le webhook ne crédite qu'après vérification auprès de SasPay (verifyPayment). Le faux SasPay du serveur
+ * est dans son processus : le test le règle via la route réservée au mode test
+ *   POST /api/test/saspay/settle  (en-tête x-test-secret = SASPAY_WEBHOOK_SECRET)
+ *   corps { payment_id, outcome: 'SUCCESS' | 'FAILED' | 'CANCELLED', net_amount? } -> 200 { transactionId, data }
+ * qui appelle getFakeSaspay().settle(). La route répond 404 hors mode test ou si SASPAY_API_KEY est définie.
+ *
  * Éléments de page attendus (data-testid), à fournir par lp-designer :
  *   /fr/recharger        : amount-input, quote-fee, quote-total, pay-submit
  *   /fr/recharger/<id>   : payment-status (attribut data-status = pending | succeeded | failed), wallet-balance
@@ -43,28 +49,34 @@ async function signedUp(page: Page): Promise<void> {
   await expect(page).toHaveURL(/\/fr\/tableau-de-bord/, { timeout: 45_000 });
 }
 
-/** Envoie un webhook SasPay signé (même calcul que docs/06-saspay.md §3). */
+/** Règle la recharge côté faux SasPay du serveur (route de test) et renvoie la charge utile du webhook. */
+async function settle(
+  request: APIRequestContext,
+  paymentId: string,
+  outcome: 'SUCCESS' | 'FAILED' | 'CANCELLED' = 'SUCCESS',
+): Promise<Record<string, unknown>> {
+  const res = await request.post('/api/test/saspay/settle', {
+    data: { payment_id: paymentId, outcome },
+    headers: { 'x-test-secret': WEBHOOK_SECRET },
+  });
+  expect(res.status()).toBe(200);
+  return ((await res.json()) as { data: Record<string, unknown> }).data;
+}
+
+/** Envoie un webhook SasPay signé (même calcul que docs/06-saspay.md §3) ; `settled` = règle d'abord côté SasPay. */
 async function sendWebhook(
   request: APIRequestContext,
   paymentId: string,
   event = 'transaction.success',
+  settled = true,
 ) {
+  const outcome = event === 'transaction.success' ? 'SUCCESS' : 'FAILED';
+  const data = settled
+    ? await settle(request, paymentId, outcome)
+    : { id: `txn_e2e_${paymentId}`, status: outcome, net_amount: '3000.00' };
   const rawBody = JSON.stringify({
     event,
-    data: {
-      id: `txn_e2e_${paymentId}`,
-      reference: `ref_e2e_${paymentId}`,
-      status: event === 'transaction.success' ? 'SUCCESS' : 'FAILED',
-      amount: '3000.00',
-      fee: '90.00',
-      charged: '3090.00',
-      net_amount: '3000.00',
-      fee_charge_mode: 'ADD_ON',
-      currency: 'XAF',
-      country: 'CM',
-      network: 'mtn_cm',
-      metadata: { lyonpanel_payment_id: paymentId },
-    },
+    data: { ...data, metadata: { lyonpanel_payment_id: paymentId } },
   });
   const timestamp = String(Math.floor(Date.now() / 1000));
   const signature = createHmac('sha256', WEBHOOK_SECRET)
@@ -171,6 +183,21 @@ test.describe('page de retour', () => {
     await expect(page.locator('[data-testid="wallet-balance"]')).not.toContainText(
       /6\D?000|9\D?000/,
     );
+  });
+
+  test('webhook signé « success » mais transaction inconnue de SasPay : pas de crédit', async ({
+    page,
+  }) => {
+    await signedUp(page);
+    const id = await startRecharge(page);
+    const res = await sendWebhook(page.request, id, 'transaction.success', false);
+    expect(res.status()).toBeGreaterThanOrEqual(500);
+    await page.goto(`/fr/recharger/${id}`);
+    await expect(page.locator('[data-testid="payment-status"]')).toHaveAttribute(
+      'data-status',
+      'pending',
+    );
+    await expect(page.locator('[data-testid="wallet-balance"]')).not.toContainText(AMOUNT);
   });
 
   test('un paiement échoué affiche « échoué » et ne crédite rien', async ({ page }) => {

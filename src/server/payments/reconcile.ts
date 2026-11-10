@@ -36,6 +36,18 @@ export async function reconcilePendingPayments(
   let credited = 0;
   let failed = 0;
 
+  // Restées `created` : arrêt serveur entre l'insertion et l'appel SasPay, aucune session n'existe.
+  // Après l'expiration, plus rien ne peut les payer : on les ferme.
+  const expiryCutoff = new Date(Date.now() - PAYMENT_EXPIRY_MINUTES * 60_000).toISOString();
+  const { data: stale, error: staleError } = await createAdminClient()
+    .from('payments')
+    .update({ status: 'failed' })
+    .eq('status', 'created')
+    .lt('created_at', expiryCutoff)
+    .select('id');
+  if (staleError) throw new Error(`paiements non initialisés: ${staleError.message}`);
+  failed += stale.length;
+
   for (const row of data as (PaymentRow & { created_at: string })[]) {
     try {
       const session = await saspay.getCheckoutSessionStatus(row.saspay_session_id);
