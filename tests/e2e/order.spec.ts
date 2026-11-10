@@ -5,9 +5,9 @@ import { makeService } from '../factories/service';
 /*
  * Parcours de commande, faux fournisseur (PROVIDER_MODE=mock), aucun vrai argent.
  * Prérequis : ceux de add-funds.spec.ts (Supabase local, Turnstile de test) et un serveur lancé avec
- *   PROVIDER_MODE=mock, SASPAY_WEBHOOK_SECRET=<même valeur que dans ce processus>, SUPABASE_SERVICE_ROLE_KEY.
+ *   PROVIDER_MODE=mock, TEST_ROUTE_SECRET=<même valeur que dans ce processus>, SUPABASE_SERVICE_ROLE_KEY.
  * Le faux fournisseur du serveur est dans son processus : le test le règle via une route réservée au mode test
- *   POST /api/test/provider/fail-next  (en-tête x-test-secret = SASPAY_WEBHOOK_SECRET) -> 200
+ *   POST /api/test/provider/fail-next  (en-tête x-test-secret = TEST_ROUTE_SECRET) -> 200
  * le prochain provider.add du serveur échoue (une seule fois). Répond 404 hors mode mock.
  * Le solde de départ est préparé avec la clé de service (écriture de test seulement, comme tests/db).
  *
@@ -21,7 +21,7 @@ import { makeService } from '../factories/service';
  */
 
 const PASSWORD = 'Cf9!vQ2#zLm7-rTa84';
-const SECRET = process.env.SASPAY_WEBHOOK_SECRET ?? '';
+const SECRET = process.env.TEST_ROUTE_SECRET ?? '';
 const LINK = 'https://www.tiktok.com/@client_e2e/video/7300000000000000000';
 
 test.use({ viewport: { width: 360, height: 740 } });

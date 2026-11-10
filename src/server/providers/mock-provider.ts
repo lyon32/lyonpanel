@@ -16,15 +16,28 @@ export function armNextAddFailure(): void {
   failNextAdd = true;
 }
 
+// Statuts imposés par la route de test force-status (mémoire du module, comme failNextAdd).
+const forcedStatuses = new Map<number, 'Partial' | 'Canceled'>();
+export function forceMockOrderStatus(
+  providerOrderId: number,
+  status: 'Partial' | 'Canceled',
+): void {
+  forcedStatuses.set(providerOrderId, status);
+}
+
 const UNLISTED_SERVICE_MIN_ID = 900_000;
 const UNLISTED_SERVICE_MAX_QTY = 10_000_000;
 
 /** Faux fournisseur (PROVIDER_MODE=mock) : aucun appel réseau, aucune dépense. */
 export function createMockProvider(options: MockProviderOptions = {}): ProviderApi {
+  // Instance neuve = état de test neuf : une panne armée plus tôt ne doit pas fuir sur elle.
+  failNextAdd = false;
   const catalog = providerServicesSchema.parse(options.services ?? mockServices);
   const balanceUsd = options.balanceUsd ?? 100;
   const orders = new Map<number, ProviderStatus>();
-  let lastOrder = 10_000;
+  // Départ lié à l'heure : la base garde les anciens provider_order_id (unicité),
+  // un compteur fixe ferait échouer l'enregistrement après un redémarrage.
+  let lastOrder = Math.floor(Date.now() / 1000);
 
   return {
     async services() {
@@ -61,7 +74,16 @@ export function createMockProvider(options: MockProviderOptions = {}): ProviderA
       const out: Record<number, ProviderStatus> = {};
       for (const id of ids) {
         const known = orders.get(id);
-        if (known) out[id] = { ...known };
+        if (!known) continue;
+        // Un pas par appel : Pending -> In progress -> Completed (puis reste Completed).
+        const forced = forcedStatuses.get(id);
+        if (forced) known.status = forced;
+        else if (known.status === 'Pending') known.status = 'In progress';
+        else if (known.status === 'In progress') {
+          known.status = 'Completed';
+          known.remains = 0;
+        }
+        out[id] = { ...known };
       }
       return out;
     },

@@ -116,13 +116,13 @@ Un agent ne démarre jamais avant ce dont il dépend ; ce qui est indépendant t
 
 > À mettre à jour au début de chaque phase (`ROADMAP.md`).
 
-**Phase en cours : Phase 6 — Commande** (Phases 0 et 1 validées le 2026-11-07, phase 2 le 2026-11-08, phase 3 le 2026-11-09, phases 4 et 5 le 2026-11-10)
+**Phase en cours : Phase 7 — Suivi des commandes + alertes** (Phases 0 et 1 validées le 2026-11-07, phase 2 le 2026-11-08, phase 3 le 2026-11-09, phases 4, 5 et 6 le 2026-11-10)
 
-**Périmètre (seulement ceci)** : détail dans `docs/plans/phase-6.md` — formulaire de commande, devis serveur, idempotence (double clic = une commande), `placeOrder` → `place_order` → `submitToProvider` (faux fournisseur `PROVIDER_MODE=mock`), progression par étapes. Décisions : lien conforme à la plateforme du service ; quantité min/max sans exception ; plafond 100 000 XAF par jour en réglage `daily_order_cap_xaf` ; échec fournisseur = `to_review` + alerte, ni remboursement ni renvoi automatique ; solde insuffisant = « Il vous manque X XAF » + bouton recharge ; commentaires seulement pour les services qui les acceptent.
+**Périmètre (seulement ceci)** : détail dans `docs/plans/phase-7.md` — cron `/api/cron/orders` (lots de 100), faux fournisseur qui avance, badges de statut, barre de progression, polling 30 s, `notifyOwner` Telegram (préfixe `[TEST]` hors production, une alerte par commande et par type). Décisions : partiel ou annulé = `to_review` + alerte sans remboursement ; commande bloquée « en envoi » > 5 min = `to_review` + alerte, **jamais** de renvoi de `provider.add` ; `idem_key` unique par `(user_id, idem_key)` ; secret dédié `TEST_ROUTE_SECRET` pour `fail-next` ; faux Telegram en tests, vrai message `[TEST]` seulement quand le propriétaire a créé le bot.
 
-**Hors périmètre** : suivi des statuts et Telegram (phase 7), espace client (phase 8), vrai fournisseur et vrais paiements (phase 15), remboursement/renvoi admin.
+**Hors périmètre** : espace client (phase 8), vrai fournisseur et vrais paiements (phase 15), remboursement/renvoi/clôture admin (phase 12), Worker Cloudflare réel (phase 13).
 
-**Terminé quand** : une commande débite le bon montant, double clic = une commande, solde insuffisant = message clair ; lint, types, tests, build et CI verts (CI lue sur la PR) ; `lp-security` accepté ; rapport dans `docs/reports/phase-6/`.
+**Terminé quand** : une commande passe seule de « en cours » à « terminée » ; un échec envoie une alerte ; lint, types, tests, build et CI verts (CI lue sur la PR) ; `lp-security` accepté ; rapport dans `docs/reports/phase-7/`.
 
 ## État des documents
 

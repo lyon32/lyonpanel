@@ -515,5 +515,18 @@
     "how1": "Collez le lien. Le profil ne doit pas être privé.",
     "how2": "Entrez la quantité et vérifiez le total.",
     "how3": "Confirmez : le montant est débité de votre solde."
+  },
+  "orderTracking": {
+    "status_pending": "En attente d’envoi",
+    "status_in_progress": "En cours",
+    "status_completed": "Terminée",
+    "status_review": "En cours de vérification",
+    "status_refunded": "Remboursée",
+    "progressLabel": "Avancement de la commande",
+    "empty": "Vous n’avez pas encore de commande.",
+    "emptyHint": "Passez votre première commande : choisissez un service, un lien, une quantité.",
+    "emptyCta": "Commander",
+    "reviewHint": "Nous vérifions cette commande. Nous revenons vers vous dès que c’est réglé.",
+    "quantity": "{count} unités"
   }
 }
