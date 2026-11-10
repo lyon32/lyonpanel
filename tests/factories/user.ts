@@ -11,6 +11,7 @@ import { randomInt } from 'node:crypto';
 import { adminClient, TEST_PASSWORD } from '../db/helpers/client';
 
 let counter = 0;
+let lastStamp = 0;
 
 export type TestUser = { id: string; email: string; phone: string };
 
@@ -31,10 +32,11 @@ export async function makeUser(overrides: UserOverrides = {}): Promise<TestUser>
   counter += 1;
   const n = `${process.pid}-${Date.now() % 100000}-${counter}-${randomInt(1000)}`;
   const email = overrides.email ?? `client-${n}@lyonpanel.test`;
-  // +237600 + 6 chiffres : aléa (1 000 000 valeurs) mêlé au compteur et au processus.
-  const suffix = String(
-    (randomInt(1_000_000) + counter * 7919 + process.pid * 104729) % 1_000_000,
-  ).padStart(6, '0');
+  // Téléphone : +237600 + 2 chiffres du processus + 7 chiffres d'un horodatage
+  // strictement croissant dans le processus (jamais deux fois la même valeur).
+  lastStamp = Math.max(lastStamp + 1, Date.now());
+  const suffix =
+    String(process.pid % 100).padStart(2, '0') + String(lastStamp % 10_000_000).padStart(7, '0');
   const phone = overrides.phone ?? `+237600${suffix}`;
   const { data, error } = await adminClient().auth.admin.createUser({
     email,
