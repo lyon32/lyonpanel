@@ -1,3 +1,4 @@
+import { afterAll } from 'vitest';
 import { adminClient } from '../db/helpers/client';
 import { TEST_WEBHOOK_SECRET } from './saspay-webhook';
 
@@ -33,6 +34,18 @@ export async function setRechargeSettings(
   const rows = Object.entries(values).map(([key, value]) => ({ key, value }));
   const { error } = await adminClient().from('settings').upsert(rows);
   if (error) throw new Error(`réglages de recharge impossibles : ${error.message}`);
+}
+
+/**
+ * À appeler en tête de fichier : en fin de fichier (même si un test a échoué),
+ * remet les réglages de recharge à 500 / 500 000 / 3 et ferme les recharges
+ * `pending` laissées, pour ne pas polluer seed.test.ts et les autres fichiers.
+ */
+export function restoreRechargeStateAfterAll(): void {
+  afterAll(async () => {
+    await setRechargeSettings();
+    await clearOtherPendingPayments();
+  });
 }
 
 export async function walletOf(

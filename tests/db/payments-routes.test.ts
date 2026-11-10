@@ -4,7 +4,12 @@ import { NextRequest } from 'next/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { makePayment } from '../factories/payment';
 import { makeUser, removeUser, type TestUser } from '../factories/user';
-import { setRechargeSettings, setupFakeSaspayEnv, walletOf } from '../helpers/payments-db';
+import {
+  restoreRechargeStateAfterAll,
+  setRechargeSettings,
+  setupFakeSaspayEnv,
+  walletOf,
+} from '../helpers/payments-db';
 import { adminClient, userClient } from './helpers/client';
 
 vi.mock('server-only', () => ({}));
@@ -31,6 +36,7 @@ import { POST as quoteRoute } from '@/app/api/v1/payments/quote/route';
 // POST : en-tête Origin identique au site (CSRF). Utilisateur non connecté : 401 UNAUTHENTICATED.
 
 setupFakeSaspayEnv();
+restoreRechargeStateAfterAll();
 const db = adminClient();
 const created: string[] = [];
 const ORIGIN = 'http://localhost:3000';

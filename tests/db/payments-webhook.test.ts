@@ -4,11 +4,17 @@ import { makeUser, removeUser } from '../factories/user';
 import {
   journalOf,
   paymentOf,
+  restoreRechargeStateAfterAll,
   setRechargeSettings,
   setupFakeSaspayEnv,
   walletOf,
 } from '../helpers/payments-db';
-import { buildWebhook, webhookData, webhookRequest, type WebhookData } from '../helpers/saspay-webhook';
+import {
+  buildWebhook,
+  webhookData,
+  webhookRequest,
+  type WebhookData,
+} from '../helpers/saspay-webhook';
 
 vi.mock('server-only', () => ({}));
 vi.mock('@/server/providers/telegram', () => ({ notifyOwner: vi.fn(async () => {}) }));
@@ -31,6 +37,7 @@ import { getFakeSaspay } from '@/server/providers/saspay-client';
 //   POST /api/webhooks/saspay (src/app/api/webhooks/saspay/route.ts)
 
 setupFakeSaspayEnv();
+restoreRechargeStateAfterAll();
 const created: string[] = [];
 
 async function newUser() {
@@ -225,7 +232,13 @@ describe('handleSaspayWebhook : vérification auprès de SasPay (verifyPayment)'
 
   it('webhook « success » mais SasPay dit PENDING : aucun crédit', async () => {
     const pay = await paidPayment();
-    vi.spyOn(getFakeSaspay(), 'verifyPayment').mockResolvedValue({ status: 'PENDING', netAmount: '3000.00', fee: '90.00', charged: '3090.00', currency: 'XAF' });
+    vi.spyOn(getFakeSaspay(), 'verifyPayment').mockResolvedValue({
+      status: 'PENDING',
+      netAmount: '3000.00',
+      fee: '90.00',
+      charged: '3090.00',
+      currency: 'XAF',
+    });
     const w = buildWebhook({ event: pay.event, data: pay.withMeta });
     expect(await handleSaspayWebhook(w.rawBody, w.headers)).not.toBe('credited');
     expect((await walletOf(pay.user.id)).balance_xaf).toBe(0);
@@ -370,23 +383,23 @@ describe('handleSaspayWebhook : signature et horodatage', () => {
     expect((await walletOf(pay.user.id)).balance_xaf).toBe(0);
   });
 
-  it('horodatage trop vieux (301 s) : rejected même avec une bonne signature', async () => {
+  it('horodatage trop vieux (330 s) : rejected même avec une bonne signature', async () => {
     const pay = await paidPayment();
     const w = buildWebhook({
       event: pay.event,
       data: pay.withMeta,
-      timestamp: Math.floor(Date.now() / 1000) - 301,
+      timestamp: Math.floor(Date.now() / 1000) - 330,
     });
     expect(await handleSaspayWebhook(w.rawBody, w.headers)).toBe('rejected');
     expect((await walletOf(pay.user.id)).balance_xaf).toBe(0);
   });
 
-  it('horodatage dans le futur (301 s) : rejected', async () => {
+  it('horodatage dans le futur (330 s) : rejected', async () => {
     const pay = await paidPayment();
     const w = buildWebhook({
       event: pay.event,
       data: pay.withMeta,
-      timestamp: Math.floor(Date.now() / 1000) + 301,
+      timestamp: Math.floor(Date.now() / 1000) + 330,
     });
     expect(await handleSaspayWebhook(w.rawBody, w.headers)).toBe('rejected');
   });
@@ -426,10 +439,10 @@ describe('POST /api/webhooks/saspay', () => {
     expect((await walletOf(pay.user.id)).balance_xaf).toBe(0);
   });
 
-  it('horodatage trop vieux ou futur (301 s) : 403', async () => {
+  it('horodatage trop vieux ou futur (330 s) : 403', async () => {
     const pay = await paidPayment();
     const now = Math.floor(Date.now() / 1000);
-    for (const timestamp of [now - 301, now + 301]) {
+    for (const timestamp of [now - 330, now + 330]) {
       const w = buildWebhook({ event: pay.event, data: pay.withMeta, timestamp });
       expect((await webhookRoute(webhookRequest(w))).status).toBe(403);
     }

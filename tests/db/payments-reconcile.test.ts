@@ -8,6 +8,7 @@ import {
   CRON_TEST_SECRET,
   journalOf,
   paymentOf,
+  restoreRechargeStateAfterAll,
   setRechargeSettings,
   setupFakeSaspayEnv,
   walletOf,
@@ -33,6 +34,7 @@ import { getFakeSaspay } from '@/server/providers/saspay-client';
 //   GET /api/cron/payments (src/app/api/cron/payments/route.ts) : Authorization: Bearer <CRON_SECRET>
 
 setupFakeSaspayEnv();
+restoreRechargeStateAfterAll();
 const created: string[] = [];
 
 async function newUser() {

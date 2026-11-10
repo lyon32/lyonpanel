@@ -3,6 +3,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vite
 import { makeUser, removeUser } from '../factories/user';
 import {
   paymentOf,
+  restoreRechargeStateAfterAll,
   setRechargeSettings,
   setupFakeSaspayEnv,
   walletOf,
@@ -23,6 +24,7 @@ import { getFakeSaspay } from '@/server/providers/saspay-client';
 // Faux SasPay (SASPAY_MODE=test, sans clé) ; vraie base locale.
 
 setupFakeSaspayEnv();
+restoreRechargeStateAfterAll();
 const db = adminClient();
 const created: string[] = [];
 
