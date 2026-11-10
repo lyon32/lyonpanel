@@ -29,7 +29,7 @@ Sources : `docs/06-saspay.md` (relu le 2026-11-10 contre l'OpenAPI officielle), 
 - Aucune clé SasPay dans le code ou les journaux.
 
 ## Terminé quand
-Statut : terminée, en attente de validation du propriétaire (2026-11-10).
+Statut : validée par le propriétaire (2026-11-10).
 - [x] En mode test, une recharge de 3 000 XAF crédite le solde **une seule fois**, même si le webhook est renvoyé.
 - [x] Lint, types, tests, build verts ; `lp-security` accepté (2e passage).
 - [ ] CI GitHub lue et verte (à lire sur la PR par le chef de projet).

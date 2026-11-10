@@ -89,3 +89,11 @@ La phase 6 (commande) n'exige rien de ta part. Pour la phase 15 : compte marchan
 
 ## Carte du code
 `graphify-out/graph.html` existe (carte cliquable). Elle n'a pas été régénérée pour ce bilan.
+
+## Derniers changements avant validation (2026-11-10)
+- Page de recharge : le solde actuel s'affiche et le champ montant a une bordure visible (`border-gris-400`, écart assumé avec docs/05 sur ce seul champ).
+- CI : variables du faux SasPay ajoutées (`SASPAY_MODE=test`, secrets factices) ; téléphones de test uniques pour éviter les collisions.
+- `supabase/config.toml` inchangé : avec la CLI locale 3.1.0 il faut l'adapter à la main, sans le committer (la CI utilise la 2.75.0).
+- Test local `seed.test.ts` « aucun faux client » : échoue si un compte réel existe dans la base locale ; `supabase db reset` règle le cas. Sans effet sur la CI.
+- CI lue sur GitHub avant validation : verte (head 9199425).
+- Validation : le propriétaire a écrit « Valide » le 2026-11-10.
