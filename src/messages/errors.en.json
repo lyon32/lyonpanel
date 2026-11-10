@@ -22,7 +22,7 @@
   "SERVICE_UNAVAILABLE": "This service is temporarily unavailable.",
   "PRICE_CHANGED": "The price changed since your quote. Please check the new total.",
   "DAILY_LIMIT_REACHED": "You have reached your 24-hour spending limit.",
-  "AMOUNT_BELOW_MINIMUM": "The amount is below the minimum top-up.",
+  "AMOUNT_BELOW_MINIMUM": "The amount is below the minimum top-up ({min_xaf} XAF).",
   "AMOUNT_MISMATCH": "The amount received does not match the amount requested.",
   "AMOUNT_TOO_HIGH": "The amount exceeds what was charged.",
   "INVALID_AMOUNT": "Invalid amount.",

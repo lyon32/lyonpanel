@@ -22,7 +22,7 @@
   "SERVICE_UNAVAILABLE": "Ce service est momentanément indisponible.",
   "PRICE_CHANGED": "Le prix a changé depuis votre devis. Vérifiez le nouveau total.",
   "DAILY_LIMIT_REACHED": "Vous avez atteint votre plafond de dépense sur 24 heures.",
-  "AMOUNT_BELOW_MINIMUM": "Le montant est inférieur à la recharge minimale.",
+  "AMOUNT_BELOW_MINIMUM": "Le montant est inférieur à la recharge minimale ({min_xaf} XAF).",
   "AMOUNT_MISMATCH": "Le montant reçu ne correspond pas au montant demandé.",
   "AMOUNT_TOO_HIGH": "Le montant dépasse celui qui a été débité.",
   "INVALID_AMOUNT": "Montant invalide.",

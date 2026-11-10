@@ -2,6 +2,25 @@
 
 Écrit pour le propriétaire. Une section par phase. Seul le propriétaire valide une phase.
 
+## Phase 5 — Recharge SasPay en mode test (2026-11-10) — faite, en attente de validation
+
+### Nouveau
+- Recharge du solde de 500 à 500 000 XAF. Les frais sont payés en plus par le client : 3 000 XAF rechargés, 90 XAF de frais, 3 090 XAF payés, 3 000 XAF crédités.
+- Page de recharge (FR et EN) avec total affiché avant de payer, et page de retour qui se met à jour toute seule (en attente, crédité, échoué, annulé).
+- Confirmation de paiement par message signé de SasPay. Le site vérifie la signature, redemande la transaction à SasPay, puis crédite. Un message renvoyé 3 fois ne crédite qu'une fois.
+- Rattrapage automatique des paiements dont le message n'est jamais arrivé. Une recharge non payée expire après 30 minutes.
+- Faux SasPay pour tester sans argent réel. Aucun vrai appel SasPay, aucun vrai paiement.
+
+### Sécurité
+- Contrôle sécurité accepté au 2e passage. Corrigés : limite de 5 recharges par minute, vérification auprès de SasPay avant tout crédit, faux SasPay refusé en production.
+
+### Chiffres
+- 1 124 tests unitaires, 373 tests de base et 10 tests de navigateur verts. Lint sans erreur (8 avertissements de taille), types et build OK. Couverture non mesurée.
+
+### À surveiller
+- Non testé : vrai SasPay, vrais paiements, forme réelle du champ `metadata`, réglage `ADD_ON` du compte SasPay (actions du propriétaire avant la phase 15).
+- Cinq points à confirmer par le propriétaire : voir `docs/reports/phase-5/bilan.md`.
+
 ## Phase 4 — Prix et catalogue (2026-11-10) — faite, en attente de validation
 
 ### Nouveau

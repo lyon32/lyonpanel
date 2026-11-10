@@ -18,6 +18,10 @@ jobs:
       NEXT_PUBLIC_TURNSTILE_SITE_KEY: 1x00000000000000000000AA
       TURNSTILE_SECRET_KEY: 1x0000000000000000000000000000000AA
       SUPABASE_AUTH_CAPTCHA_SECRET: 1x0000000000000000000000000000000AA
+      # Faux SasPay pour les tests de recharge : valeurs de test, pas des secrets
+      SASPAY_MODE: test
+      SASPAY_WEBHOOK_SECRET: ci-faux-secret-webhook-saspay-test
+      CRON_SECRET: ci-faux-secret-cron-test
     steps:
       - uses: actions/checkout@v5
         with:

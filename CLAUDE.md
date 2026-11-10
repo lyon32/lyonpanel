@@ -116,23 +116,13 @@ Un agent ne démarre jamais avant ce dont il dépend ; ce qui est indépendant t
 
 > À mettre à jour au début de chaque phase (`ROADMAP.md`).
 
-**Phase en cours : Phase 4 — Prix + catalogue** (Phases 0 et 1 validées le 2026-11-07, phase 2 le 2026-11-08, phase 3 le 2026-11-09, phase 4 le 2026-11-10)
+**Phase en cours : Phase 5 — Recharge SasPay (mode test)** (Phases 0 et 1 validées le 2026-11-07, phase 2 le 2026-11-08, phase 3 le 2026-11-09, phase 4 le 2026-11-10)
 
-**Périmètre (seulement ceci)**
-- (a) Prix = coût fournisseur en XAF × multiplicateur (départ ×3 partout). Multiplicateur réglable par catégorie (réseau × type), avec surcharge par service, jamais en dur ; structure et calcul en base maintenant (écran admin en phase 12). Taux 1 USD = 600 XAF réglable (réglage, pas en dur). Arrondi au multiple de 5 XAF supérieur (prix pour 1000 ET total de commande, minimum 5 XAF). Calculs côté serveur uniquement.
-- (b) Faux fournisseur (`PROVIDER_MODE=mock`) et client du vrai fournisseur (vrai appel seulement en phase 15).
-- (c) Catalogue de 2 188 services classés par règles sur le nom : d'abord le réseau (Instagram, TikTok, Facebook, YouTube, Telegram, Twitter/X, Kick, Threads, etc.), puis le type (abonnés, likes, vues, commentaires, partages, autres). TOUS les services sont vendus et actifs, sauf ceux que le fournisseur déclare indisponibles. Noms reconstruits (jamais le nom ni le prix du fournisseur).
-- (d) Pages catalogue et fiche service, prix en XAF/XOF/USD, prix de la commande minimum affiché.
+**Périmètre (seulement ceci)** : détail dans `docs/plans/phase-5.md` — client SasPay (+ faux SasPay), devis avec frais, création du paiement, webhook signé, rattrapage cron, page de recharge et page de retour dynamique. Frais en plus (`ADD_ON`), 500 à 500 000 XAF, expiration 30 min. Crédit uniquement par `credit_payment`.
 
-**Hors périmètre (ne pas toucher)**
-- Paiement, commande, admin (phases 11 et 12), écrans de compte, page d'accueil et SEO.
-- Migrations déjà appliquées (changement de schéma non prévu : demander d'abord) ; toute bibliothèque hors `LLD.md §1`.
+**Hors périmètre** : commande (phase 6), admin, vrai SasPay et vrais paiements (phase 15), catalogue et prix (phase 4, terminée).
 
-**Terminé quand (définition de « fini »)**
-- [ ] Catalogue rangé (réseau puis type), tous les services actifs sauf indisponibles.
-- [ ] Les prix respectent les multiplicateurs ; aucun nom ne contient le fournisseur ni son prix.
-- [ ] Lint, types, tests, build verts ; CI GitHub verte sur la PR ; `lp-security` si pertinent.
-- [ ] Rapport dans `docs/reports/phase-4/` et résumé au propriétaire en français simple, avec ce qu'il doit tester.
+**Terminé quand** : en mode test, 3 000 XAF crédités une seule fois même si le webhook est renvoyé ; lint, types, tests, build et CI verts ; `lp-security` accepté ; rapport dans `docs/reports/phase-5/`.
 
 ## État des documents
 

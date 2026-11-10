@@ -434,7 +434,10 @@ describe('vue services_public', () => {
   });
 
   it('ne contient que les services actifs et disponibles', async () => {
-    const { data, error } = await a.client.from('services_public').select('id');
+    const { data, error } = await a.client
+      .from('services_public')
+      .select('id')
+      .in('id', [serviceActive, serviceHidden, serviceUnavailable]);
     expect(error).toBeNull();
     const got = data?.map((r) => r.id) ?? [];
     expect(got).toContain(serviceActive);
@@ -529,7 +532,10 @@ describe('visiteur anonyme', () => {
   });
 
   it('lit seulement les services actifs et disponibles via services_public', async () => {
-    const { data, error } = await anon.from('services_public').select('id');
+    const { data, error } = await anon
+      .from('services_public')
+      .select('id')
+      .in('id', [serviceActive, serviceHidden, serviceUnavailable]);
     expect(error).toBeNull();
     const got = data?.map((r) => r.id) ?? [];
     expect(got).toContain(serviceActive);

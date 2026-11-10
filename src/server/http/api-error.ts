@@ -75,11 +75,18 @@ export function getErrorMessage(
   locale: ErrorLocale,
   details?: Record<string, unknown>,
 ): string {
-  const text = MESSAGES[locale][code] ?? '';
-  if (!text.includes('{duration}')) return text;
+  // Montants du détail (ex. {min_xaf}) : seuls les nombres entiers sont insérés, tels quels.
+  const base = (MESSAGES[locale][code] ?? '').replace(
+    /\{(min_xaf|max_xaf)\}/g,
+    (match, key: string) => {
+      const value = details?.[key];
+      return typeof value === 'number' ? String(value) : match;
+    },
+  );
+  if (!base.includes('{duration}')) return base;
   const seconds = details?.retry_after_seconds;
   const fallback = locale === 'fr' ? 'quelques instants' : 'a few moments';
-  return text.replace(
+  return base.replace(
     '{duration}',
     typeof seconds === 'number' ? formatDuration(seconds) : fallback,
   );

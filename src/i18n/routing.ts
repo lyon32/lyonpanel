@@ -35,6 +35,8 @@ export const routing = defineRouting({
     '/demo': '/demo',
     // Page du lien reçu par email (phase 3) : hors table LLD §6, ajoutée ici.
     '/reset-password': { fr: '/nouveau-mot-de-passe', en: '/reset-password' },
+    // Page de retour d'une recharge : sous-adresse de /add-funds, hors table LLD §6.
+    '/add-funds/[id]': { fr: '/recharger/[id]', en: '/add-funds/[id]' },
     ...pathnames,
   },
 });
