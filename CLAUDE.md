@@ -116,13 +116,13 @@ Un agent ne démarre jamais avant ce dont il dépend ; ce qui est indépendant t
 
 > À mettre à jour au début de chaque phase (`ROADMAP.md`).
 
-**Phase en cours : Phase 5 — Recharge SasPay (mode test)** (Phases 0 et 1 validées le 2026-11-07, phase 2 le 2026-11-08, phase 3 le 2026-11-09, phase 4 le 2026-11-10)
+**Phase en cours : Phase 6 — Commande** (Phases 0 et 1 validées le 2026-11-07, phase 2 le 2026-11-08, phase 3 le 2026-11-09, phases 4 et 5 le 2026-11-10)
 
-**Périmètre (seulement ceci)** : détail dans `docs/plans/phase-5.md` — client SasPay (+ faux SasPay), devis avec frais, création du paiement, webhook signé, rattrapage cron, page de recharge et page de retour dynamique. Frais en plus (`ADD_ON`), 500 à 500 000 XAF, expiration 30 min. Crédit uniquement par `credit_payment`.
+**Périmètre (seulement ceci)** : détail dans `docs/plans/phase-6.md` — formulaire de commande, devis serveur, idempotence (double clic = une commande), `placeOrder` → `place_order` → `submitToProvider` (faux fournisseur `PROVIDER_MODE=mock`), progression par étapes. Décisions : lien conforme à la plateforme du service ; quantité min/max sans exception ; plafond 100 000 XAF par jour en réglage `daily_order_cap_xaf` ; échec fournisseur = `to_review` + alerte, ni remboursement ni renvoi automatique ; solde insuffisant = « Il vous manque X XAF » + bouton recharge ; commentaires seulement pour les services qui les acceptent.
 
-**Hors périmètre** : commande (phase 6), admin, vrai SasPay et vrais paiements (phase 15), catalogue et prix (phase 4, terminée).
+**Hors périmètre** : suivi des statuts et Telegram (phase 7), espace client (phase 8), vrai fournisseur et vrais paiements (phase 15), remboursement/renvoi admin.
 
-**Terminé quand** : en mode test, 3 000 XAF crédités une seule fois même si le webhook est renvoyé ; lint, types, tests, build et CI verts ; `lp-security` accepté ; rapport dans `docs/reports/phase-5/`.
+**Terminé quand** : une commande débite le bon montant, double clic = une commande, solde insuffisant = message clair ; lint, types, tests, build et CI verts (CI lue sur la PR) ; `lp-security` accepté ; rapport dans `docs/reports/phase-6/`.
 
 ## État des documents
 
