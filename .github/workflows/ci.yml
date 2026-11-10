@@ -22,6 +22,8 @@ jobs:
       SASPAY_MODE: test
       SASPAY_WEBHOOK_SECRET: ci-faux-secret-webhook-saspay-test
       CRON_SECRET: ci-faux-secret-cron-test
+      # Secret des routes de test (faux fournisseur) : valeur de test, pas un secret
+      TEST_ROUTE_SECRET: ci-faux-secret-routes-test
     steps:
       - uses: actions/checkout@v5
         with:
