@@ -45,7 +45,8 @@ async function seedServices(): Promise<SeedService[]> {
 describe('seed : réglages par défaut', () => {
   it.each([
     ['usd_xaf_rate', 600],
-    ['min_recharge_xaf', 3000],
+    ['min_recharge_xaf', 500],
+    ['max_recharge_xaf', 500000],
     ['referral_pct', 5],
     ['provider_low_balance_usd', 5],
     ['limited_launch', false],
