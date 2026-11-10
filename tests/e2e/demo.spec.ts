@@ -86,10 +86,12 @@ test('le sélecteur de langue de /fr/demo mène à /en/demo', async ({ page }) =
 
 test('changer la devise met à jour le cookie lp_currency', async ({ page, context }) => {
   await page.goto('/fr/demo');
-  await page.getByRole('combobox', { name: 'Devise' }).first().selectOption('USD');
-  await expect
-    .poll(async () => (await context.cookies()).find((c) => c.name === 'lp_currency')?.value)
-    .toBe('USD');
+  // Avant que la page soit active, le choix est perdu : on réessaie jusqu'à ce qu'il prenne.
+  await expect(async () => {
+    await page.getByRole('combobox', { name: 'Devise' }).first().selectOption('USD');
+    const cookie = (await context.cookies()).find((c) => c.name === 'lp_currency');
+    expect(cookie?.value).toBe('USD');
+  }).toPass({ timeout: 20_000 });
 });
 
 // Les blocs lourds ne se montent qu'à l'approche de l'écran : on descend la page pour les faire apparaître.
