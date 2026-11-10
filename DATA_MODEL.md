@@ -200,7 +200,7 @@ id uuid PK · user_id FK → profiles · body text · created_at. **Jamais lisib
 
 ### settings — réglages (admin seulement)
 key text PK · value jsonb · updated_at.
-Clés : `usd_xaf_rate` (600), `default_multiplier` (3), `min_recharge_xaf` (3000), `auto_discount` ({threshold_xaf: 50000, pct: 10}), `referral_pct` (5), `provider_low_balance_usd` (5), `saspay_fee_pct` (3), `price_alert_pct` (20). Les deux dernières valeurs sont provisoires (seed), confirmées par le propriétaire le 2026-11-07 ; ajustables.
+Clés : `usd_xaf_rate` (600), `default_multiplier` (3), `min_recharge_xaf` (500), `max_recharge_xaf` (500 000), `auto_discount` ({threshold_xaf: 50000, pct: 10}), `referral_pct` (5), `provider_low_balance_usd` (5), `saspay_fee_pct` (3), `price_alert_pct` (20). Les deux dernières valeurs sont provisoires (seed), confirmées par le propriétaire le 2026-11-07 ; ajustables.
 
 ### login_attempts — essais de connexion (blocage 5 échecs / 15 min)
 id bigserial PK · identifier_hash text (email/téléphone haché) · ip_hash text · success bool · created_at. Index (identifier_hash, created_at), (ip_hash, created_at). Purge après 30 jours.
