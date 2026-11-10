@@ -56,6 +56,6 @@ Statut : faite – en attente de validation (2026-11-10).
 - [x] Échec fournisseur simulé = `to_review`, alerte, aucun remboursement, client voit « en cours de vérification ».
 - [x] Lien d'une autre plateforme refusé ; quantité hors limites refusée ; plafond 100 000 XAF appliqué ; commentaires refusés si le service n'en accepte pas.
 - [x] Lint, types, tests, build verts ; `lp-security` accepté.
-- [ ] CI GitHub lue sur la PR (vraie CI, pas supposée) et verte.
+- [x] CI GitHub lue sur la PR (vraie CI, pas supposée) et verte : exécution 42855000877, job `ci` réussi (12 min 57 s), Vercel vert.
 - [x] Rapport dans `docs/reports/phase-6/` et résumé en français simple (`bilan.md`).
 - [ ] Validation du propriétaire (« validé », écrit par lui).
