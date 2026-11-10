@@ -125,13 +125,16 @@ export async function handleSaspayWebhook(
     // Jamais de rétrogradation : un paiement déjà crédité ou déjà échoué reste tel quel.
     return (await markPaymentFailed(payment.id, raw)) ? 'failed' : 'duplicate';
   }
-  if (data.status !== undefined && data.status !== 'SUCCESS') return 'ignored';
+  // Le corps du webhook n'est jamais cru pour créditer : on redemande la transaction à SasPay.
+  // Pas de try/catch : une panne remonte (5xx) pour que SasPay renvoie le webhook plus tard.
+  const verified = await getSaspay().verifyPayment(data.id);
+  if (verified.status !== 'SUCCESS') return 'ignored';
 
   return creditSettlement(payment, {
     transactionId: data.id,
-    netAmount: data.net_amount ?? '',
-    fee: data.fee ?? '',
-    charged: data.charged ?? '',
+    netAmount: verified.netAmount,
+    fee: verified.fee,
+    charged: verified.charged,
     network: data.network ?? null,
     raw,
   });

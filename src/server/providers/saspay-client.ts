@@ -143,6 +143,9 @@ export function getSaspay(): SaspayApi {
   const env = loadServerEnv();
   const { SASPAY_API_URL: apiUrl, SASPAY_API_KEY: apiKey } = env;
   if (!apiKey) {
+    // Le faux SasPay ne doit jamais servir en production : il validerait de faux paiements.
+    if (env.VERCEL_ENV === 'production')
+      throw new Error('Le faux SasPay est interdit en production');
     if (env.SASPAY_MODE === 'live') throw new Error('SASPAY_API_KEY est obligatoire en mode live');
     return getFakeSaspay();
   }
