@@ -116,6 +116,21 @@ test.describe('page de recharge', () => {
     await expect(page.locator('[data-testid="quote-total"]')).toContainText(/3\D?090/);
   });
 
+  test('affiche le solde actuel : 0 au départ, puis 3 000 XAF après un crédit', async ({
+    page,
+  }) => {
+    await signedUp(page);
+    await page.goto('/fr/recharger');
+    await expect(page.locator('[data-testid="current-balance"]')).toContainText(/Solde actuel/);
+    await expect(page.locator('[data-testid="current-balance"]')).toContainText(/0\s*XAF/);
+
+    const id = await startRecharge(page);
+    expect((await sendWebhook(page.request, id)).status()).toBe(200);
+
+    await page.goto('/fr/recharger');
+    await expect(page.locator('[data-testid="current-balance"]')).toContainText(AMOUNT);
+  });
+
   for (const [amount, message] of [
     ['499', /minimum est de 500 XAF/],
     ['500001', /maximum est de 500\D{1,2}000 XAF/],

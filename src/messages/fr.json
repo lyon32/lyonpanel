@@ -433,6 +433,7 @@
   },
   "wallet": {
     "title": "Recharger mon solde",
+    "currentBalance": "Solde actuel",
     "amountLabel": "Montant à ajouter (XAF)",
     "amountHint": "Les frais de paiement s'ajoutent au montant. Votre solde reçoit le montant exact.",
     "fee": "Frais de paiement",

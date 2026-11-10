@@ -24,11 +24,11 @@ beforeEach(() => {
 });
 afterEach(() => vi.unstubAllGlobals());
 
-function renderForm(locale: 'fr' | 'en' = 'fr', min = MIN, max = MAX) {
+function renderForm(locale: 'fr' | 'en' = 'fr', min = MIN, max = MAX, balanceXaf = 0) {
   const messages = locale === 'fr' ? fr : en;
   return render(
     <NextIntlClientProvider locale={locale} messages={messages}>
-      <AddFundsForm minXaf={min} maxXaf={max} />
+      <AddFundsForm minXaf={min} maxXaf={max} balanceXaf={balanceXaf} />
     </NextIntlClientProvider>,
   );
 }
@@ -142,7 +142,43 @@ describe('AddFundsForm : validation avant tout appel réseau', () => {
   });
 });
 
+describe('AddFundsForm : solde actuel et champ visible', () => {
+  const balance = () => screen.getByTestId('current-balance');
+
+  it('affiche « Solde actuel » avec le montant formaté en français', () => {
+    renderForm('fr', MIN, MAX, 12500);
+    expect(balance()).toHaveTextContent(/Solde actuel/);
+    expect(balance()).toHaveTextContent(/12\D{1,2}500\s*XAF/);
+  });
+
+  it('affiche « Current balance » avec le montant formaté en anglais', () => {
+    renderForm('en', MIN, MAX, 12500);
+    expect(balance()).toHaveTextContent(/Current balance/);
+    expect(balance()).toHaveTextContent(/12\D?500\s*XAF/);
+  });
+
+  it('affiche 0 XAF pour un solde nul (pas de zone vide)', () => {
+    renderForm('fr', MIN, MAX, 0);
+    expect(balance()).toHaveTextContent(/0\s*XAF/);
+  });
+
+  it('le champ montant a une bordure visible (plus foncée que gris-200, ni nulle ni transparente)', () => {
+    renderForm('fr');
+    const classes = input().className.split(/\s+/);
+    expect(classes).toContain('border');
+    expect(classes).not.toContain('border-0');
+    expect(classes).not.toContain('border-transparent');
+    expect(classes).not.toContain('border-gris-200');
+    expect(classes.some((c) => /^border-gris-(300|400|500|600)$/.test(c))).toBe(true);
+  });
+});
+
 describe('messages wallet : clés identiques FR/EN', () => {
+  it('la clé wallet.currentBalance existe en FR (Solde actuel) et EN (Current balance)', () => {
+    expect((fr.wallet as Record<string, string>).currentBalance).toMatch(/Solde actuel/);
+    expect((en.wallet as Record<string, string>).currentBalance).toMatch(/Current balance/);
+  });
+
   it.each(['minAmount', 'maxAmount', 'enterAmount'])(
     'la clé wallet.%s existe en FR et EN',
     (key) => {

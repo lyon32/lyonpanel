@@ -6,10 +6,12 @@ export interface FieldProps extends React.ComponentProps<'input'> {
   label: string;
   hint?: string;
   error?: string;
+  // Classes appliquées au champ lui-même (className vise le conteneur).
+  inputClassName?: string;
 }
 
 // Libellé + champ + aide/erreur, reliés pour les lecteurs d'écran.
-function Field({ label, hint, error, id, className, ...props }: FieldProps) {
+function Field({ label, hint, error, id, className, inputClassName, ...props }: FieldProps) {
   const autoId = React.useId();
   const inputId = id ?? autoId;
   const hintId = hint ? `${inputId}-hint` : undefined;
@@ -23,6 +25,7 @@ function Field({ label, hint, error, id, className, ...props }: FieldProps) {
       </label>
       <Input
         id={inputId}
+        className={inputClassName}
         aria-describedby={describedBy}
         aria-invalid={error ? true : undefined}
         {...props}

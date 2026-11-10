@@ -433,6 +433,7 @@
   },
   "wallet": {
     "title": "Add funds",
+    "currentBalance": "Current balance",
     "amountLabel": "Amount to add (XAF)",
     "amountHint": "Payment fees are added on top. Your balance receives the exact amount.",
     "fee": "Payment fee",

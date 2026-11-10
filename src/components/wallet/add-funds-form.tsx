@@ -10,7 +10,15 @@ import { Field } from '@/components/ui/field';
 const QUOTE_DELAY_MS = 350;
 const QUICK_AMOUNTS = [1000, 3000, 5000, 10000];
 
-export function AddFundsForm({ minXaf, maxXaf }: { minXaf: number; maxXaf: number }) {
+export function AddFundsForm({
+  minXaf,
+  maxXaf,
+  balanceXaf,
+}: {
+  minXaf: number;
+  maxXaf: number;
+  balanceXaf: number;
+}) {
   const t = useTranslations('wallet');
   const locale = useLocale();
   const [quote, setQuote] = useState<Quote | null>(null);
@@ -115,7 +123,15 @@ export function AddFundsForm({ minXaf, maxXaf }: { minXaf: number; maxXaf: numbe
       className="border-gris-200 bg-blanc flex max-w-md flex-col gap-5 rounded-xl border p-4 sm:p-6"
       noValidate
     >
+      <p
+        data-testid="current-balance"
+        className="bg-gris-50 text-encre flex items-baseline justify-between rounded-lg px-3 py-3 text-sm tabular-nums"
+      >
+        <span className="text-gris-600">{t('currentBalance')}</span>
+        <span className="text-bleu-600 text-lg font-bold">{xaf(balanceXaf)}</span>
+      </p>
       <Field
+        inputClassName="border-gris-400"
         label={t('amountLabel')}
         hint={t('amountHint')}
         name="amount"
