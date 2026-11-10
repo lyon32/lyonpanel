@@ -49,13 +49,13 @@ Suivi des statuts et alertes Telegram réelles (phase 7 : ici `notifyOwner` ne f
 « graphify : si `graphify-out/graph.json` existe, lancer `graphify query "<question>"` avant votre premier grep ou lecture de code ; lire un fichier brut seulement pour les lignes déjà repérées. Après toute modification de code, lancer `graphify update .`. »
 
 ## Terminé quand
-Statut : en cours.
-- [ ] Une commande débite le bon montant (ex. 1 000 abonnés à 1 155 XAF → solde −1 155 XAF).
-- [ ] Double clic = une seule commande, un seul débit.
-- [ ] Solde insuffisant = « Il vous manque X XAF » + bouton vers la recharge.
-- [ ] Échec fournisseur simulé = `to_review`, alerte, aucun remboursement, client voit « en cours de vérification ».
-- [ ] Lien d'une autre plateforme refusé ; quantité hors limites refusée ; plafond 100 000 XAF appliqué ; commentaires refusés si le service n'en accepte pas.
-- [ ] Lint, types, tests, build verts ; `lp-security` accepté.
+Statut : faite – en attente de validation (2026-11-10).
+- [x] Une commande débite le bon montant (ex. 1 000 abonnés à 1 155 XAF → solde −1 155 XAF).
+- [x] Double clic = une seule commande, un seul débit.
+- [x] Solde insuffisant = « Il vous manque X XAF » + bouton vers la recharge.
+- [x] Échec fournisseur simulé = `to_review`, alerte, aucun remboursement, client voit « en cours de vérification ».
+- [x] Lien d'une autre plateforme refusé ; quantité hors limites refusée ; plafond 100 000 XAF appliqué ; commentaires refusés si le service n'en accepte pas.
+- [x] Lint, types, tests, build verts ; `lp-security` accepté.
 - [ ] CI GitHub lue sur la PR (vraie CI, pas supposée) et verte.
-- [ ] Rapport dans `docs/reports/phase-6/` et résumé en français simple (`bilan.md`).
+- [x] Rapport dans `docs/reports/phase-6/` et résumé en français simple (`bilan.md`).
 - [ ] Validation du propriétaire (« validé », écrit par lui).

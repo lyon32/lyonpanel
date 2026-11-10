@@ -10,6 +10,7 @@ insert into public.settings (key, value) values
   ('limited_launch', 'false'),
   ('auto_discount', '{"threshold_xaf": 50000, "pct": 10}'),
   ('default_multiplier', '3'),
+  ('daily_order_cap_xaf', '100000'),
   -- Valeur provisoire : à confirmer par le propriétaire (phase 5, tarifs SasPay /pricing/my-rates/).
   ('saspay_fee_pct', '3'),
   -- Valeur provisoire : à confirmer par le propriétaire (phase 4, alerte si le coût fournisseur change de plus de X %).
@@ -20,7 +21,8 @@ on conflict (key) do update set value = excluded.value, updated_at = now();
 insert into public.services
   (id, platform, category, name_fr, provider_name, provider_type, cost_usd_1000, price_xaf_1000,
    min_qty, max_qty, refill, cancel, dripfeed, active, available, sort_order)
-select v.id, v.platform, v.category, v.name_fr, v.provider_name, 'Default', v.cost,
+select v.id, v.platform, v.category, v.name_fr, v.provider_name,
+       case when v.category = 'comments' then 'Custom Comments' else 'Default' end, v.cost,
        (ceil(v.cost * 600 * 3 / 5) * 5)::bigint,
        v.min_qty, v.max_qty, v.refill, false, false, true, true, v.id - 900000
   from (values

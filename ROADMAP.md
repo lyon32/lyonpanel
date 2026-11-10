@@ -92,6 +92,7 @@ Remplace `docs/04-roadmap.md`. S'appuie sur : `PRD.md`, `ARCHITECTURE.md`, `DATA
 ### Phase 7 — Suivi des commandes + alertes
 - Cron des statuts par lots, polling 30 s, badges de statut, barre de progression de la commande.
 - `notifyOwner` Telegram, préfixe `[TEST]` hors production.
+- **Points repris de la phase 6** : rattrapage et alerte des commandes restées « pending » avec `error='submitting'` après un plantage ; `idem_key` unique par client `(user_id, idem_key)` ; nom dédié pour le secret de la route de test `fail-next` ; interdire `PROVIDER_MODE=mock` avec `SASPAY_MODE=live` (à vérifier au plus tard en phase 15).
 - **Terminé quand** : une commande passe seule de « en cours » à « terminée » ; un échec t'envoie une alerte.
 - 🧑 Créer le bot avec @BotFather, récupérer jeton et `chat_id` (`ENV_SETUP.md §4`).
 
@@ -170,7 +171,7 @@ Pages par pays, blog, commandes en lot, notifications client, email « nouvelle 
 | 3 | validée | 2026-11-09 |
 | 4 | validée (2026-11-10) | — |
 | 5 | validée par le propriétaire (2026-11-10) | — |
-| 6 | à faire | — |
+| 6 | faite – en attente de validation (2026-11-10) | — |
 | 7 | à faire | — |
 | 8 | à faire | — |
 | 9 | à faire | — |

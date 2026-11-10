@@ -50,6 +50,7 @@ describe('seed : réglages par défaut', () => {
     ['referral_pct', 5],
     ['provider_low_balance_usd', 5],
     ['limited_launch', false],
+    ['daily_order_cap_xaf', 100000],
   ])('le réglage %s vaut %j', async (key, expected) => {
     expect(await getSetting(key)).toEqual(expected);
   });
@@ -73,6 +74,16 @@ describe('seed : services fictifs', () => {
     expect(rows.length).toBeGreaterThanOrEqual(18);
     expect(rows.length).toBeLessThanOrEqual(24);
     expect(new Set(rows.map((r) => r.id)).size).toBe(rows.length);
+  });
+
+  it('le service 900007 (commentaires) a le type fournisseur « Custom Comments »', async () => {
+    const { data, error } = await adminClient()
+      .from('services')
+      .select('provider_type')
+      .eq('id', 900007)
+      .single();
+    expect(error).toBeNull();
+    expect(data?.provider_type).toBe('Custom Comments');
   });
 
   it('couvre tiktok, instagram et facebook', async () => {
