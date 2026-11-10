@@ -445,9 +445,19 @@
     "statusPending": "Paiement en attente de confirmation. Cette page se met à jour toute seule.",
     "statusTimedOut": "La confirmation prend plus de temps que prévu. Revenez dans quelques minutes ou contactez le support.",
     "statusSucceeded": "Paiement confirmé : {amount} ajoutés à votre solde.",
-    "statusFailed": "Le paiement a échoué. Rien n'a été débité de votre solde.",
+    "statusFailed": "Le paiement a échoué ou a expiré. Rien n'a été débité de votre solde.",
     "balance": "Solde actuel :",
     "retry": "Réessayer",
-    "newTopUp": "Nouvelle recharge"
+    "newTopUp": "Nouvelle recharge",
+    "quickAmounts": "Montants rapides",
+    "quoteLoading": "Calcul du total…",
+    "secureNote": "Vous serez redirigé vers la page de paiement Mobile Money.",
+    "stepsLabel": "Étapes de la recharge",
+    "stepPaid": "Paiement lancé",
+    "stepWaiting": "Confirmation en cours",
+    "stepCredited": "Solde crédité",
+    "stepFailed": "Paiement non abouti",
+    "doNotPayTwice": "Ne payez pas deux fois. Votre solde sera crédité automatiquement dès la confirmation.",
+    "toDashboard": "Retour au tableau de bord"
   }
 }

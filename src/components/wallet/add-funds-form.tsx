@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Field } from '@/components/ui/field';
 
 const QUOTE_DELAY_MS = 350;
+const QUICK_AMOUNTS = [1000, 3000, 5000, 10000];
 
 export function AddFundsForm() {
   const t = useTranslations('wallet');
@@ -15,6 +16,8 @@ export function AddFundsForm() {
   const [quote, setQuote] = useState<Quote | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const [loadingQuote, setLoadingQuote] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
   // Numéro de la dernière saisie : la réponse tardive d'un ancien montant est ignorée.
   const latest = useRef(0);
   const timer = useRef<number | undefined>(undefined);
@@ -42,11 +45,26 @@ export function AddFundsForm() {
   }
 
   function handleChange(event: ChangeEvent<HTMLInputElement>) {
-    const raw = event.target.value;
+    scheduleQuote(event.target.value);
+  }
+
+  // Un montant rapide remplit seulement le champ ; le devis suit comme pour une saisie.
+  function pickAmount(amount: number) {
+    const input = formRef.current?.elements.namedItem('amount');
+    if (input instanceof HTMLInputElement) input.value = String(amount);
+    scheduleQuote(String(amount));
+  }
+
+  function scheduleQuote(raw: string) {
+    setLoadingQuote(Boolean(raw.trim()));
     latest.current += 1;
     const ticket = latest.current;
     window.clearTimeout(timer.current);
-    timer.current = window.setTimeout(() => void refreshQuote(raw, ticket), QUOTE_DELAY_MS);
+    timer.current = window.setTimeout(() => {
+      void refreshQuote(raw, ticket).finally(() => {
+        if (ticket === latest.current) setLoadingQuote(false);
+      });
+    }, QUOTE_DELAY_MS);
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -71,7 +89,12 @@ export function AddFundsForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex max-w-md flex-col gap-4" noValidate>
+    <form
+      ref={formRef}
+      onSubmit={handleSubmit}
+      className="border-gris-200 bg-blanc flex max-w-md flex-col gap-5 rounded-xl border p-4 sm:p-6"
+      noValidate
+    >
       <Field
         label={t('amountLabel')}
         hint={t('amountHint')}
@@ -82,16 +105,33 @@ export function AddFundsForm() {
         data-testid="amount-input"
         onChange={handleChange}
       />
-      <dl className="flex flex-col gap-1 text-sm">
-        <div className="flex justify-between">
+      <div role="group" aria-label={t('quickAmounts')} className="grid grid-cols-2 gap-2">
+        {QUICK_AMOUNTS.map((amount) => (
+          <button
+            key={amount}
+            type="button"
+            onClick={() => pickAmount(amount)}
+            className="border-gris-200 text-encre hover:border-bleu-600 hover:bg-bleu-50 focus-visible:outline-bleu-600 min-h-11 rounded-lg border text-sm font-semibold tabular-nums focus-visible:outline-2 focus-visible:outline-offset-2"
+          >
+            {xaf(amount)}
+          </button>
+        ))}
+      </div>
+      <dl className="border-gris-200 flex flex-col gap-2 border-t pt-4 text-sm tabular-nums">
+        <div className="text-gris-600 flex justify-between">
           <dt>{t('fee')}</dt>
           <dd data-testid="quote-fee">{quote ? xaf(quote.feeXaf) : '-'}</dd>
         </div>
-        <div className="flex justify-between font-semibold">
-          <dt>{t('total')}</dt>
-          <dd data-testid="quote-total">{quote ? xaf(quote.totalToPay) : '-'}</dd>
+        <div className="text-encre flex items-baseline justify-between">
+          <dt className="font-semibold">{t('total')}</dt>
+          <dd data-testid="quote-total" className="text-2xl font-bold">
+            {quote ? xaf(quote.totalToPay) : '-'}
+          </dd>
         </div>
       </dl>
+      <p aria-live="polite" className="text-gris-600 -mt-3 min-h-5 text-sm">
+        {loadingQuote ? t('quoteLoading') : ''}
+      </p>
       {error ? <FormAlert kind="error">{error}</FormAlert> : null}
       <Button
         type="submit"
@@ -101,6 +141,7 @@ export function AddFundsForm() {
       >
         {t('pay')}
       </Button>
+      <p className="text-gris-600 text-center text-sm">{t('secureNote')}</p>
     </form>
   );
 }

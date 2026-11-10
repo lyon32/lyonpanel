@@ -445,9 +445,19 @@
     "statusPending": "Waiting for payment confirmation. This page updates by itself.",
     "statusTimedOut": "Confirmation is taking longer than expected. Come back in a few minutes or contact support.",
     "statusSucceeded": "Payment confirmed: {amount} added to your balance.",
-    "statusFailed": "The payment failed. Nothing was taken from your balance.",
+    "statusFailed": "The payment failed or expired. Nothing was taken from your balance.",
     "balance": "Current balance:",
     "retry": "Try again",
-    "newTopUp": "New top-up"
+    "newTopUp": "New top-up",
+    "quickAmounts": "Quick amounts",
+    "quoteLoading": "Calculating total…",
+    "secureNote": "You will be redirected to the Mobile Money payment page.",
+    "stepsLabel": "Top-up steps",
+    "stepPaid": "Payment started",
+    "stepWaiting": "Confirmation in progress",
+    "stepCredited": "Balance credited",
+    "stepFailed": "Payment not completed",
+    "doNotPayTwice": "Do not pay twice. Your balance will be credited automatically once confirmed.",
+    "toDashboard": "Back to dashboard"
   }
 }
