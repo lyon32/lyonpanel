@@ -908,7 +908,7 @@ components:
       required: [service_id, link, quantity, expected_total_xaf]
       properties:
         service_id: { type: integer }
-        link: { type: string, maxLength: 500 }
+        link: { type: string, maxLength: 2048 }
         quantity: { type: integer, minimum: 1 }
         comments: { type: array, items: { type: string, maxLength: 300 } }
         expected_total_xaf: { type: integer }

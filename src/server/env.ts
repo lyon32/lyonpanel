@@ -9,6 +9,7 @@ const optionalString = z.preprocess(
 
 const envSchema = z
   .object({
+    NODE_ENV: optionalString,
     NEXT_PUBLIC_SITE_URL: optionalString,
     ADMIN_PATH: optionalString,
     NEXT_PUBLIC_SUPABASE_URL: optionalString,
@@ -16,7 +17,7 @@ const envSchema = z
     SUPABASE_SERVICE_ROLE_KEY: optionalString,
     PROVIDER_API_URL: optionalString,
     PROVIDER_API_KEY: optionalString,
-    PROVIDER_MODE: z.enum(['mock', 'live']).default('mock'),
+    PROVIDER_MODE: z.enum(['mock', 'live']).optional(),
     SASPAY_API_URL: optionalString,
     SASPAY_API_KEY: optionalString,
     SASPAY_WEBHOOK_SECRET: optionalString,
@@ -35,6 +36,15 @@ const envSchema = z
     VERCEL_ENV: optionalString,
   })
   .superRefine((env, ctx) => {
+    // Pas de faux fournisseur par oubli en production : le mode doit être choisi explicitement.
+    const isProduction = env.VERCEL_ENV === 'production' || env.NODE_ENV === 'production';
+    if (isProduction && env.PROVIDER_MODE === undefined) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['PROVIDER_MODE'],
+        message: 'PROVIDER_MODE doit être défini explicitement en production (mock ou live)',
+      });
+    }
     // Le vrai fournisseur coûte de l'argent : interdit hors production.
     if (env.PROVIDER_MODE === 'live' && env.VERCEL_ENV !== 'production') {
       ctx.addIssue({
@@ -65,7 +75,9 @@ const envSchema = z
     }
   });
 
-export type ServerEnv = z.infer<typeof envSchema>;
+export type ServerEnv = Omit<z.infer<typeof envSchema>, 'PROVIDER_MODE'> & {
+  PROVIDER_MODE: 'mock' | 'live';
+};
 
 export class MissingEnvError extends Error {
   constructor(name: string) {
@@ -92,7 +104,8 @@ export function loadServerEnv(source: Record<string, string | undefined> = proce
       .join(' ; ');
     throw new Error(`Variables d'environnement invalides — ${details}`);
   }
-  return result.data;
+  // Hors production, le faux fournisseur est le défaut.
+  return { ...result.data, PROVIDER_MODE: result.data.PROVIDER_MODE ?? 'mock' };
 }
 
 export function requireEnv<K extends keyof ServerEnv>(

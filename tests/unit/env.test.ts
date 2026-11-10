@@ -13,6 +13,15 @@ describe('loadServerEnv', () => {
     expect(env.SASPAY_MODE).toBe('test');
   });
 
+  it('échoue en production si PROVIDER_MODE est absent (pas de défaut mock)', () => {
+    expect(() => loadServerEnv({ VERCEL_ENV: 'production' })).toThrow(/PROVIDER_MODE/);
+  });
+
+  it('garde le défaut mock hors production (preview, local)', () => {
+    expect(loadServerEnv({ VERCEL_ENV: 'preview' }).PROVIDER_MODE).toBe('mock');
+    expect(loadServerEnv({}).PROVIDER_MODE).toBe('mock');
+  });
+
   it('refuse PROVIDER_MODE=live hors production', () => {
     expect(() => loadServerEnv({ PROVIDER_MODE: 'live', VERCEL_ENV: 'preview' })).toThrow(
       /PROVIDER_MODE/,
@@ -35,6 +44,7 @@ describe('loadServerEnv', () => {
       SASPAY_MODE: 'live',
       SASPAY_API_KEY: 'sk_live_x',
       VERCEL_ENV: 'production',
+      PROVIDER_MODE: 'mock',
     });
     expect(env.SASPAY_MODE).toBe('live');
   });
@@ -83,7 +93,7 @@ describe('loadServerEnv', () => {
     expect(() => loadServerEnv({ SASPAY_MODE: 'test', SASPAY_API_KEY: 'SK_LIVE_x' })).toThrow();
     expect(() => loadServerEnv({ SASPAY_MODE: 'test', SASPAY_API_KEY: 'sansprefixe' })).toThrow();
     expect(() => loadServerEnv({ SASPAY_MODE: 'test', SASPAY_API_KEY: 'SK_TEST_x' })).not.toThrow();
-    const live = { SASPAY_MODE: 'live', VERCEL_ENV: 'production' };
+    const live = { SASPAY_MODE: 'live', VERCEL_ENV: 'production', PROVIDER_MODE: 'mock' };
     expect(() => loadServerEnv({ ...live, SASPAY_API_KEY: 'sansprefixe' })).toThrow();
     expect(() => loadServerEnv({ ...live, SASPAY_API_KEY: 'SK_TEST_x' })).toThrow();
     expect(() => loadServerEnv({ ...live, SASPAY_API_KEY: 'sk_live_x' })).not.toThrow();

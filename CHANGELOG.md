@@ -2,6 +2,28 @@
 
 Écrit pour le propriétaire. Une section par phase. Seul le propriétaire valide une phase.
 
+## Phase 6 — Commande avec le faux fournisseur (2026-11-10) — validée
+
+### Nouveau
+- Page de commande (FR et EN) : service, lien, quantité, commentaires si le service les accepte. Le prix s'affiche avant de commander. Exemple : 1 000 abonnés à 1 155 XAF, solde 5 000 puis 3 845.
+- Le lien doit être de la bonne plateforme ; la quantité doit rester entre le minimum et le maximum du service.
+- Double clic : une seule commande, un seul débit.
+- Solde insuffisant : « Il vous manque X XAF » avec un bouton vers la recharge.
+- Plafond de 100 000 XAF par client sur 24 heures (réglage modifiable). 10 commandes par minute au maximum.
+- Total arrondi au multiple de 5 XAF supérieur (ta décision du 2026-11-10).
+- Échec du fournisseur : commande « à vérifier », alerte, aucun remboursement ni renvoi automatique. Le client voit « en cours de vérification ».
+
+### Sécurité
+- Contrôle sécurité accepté au 2e passage. Corrigés : limite des commentaires, limite de débit du devis, valeur explicite du mode fournisseur en production.
+
+### Chiffres
+- 1 252 tests unitaires et 6 tests de navigateur verts ; tests de base : 473 réussis ou plus, 1 échec connu sans lien (un vrai compte dans la base locale). Lint sans erreur, types et build OK.
+- Couverture : pas 100 % strict sur `place-order.ts` (97,5 % des lignes) ni `submit-to-provider.ts`.
+
+### À surveiller
+- Reportés en phase 7 : rattrapage des commandes bloquées après un plantage, clé de commande unique par client, secret dédié de la route de test.
+- CI GitHub pas encore lue. Aucun vrai fournisseur ni vrai paiement.
+
 ## Phase 5 — Recharge SasPay en mode test (2026-11-10) — faite, en attente de validation
 
 ### Nouveau

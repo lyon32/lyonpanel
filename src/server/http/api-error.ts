@@ -77,7 +77,7 @@ export function getErrorMessage(
 ): string {
   // Montants du détail (ex. {min_xaf}) : seuls les nombres entiers sont insérés, tels quels.
   const base = (MESSAGES[locale][code] ?? '').replace(
-    /\{(min_xaf|max_xaf)\}/g,
+    /\{(min_xaf|max_xaf|missing_xaf|min|max|limit_xaf|new_total_xaf)\}/g,
     (match, key: string) => {
       const value = details?.[key];
       return typeof value === 'number' ? String(value) : match;

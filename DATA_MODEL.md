@@ -263,7 +263,7 @@ Colonnes cachées au client : `orders.cost_usd`, `orders.error`, `orders.provide
 | Fonction | Fait, en une transaction |
 |---|---|
 | `credit_payment(payment_id)` | si non `succeeded` (un paiement `failed` est refusé : `PAYMENT_NOT_PAYABLE`) et si `net_amount` = montant demandé : passe `succeeded`, crédite, journalise, augmente `total_recharged_xaf`, verse le bonus parrain si 1re recharge |
-| `place_order(user, service, link, qty, comments, idem_key)` | verrouille le portefeuille, recalcule prix + remise (total arrondi au XAF supérieur : `ceil(prix_1000 × quantité × (100 − remise) / 100 000)`), vérifie statut client, min/max, solde ; débite ; crée la commande |
+| `place_order(user, service, link, qty, comments, idem_key)` | verrouille le portefeuille, recalcule prix + remise (total arrondi au multiple de 5 XAF supérieur, minimum 5 : `ceil(prix_1000 × quantité × (100 − remise) / 100 000 / 5) × 5` ; plafond 24 h = min(`settings.daily_order_cap_xaf`, `daily_spend_limit_xaf`) ; commentaires validés (`COMMENTS_INVALID`)), vérifie statut client, min/max, solde ; débite ; crée la commande |
 | `refund_order(order_id, amount, admin_id)` | un seul remboursement par commande, total ou partiel, qui clôt la commande (`refunded`) : crédite, journalise, écrit `audit_log` |
 | `admin_adjust(user, amount, note, admin_id)` | ajustement manuel + audit |
 | `anonymize_user(user_id)` | email/téléphone/messages → null, `status='deleted'`, supprime pièces jointes, favoris, sessions, jetons, mot de passe et sujet des tickets, garde commandes/paiements |
