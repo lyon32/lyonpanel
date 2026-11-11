@@ -70,6 +70,7 @@ create type currency_code  as enum ('XAF','XOF','USD');
 | country | char(2) | code ISO (CM, SN, CI…), non null |
 | display_currency | currency_code | défaut `XAF` |
 | language | text | `fr` ou `en`, défaut `fr` |
+| suggestions_enabled | boolean | not null, défaut `true` ; écrite par le serveur (PATCH /me), pas par le client |
 | status | user_status | défaut `active` |
 | is_admin | boolean | défaut false ; un seul `true` (le propriétaire) |
 | referral_code | text | unique, 8 caractères, généré à l'inscription |
@@ -250,6 +251,7 @@ Pagination par curseur (`created_at`, `id`) sur commandes, transactions, tickets
 |---|---|---|
 | profiles | lire/modifier **sa** ligne (sauf status, is_admin, custom_discount_pct, referred_by) | tout |
 | wallets, wallet_transactions, payments, orders | **lire** ses lignes ; aucune écriture directe | tout |
+| wallet_transactions (colonnes) | le client ne lit que `id, user_id, type, amount_xaf, balance_after_xaf, order_id, created_at` (pas `ref`, `note`, `created_by`, `payment_id` ; `select *` refusé) | tout |
 | services | via la vue `services_public` : actifs et disponibles, sans `provider_name`, `provider_type`, `cost_usd_1000`, `multiplier` | tout |
 | favorites, tickets, ticket_messages, ticket_attachments | ses lignes | tout |
 | admin_notes, settings, price_multipliers, audit_log, referral_rewards, service_price_history, provider_balance_snapshots, login_attempts, rate_limits, allowed_signups, idempotency_keys | **aucun accès** | tout |
@@ -266,6 +268,7 @@ Colonnes cachées au client : `orders.cost_usd`, `orders.error`, `orders.provide
 | `place_order(user, service, link, qty, comments, idem_key)` | verrouille le portefeuille, recalcule prix + remise (total arrondi au multiple de 5 XAF supérieur, minimum 5 : `ceil(prix_1000 × quantité × (100 − remise) / 100 000 / 5) × 5` ; plafond 24 h = min(`settings.daily_order_cap_xaf`, `daily_spend_limit_xaf`) ; commentaires validés (`COMMENTS_INVALID`)), vérifie statut client, min/max, solde ; débite ; crée la commande |
 | `refund_order(order_id, amount, admin_id)` | un seul remboursement par commande, total ou partiel, qui clôt la commande (`refunded`) : crédite, journalise, écrit `audit_log` |
 | `admin_adjust(user, amount, note, admin_id)` | ajustement manuel + audit |
+| `verify_user_password(user, password)` | renvoie `true` si le mot de passe correspond (compte non supprimé), sinon `false` ; `service_role` seul ; sert à `DELETE /me` (pas de captcha) |
 | `anonymize_user(user_id)` | email/téléphone/messages → null, `status='deleted'`, supprime pièces jointes, favoris, sessions, jetons, mot de passe et sujet des tickets, garde commandes/paiements |
 
 Remise appliquée = la plus grande entre la remise auto 10 % (si seuil atteint) et `custom_discount_pct` ; elles ne s'additionnent pas (mon choix).

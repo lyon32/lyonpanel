@@ -37,6 +37,10 @@ function DialogContent({
   );
 }
 
+function DialogHeader({ className, ...props }: React.ComponentProps<'div'>) {
+  return <div className={cn('flex flex-col gap-1', className)} {...props} />;
+}
+
 function DialogTitle({ className, ...props }: React.ComponentProps<typeof DialogPrimitive.Title>) {
   return (
     <DialogPrimitive.Title
@@ -55,4 +59,12 @@ function DialogDescription({
   );
 }
 
-export { Dialog, DialogTrigger, DialogClose, DialogContent, DialogTitle, DialogDescription };
+export {
+  Dialog,
+  DialogTrigger,
+  DialogClose,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+};

@@ -2,6 +2,35 @@
 
 Écrit pour le propriétaire. Une section par phase. Seul le propriétaire valide une phase.
 
+## Phase 8 — Espace client (2026-11-11) — faite, en attente de validation
+
+### Nouveau
+- Espace client sombre (tableau de bord, commandes, transactions, favoris, compte). Accueil, catalogue et connexion restent inchangés (blanc, bleu, jaune). Palette : accent #425EFF, gris #D7D7DA, fond #111111.
+- Tableau de bord : « Bonjour », 4 cartes de chiffres, une carte de suggestion de commande (calculée par le serveur, jamais de donnée fournisseur), dernières commandes.
+- Suggestion : bouton « Commander » qui pré-remplit le formulaire. La croix la ferme pour la visite ; « Ne plus afficher » la coupe pour de bon, sur tous tes appareils (réglage gardé en base).
+- Transactions : pages successives et filtre par type. Seules les colonnes publiques sont lisibles par le client.
+- Favoris : cœur sur la page Commander, page Favoris.
+- Compte : devise (XAF, XOF, USD), langue, téléphone (unique), suppression du compte avec mot de passe (anonymisation, solde non modifié).
+- Menu du bas sur téléphone. Solde réel dans l'en-tête (il affichait « — »). Bouton « Nouvelle commande » sur une seule ligne.
+- Boutons avec état de chargement puis de succès sur chaque action. FR et EN.
+- Les composants shadcn/ui ont tous été ajoutés (50 fichiers dans `src/components/ui`), les 7 existants intacts. Aucune autre bibliothèque.
+
+### Base de données (3 migrations)
+- `20261111100000` : réglage « suggestion désactivée » dans le profil.
+- `20261111120000` : fonction de vérification du mot de passe, réservée au serveur.
+- `20261111130000` : le client ne lit que les colonnes publiques de ses transactions.
+
+### Sécurité
+- Contrôle sécurité accepté au 2e passage : aucune faille critique, haute ou moyenne. 1 moyenne et 1 basse corrigées.
+
+### Chiffres
+- 1 334 tests unitaires sur 1 334, 15 tests de base sur 15 pour le fichier corrigé (suite de base : 597 sur 598 avant correction), 8 tests de navigateur sur 8. Lint sans erreur, types, format et build OK.
+
+### À surveiller
+- Les 9 nuances intermédiaires de la palette sont calculées, pas relevées sur l'outil Radix. Le « # » du nom des services (identifiant du fournisseur) est gardé à ta demande, affiché « Réf. N ».
+- Numéro de téléphone marqué confirmé sans code SMS (à traiter en phase 15). CI GitHub pas encore lue (pas de PR).
+- Reportés : onglets, Filtrer/Trier/Colonnes, « Aide » et « Déconnexion » en barre latérale, cartes de chiffres sur plus de 100 commandes, prénom du bonjour, suppression de compte avec commandes en cours (phase 12).
+
 ## Phase 7 — Suivi des commandes et alertes (2026-11-10) — validée
 
 ### Nouveau

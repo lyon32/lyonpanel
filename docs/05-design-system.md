@@ -173,6 +173,34 @@ Dossier : `reference-design system/` (7 images fournies par le propriétaire le 
 5. **Sur téléphone** : la barre latérale devient un menu du bas (Commander, Commandes, Recharger, Compte), les 4 cartes de chiffres passent en 2 × 2, la fiche du service passe **sous** le formulaire.
 6. **Formulaire de commande** : une colonne, libellés au-dessus des champs, min/max affichés dans le champ quantité, total en direct à côté du bouton.
 
+## 11. Espace client sombre (ajout du 2026-11-11, décision explicite du propriétaire)
+
+Exception à « blanc, bleu, jaune » et à « pas de mode sombre » **pour l'espace client seulement** (tableau de bord, commandes, recharge, transactions, favoris, compte). Accueil, catalogue et pages de connexion restent inchangés. Pas de bouton clair/sombre.
+
+- **Palette** : générée avec Radix Colors (outil de palette personnalisée) : accent `#425EFF`, gris `#D7D7DA`, fond `#111111`. Les 12 nuances sont des variables CSS sous la classe `.lp-app` (`src/styles/globals.css`). **Aucune bibliothèque ajoutée** (ni Radix Colors, ni HeroUI) ; composants = shadcn/ui.
+- Les rôles de §1 se transposent : fond de page = fond `#111111`, cartes = nuances 2-3 du gris, texte = nuances 11-12, bouton principal = accent, statuts (terminé, en cours, échec) gardent leur sens avec des teintes lisibles sur fond sombre.
+- Contrastes ≥ 4,5:1 (texte), ≥ 3:1 (bordures d'éléments actifs). Public Sans, §2 à §7 inchangés ; interdits de §1 (néons, arc-en-ciel) restent valables.
+- **Valeurs** (calculées, voir note ; variables `--lp-gray-N`, `--lp-accent-N`, rôles `--lp-app-*`) :
+
+| N | Gris | Accent |
+|---|---|---|
+| 1 | `#111111` | `#111113` |
+| 2 | `#191919` | `#121319` |
+| 3 | `#222223` | `#141520` |
+| 4 | `#2A2A2C` | `#151828` |
+| 5 | `#323234` | `#171A30` |
+| 6 | `#3B3B3E` | `#191E3A` |
+| 7 | `#4A4A4E` | `#1C2247` |
+| 8 | `#636368` | `#20285A` |
+| 9 | `#727278` | `#425EFF` |
+| 10 | `#808086` | `#5B73FF` |
+| 11 | `#A9A9B0` | `#9DB0FF` |
+| 12 | `#D7D7DA` | `#D6DDFF` |
+
+- **Rôles** : fond `gray-1`, carte `gray-2`, carte relevée `gray-3`, bordure `gray-6`, bordure active `gray-9`, texte `gray-12`, texte secondaire `gray-11`, bouton `accent-9` (survol `#3A55F2`, texte blanc), lien `accent-11`. Statuts : terminé `#4ADE80`, en cours `#7DA2FF`, échec `#FF7A7A`, à vérifier `#F5C451`.
+- **Contrastes mesurés** (WCAG) : texte `gray-12` 13,15:1 sur fond, 12,24:1 sur carte ; `gray-11` 8,08:1 / 7,53:1 ; `accent-11` 9,07:1 / 8,45:1 ; statuts 7,48 à 11,6:1 sur fond (6,96 à 10,8:1 sur carte) ; blanc sur bouton `accent-9` 4,91:1, au survol 5,58:1. Bordure active `gray-9` 3,95:1 sur fond, 3,67:1 sur carte ; anneau de focus `accent-9` 3,85:1 / 3,58:1. La bordure simple `gray-6` (1,69:1) est décorative, pas un élément actif.
+- *Note* : les valeurs n'ont pas pu être lues sur l'outil Radix (navigateur indisponible dans la tâche). Elles sont calculées : accent-9 = `#425EFF`, gray-12 = `#D7D7DA`, gray-1 = `#111111` imposés ; les autres nuances sont interpolées à la main, pas par l'algorithme exact de Radix. À remplacer par les valeurs de l'outil si le propriétaire le souhaite.
+
 ## 10. Pages de compte (ajout du 2026-11-09, décision explicite du propriétaire)
 
 Exception à « blanc, bleu, jaune » **pour les pages de compte seulement** (inscription, connexion, mot de passe oublié, nouveau mot de passe).

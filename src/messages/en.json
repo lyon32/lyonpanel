@@ -17,7 +17,10 @@
     "bottomOrder": "Order",
     "mainLabel": "Main navigation",
     "appLabel": "Customer area",
-    "bottomLabel": "Bottom menu"
+    "bottomLabel": "Bottom menu",
+    "dashboard": "Dashboard",
+    "transactions": "Transactions",
+    "favorites": "Favorites"
   },
   "footer": {
     "privacy": "Privacy",
@@ -256,6 +259,18 @@
       "morning": "Good morning",
       "afternoon": "Good afternoon",
       "evening": "Good evening"
+    },
+    "recent": "Latest orders",
+    "seeAll": "See all",
+    "stats": {
+      "label": "Your numbers",
+      "balance": "Balance",
+      "orders": "Orders",
+      "spent": "Total spent",
+      "completed": "Completed",
+      "discount": "{pct}% discount",
+      "lastOrders": "Last {count} orders",
+      "completedRate": "{pct}% completed"
     }
   },
   "pages": {
@@ -528,5 +543,87 @@
     "emptyCta": "Place an order",
     "reviewHint": "We are checking this order. We will get back to you as soon as it is sorted.",
     "quantity": "{count} units"
+  },
+  "suggestion": {
+    "title": "Your usual order",
+    "quantity": "{count} units",
+    "order": "Order",
+    "dismiss": "Close the suggestion",
+    "disable": "Don’t show again",
+    "disableError": "This choice could not be saved. Try again."
+  },
+  "transactions": {
+    "title": "Transactions",
+    "filterLabel": "Type of movement",
+    "filterAll": "All types",
+    "types": {
+      "recharge": "Top-up",
+      "order": "Order",
+      "refund": "Refund",
+      "referral_bonus": "Referral bonus",
+      "adjustment": "Adjustment"
+    },
+    "orderRef": "Order #{id}",
+    "balanceAfter": "Balance: {amount}",
+    "empty": "No movement yet.",
+    "emptyHint": "Your top-ups and orders will show up here.",
+    "emptyFiltered": "No movement of this type.",
+    "paging": "Pages",
+    "next": "Next page",
+    "first": "Back to start"
+  },
+  "favorites": {
+    "title": "Favorites",
+    "empty": "No favorites yet.",
+    "emptyHint": "Open a service on the Order page and tap “Favorite” to find it here.",
+    "emptyCta": "Browse services",
+    "order": "Order",
+    "remove": "Remove",
+    "removing": "Removing…",
+    "removed": "Removed",
+    "price": "{price} per 1,000",
+    "removeError": "The favorite could not be removed. Try again.",
+    "toggle": "Favorite",
+    "saving": "Saving…",
+    "saved": "Saved",
+    "toggleError": "The favorite could not be saved. Try again."
+  },
+  "account": {
+    "title": "My account",
+    "preferences": "Preferences",
+    "currency": "Display currency",
+    "language": "Language",
+    "phone": "Phone",
+    "phoneHint": "International format, for example +237 6 12 34 56 78.",
+    "suggestions": "Order suggestion",
+    "suggestionsHint": "Shows the service you order most on your dashboard.",
+    "save": "Save",
+    "saving": "Saving…",
+    "saved": "Saved",
+    "saveError": "Your changes could not be saved. Try again.",
+    "linkTransactions": "My transactions",
+    "linkFavorites": "My favorites",
+    "delete": {
+      "title": "Delete my account",
+      "description": "Your personal data is erased. Any remaining balance is not refunded automatically: contact support before deleting.",
+      "open": "Delete my account",
+      "confirmTitle": "Delete your account?",
+      "confirmText": "This cannot be undone. Enter your password to confirm.",
+      "password": "Password",
+      "passwordRequired": "Enter your password.",
+      "cancel": "Cancel",
+      "confirm": "Delete",
+      "deleting": "Deleting…",
+      "deleted": "Deleted",
+      "error": "The account could not be deleted. Try again.",
+      "wrongPassword": "Incorrect password."
+    },
+    "phoneErrors": {
+      "INVALID_PHONE": "Invalid number. Use the international format, for example +237612345678.",
+      "PHONE_TAKEN": "This phone number is already in use."
+    }
+  },
+  "service": {
+    "ref": "Ref. {id}"
   }
 }

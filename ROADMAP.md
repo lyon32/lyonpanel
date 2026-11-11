@@ -173,7 +173,7 @@ Pages par pays, blog, commandes en lot, notifications client, email « nouvelle 
 | 5 | validée par le propriétaire (2026-11-10) | — |
 | 6 | validée (2026-11-10) | — |
 | 7 | validée (2026-11-10) | — |
-| 8 | à faire | — |
+| 8 | faite – en attente de validation (2026-11-11) | — |
 | 9 | à faire | — |
 | 10 | à faire | — |
 | 11 | à faire | — |

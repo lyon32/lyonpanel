@@ -37,7 +37,7 @@ export function encodeCursor(row: { created_at: string; id: string }): string {
   return Buffer.from(`${row.created_at}|${row.id}`).toString('base64url');
 }
 
-function decodeCursor(cursor: string): { createdAt: string; id: string } {
+export function decodeCursor(cursor: string): { createdAt: string; id: string } {
   const [createdAt, id] = Buffer.from(cursor, 'base64url').toString().split('|');
   if (
     !createdAt ||
@@ -52,7 +52,7 @@ function decodeCursor(cursor: string): { createdAt: string; id: string } {
 }
 
 // Valeurs déjà validées (ISO, UUID) : rien de libre n'entre dans le filtre.
-function keysetFilter(c: { createdAt: string; id: string }): string {
+export function keysetFilter(c: { createdAt: string; id: string }): string {
   const date = c.createdAt.replace('+00:00', 'Z');
   return ['created_at.lt.', date, ',and(created_at.eq.', date, ',id.lt.', c.id, ')'].join('');
 }

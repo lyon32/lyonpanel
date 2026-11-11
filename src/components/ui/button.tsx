@@ -5,7 +5,7 @@ import { Check, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/cn';
 
 const buttonVariants = cva(
-  'inline-flex min-h-11 items-center justify-center gap-2 rounded-lg px-4 text-base font-semibold whitespace-nowrap transition-colors duration-150 ease-out outline-none focus-visible:ring-4 focus-visible:ring-bleu-100 disabled:pointer-events-none disabled:opacity-50',
+  'inline-flex items-center justify-center gap-2 rounded-lg text-base font-semibold whitespace-nowrap transition-colors duration-150 ease-out outline-none focus-visible:ring-4 focus-visible:ring-bleu-100 disabled:pointer-events-none disabled:opacity-50',
   {
     variants: {
       variant: {
@@ -13,9 +13,24 @@ const buttonVariants = cva(
         secondary: 'bg-blanc border border-gris-200 text-encre hover:bg-gris-50',
         ghost: 'bg-transparent text-bleu-600 hover:bg-bleu-50',
         destructive: 'bg-erreur text-blanc hover:opacity-90',
+        // Alias shadcn : "default" = primary, "outline" = secondary, "link" = lien souligné.
+        default: 'bg-bleu-600 text-blanc hover:bg-bleu-700',
+        outline: 'bg-blanc border border-gris-200 text-encre hover:bg-gris-50',
+        link: 'bg-transparent text-bleu-600 underline-offset-4 hover:underline',
+      },
+      // "default" garde la taille historique (44 px de haut minimum, cible tactile).
+      size: {
+        default: 'min-h-11 px-4',
+        xs: 'min-h-6 px-2 text-xs',
+        sm: 'min-h-9 px-3 text-sm',
+        lg: 'min-h-12 px-6',
+        icon: 'size-11 p-0',
+        'icon-xs': 'size-6 p-0',
+        'icon-sm': 'size-9 p-0',
+        'icon-lg': 'size-12 p-0',
       },
     },
-    defaultVariants: { variant: 'primary' },
+    defaultVariants: { variant: 'primary', size: 'default' },
   },
 );
 
@@ -33,6 +48,7 @@ export interface ButtonProps
 function Button({
   className,
   variant,
+  size,
   asChild = false,
   loading = false,
   loadingLabel,
@@ -46,7 +62,7 @@ function Button({
   return (
     <Comp
       className={cn(
-        buttonVariants({ variant }),
+        buttonVariants({ variant, size }),
         (loading || success) && 'disabled:opacity-100',
         className,
       )}

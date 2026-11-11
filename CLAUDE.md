@@ -116,13 +116,13 @@ Un agent ne démarre jamais avant ce dont il dépend ; ce qui est indépendant t
 
 > À mettre à jour au début de chaque phase (`ROADMAP.md`).
 
-**Phase en cours : Phase 7 — Suivi des commandes + alertes (terminée, fusionnée ; la phase 8 démarre dans une nouvelle session)** (Phases 0 et 1 validées le 2026-11-07, phase 2 le 2026-11-08, phase 3 le 2026-11-09, phases 4, 5, 6 et 7 le 2026-11-10)
+**Phase en cours : Phase 8 — Espace client** (Phases 0 et 1 validées le 2026-11-07, phase 2 le 2026-11-08, phase 3 le 2026-11-09, phases 4, 5, 6 et 7 le 2026-11-10)
 
-**Périmètre (seulement ceci)** : détail dans `docs/plans/phase-7.md` — cron `/api/cron/orders` (lots de 100), faux fournisseur qui avance, badges de statut, barre de progression, polling 30 s, `notifyOwner` Telegram (préfixe `[TEST]` hors production, une alerte par commande et par type). Décisions : partiel ou annulé = `to_review` + alerte sans remboursement ; commande bloquée « en envoi » > 5 min = `to_review` + alerte, **jamais** de renvoi de `provider.add` ; `idem_key` unique par `(user_id, idem_key)` ; secret dédié `TEST_ROUTE_SECRET` pour `fail-next` ; faux Telegram en tests, vrai message `[TEST]` seulement quand le propriétaire a créé le bot.
+**Périmètre (seulement ceci)** : détail dans `docs/plans/phase-8.md` — tableau de bord, historiques commandes et transactions, favoris, page compte (devise, langue, téléphone, suppression), suggestion de commande calculée côté serveur (carte discrète, fermable, désactivable dans le navigateur, FR/EN), états de chargement et de succès sur toutes les actions. Décisions du propriétaire (2026-11-11) : **espace client en thème sombre seulement**, palette Radix (accent `#425EFF`, gris `#D7D7DA`, fond `#111111`) en variables CSS sous `.lp-app` (`docs/05` §11) ; accueil, catalogue et connexion inchangés (blanc, bleu `#1D4ED8`, jaune) ; **aucune bibliothèque ajoutée** (ni Radix Colors ni HeroUI, shadcn/ui seulement) ; skills de design utilisés partout (`unslop`, `antislop-*`, `baseline-ui`, `improve-ui`, `fixing-accessibility`, `ui-ux-pro-max`, `apple-design-hig`, `ponytail`). Points reportés de la phase 7 : solde de l'en-tête « — », bouton « Nouvelle commande » sur 2 lignes, nom de service à vérifier (`#` ≠ identifiant fournisseur).
 
-**Hors périmètre** : espace client (phase 8), vrai fournisseur et vrais paiements (phase 15), remboursement/renvoi/clôture admin (phase 12), Worker Cloudflare réel (phase 13).
+**Hors périmètre** : support (phase 9), parrainage et remises (phase 10), admin (11-12), accueil et pages publiques (phase 14), vrai fournisseur et vrais paiements (phase 15), thème clair/sombre.
 
-**Terminé quand** : une commande passe seule de « en cours » à « terminée » ; un échec envoie une alerte ; lint, types, tests, build et CI verts (CI lue sur la PR) ; `lp-security` accepté ; rapport dans `docs/reports/phase-7/`.
+**Terminé quand** : tout l'espace client fonctionne sur petit téléphone (360 px) en sombre, FR et EN ; lint, types, tests, build et CI verts (CI lue sur la PR) ; `lp-security` accepté ; rapport dans `docs/reports/phase-8/`.
 
 ## État des documents
 

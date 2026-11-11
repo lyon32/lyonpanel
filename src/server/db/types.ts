@@ -381,6 +381,7 @@ export type Database = {
           referral_code: string;
           referred_by: string | null;
           status: Database['public']['Enums']['user_status'];
+          suggestions_enabled: boolean;
           updated_at: string;
         };
         Insert: {
@@ -399,6 +400,7 @@ export type Database = {
           referral_code: string;
           referred_by?: string | null;
           status?: Database['public']['Enums']['user_status'];
+          suggestions_enabled?: boolean;
           updated_at?: string;
         };
         Update: {
@@ -417,6 +419,7 @@ export type Database = {
           referral_code?: string;
           referred_by?: string | null;
           status?: Database['public']['Enums']['user_status'];
+          suggestions_enabled?: boolean;
           updated_at?: string;
         };
         Relationships: [
@@ -932,6 +935,7 @@ export type Database = {
           p_user: string;
         };
         Returns: {
+          alerted_at: string | null;
           charged_xaf: number;
           comments: string[] | null;
           cost_usd: number | null;
@@ -962,6 +966,7 @@ export type Database = {
       refund_order: {
         Args: { p_admin: string; p_amount: number; p_order: string };
         Returns: {
+          alerted_at: string | null;
           charged_xaf: number;
           comments: string[] | null;
           cost_usd: number | null;
@@ -988,6 +993,10 @@ export type Database = {
           isOneToOne: true;
           isSetofReturn: false;
         };
+      };
+      verify_user_password: {
+        Args: { p_password: string; p_user: string };
+        Returns: boolean;
       };
     };
     Enums: {
