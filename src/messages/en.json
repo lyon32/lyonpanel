@@ -621,7 +621,8 @@
     "phoneErrors": {
       "INVALID_PHONE": "Invalid number. Use the international format, for example +237612345678.",
       "PHONE_TAKEN": "This phone number is already in use."
-    }
+    },
+    "phoneRateLimited": "You changed your number too many times. Try again in an hour."
   },
   "service": {
     "ref": "Ref. {id}"

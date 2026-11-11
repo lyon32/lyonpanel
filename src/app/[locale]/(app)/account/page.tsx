@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { CircleUserRound, Heart, Receipt } from 'lucide-react';
+import { Heart, Receipt } from 'lucide-react';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { AccountForm } from '@/components/account/account-form';
 import { DeleteAccount } from '@/components/account/delete-account';
@@ -28,10 +28,7 @@ export default async function AccountPage({ params }: Props) {
   ] as const;
   return (
     <section className="flex max-w-2xl flex-col gap-4">
-      <h1 className="text-encre flex items-center gap-2 text-2xl font-bold md:text-3xl">
-        <CircleUserRound size={28} aria-hidden="true" className="text-gris-400" />
-        {t('title')}
-      </h1>
+      <h1 className="text-encre text-2xl font-bold md:text-3xl">{t('title')}</h1>
       <AccountForm
         email={me.email}
         currency={me.display_currency}

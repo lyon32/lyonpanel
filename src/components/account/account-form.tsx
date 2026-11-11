@@ -51,6 +51,7 @@ export function AccountForm(props: Props) {
       const code = result.fields.phone ?? (result.code === 'PHONE_TAKEN' ? 'PHONE_TAKEN' : null);
       if (code === 'PHONE_TAKEN' || code === 'INVALID_PHONE')
         setPhoneError(t(`phoneErrors.${code}`));
+      else if (result.code === 'RATE_LIMITED' && body.phone) setPhoneError(t('phoneRateLimited'));
       else setError(result.message || t('saveError'));
       throw new Error(result.code);
     }
