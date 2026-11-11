@@ -2,7 +2,7 @@
 
 Écrit pour le propriétaire. Une section par phase. Seul le propriétaire valide une phase.
 
-## Phase 8 — Espace client (2026-11-11) — faite, en attente de validation
+## Phase 8 — Espace client (2026-11-11) — validée
 
 ### Nouveau
 - Espace client sombre (tableau de bord, commandes, transactions, favoris, compte). Accueil, catalogue et connexion restent inchangés (blanc, bleu, jaune). Palette : accent #425EFF, gris #D7D7DA, fond #111111.

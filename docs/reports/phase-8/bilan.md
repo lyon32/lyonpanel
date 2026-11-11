@@ -1,5 +1,5 @@
 # Bilan — Phase 8 : Espace client
-Date : 2026-11-11 · Statut : faite – en attente de validation
+Date : 2026-11-11 · Statut : validée par le propriétaire (2026-11-11), PR 18
 
 ## Objectif de la phase (ROADMAP.md)
 Tout l'espace client fonctionne sur petit téléphone : tableau de bord, commandes, transactions, favoris, compte, suggestion de commande, états de chargement et de succès. Tout avec le faux fournisseur et le faux SasPay : aucun argent réel.
@@ -50,10 +50,11 @@ Tout l'espace client fonctionne sur petit téléphone : tableau de bord, command
 - 3 tests de limite de débit instables sous charge : passent seuls (déjà connus en phase 7).
 - Supabase exige un captcha pour vérifier un mot de passe : remplacé par la fonction SQL `verify_user_password` (réservée au serveur).
 - `rls.test.ts` ajusté après la migration des colonnes de transactions.
+- Deux échecs de la vraie CI sur la PR 18, corrigés : (1) le test e2e du parcours de comptes de la phase 3 attendait « Bonjour » seul, alors que le titre est maintenant « Bonjour, <prénom> » ; (2) gitleaks a signalé le faux mauvais mot de passe de test de `tests/db/me-routes.test.ts:217` (ligne ajoutée à `.gitleaksignore` avec l'accord du propriétaire).
 
 ## Ce qui n'a PAS été fait ou testé
 - **Palette : seules 3 valeurs sont exactes** (accent-9 `#425EFF`, gris-12 `#D7D7DA`, gris-1 `#111111`). Les 9 nuances intermédiaires sont **calculées**, pas relevées sur l'outil Radix (l'agent n'avait pas de navigateur). Proposition : tu relèves les vraies valeurs, ou on les relève ensemble.
-- **CI GitHub non lue** : il n'y a pas encore de PR pour la phase 8. La case reste non cochée.
+- CI GitHub : lue ensuite sur la PR 18, verte (voir « Décision »).
 - Mode anglais vérifié en navigateur par la QA seulement.
 - Temps de chargement sur build de production non mesuré.
 - Vrai Telegram non concerné ici. Aucun vrai fournisseur, aucun vrai paiement.
@@ -92,5 +93,5 @@ Tout l'espace client fonctionne sur petit téléphone : tableau de bord, command
 - Phase 9 (support, tickets, captures de 2 Mo maximum, bucket privé) : **rien à préparer**.
 - À décider quand tu veux : relever les vraies valeurs de la palette Radix, harmoniser les autres documents sur le sombre de l'espace client, garder ou non le « # » (identifiant fournisseur).
 
-## Décision attendue : « validé » ou corrections
-Seul le propriétaire écrit « validé ». Avant la fusion, la CI GitHub doit être lue sur la PR et verte (pas encore faite).
+## Décision
+Validé par le propriétaire (message « valide » écrit par lui dans la session). CI lue sur la PR 18 : job ci vert (11 min 34 s) sur le commit 8a8d0d0 après 2 corrections : test e2e du titre « Bonjour, <prénom> » et faux positif gitleaks (mot de passe de test, ligne ajoutée à .gitleaksignore avec accord).

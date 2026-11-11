@@ -1,10 +1,10 @@
 # Tableau de bord LyonPanel
-Mis à jour le 2026-11-11 (phase 8 faite). Chiffres lus dans les comptes-rendus des phases 1 à 8.
+Mis à jour le 2026-11-11 (phase 8 validée). Chiffres lus dans les comptes-rendus des phases 1 à 8.
 
-**En 5 secondes :** les phases 0 à 7 sont validées. La phase 8 (espace client) est faite et attend ta validation. Ce qui manque : la CI GitHub à lire sur la PR. Ensuite : phase 9, support (rien à préparer de ton côté).
+**En 5 secondes :** les phases 0 à 8 sont validées. La phase 8 (espace client) est validée le 2026-11-11, CI de la PR 18 verte (11 min 34 s). Rien ne bloque. Ensuite : phase 9, support (rien à préparer de ton côté).
 
 ## 1. Avancement des phases
-Bleu : validée. Jaune : faite, en attente de validation. Gris : à faire. Dates réelles : phases 0 et 1 le 2026-11-07, phase 2 le 2026-11-08, phase 3 le 2026-11-09, phases 4 à 7 le 2026-11-10, phase 8 faite le 2026-11-11.
+Bleu : validée. Jaune : faite, en attente de validation. Gris : à faire. Dates réelles : phases 0 et 1 le 2026-11-07, phase 2 le 2026-11-08, phase 3 le 2026-11-09, phases 4 à 7 le 2026-11-10, phase 8 le 2026-11-11.
 
 ```mermaid
 flowchart LR
@@ -15,7 +15,7 @@ flowchart LR
   P4 --> P5["Phase 5 Recharge SasPay<br/>validée<br/>2026-11-10"]
   P5 --> P6["Phase 6 Commande<br/>validée<br/>2026-11-10"]
   P6 --> P7["Phase 7 Suivi et alertes<br/>validée<br/>2026-11-10"]
-  P7 --> P8["Phase 8 Espace client<br/>faite, attend validation<br/>2026-11-11"]
+  P7 --> P8["Phase 8 Espace client<br/>validée<br/>2026-11-11"]
   P8 --> P9["9 Support"]
   P9 --> P10["10 Parrainage"]
   P10 --> P11["11 Admin 1"]
@@ -27,8 +27,7 @@ flowchart LR
   classDef valide fill:#DBEAFE,stroke:#1D4ED8,color:#000
   classDef enattente fill:#FEF3C7,stroke:#B45309,color:#000
   classDef afaire fill:#E5E7EB,stroke:#6B7280,color:#000
-  class P0,P1,P2,P3,P4,P5,P6,P7 valide
-  class P8 enattente
+  class P0,P1,P2,P3,P4,P5,P6,P7,P8 valide
   class P9,P10,P11,P12,P13,P14,P15,P16 afaire
 ```
 
@@ -85,7 +84,7 @@ pie showData
 ```
 
 ## 4. Qui fait quoi maintenant
-Plus aucun agent actif. Le chef de projet ouvre la PR et lit la CI, puis le propriétaire teste et dit « validé ».
+Plus aucun agent actif. La CI de la PR 18 est verte et le propriétaire a validé. Reste la fusion, puis la phase 9.
 
 ```mermaid
 flowchart TD
@@ -100,14 +99,13 @@ flowchart TD
   R --> RP["8.6 Rapport<br/>lp-reporter : fait"]
   Q --> RP
   S --> RP
-  RP --> PR["PR vers main<br/>CI à lire"]
-  PR --> OWN["Propriétaire : tester et dire validé"]
+  RP --> PR["PR 18 vers main<br/>CI verte"]
+  PR --> OWN["Propriétaire : validé"]
   OWN --> NEXT["Phase 9 Support"]
   classDef fait fill:#DBEAFE,stroke:#1D4ED8,color:#000
   classDef attente fill:#FEF3C7,stroke:#B45309,color:#000
   classDef afaire fill:#E5E7EB,stroke:#6B7280,color:#000
-  class T0,T1,T3,T4,T8,R,Q,S,RP fait
-  class PR,OWN attente
+  class T0,T1,T3,T4,T8,R,Q,S,RP,PR,OWN fait
   class NEXT afaire
 ```
 

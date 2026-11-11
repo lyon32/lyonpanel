@@ -144,9 +144,9 @@
     "semantic_hash": ""
   },
   "src/app/[locale]/(app)/account/page.tsx": {
-    "mtime": 1794385288.6181555,
-    "seen": 1794385643.9748306,
-    "ast_hash": "bded888ae67965419cbb47ac60b86e05",
+    "mtime": 1794390725.3675091,
+    "seen": 1794427431.5970602,
+    "ast_hash": "a09187e11a701475cec9111ec7d2a3b6",
     "semantic_hash": ""
   },
   "src/app/[locale]/(app)/add-funds/page.tsx": {
@@ -606,15 +606,15 @@
     "semantic_hash": ""
   },
   "src/messages/en.json": {
-    "mtime": 1794385288.806356,
-    "seen": 1794385644.0391169,
-    "ast_hash": "1d03a5298fbe473748661a4450f9cd09",
+    "mtime": 1794390719.5607173,
+    "seen": 1794427431.772016,
+    "ast_hash": "d06f8358ff62f089366d814d2d94344b",
     "semantic_hash": ""
   },
   "src/messages/fr.json": {
-    "mtime": 1794385288.782292,
-    "seen": 1794385644.0398035,
-    "ast_hash": "1be2e73a1a35bdb18b22e8d9390ef6fb",
+    "mtime": 1794390719.5587132,
+    "seen": 1794427431.7729135,
+    "ast_hash": "90bff8533108dbf5b2c0c0b184e0bb42",
     "semantic_hash": ""
   },
   "src/proxy.ts": {
@@ -2094,9 +2094,9 @@
     "semantic_hash": ""
   },
   "CHANGELOG.md": {
-    "mtime": 1794387197.2612104,
-    "seen": 1794387455.32461,
-    "ast_hash": "63ffe725d873590452ada919f16e5846",
+    "mtime": 1794427379.5826485,
+    "seen": 1794427432.0266373,
+    "ast_hash": "974f3ac5dd0d77e821fed06a69148f27",
     "semantic_hash": ""
   },
   "CI_CD.md": {
@@ -2106,9 +2106,9 @@
     "semantic_hash": ""
   },
   "CLAUDE.md": {
-    "mtime": 1794377398.711227,
-    "seen": 1794378672.2077446,
-    "ast_hash": "cfd02191905e6637f3c7c0cd77259940",
+    "mtime": 1794427343.0662382,
+    "seen": 1794427432.0269637,
+    "ast_hash": "5408fecaeedf3ed78e33e0fb4b36985f",
     "semantic_hash": ""
   },
   "CONVENTIONS.md": {
@@ -2148,9 +2148,9 @@
     "semantic_hash": ""
   },
   "ROADMAP.md": {
-    "mtime": 1794387197.2581286,
-    "seen": 1794387455.3270872,
-    "ast_hash": "933609e499e693c27c413f76c18a63d0",
+    "mtime": 1794427379.5811336,
+    "seen": 1794427432.028882,
+    "ast_hash": "e304830949d63dd9e273a2ca38fef71b",
     "semantic_hash": ""
   },
   "SECURITY_NOTES.md": {
@@ -2262,9 +2262,9 @@
     "semantic_hash": ""
   },
   "docs/reports/TABLEAU-DE-BORD.md": {
-    "mtime": 1794387345.72876,
-    "seen": 1794387455.3364983,
-    "ast_hash": "e5fe91361cc93f98268dad95543dac47",
+    "mtime": 1794427379.5866606,
+    "seen": 1794427432.0366678,
+    "ast_hash": "031a645cdb708ae8e1e32a77abe06b14",
     "semantic_hash": ""
   },
   "docs/reports/phase-0/2026-11-07-tache-0.1.md": {
@@ -3300,9 +3300,9 @@
     "semantic_hash": ""
   },
   "tests/e2e/auth.spec.ts": {
-    "mtime": 1794376959.215082,
-    "seen": 1794378672.206925,
-    "ast_hash": "4741252dfaaded47261a0dfb80220f70",
+    "mtime": 1794389477.7024243,
+    "seen": 1794427431.8536537,
+    "ast_hash": "b950abda8df3e62cb00550ab89248d84",
     "semantic_hash": ""
   },
   "tests/helpers/memory-attempt-store.ts": {
@@ -7308,9 +7308,9 @@
     "semantic_hash": ""
   },
   "docs/plans/phase-8.md": {
-    "mtime": 1794387205.9472709,
-    "seen": 1794387455.3364909,
-    "ast_hash": "ce3d8b310b22deca058299afe864e448",
+    "mtime": 1794427379.5836644,
+    "seen": 1794427432.0366635,
+    "ast_hash": "043cc48f9cd199e2ceafa6f59329bcf1",
     "semantic_hash": ""
   },
   "docs/reports/phase-7/bilan.md": {
@@ -7746,9 +7746,9 @@
     "semantic_hash": ""
   },
   "src/components/account/account-form.tsx": {
-    "mtime": 1794385311.5876322,
-    "seen": 1794385643.9940617,
-    "ast_hash": "d0949ca883c525f577187854ed80db8f",
+    "mtime": 1794390725.2277153,
+    "seen": 1794427431.6489317,
+    "ast_hash": "2c38f8a3c10fb5a73a175eaedd7fa9a7",
     "semantic_hash": ""
   },
   "src/components/account/delete-account.tsx": {
@@ -8274,9 +8274,9 @@
     "semantic_hash": ""
   },
   "docs/reports/phase-8/bilan.md": {
-    "mtime": 1794387318.3830516,
-    "seen": 1794387455.3625047,
-    "ast_hash": "5803c737aa7d99fa1dc05bc3b880d6d2",
+    "mtime": 1794427379.5846598,
+    "seen": 1794427432.0595675,
+    "ast_hash": "5066a0b53998994ad201e5dc43b08691",
     "semantic_hash": ""
   },
   "docs/reports/phase-8/qa/rapport-qa-2.md": {

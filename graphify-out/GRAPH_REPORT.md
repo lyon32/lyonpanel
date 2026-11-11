@@ -1,7 +1,7 @@
 # Graph Report - unruffled-kowalevski-7a6c06  (2026-11-11)
 
 ## Corpus Check
-- 816 files · ~553,569 words
+- 816 files · ~553,690 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 51 file(s) not represented in the graph (top: (none) 45, .toml 2, .example 1)
 
@@ -11,7 +11,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `21f0ccfe`
+- Built from commit: `8a8d0d09`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -392,12 +392,12 @@
   ROADMAP.md → src/server/catalog/sync-services.ts
 - `Phase 7 — Suivi des commandes + alertes` --references--> `notifyOwner()`  [INFERRED]
   ROADMAP.md → src/server/providers/telegram.ts
-- `Ce qui a été fait` --references--> `ActionButton()`  [INFERRED]
-  docs/reports/phase-8/2026-11-11-tache-8.4.md → src/components/shared/action-button.tsx
 - `Résultat : ce qui marche maintenant` --references--> `ActionButton()`  [INFERRED]
   docs/reports/phase-8/bilan.md → src/components/shared/action-button.tsx
 - `Tâche 0.2 — Vérification des variables d'environnement` --references--> `MissingEnvError`  [INFERRED]
   docs/plans/phase-0.md → src/server/env.ts
+- `Ce qui a été fait` --references--> `placeOrder()`  [INFERRED]
+  docs/reports/phase-6/tache-6.1.md → src/server/orders/place-order.ts
 
 ## Import Cycles
 - None detected.
@@ -1306,7 +1306,7 @@ Nodes (7): Additional content, Additional requests, Best practices, Change log, 
 
 ### Community 226 - "Bilan — Phase 8 : Espace client"
 Cohesion: 0.15
-Nodes (12): Bilan — Phase 8 : Espace client, Ce que le propriétaire doit préparer pour la phase suivante, Ce qui n'a PAS été fait ou testé, Chiffres réels, Décision attendue : « validé » ou corrections, Décisions du propriétaire (2026-11-11), Objectif de la phase (ROADMAP.md), Points reportés (+4 more)
+Nodes (12): Bilan — Phase 8 : Espace client, Ce que le propriétaire doit préparer pour la phase suivante, Ce qui n'a PAS été fait ou testé, Chiffres réels, Décision, Décisions du propriétaire (2026-11-11), Objectif de la phase (ROADMAP.md), Points reportés (+4 more)
 
 ### Community 227 - "LyonPanel — Conventions"
 Cohesion: 0.18
@@ -1779,16 +1779,16 @@ Nodes (3): DOMAINS, INVALID, LinkCheck
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `vitest` connect `vitest` to `ComingSoon`, `requireApiUser`, `generate.ts`, `package.json`, `vitest`, `Link`, `useMotionLevel`, `Link`, `react`, `demo-basics.tsx`, `handle-webhook.ts`, `client.ts`, `home-hero.tsx`, `makeService`, `ref_node_fs`, `zod`, `demo-track-e.tsx`, `rate-limit.ts`, `[type]/page.tsx`, `generate.ts`, `EmptyState`, `providers/types.ts`, `sentry-scrub.ts`, `next-intl`, `sitemap.ts`, `api-error.ts`, `create-payment.ts`, `Card`, `orders-sync.test.ts`, `payments-reconcile.test.ts`, `orders-routes.test.ts`, `next`, `admin-adjust.test.ts`, `add-funds-form.tsx`, `compute-price.ts`, `(app)/layout.tsx`, `handler`, `sync-services.test.ts`, `sync-services.ts`, `ref_node_crypto`, `auth.ts`, `apiError`, `saspay-client.ts`, `robots.ts`, `dashboard/page.tsx`?**
-  _High betweenness centrality (0.080) - this node is a cross-community bridge._
+  _High betweenness centrality (0.104) - this node is a cross-community bridge._
 - **Are the 8 inferred relationships involving `apiError()` (e.g. with `10. Skills à utiliser` and `5. Méthode, pas à pas`) actually correct?**
   _`apiError()` has 8 INFERRED edges - model-reasoned connections that need verification._
 - **Should `ComingSoon` be split into smaller, more focused modules?**
   _Cohesion score 0.08143939393939394 - nodes in this community are weakly interconnected._
 - **Why does `react` connect `react` to `auth-shell.tsx`, `item.tsx`, `vitest`, `package.json`, `card-stack.tsx`, `Link`, `useMotionLevel`, `Link`, `react`, `demo-basics.tsx`, `cn.ts`, `dependencies`, `layout/sidebar.tsx`, `home-hero.tsx`, `message-scroller.tsx`, `select-field.tsx`, `demo-track-e.tsx`, `class-variance-authority`, `menubar.tsx`, `carousel.tsx`, `[type]/page.tsx`, `form.tsx`, `EmptyState`, `add-funds/[id]/page.tsx`, `navigation-menu.tsx`, `dropdown-menu.tsx`, `chart.tsx`, `drawer.tsx`, `sentry-scrub.ts`, `next-intl`, `Card`, `attachment.tsx`, `radix-ui`, `select.tsx`, `popover.tsx`, `ui/sidebar.tsx`, `bubble.tsx`, `message.tsx`, `combobox.tsx`, `add-funds-form.tsx`, `context-menu.tsx`, `(app)/layout.tsx`, `[locale]/layout.tsx`, `dashboard/page.tsx`?**
-  _High betweenness centrality (0.048) - this node is a cross-community bridge._
+  _High betweenness centrality (0.052) - this node is a cross-community bridge._
 - **Should `Accessibility Code Patterns` be split into smaller, more focused modules?**
   _Cohesion score 0.041666666666666664 - nodes in this community are weakly interconnected._
 - **Why does `next` connect `next` to `ComingSoon`, `requireApiUser`, `package.json`, `Link`, `react`, `handle-webhook.ts`, `cn.ts`, `dependencies`, `client.ts`, `zod`, `rate-limit.ts`, `[type]/page.tsx`, `add-funds/[id]/page.tsx`, `sentry-scrub.ts`, `next-intl`, `sitemap.ts`, `api-error.ts`, `Card`, `Référencement Afrique et design`, `payments-reconcile.test.ts`, `orders-routes.test.ts`, `vitest`, `auth-metadata.ts`, `handler`, `(app)/layout.tsx`, `list-orders.ts`, `robots.ts`, `[locale]/layout.tsx`, `dashboard/page.tsx`?**
-  _High betweenness centrality (0.040) - this node is a cross-community bridge._
+  _High betweenness centrality (0.037) - this node is a cross-community bridge._
 - **Should `contrast-check.py` be split into smaller, more focused modules?**
   _Cohesion score 0.07751937984496124 - nodes in this community are weakly interconnected._

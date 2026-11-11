@@ -56,6 +56,6 @@ Support / tickets (phase 9), parrainage et remises (phase 10), admin (phases 11-
 - [x] États de chargement et de succès sur chaque action du tableau de bord (ActionButton).
 - [x] Solde de l'en-tête correct, bouton « Nouvelle commande » sur une ligne, nom de service vérifié (le « # » est un identifiant du fournisseur, GARDÉ par choix du propriétaire, affiché « Réf. N »).
 - [x] Lint, types, tests, build verts ; `lp-security` accepté (2 passages).
-- [ ] CI GitHub lue sur la PR (vraie CI) et verte.
+- [x] CI GitHub lue sur la PR 18 (vraie CI) et verte (job `ci`, 11 min 34 s, commit 8a8d0d0).
 - [x] Rapport dans `docs/reports/phase-8/` et résumé en français simple.
-- [ ] Validation du propriétaire (« validé », écrit par lui).
+- [x] Validation du propriétaire (« valide », écrit par lui le 2026-11-11).
