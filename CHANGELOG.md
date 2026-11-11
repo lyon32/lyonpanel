@@ -2,7 +2,7 @@
 
 Écrit pour le propriétaire. Une section par phase. Seul le propriétaire valide une phase.
 
-## Phase 7 — Suivi des commandes et alertes (2026-11-10) — faite, en attente de validation
+## Phase 7 — Suivi des commandes et alertes (2026-11-10) — validée
 
 ### Nouveau
 - Une commande passe seule de « En cours » à « Terminée ». Un cron (toutes les 10 minutes) interroge le fournisseur par lots de 100, et la page des commandes se met à jour toutes les 30 secondes sans recharger.
@@ -46,7 +46,7 @@
 - Reportés en phase 7 : rattrapage des commandes bloquées après un plantage, clé de commande unique par client, secret dédié de la route de test.
 - CI GitHub pas encore lue. Aucun vrai fournisseur ni vrai paiement.
 
-## Phase 5 — Recharge SasPay en mode test (2026-11-10) — faite, en attente de validation
+## Phase 5 — Recharge SasPay en mode test (2026-11-10) — validée
 
 ### Nouveau
 - Recharge du solde de 500 à 500 000 XAF. Les frais sont payés en plus par le client : 3 000 XAF rechargés, 90 XAF de frais, 3 090 XAF payés, 3 000 XAF crédités.
@@ -65,7 +65,7 @@
 - Non testé : vrai SasPay, vrais paiements, forme réelle du champ `metadata`, réglage `ADD_ON` du compte SasPay (actions du propriétaire avant la phase 15).
 - Cinq points à confirmer par le propriétaire : voir `docs/reports/phase-5/bilan.md`.
 
-## Phase 4 — Prix et catalogue (2026-11-10) — faite, en attente de validation
+## Phase 4 — Prix et catalogue (2026-11-10) — validée
 
 ### Nouveau
 - Catalogue de 2 188 services rangés par réseau (Instagram, TikTok, YouTube, Facebook, Telegram, X, etc.) et par type (abonnés, likes, vues, commentaires, partages, autres). Données issues d'un faux fournisseur : le vrai n'est pas encore branché.

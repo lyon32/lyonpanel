@@ -1,5 +1,5 @@
 # Bilan — Phase 7 : Suivi des commandes + alertes
-Date : 2026-11-10 · Statut : en attente de validation du propriétaire
+Date : 2026-11-10 · Statut : validée par le propriétaire (2026-11-10), PR 16 fusionnée le 2026-11-11
 
 ## Objectif de la phase (ROADMAP.md)
 Une commande passe seule de « en cours » à « terminée ». Quand quelque chose cloche, tu reçois une alerte. Tout avec le faux fournisseur et un faux Telegram : aucun argent réel.
@@ -89,4 +89,4 @@ Une commande passe seule de « en cours » à « terminée ». Quand quelque cho
 - Pour la phase 8 (espace client) : rien d'autre à préparer.
 
 ## Décision attendue : « validé » ou corrections
-En attente de ta décision. Seul le propriétaire écrit « validé ».
+Validé par le propriétaire (message « valide » écrit par lui dans la session). CI lue sur la PR 16 : job `ci` vert (11 min 12 s) sur le commit 94490fd, puis fusion. Vrai message Telegram `[TEST]` reçu le 2026-11-11.
