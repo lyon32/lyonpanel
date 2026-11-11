@@ -54,6 +54,6 @@ Espace client complet (phase 8), vrai fournisseur et vrais paiements (phase 15),
 - [x] Échec fournisseur → alerte Telegram (faux en test ; vrai `[TEST]` si le bot est créé).
 - [x] `idem_key` unique par client ; secret `TEST_ROUTE_SECRET` dédié.
 - [x] Lint, types, tests, build verts ; `lp-security` accepté.
-- [ ] CI GitHub lue sur la PR (vraie CI) et verte.
+- [x] CI GitHub lue sur la PR (vraie CI) et verte.
 - [x] Rapport dans `docs/reports/phase-7/` et résumé en français simple.
-- [ ] Validation du propriétaire (« validé », écrit par lui).
+- [x] Validation du propriétaire (« valide », écrit par lui, 2026-11-10).

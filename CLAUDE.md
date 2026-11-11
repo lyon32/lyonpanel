@@ -116,7 +116,7 @@ Un agent ne démarre jamais avant ce dont il dépend ; ce qui est indépendant t
 
 > À mettre à jour au début de chaque phase (`ROADMAP.md`).
 
-**Phase en cours : Phase 7 — Suivi des commandes + alertes** (Phases 0 et 1 validées le 2026-11-07, phase 2 le 2026-11-08, phase 3 le 2026-11-09, phases 4, 5 et 6 le 2026-11-10)
+**Phase en cours : Phase 7 — Suivi des commandes + alertes (terminée, fusionnée ; la phase 8 démarre dans une nouvelle session)** (Phases 0 et 1 validées le 2026-11-07, phase 2 le 2026-11-08, phase 3 le 2026-11-09, phases 4, 5, 6 et 7 le 2026-11-10)
 
 **Périmètre (seulement ceci)** : détail dans `docs/plans/phase-7.md` — cron `/api/cron/orders` (lots de 100), faux fournisseur qui avance, badges de statut, barre de progression, polling 30 s, `notifyOwner` Telegram (préfixe `[TEST]` hors production, une alerte par commande et par type). Décisions : partiel ou annulé = `to_review` + alerte sans remboursement ; commande bloquée « en envoi » > 5 min = `to_review` + alerte, **jamais** de renvoi de `provider.add` ; `idem_key` unique par `(user_id, idem_key)` ; secret dédié `TEST_ROUTE_SECRET` pour `fail-next` ; faux Telegram en tests, vrai message `[TEST]` seulement quand le propriétaire a créé le bot.
 
