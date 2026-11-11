@@ -2,6 +2,28 @@
 
 Écrit pour le propriétaire. Une section par phase. Seul le propriétaire valide une phase.
 
+## Phase 7 — Suivi des commandes et alertes (2026-11-10) — faite, en attente de validation
+
+### Nouveau
+- Une commande passe seule de « En cours » à « Terminée ». Un cron (toutes les 10 minutes) interroge le fournisseur par lots de 100, et la page des commandes se met à jour toutes les 30 secondes sans recharger.
+- Liste des commandes refaite : pastilles de couleur (terminée, en cours, en attente, à vérifier), barre de progression avec pourcentage, état vide avec bouton « Commander ». FR et EN.
+- Commande partielle ou annulée chez le fournisseur : « à vérifier », une seule alerte, aucun remboursement automatique. Le client lit « Nous vérifions cette commande ».
+- Commande bloquée « en envoi » plus de 5 minutes après un plantage : « à vérifier » et alerte. Jamais renvoyée au fournisseur.
+- Alertes Telegram : une seule par commande, préfixe `[TEST]` hors production.
+- La clé de commande est unique par client et non plus pour toute la base.
+- Secret dédié `TEST_ROUTE_SECRET` pour les routes de test.
+
+### Sécurité
+- Contrôle sécurité accepté, aucune faille critique, haute ou moyenne. Deux failles Basses acceptées : pas de limite de fréquence sur le cron, routes de test accessibles en préversion Vercel avec le secret.
+
+### Chiffres
+- 1 313 tests unitaires sur 1 313 verts, 493 tests de base sur 493, 2 tests de navigateur sur 2. Lint sans erreur, types et build OK.
+
+### À surveiller
+- Vrai Telegram non testé : il faut d'abord créer le bot avec @BotFather. CI GitHub pas encore lue. Couverture non relancée.
+- Incident local : 96 commandes de test de la base locale sont passées en « annulée » par un nettoyage trop large. Aucun solde touché.
+- Reportés : Worker Cloudflare réel (phase 13), remboursement ou renvoi par l'administrateur (phase 12), interdiction du faux fournisseur avec les vrais paiements (phase 15).
+
 ## Phase 6 — Commande avec le faux fournisseur (2026-11-10) — validée
 
 ### Nouveau

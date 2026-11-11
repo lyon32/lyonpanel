@@ -15,9 +15,11 @@ export type OwnerEvent =
  */
 export async function notifyOwner(event: OwnerEvent, data: Record<string, unknown>): Promise<void> {
   try {
-    const { TELEGRAM_BOT_TOKEN: token, TELEGRAM_CHAT_ID: chatId } = loadServerEnv();
+    const { TELEGRAM_BOT_TOKEN: token, TELEGRAM_CHAT_ID: chatId, VERCEL_ENV } = loadServerEnv();
     if (!token || !chatId) return;
-    const text = `[LyonPanel] ${event}\n${JSON.stringify(data)}`.slice(0, 4000);
+    // Hors production, le propriétaire doit reconnaître une alerte de test au premier coup d'œil.
+    const prefix = VERCEL_ENV === 'production' ? '' : '[TEST] ';
+    const text = `${prefix}[LyonPanel] ${event}\n${JSON.stringify(data)}`.slice(0, 4000);
     await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },

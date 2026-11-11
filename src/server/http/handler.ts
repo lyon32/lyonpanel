@@ -43,7 +43,8 @@ function errorResponse(
 /** Enveloppe toutes les routes API : request_id, langue, Zod, ApiError, erreur inconnue. */
 export function handler<T>(
   fn: (req: NextRequest, ctx: Ctx) => Promise<T>,
-): (req: NextRequest) => Promise<Response> {
+): (req: NextRequest, routeCtx?: unknown) => Promise<Response> {
+  // routeCtx : contexte de route Next (params), ignoré ici mais accepté par les tests et routes dynamiques.
   return async (req) => {
     const ctx: Ctx = {
       requestId: `req_${randomBytes(4).toString('hex')}`,

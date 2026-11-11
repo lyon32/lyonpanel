@@ -1,0 +1,41 @@
+inscription OK qa-phase7-1794339979097@lyonpanel.test
+[tel] fr orders vide: overflow=false(360) petitesCibles=0  motsInterdits=[] clesBrutes=[] imgSansAlt=0
+texte vide FR: Mes commandes / Vous n’avez pas encore de commande. / Passez votre première commande : choisissez un service, un lien, une quantité. / Commander
+[tel] en orders vide: overflow=false(360) petitesCibles=0  motsInterdits=[] clesBrutes=[] imgSansAlt=0
+texte vide EN: My orders / You have no orders yet. / Place your first order: pick a service, a link and a quantity. / Place an order
+recharge creee 201 3662f37e-d06d-4d56-bcaa-f4e789588c7f
+webhook 200
+commande 1 UI statut in_progress
+DB apres commande 1 [{"id":"17cbede2-2399-4b89-a7fc-dc37bc7e6382","status":"pending","provider_order_id":null,"error":"submitting"}]
+chargement /fr/commandes tel lent ms 3607
+[tel] fr orders en cours: overflow=false(360) petitesCibles=0  motsInterdits=[] clesBrutes=[] imgSansAlt=0
+badge initial pending | En attente d’envoi
+cron 0 200 {"sync":{"checked":3,"completed":0,"flagged":0,"failedBatches":0},"recovered":{"recovered":0}}
+cron 1 200 {"sync":{"checked":3,"completed":3,"flagged":0,"failedBatches":0},"recovered":{"recovered":0}}
+cron 2 200 {"sync":{"checked":0,"completed":0,"flagged":0,"failedBatches":0},"recovered":{"recovered":0}}
+cron 3 200 {"sync":{"checked":0,"completed":0,"flagged":0,"failedBatches":0},"recovered":{"recovered":0}}
+DB apres cron [{"id":"17cbede2-2399-4b89-a7fc-dc37bc7e6382","status":"pending","provider_order_id":null}]
+badge apres cron sans recharger: pending apres ms 70332 marqueur ok
+[tel] fr orders terminee: overflow=false(360) petitesCibles=0  motsInterdits=[] clesBrutes=[] imgSansAlt=0
+commande 2 UI statut in_progress
+DB [{"id":"17cbede2-2399-4b89-a7fc-dc37bc7e6382","status":"pending","provider_order_id":null},{"id":"2a084eec-b9c3-469f-9f4f-a5ef0237adbd","status":"pending","provider_order_id":null}]
+force-status 400 {"error":{"code":"VALIDATION_ERROR","message":"Certains champs sont manquants ou invalides. Vérifiez le formulaire.","request_id":"req_4f1190d7"}}
+cron 200 {"sync":{"checked":1,"completed":0,"flagged":0,"failedBatches":0},"recovered":{"recovered":1}}
+badges FR ["pending:En attente d’envoi","pending:En attente d’envoi"]
+[tel] fr orders verification: overflow=false(360) petitesCibles=0  motsInterdits=[] clesBrutes=[] imgSansAlt=0
+texte FR liste: Mes commandes / Abonnés TikTok #9747146 / En attente d’envoi / #4037 · 100 unités · 120 XAF / Abonnés TikTok #9747146 / En attente d’envoi / #4036 · 100 unités · 120 XAF
+badges EN ["pending:Pending","pending:Pending"]
+[tel] en orders liste: overflow=false(360) petitesCibles=0  motsInterdits=[] clesBrutes=[] imgSansAlt=0
+texte EN liste: My orders / Followers TikTok #9747146 / Pending / #4037 · 100 units · 120 XAF / Followers TikTok #9747146 / Pending / #4036 · 100 units · 120 XAF
+anonyme /fr/commandes -> http://localhost:3100/fr/connexion
+anonyme /en/orders -> http://localhost:3100/en/login
+cron sans secret 401 faux secret 401
+force-status sans secret 403
+[pc] fr orders: overflow=false(1366) petitesCibles=0  motsInterdits=[] clesBrutes=[] imgSansAlt=0
+[pc] en orders: overflow=false(1366) petitesCibles=0  motsInterdits=[] clesBrutes=[] imgSansAlt=0
+retour arriere ok http://localhost:3100/fr/commandes
+rechargement ok http://localhost:3100/fr/commandes
+CONSOLE [
+ "tel warning: [Cloudflare Turnstile] Cannot find Widget cf-chl-widget-upnt7, consider using turnstile.remove() to clean up a widget."
+]
+ECHECS []

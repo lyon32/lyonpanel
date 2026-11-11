@@ -24,9 +24,10 @@ export const FORBIDDEN_ORDER_KEYS = [
   'price_xaf_1000',
 ];
 
-export type FakeProvider = ProviderApi & {
+export type FakeProvider = Omit<ProviderApi, 'status'> & {
   add: ReturnType<typeof vi.fn>;
   balance: ReturnType<typeof vi.fn>;
+  status: ReturnType<typeof vi.fn>;
 };
 
 // provider_order_id est unique en base et les commandes y restent : compteur global + aléa.

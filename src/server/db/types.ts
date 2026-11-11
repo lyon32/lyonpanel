@@ -195,6 +195,7 @@ export type Database = {
       };
       orders: {
         Row: {
+          alerted_at: string | null;
           charged_xaf: number;
           comments: string[] | null;
           cost_usd: number | null;
@@ -216,6 +217,7 @@ export type Database = {
           user_id: string;
         };
         Insert: {
+          alerted_at?: string | null;
           charged_xaf: number;
           comments?: string[] | null;
           cost_usd?: number | null;
@@ -237,6 +239,7 @@ export type Database = {
           user_id: string;
         };
         Update: {
+          alerted_at?: string | null;
           charged_xaf?: number;
           comments?: string[] | null;
           cost_usd?: number | null;

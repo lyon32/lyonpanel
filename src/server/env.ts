@@ -27,6 +27,7 @@ const envSchema = z
     NEXT_PUBLIC_TURNSTILE_SITE_KEY: optionalString,
     TURNSTILE_SECRET_KEY: optionalString,
     CRON_SECRET: optionalString,
+    TEST_ROUTE_SECRET: optionalString,
     AUTH_HASH_SECRET: optionalString,
     NEXT_PUBLIC_SENTRY_DSN: optionalString,
     SENTRY_AUTH_TOKEN: optionalString,

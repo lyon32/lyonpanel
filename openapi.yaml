@@ -292,6 +292,27 @@ paths:
         '200': { description: Commande, content: { application/json: { schema: { $ref: '#/components/schemas/Order' } } } }
         '404': { $ref: '#/components/responses/Error' }
 
+  /cron/orders:
+    get:
+      tags: [system]
+      summary: Suivi des commandes (appelé toutes les 5 min par le Worker Cloudflare)
+      description: |
+        Hors /api/v1 : URL réelle /api/cron/orders. Synchronise les commandes in_progress avec le fournisseur
+        et met en vérification (to_review, une seule alerte) les commandes bloquées en envoi. Aucune écriture de solde.
+      servers: [ { url: https://lyonpanel.com/api } ]
+      security: [ { cronSecret: [] } ]
+      responses:
+        '200':
+          description: Compteurs du passage
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sync: { type: object, additionalProperties: { type: integer } }
+                  recovered: { type: object, additionalProperties: { type: integer } }
+        '401': { $ref: '#/components/responses/Error' }
+
   /payments/quote:
     post:
       tags: [payments]
