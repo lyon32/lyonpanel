@@ -1,3 +1,6 @@
 # Faux positifs gitleaks : mots de passe fictifs dans des tests unitaires (aucun secret réel)
 0603e4c05d6a37039eba99522ae646284307a1a3:tests/unit/auth/login.test.ts:generic-api-key:12
 0603e4c05d6a37039eba99522ae646284307a1a3:tests/unit/auth/schemas.test.ts:generic-api-key:14
+
+# Phase 8 : faux mauvais mot de passe du test de suppression de compte (aucun secret réel)
+a1f43ecde7048835f6bb75b9fc10a026a82bd5bc:tests/db/me-routes.test.ts:generic-api-key:217

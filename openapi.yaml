@@ -110,9 +110,13 @@ paths:
                 display_currency: { $ref: '#/components/schemas/Currency' }
                 language: { $ref: '#/components/schemas/Language' }
                 phone: { type: string, description: E.164 }
+                suggestions_enabled: { type: boolean, description: Booléen strict }
+              description: Au moins un champ ; tout autre champ est ignoré.
       responses:
-        '200': { description: Profil modifié, content: { application/json: { schema: { $ref: '#/components/schemas/User' } } } }
+        '200': { description: 'Profil modifié ({user})', content: { application/json: { schema: { type: object, properties: { user: { $ref: '#/components/schemas/User' } } } } } }
         '400': { $ref: '#/components/responses/Error' }
+        '401': { $ref: '#/components/responses/Error' }
+        '403': { $ref: '#/components/responses/Error' }
         '409': { $ref: '#/components/responses/Error' }
     delete:
       tags: [profile]
@@ -126,8 +130,11 @@ paths:
               properties:
                 password: { type: string }
       responses:
-        '204': { description: Compte anonymisé }
+        '204': { description: Compte anonymisé (solde et commandes conservés) }
+        '400': { $ref: '#/components/responses/Error' }
         '401': { $ref: '#/components/responses/Error' }
+        '403': { $ref: '#/components/responses/Error' }
+        '429': { $ref: '#/components/responses/Error' }
 
   /wallet:
     get:
@@ -148,6 +155,7 @@ paths:
     get:
       tags: [wallet]
       parameters:
+        - { name: type, in: query, schema: { type: string, enum: [recharge, order, refund, referral_bonus, adjustment] } }
         - $ref: '#/components/parameters/Limit'
         - $ref: '#/components/parameters/Cursor'
       responses:
@@ -283,6 +291,33 @@ paths:
         '409': { $ref: '#/components/responses/Error' }
         '422': { $ref: '#/components/responses/Error' }
         '429': { $ref: '#/components/responses/Error' }
+  /orders/suggestion:
+    get:
+      tags: [orders]
+      description: Service le plus commandé par le client et sa quantité habituelle ; null si aucune commande ou suggestions désactivées.
+      responses:
+        '200':
+          description: Suggestion
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [suggestion]
+                properties:
+                  suggestion:
+                    nullable: true
+                    type: object
+                    required: [service, quantity]
+                    properties:
+                      service:
+                        type: object
+                        required: [id, name, platform]
+                        properties:
+                          id: { type: integer }
+                          name: { type: string }
+                          platform: { type: string }
+                      quantity: { type: integer }
+        '401': { $ref: '#/components/responses/Error' }
   /orders/{id}:
     get:
       tags: [orders]
@@ -399,7 +434,8 @@ paths:
     put:
       tags: [favorites]
       responses:
-        '204': { description: Ajouté }
+        '204': { description: Ajouté (idempotent) }
+        '404': { $ref: '#/components/responses/Error' }
     delete:
       tags: [favorites]
       responses:

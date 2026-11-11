@@ -171,7 +171,8 @@ describe('syncOrderStatuses', () => {
     const { count } = await adminClient()
       .from('orders')
       .select('id', { count: 'exact', head: true })
-      .eq('status', 'in_progress');
+      .eq('status', 'in_progress')
+      .not('provider_order_id', 'is', null);
     const total = count ?? 0;
     expect(total).toBeGreaterThanOrEqual(250);
     answer({});

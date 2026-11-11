@@ -12,7 +12,7 @@ const BUCKET = 'ticket-attachments';
 
 // Colonnes que le client a le droit de lire (jamais cost_usd, error, raw_webhook, etc.).
 const CLIENT_COLS: Record<string, string> = {
-  wallet_transactions: '*',
+  wallet_transactions: 'id, user_id, type, amount_xaf, balance_after_xaf, order_id, created_at',
   tickets: '*',
   favorites: '*',
   payments:

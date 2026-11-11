@@ -67,6 +67,16 @@ export async function getPublicService(id: number): Promise<PublicServiceRow | n
   return data ? complete(data as RawRow) : null;
 }
 
+/** Services visibles parmi une liste d'identifiants (favoris) ; les inconnus ou masqués sont absents. */
+export async function listPublicServicesByIds(
+  ids: number[],
+  db: Pick<ReturnType<typeof createAdminClient>, 'from'> = createStatelessClient(),
+): Promise<PublicServiceRow[]> {
+  const { data, error } = await db.from('services_public').select(COLUMNS).in('id', ids);
+  if (error) throw new Error(`services_public: ${error.message}`);
+  return (data as RawRow[]).flatMap((r) => complete(r) ?? []);
+}
+
 /** Taux d'affichage USD ; vient du réglage usd_xaf_rate (la table settings n'est pas publique). */
 export async function getUsdXafRate(): Promise<number> {
   const { data, error } = await createAdminClient()

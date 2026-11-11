@@ -1,5 +1,6 @@
 import { useLocale, useTranslations } from 'next-intl';
 import type { OrderService } from './order-form';
+import { ServiceName } from '@/components/shared/service-name';
 
 // Fiche du service à droite (sous le formulaire sur téléphone). Que des faits connus, rien d'inventé.
 export function ServiceCard({
@@ -20,7 +21,9 @@ export function ServiceCard({
       <h2 id="order-service-card" className="text-encre text-lg font-semibold">
         {t('cardTitle')}
       </h2>
-      <p className="text-encre text-base">{service.name}</p>
+      <p className="text-encre text-base">
+        <ServiceName name={service.name} />
+      </p>
       <dl className="flex flex-col gap-2 text-sm tabular-nums">
         <div className="flex justify-between gap-3">
           <dt className="text-gris-600">{t('pricePer1000')}</dt>

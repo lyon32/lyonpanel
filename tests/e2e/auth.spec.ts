@@ -102,7 +102,7 @@ for (const locale of ['fr', 'en'] as const) {
       await expect(page).toHaveURL(p.home, { timeout: 45_000 });
       // Salutation selon l'heure locale de l'appareil (pas celle du serveur).
       await expect(page.locator('h1').first()).toHaveText(
-        /^(Bonjour|Bon après-midi|Bonsoir|Good morning|Good afternoon|Good evening)$/,
+        /^(Bonjour|Bon après-midi|Bonsoir|Good morning|Good afternoon|Good evening)(, .+)?$/,
       );
 
       await page.locator('[data-testid="logout"]').click();

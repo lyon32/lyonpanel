@@ -9,6 +9,7 @@ import { commentLines, useOrderSubmit } from './use-order-submit';
 import { OrderResult } from './order-result';
 import { OrderProgress } from './order-progress';
 import { ServiceCard } from './service-card';
+import { ServiceName } from '@/components/shared/service-name';
 import { FormAlert } from '@/components/auth/form-alert';
 import { Button } from '@/components/ui/button';
 import { Field } from '@/components/ui/field';
@@ -33,14 +34,16 @@ type Props = {
   currency: Currency;
   usdXafRate: number;
   balanceXaf: number;
+  // Quantité reprise de la suggestion (adresse ?quantity=) ; le devis est recalculé au chargement.
+  initialQuantity?: number;
 };
 
-export function OrderForm({ service, currency, usdXafRate, balanceXaf }: Props) {
+export function OrderForm({ service, currency, usdXafRate, balanceXaf, initialQuantity }: Props) {
   const t = useTranslations('order');
   const locale = useLocale();
   const router = useRouter();
   const [link, setLink] = useState('');
-  const [quantityRaw, setQuantityRaw] = useState('');
+  const [quantityRaw, setQuantityRaw] = useState(initialQuantity ? String(initialQuantity) : '');
   const [commentsRaw, setCommentsRaw] = useState('');
   const [quote, setQuote] = useState<OrderQuote | null>(null);
   const [quoteLoading, setQuoteLoading] = useState(false);
@@ -173,7 +176,7 @@ export function OrderForm({ service, currency, usdXafRate, balanceXaf }: Props) 
           <div className="flex flex-col gap-1">
             <span className="text-encre text-sm font-semibold">{t('serviceLabel')}</span>
             <p data-testid="order-service" className="text-encre text-base">
-              {service.name}
+              <ServiceName name={service.name} />
             </p>
           </div>
           <Field

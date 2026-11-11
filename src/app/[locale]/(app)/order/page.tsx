@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { FavoriteToggle } from '@/components/order/favorite-toggle';
 import { WalletBalance } from '@/components/order/order-parts';
 import { OrderForm, type OrderService } from '@/components/order/order-form';
 import { CURRENCY_COOKIE, parseCurrency } from '@/lib/currency';
@@ -10,10 +11,11 @@ import { requireUser } from '@/server/auth/require-user';
 import { getPublicService, getUsdXafRateCached } from '@/server/catalog/public-catalog';
 import { createAdminClient } from '@/server/db/supabase-admin';
 import { createSessionClient } from '@/server/db/supabase-server';
+import { listFavorites } from '@/server/favorites/favorites';
 
 type Props = {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ service?: string }>;
+  searchParams: Promise<{ service?: string; quantity?: string }>;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -48,9 +50,16 @@ async function loadService(raw: string | undefined): Promise<OrderService | null
   };
 }
 
+// Quantité d'adresse acceptée seulement si c'est un entier dans les bornes du service.
+function initialQuantity(raw: string | undefined, service: OrderService): number | undefined {
+  const n = Number(raw);
+  if (!raw || !Number.isInteger(n)) return undefined;
+  return n >= service.minQty && n <= service.maxQty ? n : undefined;
+}
+
 export default async function OrderPage({ params, searchParams }: Props) {
   const { locale } = await params;
-  const { service: serviceParam } = await searchParams;
+  const { service: serviceParam, quantity: quantityParam } = await searchParams;
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: 'order' });
   const user = await requireUser(locale === 'en' ? 'en' : 'fr');
@@ -62,15 +71,23 @@ export default async function OrderPage({ params, searchParams }: Props) {
     currency === 'USD' ? getUsdXafRateCached() : Promise.resolve(1),
   ]);
   const balanceXaf = wallet.data?.balance_xaf ?? 0;
+  // État de départ du bouton Favori : lu côté serveur, pas de chargement dans le navigateur.
+  const isFavorite = service
+    ? (await listFavorites(user.id, locale === 'en' ? 'en' : 'fr')).some((f) => f.id === service.id)
+    : false;
   return (
     <section className="flex max-w-4xl flex-col gap-4">
-      <h1 className="text-encre text-2xl font-bold">{t('title')}</h1>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="text-encre text-2xl font-bold">{t('title')}</h1>
+        {service ? <FavoriteToggle serviceId={service.id} initialFavorite={isFavorite} /> : null}
+      </div>
       {service ? (
         <OrderForm
           service={service}
           currency={currency}
           usdXafRate={usdXafRate}
           balanceXaf={balanceXaf}
+          initialQuantity={initialQuantity(quantityParam, service)}
         />
       ) : (
         <>

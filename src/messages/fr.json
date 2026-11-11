@@ -17,7 +17,10 @@
     "bottomOrder": "Commander",
     "mainLabel": "Navigation principale",
     "appLabel": "Espace client",
-    "bottomLabel": "Menu du bas"
+    "bottomLabel": "Menu du bas",
+    "dashboard": "Tableau de bord",
+    "transactions": "Transactions",
+    "favorites": "Favoris"
   },
   "footer": {
     "privacy": "Confidentialité",
@@ -256,6 +259,18 @@
       "morning": "Bonjour",
       "afternoon": "Bon après-midi",
       "evening": "Bonsoir"
+    },
+    "recent": "Dernières commandes",
+    "seeAll": "Tout voir",
+    "stats": {
+      "label": "Vos chiffres",
+      "balance": "Solde",
+      "orders": "Commandes",
+      "spent": "Total dépensé",
+      "completed": "Terminées",
+      "discount": "Remise de {pct} %",
+      "lastOrders": "Sur les {count} dernières",
+      "completedRate": "{pct} % terminées"
     }
   },
   "pages": {
@@ -528,5 +543,88 @@
     "emptyCta": "Commander",
     "reviewHint": "Nous vérifions cette commande. Nous revenons vers vous dès que c’est réglé.",
     "quantity": "{count} unités"
+  },
+  "suggestion": {
+    "title": "Votre commande habituelle",
+    "quantity": "{count} unités",
+    "order": "Commander",
+    "dismiss": "Fermer la suggestion",
+    "disable": "Ne plus afficher",
+    "disableError": "Ce choix n’a pas pu être enregistré. Réessayez."
+  },
+  "transactions": {
+    "title": "Transactions",
+    "filterLabel": "Type de mouvement",
+    "filterAll": "Tous les types",
+    "types": {
+      "recharge": "Recharge",
+      "order": "Commande",
+      "refund": "Remboursement",
+      "referral_bonus": "Bonus de parrainage",
+      "adjustment": "Ajustement"
+    },
+    "orderRef": "Commande #{id}",
+    "balanceAfter": "Solde : {amount}",
+    "empty": "Aucun mouvement pour le moment.",
+    "emptyHint": "Vos recharges et vos commandes apparaîtront ici.",
+    "emptyFiltered": "Aucun mouvement de ce type.",
+    "paging": "Pages",
+    "next": "Page suivante",
+    "first": "Retour au début"
+  },
+  "favorites": {
+    "title": "Favoris",
+    "empty": "Aucun favori pour le moment.",
+    "emptyHint": "Ouvrez un service sur la page Commander et touchez « Favori » pour le retrouver ici.",
+    "emptyCta": "Voir les services",
+    "order": "Commander",
+    "remove": "Retirer",
+    "removing": "Retrait…",
+    "removed": "Retiré",
+    "price": "{price} les 1 000",
+    "removeError": "Le favori n’a pas pu être retiré. Réessayez.",
+    "toggle": "Favori",
+    "saving": "Enregistrement…",
+    "saved": "Enregistré",
+    "toggleError": "Le favori n’a pas pu être enregistré. Réessayez."
+  },
+  "account": {
+    "title": "Mon compte",
+    "preferences": "Préférences",
+    "currency": "Devise d’affichage",
+    "language": "Langue",
+    "phone": "Téléphone",
+    "phoneHint": "Format international, par exemple +237 6 12 34 56 78.",
+    "suggestions": "Suggestion de commande",
+    "suggestionsHint": "Affiche sur le tableau de bord le service que vous commandez le plus.",
+    "save": "Enregistrer",
+    "saving": "Enregistrement…",
+    "saved": "Enregistré",
+    "saveError": "Les changements n’ont pas pu être enregistrés. Réessayez.",
+    "linkTransactions": "Mes transactions",
+    "linkFavorites": "Mes favoris",
+    "delete": {
+      "title": "Supprimer mon compte",
+      "description": "Vos données personnelles sont effacées. Le solde restant n’est pas remboursé automatiquement : contactez le support avant de supprimer.",
+      "open": "Supprimer mon compte",
+      "confirmTitle": "Supprimer votre compte ?",
+      "confirmText": "Cette action est définitive. Entrez votre mot de passe pour confirmer.",
+      "password": "Mot de passe",
+      "passwordRequired": "Entrez votre mot de passe.",
+      "cancel": "Annuler",
+      "confirm": "Supprimer",
+      "deleting": "Suppression…",
+      "deleted": "Supprimé",
+      "error": "Le compte n’a pas pu être supprimé. Réessayez.",
+      "wrongPassword": "Mot de passe incorrect."
+    },
+    "phoneErrors": {
+      "INVALID_PHONE": "Numéro invalide. Format international, par exemple +237612345678.",
+      "PHONE_TAKEN": "Ce numéro de téléphone est déjà utilisé."
+    },
+    "phoneRateLimited": "Vous avez changé votre numéro trop souvent. Réessayez dans une heure."
+  },
+  "service": {
+    "ref": "Réf. {id}"
   }
 }
