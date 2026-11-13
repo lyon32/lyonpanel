@@ -138,5 +138,7 @@ describe('createTicket : échecs après création', () => {
     );
     expect(res.status).toBe(404);
     expect(((await res.json()) as Err).error.code).toBe('NOT_FOUND');
+    // Le ticket créé par la requête est supprimé : il ne reste que le ticket préexistant.
+    expect(await ticketsOf(u.id)).toHaveLength(1);
   });
 });

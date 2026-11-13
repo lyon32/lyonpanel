@@ -201,8 +201,10 @@ test.describe('Support à 360 px', () => {
     const context = await browser.newContext({ viewport: { width: 360, height: 740 } });
     const other = await context.newPage();
     await signedUp(other);
-    const res = await other.goto(`/fr/support/${id}`);
-    expect(res?.status()).toBe(404);
+    // Le statut HTTP n'est pas vérifié : (app)/loading.tsx envoie le squelette (200)
+    // avant que notFound() ne s'exécute. Ce qui compte : page introuvable, aucune donnée du ticket.
+    await other.goto(`/fr/support/${id}`);
+    await expect(other.getByText('Page introuvable')).toBeVisible();
     await expect(other.locator('body')).not.toContainText('Mon ticket privé');
     await context.close();
   });
