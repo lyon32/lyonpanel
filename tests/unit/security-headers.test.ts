@@ -117,3 +117,20 @@ describe('zone privée : Cache-Control no-store', () => {
     }
   });
 });
+
+describe('captures de tickets et compression (phase 9)', () => {
+  const csp = headers()['content-security-policy'] ?? '';
+  it('img-src autorise l’origine Supabase précise, jamais https:', () => {
+    const img = directive(csp, 'img-src');
+    expect(img).toContain(SUPABASE);
+    expect(img).not.toContain('https:');
+    expect(img).not.toContain('*');
+  });
+  it('worker-src autorise self et blob: seulement', () => {
+    expect(directive(csp, 'worker-src').sort()).toEqual(["'self'", 'blob:']);
+  });
+  it('sans adresse Supabase valide, img-src ne reçoit pas de valeur vide', () => {
+    const img = directive(headers({ supabaseUrl: '' })['content-security-policy'] ?? '', 'img-src');
+    expect(img).toEqual(["'self'", 'data:', 'blob:']);
+  });
+});

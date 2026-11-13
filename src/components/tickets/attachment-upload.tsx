@@ -1,7 +1,7 @@
 'use client';
 
 import imageCompression from 'browser-image-compression';
-import { Paperclip, X } from 'lucide-react';
+import { Loader2, Paperclip, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useRef, useState, type ChangeEvent } from 'react';
 import { FormAlert } from '@/components/auth/form-alert';
@@ -23,6 +23,44 @@ export async function readApiError(res: Response): Promise<string | null> {
   }
 }
 
+type Translate = (key: string) => string;
+
+// Message affiché pour une réponse en erreur : les limites (429) ont chacune leur phrase,
+// sinon le message du serveur, sinon l'erreur réseau.
+export async function ticketErrorMessage(res: Response, t: Translate): Promise<string> {
+  let data: { error?: { message?: string; details?: { reason?: string } } } = {};
+  try {
+    data = await res.json();
+  } catch {
+    return t('form.networkError');
+  }
+  const reasons: Record<string, string> = {
+    open_tickets: 'errors.openTickets',
+    rate: 'errors.rateLimit',
+    upload: 'errors.uploadLimit',
+  };
+  const key = reasons[data.error?.details?.reason ?? ''];
+  return key ? t(key) : (data.error?.message ?? t('form.networkError'));
+}
+
+// Délai maximal de réduction : une image impossible à compresser prendrait plus d'une minute sur téléphone.
+const COMPRESS_TIMEOUT_MS = 20_000;
+
+class CompressTimeout extends Error {}
+
+function compressWithTimeout(file: File): Promise<File | Blob> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => reject(new CompressTimeout()), COMPRESS_TIMEOUT_MS);
+  });
+  const work = imageCompression(file, {
+    maxSizeMB: MAX_SIZE_MB,
+    maxWidthOrHeight: 1600,
+    useWebWorker: true,
+  });
+  return Promise.race([work, timeout]).finally(() => clearTimeout(timer));
+}
+
 export function AttachmentUpload({ onChange }: { onChange: (ids: string[]) => void }) {
   const t = useTranslations('support');
   const [chips, setChips] = useState<Chip[]>([]);
@@ -38,11 +76,16 @@ export function AttachmentUpload({ onChange }: { onChange: (ids: string[]) => vo
   }
 
   async function sendOne(file: File): Promise<void> {
-    const small = await imageCompression(file, { maxSizeMB: MAX_SIZE_MB, maxWidthOrHeight: 1600 });
+    let small: File | Blob;
+    try {
+      small = await compressWithTimeout(file);
+    } catch (e) {
+      throw e instanceof CompressTimeout ? new Error(t('errors.compressTimeout')) : e;
+    }
     const body = new FormData();
     body.append('file', small);
     const res = await fetch('/api/v1/tickets/attachments', { method: 'POST', body });
-    if (!res.ok) throw new Error((await readApiError(res)) ?? t('form.networkError'));
+    if (!res.ok) throw new Error(await ticketErrorMessage(res, t));
     const { id } = (await res.json()) as { id: string };
     update([...current.current, { id, name: file.name }]);
   }
@@ -107,6 +150,12 @@ export function AttachmentUpload({ onChange }: { onChange: (ids: string[]) => vo
             </li>
           ))}
         </ul>
+      ) : null}
+      {busy ? (
+        <p role="status" className="text-gris-600 flex min-h-11 items-center gap-2 text-sm">
+          <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+          {t('errors.compressing')}
+        </p>
       ) : null}
       {error ? <FormAlert kind="error">{error}</FormAlert> : null}
     </div>

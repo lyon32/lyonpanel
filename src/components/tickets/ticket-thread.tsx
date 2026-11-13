@@ -2,7 +2,7 @@
 
 import { useLocale, useTranslations } from 'next-intl';
 import { useState } from 'react';
-import { readApiError } from './attachment-upload';
+import { ticketErrorMessage } from './attachment-upload';
 import { FormAlert } from '@/components/auth/form-alert';
 import { Button } from '@/components/ui/button';
 import { useRouter } from '@/i18n/navigation';
@@ -52,7 +52,7 @@ export function TicketThread({
         body: JSON.stringify(payload),
       });
       if (!res.ok) {
-        setError((await readApiError(res)) ?? t('form.networkError'));
+        setError(await ticketErrorMessage(res, t));
         return false;
       }
       return true;

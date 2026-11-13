@@ -706,7 +706,11 @@
       "openLimit": "You already have 3 open tickets. Wait for a reply or close one.",
       "rateLimit": "Too many messages sent. Try again in an hour.",
       "fileType": "Only JPEG, PNG and WebP images are accepted.",
-      "fileTooMany": "You can attach up to 3 images."
+      "fileTooMany": "You can attach up to 3 images.",
+      "openTickets": "You already have 3 open tickets. Close one to open a new one.",
+      "uploadLimit": "Too many screenshots sent. Try again a bit later.",
+      "compressTimeout": "This image is too heavy to shrink. Try another screenshot.",
+      "compressing": "Shrinking the image…"
     }
   }
 }

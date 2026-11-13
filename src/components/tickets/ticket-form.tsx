@@ -1,8 +1,8 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useState, type FormEvent } from 'react';
-import { AttachmentUpload, readApiError } from './attachment-upload';
+import { useState, useSyncExternalStore, type FormEvent } from 'react';
+import { AttachmentUpload, ticketErrorMessage } from './attachment-upload';
 import { FormAlert } from '@/components/auth/form-alert';
 import { Button } from '@/components/ui/button';
 import { useRouter } from '@/i18n/navigation';
@@ -23,6 +23,13 @@ export function TicketForm({ orders }: { orders: { id: string; label: string }[]
   const [attachmentIds, setAttachmentIds] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  // Envoi bloqué tant que la page n'est pas hydratée : sinon le navigateur enverrait le formulaire en natif.
+  // (faux côté serveur et pendant l'hydratation, vrai ensuite)
+  const ready = useSyncExternalStore(
+    () => () => undefined,
+    () => true,
+    () => false,
+  );
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -45,7 +52,7 @@ export function TicketForm({ orders }: { orders: { id: string; label: string }[]
         }),
       });
       if (!res.ok) {
-        setError((await readApiError(res)) ?? t('form.networkError'));
+        setError(await ticketErrorMessage(res, t));
         return;
       }
       const { id } = (await res.json()) as { id: string };
@@ -88,7 +95,10 @@ export function TicketForm({ orders }: { orders: { id: string; label: string }[]
           <select
             data-testid="ticket-order"
             value={orderId}
-            onChange={(e) => setOrderId(e.target.value)}
+            onChange={(e) => {
+              setOrderId(e.target.value);
+              setError(null);
+            }}
             className={selectClass}
           >
             <option value="">{t('form.orderPlaceholder')}</option>
@@ -116,6 +126,7 @@ export function TicketForm({ orders }: { orders: { id: string; label: string }[]
       <Button
         type="submit"
         loading={pending}
+        disabled={!ready}
         loadingLabel={t('form.sending')}
         data-testid="ticket-submit"
       >
