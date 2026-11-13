@@ -1,10 +1,10 @@
 import 'server-only';
 import { ATTACHMENT_BUCKET } from './attachments';
-import { createAttemptStore, createRateLimiter } from '@/server/auth/rate-limit';
+import { consumeAction } from './upload-limit';
 import { createAdminClient } from '@/server/db/supabase-admin';
 import { createSessionClient } from '@/server/db/supabase-server';
-import { ApiError, apiError } from '@/server/http/api-error';
-import { decodeCursor, encodeCursor } from '@/server/orders/list-orders';
+import { apiError } from '@/server/http/api-error';
+import { decodeCursor, encodeCursor, keysetFilter } from '@/server/orders/list-orders';
 import { notifyOwner } from '@/server/providers/telegram';
 import type {
   CreateTicketInput,
@@ -14,8 +14,6 @@ import type {
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const SIGNED_URL_SECONDS = 600;
-// Un seul compteur pour les créations de tickets et les messages (API_SPEC §5).
-const MAX_ACTIONS_PER_HOUR = 10;
 
 export type TicketSummary = {
   id: string;
@@ -36,22 +34,6 @@ function orderShortId(
 /** Numéro court affiché au client et dans l'alerte : 8 premiers caractères de l'uuid. */
 export function shortTicketId(id: string): string {
   return id.slice(0, 8).toUpperCase();
-}
-
-async function consumeAction(userId: string): Promise<void> {
-  try {
-    await createRateLimiter({ store: createAttemptStore(createAdminClient()) }).consume({
-      scope: 'tickets',
-      key: userId,
-      max: MAX_ACTIONS_PER_HOUR,
-      windowSeconds: 3600,
-    });
-  } catch (e) {
-    if (e instanceof ApiError && e.code === 'RATE_LIMITED') {
-      apiError('RATE_LIMITED', { ...e.details, reason: 'rate' });
-    }
-    throw e;
-  }
 }
 
 /** Alerte sans texte, email ni téléphone ; une alerte qui échoue ne bloque rien. */
@@ -120,7 +102,11 @@ async function insertMessage(
         size_bytes: f.size,
       })),
     );
-    if (attError) throw new Error(`ticket_attachments: ${attError.message}`);
+    if (attError) {
+      // Index unique sur storage_path : la même image envoyée deux fois en parallèle.
+      if (attError.code === '23505') apiError('NOT_FOUND');
+      throw new Error(`ticket_attachments: ${attError.message}`);
+    }
   }
   return { id: data.id };
 }
@@ -152,7 +138,13 @@ export async function createTicket(
     }
     throw new Error(`tickets: ${error.message}`);
   }
-  await insertMessage(ticket.id, input.body, files);
+  try {
+    await insertMessage(ticket.id, input.body, files);
+  } catch (e) {
+    // Un ticket vide ne doit pas occuper une des 3 places du client.
+    await createAdminClient().from('tickets').delete().eq('id', ticket.id).eq('user_id', userId);
+    throw e;
+  }
   await alertOwner(ticket.id, input.subject);
   return { id: ticket.id, short_id: shortTicketId(ticket.id) };
 }
@@ -172,9 +164,7 @@ export async function listTickets(
     .limit(limit + 1);
   if (q.cursor) {
     // Date et uuid déjà validés par decodeCursor : rien de libre n'entre dans le filtre.
-    const c = decodeCursor(q.cursor);
-    const date = c.createdAt.replace('+00:00', 'Z');
-    query = query.or(`updated_at.lt.${date},and(updated_at.eq.${date},id.lt.${c.id})`);
+    query = query.or(keysetFilter(decodeCursor(q.cursor), 'updated_at'));
   }
   const { data, error } = await query;
   if (error) throw new Error(`tickets: ${error.message}`);
@@ -238,7 +228,11 @@ export async function getTicket(userId: string, id: string) {
       .select('id, message_id, storage_path')
       .in('message_id', ids)
       .order('created_at', { ascending: true });
-    if (attError) throw new Error(`ticket_attachments: ${attError.message}`);
+    if (attError) {
+      // Index unique sur storage_path : la même image envoyée deux fois en parallèle.
+      if (attError.code === '23505') apiError('NOT_FOUND');
+      throw new Error(`ticket_attachments: ${attError.message}`);
+    }
     if (atts.length > 0) {
       // Liens signés de 10 min : le bucket reste privé, le chemin ne quitte jamais le serveur.
       const { data: signed, error: signError } = await createAdminClient()

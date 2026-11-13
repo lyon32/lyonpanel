@@ -7,6 +7,9 @@ import { FormAlert } from '@/components/auth/form-alert';
 import { Button } from '@/components/ui/button';
 import { useRouter } from '@/i18n/navigation';
 
+// Même plafond que le schéma serveur (MAX_BODY_LENGTH) ; le code client n'importe pas @/server.
+const MAX_BODY_LENGTH = 4000;
+
 export type ThreadTicket = {
   id: string;
   subject: string;
@@ -125,7 +128,7 @@ export function TicketThread({
             value={reply}
             onChange={(e) => setReply(e.target.value)}
             rows={4}
-            maxLength={2000}
+            maxLength={MAX_BODY_LENGTH}
             className="border-gris-400 bg-blanc text-encre focus-visible:outline-bleu-600 w-full rounded-lg border p-3 text-base font-normal focus-visible:outline-2"
           />
         </label>
