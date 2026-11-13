@@ -9,6 +9,13 @@ import { listTickets, shortTicketId } from '@/server/tickets/tickets';
 
 type Props = { params: Promise<{ locale: string }> };
 
+// Couleurs de statut lisibles sur fond sombre (docs/05 §11).
+const STATUS_CLASS: Record<string, string> = {
+  open: 'border-[#f5c451]/50 text-[#f5c451]',
+  answered: 'border-[#4ade80]/50 text-[#4ade80]',
+  closed: 'border-gris-400 text-gris-600',
+};
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'pages' });
@@ -36,7 +43,9 @@ export default async function TicketsPage({ params }: Props) {
       <section className="flex flex-col gap-3">
         <h2 className="text-encre text-lg font-bold">{t('list.title')}</h2>
         {items.length === 0 ? (
-          <p className="text-gris-600 text-sm">{t('list.empty')}</p>
+          <p className="border-gris-200 bg-blanc text-gris-600 rounded-lg border border-dashed p-4 text-sm">
+            {t('list.empty')}
+          </p>
         ) : (
           <ul className="flex flex-col gap-2">
             {items.map((ticket) => (
@@ -46,11 +55,17 @@ export default async function TicketsPage({ params }: Props) {
                   href={{ pathname: '/tickets/[id]', params: { id: ticket.id } }}
                   className="border-gris-200 bg-blanc text-encre focus-visible:outline-bleu-600 flex min-h-11 items-center justify-between gap-3 rounded-lg border px-3 py-2 text-sm focus-visible:outline-2"
                 >
-                  <span className="font-semibold">
+                  <span className="min-w-0 font-semibold break-words">
                     #{shortTicketId(ticket.id)} · {t(`subjects.${ticket.subject}`)}
                   </span>
-                  <span className="text-gris-600 shrink-0">
-                    {t(`list.status.${ticket.status}`)} · {date.format(new Date(ticket.updated_at))}
+                  <span className="text-gris-600 flex shrink-0 flex-col items-end gap-1 text-xs">
+                    <span
+                      data-status={ticket.status}
+                      className={`rounded-full border px-2 py-0.5 font-semibold ${STATUS_CLASS[ticket.status] ?? STATUS_CLASS.closed}`}
+                    >
+                      {t(`list.status.${ticket.status}`)}
+                    </span>
+                    <span>{date.format(new Date(ticket.updated_at))}</span>
                   </span>
                 </Link>
               </li>

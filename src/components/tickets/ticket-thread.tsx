@@ -84,8 +84,8 @@ export function TicketThread({
             data-from-admin={m.from_admin ? 'true' : 'false'}
             className={
               m.from_admin
-                ? 'bg-bleu-50 text-encre mr-6 flex flex-col gap-2 rounded-xl p-3'
-                : 'border-gris-200 bg-blanc text-encre ml-6 flex flex-col gap-2 rounded-xl border p-3'
+                ? 'bg-bleu-50 border-bleu-600/40 text-encre mr-6 flex flex-col gap-2 rounded-xl rounded-tl-sm border p-3'
+                : 'border-gris-200 bg-gris-50 text-encre ml-6 flex flex-col gap-2 rounded-xl rounded-tr-sm border p-3'
             }
           >
             <p className="text-gris-600 text-xs">
@@ -103,7 +103,7 @@ export function TicketThread({
                 data-testid="ticket-attachment"
                 src={a.url}
                 alt={t('thread.attachment')}
-                className="max-h-64 max-w-full rounded-lg object-contain"
+                className="border-gris-200 max-h-40 max-w-full self-start rounded-lg border object-contain"
               />
             ))}
           </li>
@@ -112,7 +112,7 @@ export function TicketThread({
       {closed ? (
         <p
           data-testid="ticket-closed-notice"
-          className="bg-gris-50 text-gris-600 rounded-lg p-3 text-sm"
+          className="bg-gris-50 text-gris-600 border-gris-200 rounded-lg border p-3 text-sm"
         >
           {t('thread.closedNotice')}
         </p>
