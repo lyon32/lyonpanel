@@ -142,7 +142,19 @@ export async function createTicket(
     await insertMessage(ticket.id, input.body, files);
   } catch (e) {
     // Un ticket vide ne doit pas occuper une des 3 places du client.
-    await createAdminClient().from('tickets').delete().eq('id', ticket.id).eq('user_id', userId);
+    // Les messages d'abord (pas de cascade vers tickets) ; leurs pièces jointes partent en cascade.
+    const admin = createAdminClient();
+    const { error: msgErr } = await admin
+      .from('ticket_messages')
+      .delete()
+      .eq('ticket_id', ticket.id);
+    const { error: delErr } = await admin
+      .from('tickets')
+      .delete()
+      .eq('id', ticket.id)
+      .eq('user_id', userId);
+    const failure = msgErr ?? delErr;
+    if (failure) console.error('ticket_cleanup_failed', { code: failure.code });
     throw e;
   }
   await alertOwner(ticket.id, input.subject);
