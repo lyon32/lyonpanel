@@ -56,7 +56,8 @@ function compressWithTimeout(file: File): Promise<File | Blob> {
   const work = imageCompression(file, {
     maxSizeMB: MAX_SIZE_MB,
     maxWidthOrHeight: 1600,
-    useWebWorker: true,
+    // Le worker charge du code depuis un CDN, bloqué par le CSP : on reste sur le fil principal.
+    useWebWorker: false,
   });
   return Promise.race([work, timeout]).finally(() => clearTimeout(timer));
 }

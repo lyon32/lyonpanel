@@ -707,10 +707,10 @@
       "rateLimit": "Trop de messages envoyés. Réessayez dans une heure.",
       "fileType": "Seules les images JPEG, PNG et WebP sont acceptées.",
       "fileTooMany": "Vous pouvez joindre 3 images au maximum.",
-      "openTickets": "Tu as déjà 3 tickets ouverts. Ferme-en un pour en ouvrir un nouveau.",
-      "uploadLimit": "Trop de captures envoyées. Réessaie un peu plus tard.",
-      "compressTimeout": "Cette image est trop lourde à réduire. Essaie une autre capture.",
-      "compressing": "Réduction de l'image…"
+      "openTickets": "Vous avez déjà 3 tickets ouverts. Fermez-en un pour en ouvrir un nouveau.",
+      "uploadLimit": "Trop de captures envoyées. Réessayez un peu plus tard.",
+      "compressTimeout": "Cette image est trop lourde à réduire. Essayez une autre capture.",
+      "compressing": "Réduction de l’image…"
     }
   }
 }

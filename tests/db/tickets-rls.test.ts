@@ -253,16 +253,18 @@ describe('Storage : bucket privé ticket-attachments', () => {
     expect(error).not.toBeNull();
   });
 
-  it('un client dépose dans son dossier, jamais dans celui d’un autre', async () => {
+  it('un client ne peut plus déposer (ni chez lui, ni chez un autre) ; le dépôt serveur reste lisible', async () => {
     const { a, b, ca } = await pair();
     const own = await ca.storage
       .from(BUCKET)
       .upload(`${a.id}/${randomUUID()}.png`, TINY_PNG, { contentType: 'image/png' });
-    expect(own.error).toBeNull();
+    expect(own.error).not.toBeNull();
     const theirs = await ca.storage
       .from(BUCKET)
       .upload(`${b.id}/${randomUUID()}.png`, TINY_PNG, { contentType: 'image/png' });
     expect(theirs.error).not.toBeNull();
+    const serverPath = await putObject(a.id);
+    expect((await ca.storage.from(BUCKET).download(serverPath)).error).toBeNull();
   });
 
   it('refuse un type de fichier non autorisé, même dans son propre dossier', async () => {

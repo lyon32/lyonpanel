@@ -126,8 +126,8 @@ describe('captures de tickets et compression (phase 9)', () => {
     expect(img).not.toContain('https:');
     expect(img).not.toContain('*');
   });
-  it('worker-src autorise self et blob: seulement', () => {
-    expect(directive(csp, 'worker-src').sort()).toEqual(["'self'", 'blob:']);
+  it('worker-src vaut exactement self', () => {
+    expect(directive(csp, 'worker-src')).toEqual(["'self'"]);
   });
   it('sans adresse Supabase valide, img-src ne reçoit pas de valeur vide', () => {
     const img = directive(headers({ supabaseUrl: '' })['content-security-policy'] ?? '', 'img-src');

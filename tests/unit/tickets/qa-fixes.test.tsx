@@ -82,7 +82,7 @@ describe('formulaire', () => {
 });
 
 describe('compression', () => {
-  it('abandonne avec un message clair après le délai maximal et utilise le Web Worker', async () => {
+  it('abandonne avec un message clair après le délai maximal sans Web Worker', async () => {
     vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
     compress.mockImplementation(() => new Promise(() => undefined));
     const fetchMock = vi.fn();
@@ -91,7 +91,7 @@ describe('compression', () => {
     const file = new File([new Uint8Array(10)], 'bruit.png', { type: 'image/png' });
     fireEvent.change(screen.getByTestId('ticket-attach'), { target: { files: [file] } });
     expect(screen.getByRole('status')).toHaveTextContent(fr.support.errors.compressing);
-    expect(compress.mock.calls[0]?.[1]).toMatchObject({ useWebWorker: true });
+    expect(compress.mock.calls[0]?.[1]).toMatchObject({ useWebWorker: false });
     await act(async () => {
       await vi.advanceTimersByTimeAsync(30_000);
     });
