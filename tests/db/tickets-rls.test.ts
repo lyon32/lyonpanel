@@ -1,6 +1,7 @@
-import type { SupabaseClient } from '@supabase/supabase-js';
 import { randomUUID } from 'node:crypto';
+import type { SupabaseClient } from '@supabase/supabase-js';
 import { afterEach, describe, expect, it } from 'vitest';
+import { must } from '../helpers/must';
 import { makeOrder } from '../factories/order';
 import { cleanupUsers, makeFollowersService, makeFundedUser } from '../helpers/orders-db';
 import {
@@ -164,7 +165,7 @@ describe('ticket_messages : écriture', () => {
     const t = await makeTicket(a.id);
     const m = await makeTicketMessage(t.id, { body: 'original' });
     await ca.from('ticket_messages').update({ body: 'modifié' }).eq('id', m.id);
-    expect((await messagesOf(t.id))[0].body).toBe('original');
+    expect(must((await messagesOf(t.id))[0]).body).toBe('original');
   });
 });
 

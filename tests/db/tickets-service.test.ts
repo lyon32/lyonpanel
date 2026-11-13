@@ -1,5 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { must } from '../helpers/must';
 import { makeOrder } from '../factories/order';
 import { cleanupUsers, makeFollowersService, makeFundedUser } from '../helpers/orders-db';
 import {
@@ -64,7 +65,7 @@ async function login() {
   session.client = await userClient(u.id);
   return u;
 }
-const body = (text = 'Ma recharge n’apparaît pas') => ({ subject: 'other', body: text });
+const body = (text = 'Ma recharge n’apparaît pas') => ({ subject: 'other' as const, body: text });
 
 describe('createTicket', () => {
   it('crée le ticket (ouvert, sujet = code) et son premier message', async () => {
@@ -83,7 +84,7 @@ describe('createTicket', () => {
     const u = await login();
     const text = '<img src=x onerror=alert(1)> & "quotes"';
     const { id } = await createTicket(u.id, body(text));
-    expect((await messagesOf(id))[0].body).toBe(text);
+    expect(must((await messagesOf(id))[0]).body).toBe(text);
   });
 
   it('lie le ticket à une commande du client', async () => {
@@ -112,7 +113,7 @@ describe('createTicket', () => {
     const a = await uploadAttachment(u.id, imageFile({ name: 'a.png' }));
     const b = await uploadAttachment(u.id, imageFile({ name: 'b.png' }));
     const { id } = await createTicket(u.id, { ...body(), attachment_ids: [a.id, b.id] });
-    const first = (await messagesOf(id))[0];
+    const first = must((await messagesOf(id))[0]);
     const { data } = await adminClient()
       .from('ticket_attachments')
       .select('*')
@@ -333,7 +334,7 @@ describe('listTickets', () => {
     const { items, next_cursor } = await listTickets(u.id, {});
     expect(next_cursor).toBeNull();
     expect(items.map((i) => i.id)).toEqual([mine.id]);
-    expect(Object.keys(items[0]).sort()).toEqual([
+    expect(Object.keys(must(items[0])).sort()).toEqual([
       'id',
       'order_short_id',
       'status',
@@ -348,7 +349,7 @@ describe('listTickets', () => {
     const order = await makeOrder(u.id, (await makeFollowersService()).id);
     await makeTicket(u.id, { subject: 'order', order_id: order.id });
     const { items } = await listTickets(u.id, {});
-    expect(String(items[0].order_short_id)).toBe(String(order.short_id));
+    expect(String(must(items[0]).order_short_id)).toBe(String(order.short_id));
   });
 
   it('pagine par curseur : tout est vu une fois, du plus récent au plus ancien', async () => {
@@ -400,12 +401,12 @@ describe('getTicket', () => {
       [false, 'première'],
       [true, 'Réponse de l’équipe'],
     ]);
-    expect(res.messages[0].attachments).toHaveLength(1);
-    const { id: attId, url } = res.messages[0].attachments[0];
+    expect(must(res.messages[0]).attachments).toHaveLength(1);
+    const { id: attId, url } = must(must(res.messages[0]).attachments[0]);
     expect(attId).toBeTruthy();
     expect(url).toContain('ticket-attachments');
     const token = new URL(url).searchParams.get('token') ?? '';
-    const claims = JSON.parse(Buffer.from(token.split('.')[1], 'base64url').toString()) as {
+    const claims = JSON.parse(Buffer.from(must(token.split('.')[1]), 'base64url').toString()) as {
       exp: number;
       iat?: number;
     };
@@ -420,7 +421,7 @@ describe('getTicket', () => {
       ...body(),
       attachment_ids: [(await uploadAttachment(u.id, imageFile())).id],
     });
-    const { url } = (await getTicket(u.id, id)).messages[0].attachments[0];
+    const { url } = must(must((await getTicket(u.id, id)).messages[0]).attachments[0]);
     const res = await fetch(url);
     expect(res.status).toBe(200);
     expect(res.headers.get('content-type')).toMatch(/image\/png/);
@@ -435,10 +436,9 @@ describe('getTicket', () => {
     const dump = JSON.stringify(await getTicket(u.id, id));
     expect(dump).not.toContain('storage_path');
     expect(dump).not.toContain(`"user_id"`);
-    expect(Object.keys((await getTicket(u.id, id)).messages[0].attachments[0]).sort()).toEqual([
-      'id',
-      'url',
-    ]);
+    expect(
+      Object.keys(must(must((await getTicket(u.id, id)).messages[0]).attachments[0])).sort(),
+    ).toEqual(['id', 'url']);
   });
 
   it('ticket d’un autre client ou inconnu : 404 NOT_FOUND', async () => {

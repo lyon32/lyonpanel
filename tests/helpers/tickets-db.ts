@@ -22,7 +22,9 @@ export function imageFile(
   const base = over.bytes ?? TINY_PNG;
   const bytes = over.size ? new Uint8Array(over.size).fill(0) : base;
   if (over.size) bytes.set(base.slice(0, Math.min(base.length, over.size)));
-  return new File([bytes], over.name ?? 'capture.png', { type: over.type ?? 'image/png' });
+  return new File([new Uint8Array(bytes).buffer], over.name ?? 'capture.png', {
+    type: over.type ?? 'image/png',
+  });
 }
 
 export function uploadReq(file: File | null, field = 'file'): NextRequest {

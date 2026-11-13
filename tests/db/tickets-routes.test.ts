@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { must } from '../helpers/must';
 import { cleanupUsers, makeFundedUser } from '../helpers/orders-db';
 import { getReq, sendReq, type ErrorBody } from '../helpers/client-area-db';
 import {
@@ -125,7 +126,7 @@ describe('POST /api/v1/tickets', () => {
     expect(res.status).toBe(201);
     const { id } = await res.json();
     expect(await ticketOf(id)).toMatchObject({ user_id: u.id, status: 'open' });
-    expect((await messagesOf(id))[0].from_admin).toBe(false);
+    expect(must((await messagesOf(id))[0]).from_admin).toBe(false);
   });
 
   it('le 4e ticket non fermé donne 429 RATE_LIMITED au format d’erreur commun', async () => {

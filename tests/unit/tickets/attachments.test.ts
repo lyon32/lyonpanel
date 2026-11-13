@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('server-only', () => ({}));
 
+import { TINY_PNG } from '../../helpers/tickets-db';
 import { ApiError } from '@/server/http/api-error';
 import {
   MAX_ATTACHMENT_BYTES,
@@ -10,7 +11,6 @@ import {
   detectImageMime,
   validateAttachment,
 } from '@/server/tickets/attachments';
-import { TINY_PNG } from '../../helpers/tickets-db';
 
 /*
  * Contrat attendu (src/server/tickets/attachments.ts), fonctions pures :

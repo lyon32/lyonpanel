@@ -3,6 +3,7 @@ import { fireEvent, render, screen, waitFor, within } from '@testing-library/rea
 import { NextIntlClientProvider } from 'next-intl';
 import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { must } from '../../helpers/must';
 import fr from '@/messages/fr.json';
 import { AttachmentUpload } from '@/components/tickets/attachment-upload';
 import { SupportFaq } from '@/components/tickets/support-faq';
@@ -96,8 +97,8 @@ describe('AttachmentUpload', () => {
 
     await waitFor(() => expect(onChange).toHaveBeenLastCalledWith(['att-1']));
     expect(compress).toHaveBeenCalledTimes(1);
-    expect(compress.mock.calls[0][1].maxSizeMB).toBeLessThanOrEqual(2);
-    const [url, init] = fetchMock.mock.calls[0];
+    expect(must(compress.mock.calls[0])[1].maxSizeMB).toBeLessThanOrEqual(2);
+    const [url, init] = must(fetchMock.mock.calls[0]);
     expect(String(url)).toBe('/api/v1/tickets/attachments');
     expect(init?.method).toBe('POST');
     const sent = (init?.body as FormData).get('file') as File;
@@ -114,7 +115,7 @@ describe('AttachmentUpload', () => {
     upload([png('a.png'), png('b.png')]);
     await waitFor(() => expect(screen.getAllByTestId('attachment-chip')).toHaveLength(2));
     fireEvent.click(
-      within(screen.getAllByTestId('attachment-chip')[0]).getByTestId('attachment-remove'),
+      within(must(screen.getAllByTestId('attachment-chip')[0])).getByTestId('attachment-remove'),
     );
     await waitFor(() => expect(screen.getAllByTestId('attachment-chip')).toHaveLength(1));
     expect(onChange).toHaveBeenLastCalledWith(['att-2']);
@@ -201,17 +202,17 @@ describe('TicketForm', () => {
     const fetchMock = mockFetch(() => json(201, { id: 'ticket-42' }));
     wrap(<TicketForm orders={orders} />);
     fill('order', 'Ma commande est bloquée');
-    fireEvent.change(screen.getByTestId('ticket-order'), { target: { value: orders[0].id } });
+    fireEvent.change(screen.getByTestId('ticket-order'), { target: { value: must(orders[0]).id } });
     fireEvent.click(screen.getByTestId('ticket-submit'));
 
     await waitFor(() => expect(nav.push).toHaveBeenCalledTimes(1));
     expect(JSON.stringify(nav.push.mock.calls[0])).toContain('ticket-42');
-    const [url, init] = fetchMock.mock.calls[0];
+    const [url, init] = must(fetchMock.mock.calls[0]);
     expect(String(url)).toBe('/api/v1/tickets');
     expect(init?.method).toBe('POST');
     expect(JSON.parse(String(init?.body))).toEqual({
       subject: 'order',
-      order_id: orders[0].id,
+      order_id: must(orders[0]).id,
       body: 'Ma commande est bloquée',
     });
   });
@@ -282,7 +283,7 @@ describe('TicketThread', () => {
 
   it('affiche le texte brut tel quel : aucune balise HTML interprétée', () => {
     wrap(<TicketThread ticket={ticket} messages={messages} />);
-    const first = screen.getAllByTestId('ticket-message')[0];
+    const first = must(screen.getAllByTestId('ticket-message')[0]);
     expect(first).toHaveTextContent('<b>Bonjour</b> & merci');
     expect(first.querySelector('b')).toBeNull();
   });
@@ -301,7 +302,7 @@ describe('TicketThread', () => {
     fireEvent.change(screen.getByTestId('ticket-reply-body'), { target: { value: 'Merci !' } });
     fireEvent.click(screen.getByTestId('ticket-reply-send'));
     await waitFor(() => expect(nav.refresh).toHaveBeenCalled());
-    const [url, init] = fetchMock.mock.calls[0];
+    const [url, init] = must(fetchMock.mock.calls[0]);
     expect(String(url)).toBe('/api/v1/tickets/ticket-7/messages');
     expect(init?.method).toBe('POST');
     expect(JSON.parse(String(init?.body))).toEqual({ body: 'Merci !' });
@@ -319,7 +320,7 @@ describe('TicketThread', () => {
     wrap(<TicketThread ticket={ticket} messages={messages} />);
     fireEvent.click(screen.getByTestId('ticket-close'));
     await waitFor(() => expect(nav.refresh).toHaveBeenCalled());
-    const [url, init] = fetchMock.mock.calls[0];
+    const [url, init] = must(fetchMock.mock.calls[0]);
     expect(String(url)).toBe('/api/v1/tickets/ticket-7');
     expect(init?.method).toBe('PATCH');
     expect(JSON.parse(String(init?.body))).toEqual({ status: 'closed' });
