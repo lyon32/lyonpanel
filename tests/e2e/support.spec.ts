@@ -62,7 +62,13 @@ async function noHorizontalOverflow(page: Page) {
 async function tapTargetsAreBigEnough(page: Page) {
   const small = await page.evaluate(() =>
     [...document.querySelectorAll<HTMLElement>('a, button, [role="button"], select, input')]
-      .filter((el) => el.offsetParent !== null && el.getAttribute('type') !== 'hidden')
+      // Le champ fichier est masqué (sr-only) : sa zone tactile est le libellé de 44 px qui l'entoure.
+      .filter(
+        (el) =>
+          el.offsetParent !== null &&
+          el.getAttribute('type') !== 'hidden' &&
+          el.getAttribute('type') !== 'file',
+      )
       .map((el) => ({ el, r: el.getBoundingClientRect() }))
       .filter(({ r }) => r.width > 0 && r.height > 0 && (r.height < 44 || r.width < 44))
       .map(
@@ -80,6 +86,8 @@ async function noProviderWord(page: Page) {
 
 async function openTicket(page: Page, subject: string, body: string, withImage = false) {
   await page.goto('/fr/support');
+  // Le bouton n'est actif qu'une fois la page hydratée : avant, React efface le sujet choisi.
+  await expect(page.locator('[data-testid="ticket-submit"]')).toBeEnabled();
   await page.locator('[data-testid="ticket-subject"]').selectOption(subject);
   await page.locator('[data-testid="ticket-body"]').fill(body);
   if (withImage) {
@@ -176,6 +184,7 @@ test.describe('Support à 360 px', () => {
     const service = await makeService({ min_qty: 10, max_qty: 10_000 });
     const order = await makeOrder(user.id, service.id, { quantity: 500 });
     await page.goto('/fr/support');
+    await expect(page.locator('[data-testid="ticket-submit"]')).toBeEnabled();
     await page.locator('[data-testid="ticket-subject"]').selectOption('order');
     await page.locator('[data-testid="ticket-body"]').fill('Ma commande n’avance pas.');
     await page.locator('[data-testid="ticket-submit"]').click();
