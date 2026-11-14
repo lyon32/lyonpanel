@@ -116,7 +116,9 @@ Un agent ne démarre jamais avant ce dont il dépend ; ce qui est indépendant t
 
 > À mettre à jour au début de chaque phase (`ROADMAP.md`).
 
-**Phase en cours : Phase 9 — Support** (plan validé le 2026-11-12, décisions dans `docs/plans/phase-9.md`). Phases 0 et 1 validées le 2026-11-07, phase 2 le 2026-11-08, phase 3 le 2026-11-09, phases 4, 5, 6 et 7 le 2026-11-10, phase 8 le 2026-11-11 (PR 18).
+**Phase 9 — Support : terminée côté code (2026-11-14), en attente du « validé » du propriétaire** (bilan : `docs/reports/phase-9/bilan.md`, branche `feat/phase-9-support`, PR à ouvrir). **Prochaine phase : Phase 10 — Parrainage + remises, à ouvrir dans une nouvelle session** après la discussion habituelle. Ne rien démarrer de la phase 10 dans cette session.
+
+Phase 9 pour mémoire (plan validé le 2026-11-12, décisions dans `docs/plans/phase-9.md`). Phases 0 et 1 validées le 2026-11-07, phase 2 le 2026-11-08, phase 3 le 2026-11-09, phases 4, 5, 6 et 7 le 2026-11-10, phase 8 le 2026-11-11 (PR 18).
 
 **Périmètre phase 9 (seulement ceci)** : tickets du client (4 sujets fixes, lien à une commande, messages, 3 captures ≤ 2 Mo compressées dans le navigateur, bucket privé, fermeture et réouverture), FAQ fixe, délai « sous 24 h », limites anti-abus (10/heure, 3 tickets non fermés), alerte Telegram (n° et sujet seulement), FR/EN, sombre `.lp-app`. Pas d'admin (11-12), pas d'email, pas de lien Telegram client, pas de remboursement. Nouvelle migration seulement si nécessaire, annoncée avant. Seule nouvelle bibliothèque autorisée : `browser-image-compression`.
 
