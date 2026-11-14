@@ -78,6 +78,7 @@ export function TicketForm({ orders }: { orders: { id: string; label: string }[]
         <select
           data-testid="ticket-subject"
           value={subject}
+          disabled={!ready}
           onChange={(e) => setSubject(e.target.value)}
           className={selectClass}
         >
@@ -115,6 +116,7 @@ export function TicketForm({ orders }: { orders: { id: string; label: string }[]
         <textarea
           data-testid="ticket-body"
           value={body}
+          disabled={!ready}
           onChange={(e) => setBody(e.target.value)}
           rows={5}
           maxLength={MAX_BODY_LENGTH}
