@@ -88,3 +88,25 @@ B. Pagination "Mes tickets" (compte de 26 tickets fermés)
 Problème ouvert :
   A. [Important] Image de 1400 px incompressible (PNG de bruit 4,9 Mo) : PC 29 s de gel, téléphone lent plus de 5 min, sans message — capture : p3-01-bruit-tel-fr.png — Responsable : lp-coder.
 Verdict : À CORRIGER (A). B accepté.
+
+==================================================================
+4e PASSAGE (14 nov. 2026) — ciblé : défaut A (réencodage JPEG par le canvas natif, commit e6a09e9)
+==================================================================
+VERDICT : ACCEPTÉ (défaut A corrigé ; plus aucun défaut Important ouvert)
+Environnement : build de production (webpack) du commit e6a09e9 dans une copie temporaire hors dépôt, `next start` port 3100, faux fournisseur, SasPay test, Supabase local, Chromium Playwright. Téléphone 360x740 UA Android 1,6 Mbit/s 150 ms CPU x4 ; ordinateur 1366x768 ; FR et EN, 4 contextes. Telegram intercepté. Serveurs arrêtés (PID ciblés), code du dépôt non modifié. Captures : préfixe `p4-` (01 à 04 dans les 4 contextes, 07).
+
+Résultats (temps de traitement = du dépôt du fichier à la puce affichée ; "gel" = plus long blocage du fil principal, qui inclut le transfert du fichier par Playwright, très lent avec le CPU ralenti) :
+  1. PNG de bruit 1400x1400, 4,9 Mo : CORRIGÉ.
+     - PC : traitement 0,21 s (FR et EN), gel 0,8 à 1,1 s (3e passage : 29 s). Page utilisable, ping de l'interface 10 ms.
+     - Téléphone lent : traitement 3,1 s (FR) et 2,8 s (EN), gel 7,7 s et 7,0 s dont l'essentiel est le transfert Playwright (le fichier de 9 Mo, que l'application refuse sans le lire, gèle 14 à 16 s de la même façon) ; ping de l'interface 29 à 39 ms. 3e passage : plus de 337 s sans résultat.
+  2. Photo 12 Mpx (2,1 Mo) : PC 0,42 s ; téléphone 3,4 s (FR), 3,1 s (EN). Affichée dans le fil (1200x1600).
+  3. Capture d'écran PNG 1080x2400 : PC 0,21 s ; téléphone 1,0 s. Affichée dans le fil (720x1600).
+  4. Fichier de 9 Mo : refus immédiat (15 à 40 ms), "Cette image est trop lourde (8 Mo maximum). Choisissez une capture plus légère." / "This image is too heavy (8 MB maximum). Choose a lighter screenshot." (PC et téléphone, FR et EN, p4-02-*). Page utilisable.
+  5. Envoi complet d'un ticket avec 3 captures réencodées : OK sur PC FR/EN et téléphone FR/EN, redirection vers le fil, 3 images chargées dans le fil (p4-04-*). Tailles réelles en stockage : toutes en JPEG, de 49 Ko à 244 Ko (bruit 4,9 Mo -> ~207 Ko), donc <= 2 Mo (et <= 1 Mo). Console vide, 0 exception, 0 requête 4xx/5xx, débordement 360 px : 0.
+  6. Message "trop lourde à réduire" : NON PROVOCABLE avec un fichier admissible. Pire cas testé : PNG de bruit pur 1600x1600 (7,7 Mo, aléatoire total par pixel) -> accepté, réencodé en 0,83 Mo ; mesure canvas : qualité 0,8 = 1,63 Mo, 0,6 = 1,14 Mo, 0,4 = 0,83 Mo. Comme la source est plafonnée à 8 Mo et le côté à 1600 px, la limite de 2 Mo ne peut pas être dépassée : le garde-fou est inatteignable en pratique. Textes présents en FR ("Cette image est trop lourde pour être réduite. Veuillez en choisir une autre.") et EN ("This image is too heavy to be reduced. Please choose another one.") ; affichage non vu à l'écran.
+
+Observation mineure (non bloquante) : une image de 1400 px conserve ses dimensions d'origine (puces/fil : 1400x1400), seul l'encodage est réduit ; normal, le plafond est 1600 px.
+Non vérifié : le test unitaire de TooHeavy, le repli bibliothèque (navigateur sans createImageBitmap).
+
+Problèmes ouverts : aucun Bloquant ni Important. Restent les Mineurs C (HTTP 200 sur page introuvable) et D (détail de validation en anglais côté API, alerte Telegram par message) des passages précédents.
+Verdict : ACCEPTÉ.
