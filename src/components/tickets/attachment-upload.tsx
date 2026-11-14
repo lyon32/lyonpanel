@@ -51,42 +51,53 @@ export async function ticketErrorMessage(res: Response, t: Translate): Promise<s
 const COMPRESS_TIMEOUT_MS = 20_000;
 
 class CompressTimeout extends Error {}
+class TooHeavy extends Error {}
 
-// Réduit d'abord les pixels (travail borné, indépendant du contenu) : le décodage est natif et asynchrone,
-// puis la bibliothèque n'a plus qu'une petite image à ajuster.
-export async function downscale(file: File): Promise<File | Blob> {
-  if (typeof createImageBitmap !== 'function') return file;
+const TARGET_BYTES = 1024 * 1024;
+// Au-delà, même à la qualité la plus basse, l'image est jugée impossible à réduire.
+const GIVE_UP_BYTES = 2 * 1024 * 1024;
+const QUALITIES = [0.8, 0.6, 0.4];
+
+function toJpeg(canvas: HTMLCanvasElement, quality: number): Promise<Blob | null> {
+  return new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', quality));
+}
+
+// Chemin natif : décodage asynchrone puis réencodage JPEG par le canvas, toujours.
+// La bibliothèque boucle sur le fil principal avec un PNG de bruit déjà petit en pixels ; ici le travail est borné.
+// Renvoie null si le canvas est indisponible (on retombe alors sur la bibliothèque).
+export async function downscale(file: File): Promise<Blob | null> {
   const bitmap = await createImageBitmap(file);
   const ratio = Math.min(1, MAX_SIDE_PX / Math.max(bitmap.width, bitmap.height));
-  if (ratio === 1) {
-    bitmap.close();
-    return file;
-  }
   const canvas = document.createElement('canvas');
   canvas.width = Math.round(bitmap.width * ratio);
   canvas.height = Math.round(bitmap.height * ratio);
   const ctx = canvas.getContext('2d');
   if (!ctx) {
     bitmap.close();
-    return file;
+    return null;
   }
   // Fond blanc : le JPEG n'a pas de transparence.
   ctx.fillStyle = '#fff';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
   bitmap.close();
-  const blob = await new Promise<Blob | null>((resolve) =>
-    canvas.toBlob(resolve, 'image/jpeg', 0.8),
-  );
-  return blob ?? file;
+  let blob: Blob | null = null;
+  for (const quality of QUALITIES) {
+    blob = await toJpeg(canvas, quality);
+    if (!blob) return null;
+    if (blob.size <= TARGET_BYTES) return blob;
+  }
+  if (blob && blob.size > GIVE_UP_BYTES) throw new TooHeavy();
+  return blob;
 }
 
 async function compressSteps(file: File): Promise<File | Blob> {
-  // Sans createImageBitmap (vieux navigateur), la bibliothèque est appelée tout de suite.
-  const reduced = typeof createImageBitmap === 'function' ? await downscale(file) : file;
-  const source =
-    reduced instanceof File ? reduced : new File([reduced], 'image.jpg', { type: 'image/jpeg' });
-  return imageCompression(source, {
+  if (typeof createImageBitmap === 'function') {
+    const blob = await downscale(file);
+    if (blob) return blob;
+  }
+  // Repli (vieux navigateur) : la bibliothèque, sur le fil principal.
+  return imageCompression(file, {
     maxSizeMB: MAX_SIZE_MB,
     maxWidthOrHeight: MAX_SIDE_PX,
     // Le worker charge du code depuis un CDN, bloqué par le CSP : on reste sur le fil principal.
@@ -122,6 +133,7 @@ export function AttachmentUpload({ onChange }: { onChange: (ids: string[]) => vo
     try {
       small = await compressWithTimeout(file);
     } catch (e) {
+      if (e instanceof TooHeavy) throw new Error(t('errors.tooHeavyToReduce'));
       throw e instanceof CompressTimeout ? new Error(t('errors.compressTimeout')) : e;
     }
     const body = new FormData();

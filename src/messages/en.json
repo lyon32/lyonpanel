@@ -712,6 +712,7 @@
       "openTickets": "You already have 3 open tickets. Close one to open a new one.",
       "uploadLimit": "Too many screenshots sent. Try again a bit later.",
       "compressTimeout": "This image is too heavy to shrink. Try another screenshot.",
+      "tooHeavyToReduce": "This image is too heavy to be reduced. Please choose another one.",
       "fileTooBig": "This image is too heavy (8 MB maximum). Choose a lighter screenshot.",
       "compressing": "Shrinking the image…"
     }

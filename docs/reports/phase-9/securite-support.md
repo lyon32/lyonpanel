@@ -69,3 +69,48 @@ E. [Basse] src/components/tickets/attachment-upload.tsx:59 — useWebWorker: tru
 F. [Basse, inchangée] réouverture d'un ticket fermé par message : contourne la limite de 3 (bornée à 10/h par l'API ; non bornée en direct, voir C). À confirmer avec le propriétaire.
 
 Verdict : À CORRIGER. Aucune faille Critique ou Haute, mais A (Moyenne) doit être fermée avant la phase 15 ; B à F sont Basses. Aucun secret, 0 vulnérabilité en production, CSP restreint à l'origine Supabase du projet, aucun IDOR, aucune lecture croisée, limite de 3 tickets sûre en parallèle, unicité de rattachement sûre en parallèle.
+
+==========================================================================
+3e PASSAGE — vérification des corrections A à E (HEAD 44fa20b)
+==========================================================================
+VERDICT : ACCEPTÉ (aucune faille Critique, Haute ni Moyenne ; 1 Basse résiduelle, point D, non exploitable)
+Méthode : attaques refaites en direct sur la base locale (127.0.0.1:55321), clés lues dans le conteneur supabase_storage_lyonpanel et gardées en variables de session, jetons « client » signés avec le secret JWT local. Puis serveur Next de production (next build + next start, port 3199, faux fournisseur, variables passées par le processus, aucun fichier .env créé ; le .env.local déjà présent et ignoré par git n'a pas été touché). Serveur arrêté, comptes sectest-p9-* (6 au total) supprimés avec tickets, messages, pièces et fichiers : 0 compte, 0 objet restant. Scripts d'essai hors projet (scratchpad). Aucun fichier du projet modifié.
+
+Points décidés (acceptés par le propriétaire, ne bloquent pas) :
+- F (réouverture d'un ticket fermé par message, contourne la limite de 3) : ACCEPTÉ par le propriétaire. Désormais bornée aussi en direct (contrainte 4000 caractères) ; reste bornée à 10 actions/h par l'API.
+- Nettoyage des fichiers orphelins (déposés mais jamais rattachés) : REPORTÉ, accepté par le propriétaire. Avec A fermée, seul le serveur dépose (20/h par compte), donc le volume d'orphelins est borné.
+
+Vérification des failles du 2e passage :
+- A (dépôt direct) : CORRIGÉE. Policy d'insertion supprimée ; PNG valide déposé par un client avec la clé publique → 400. PUT direct → 400.
+- B (HTML déguisé en image/png) : CORRIGÉE (conséquence de A) → 400 en direct ; par la route : 422.
+- C (message > 4000) : CORRIGÉE. PostgREST direct : 4001 caractères → 400, 2 Mo → 400, 4000 → 201. Faux from_admin → 403.
+- D (chemin « ../ ») : PARTIELLEMENT corrigée, voir D ci-dessous.
+- E (useWebWorker) : CORRIGÉE. attachment-upload.tsx:59 useWebWorker: false ; CSP worker-src 'self' (sans blob:), en-tête réel vérifié sur le serveur de production. img-src/connect-src = origine exacte Supabase, nosniff présent.
+
+Essais d'attaque directs sur la base (résultat réel) :
+- Dépôt direct client (PNG valide) → attendu refus / obtenu 400 → OK
+- HTML déguisé en image/png, direct → refus / 400 → OK
+- Dépôt uid/../autre/x.png → refus / 400 → OK
+- Dépôt par la clé service (comme le serveur), 3 objets → 200 x3 → OK
+- Lecture de sa pièce conforme <uid>/<uuid>.png → 200 → OK
+- Lecture d'un fichier non conforme (<uid>/notuuid.png) → refus / 400 → OK
+- Lecture de la pièce d'autrui, lecture anon → 400 / 400 → OK
+- Signature d'URL : pièce conforme propre 200 (téléchargement 200 image/png) ; pièce d'autrui 400 ; fichier non conforme 400 → OK
+- Liste du dossier d'autrui → [] ; suppression directe par le client → objet toujours présent → OK
+- Régression IDOR (PostgREST) : B lit ticket / messages / pièces de A → 0 ligne ; B écrit dans le ticket de A → 403 ; B ferme le ticket de A → 403 (ticket resté ouvert) ; création de ticket par le client → 201 (pas de régression) → OK
+- Signature groupée avec la clé service de « uid/../autre/<fichier existant> » (y compris encodé %2F) → « object does not exist » : aucune lecture croisée possible → OK
+
+Essais HTTP sur le serveur Next de production :
+- Upload sans cookie → 401 ; Origin étranger avec cookie valide → 403 ; sans Origin → 403 → OK
+- Dépôt par la route (PNG) → 201 → OK ; HTML déguisé → 422 ; SVG → 422 ; fichier > 2 Mo → 422 ; corps brut de 3 Mo (content-length) → 422 FILE_TOO_LARGE (code du contrat API_SPEC §3, pas 413) → OK
+- Limite d'envois : 429 dès la 21e requête de l'heure (séries de 201 puis 429) → OK
+- A lit le ticket de B → 404 ; sans cookie → 401 ; A écrit chez B → 404 ; message 4001 caractères → 400 ; Origin étranger → 403 → OK
+- B rattache la pièce de A à son message → 404 ; attachment_ids invalide → 400 ; B rattache sa propre pièce → 201 ; l'URL signée renvoyée marche (200 image/png), storage_path jamais renvoyé → OK
+Non rejoués : 429 de connexion (hors périmètre), webhooks (hors tâche).
+
+Secrets : aucune clé écrite dans un fichier du projet ; les clés n'ont vécu qu'en variables de session. Pas de nouvelle dépendance depuis le 2e passage.
+
+Faille restante :
+D. [Basse] supabase/migrations/20261107160000_security_hardening.sql:185-190 — la policy ticket_attachments_insert (table, pas le stockage) accepte toujours un storage_path « uid/../autre/x.png », « uid/notuuid.png » ou « uid/<uuid>.PNG » (rattachement par PostgREST direct → 201). La migration 20261114100000 a resserré la lecture du stockage, pas cette policy. Non exploitable : aucun objet ne peut exister à ces chemins (seul le serveur dépose, avec un uuid), et la signature serveur d'un chemin « ../ » vers un fichier existant d'autrui échoue (testé). Impact : lignes parasites dans la table, sans lecture croisée. Correction (défense en profondeur, optionnelle, nouvelle migration) : exiger dans la policy le même motif strict que la lecture. Responsable : lp-db.
+
+Verdict : ACCEPTÉ. Critères du §7 remplis : essais d'attaque applicables conformes, aucune faille Critique/Haute (ni Moyenne), aucun secret, aucune vulnérabilité de production connue (npm audit --omit=dev à 0 au 2e passage, aucune dépendance ajoutée depuis).
