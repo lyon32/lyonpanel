@@ -3,11 +3,16 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { SupportFaq } from '@/components/tickets/support-faq';
 import { TicketForm } from '@/components/tickets/ticket-form';
 import { Link } from '@/i18n/navigation';
+import { ApiError } from '@/server/http/api-error';
 import { requireUser } from '@/server/auth/require-user';
+import { listTicketsQuerySchema } from '@/server/schemas/ticket';
 import { listOrders } from '@/server/orders/list-orders';
 import { listTickets, shortTicketId } from '@/server/tickets/tickets';
 
-type Props = { params: Promise<{ locale: string }> };
+type Props = {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<{ cursor?: string | string[] }>;
+};
 
 // Couleurs de statut lisibles sur fond sombre (docs/05 §11).
 const STATUS_CLASS: Record<string, string> = {
@@ -22,16 +27,34 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title: t('tickets'), robots: { index: false, follow: false } };
 }
 
-export default async function TicketsPage({ params }: Props) {
+// Curseur absent ou invalide : première page (jamais d'erreur 500 sur un lien modifié).
+async function loadTickets(userId: string, rawCursor: string | string[] | undefined) {
+  const parsed = listTicketsQuerySchema.safeParse({
+    cursor: typeof rawCursor === 'string' ? rawCursor : undefined,
+    limit: 20,
+  });
+  if (parsed.success && parsed.data.cursor) {
+    try {
+      return { page: await listTickets(userId, parsed.data), paged: true };
+    } catch (e) {
+      if (!(e instanceof ApiError)) throw e;
+    }
+  }
+  return { page: await listTickets(userId, { limit: 20 }), paged: false };
+}
+
+export default async function TicketsPage({ params, searchParams }: Props) {
   const { locale } = await params;
+  const { cursor } = await searchParams;
   setRequestLocale(locale);
   const lang = locale === 'en' ? 'en' : 'fr';
   const user = await requireUser(lang);
   const t = await getTranslations({ locale, namespace: 'support' });
-  const [{ data: orders }, { items }] = await Promise.all([
+  const [{ data: orders }, { page, paged }] = await Promise.all([
     listOrders(user.id, { limit: 50 }, lang),
-    listTickets(user.id, { limit: 20 }),
+    loadTickets(user.id, cursor),
   ]);
+  const { items, next_cursor: nextCursor } = page;
   const date = new Intl.DateTimeFormat(locale, { dateStyle: 'medium' });
   return (
     <section className="flex flex-col gap-6">
@@ -72,6 +95,26 @@ export default async function TicketsPage({ params }: Props) {
             ))}
           </ul>
         )}
+        <div className="flex flex-wrap gap-4 text-sm font-semibold">
+          {paged ? (
+            <Link
+              data-testid="tickets-back"
+              href="/tickets"
+              className="text-bleu-600 focus-visible:outline-bleu-600 flex min-h-11 items-center underline focus-visible:outline-2"
+            >
+              {t('list.backToStart')}
+            </Link>
+          ) : null}
+          {nextCursor ? (
+            <Link
+              data-testid="tickets-more"
+              href={{ pathname: '/tickets', query: { cursor: nextCursor } }}
+              className="text-bleu-600 focus-visible:outline-bleu-600 flex min-h-11 items-center underline focus-visible:outline-2"
+            >
+              {t('list.more')}
+            </Link>
+          ) : null}
+        </div>
       </section>
     </section>
   );

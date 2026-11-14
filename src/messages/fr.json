@@ -682,6 +682,8 @@
       "title": "Mes tickets",
       "empty": "Vous n’avez aucun ticket.",
       "new": "Nouveau ticket",
+      "more": "Voir plus",
+      "backToStart": "Retour au début",
       "status": {
         "open": "Ouvert",
         "answered": "Répondu",
@@ -710,6 +712,7 @@
       "openTickets": "Vous avez déjà 3 tickets ouverts. Fermez-en un pour en ouvrir un nouveau.",
       "uploadLimit": "Trop de captures envoyées. Réessayez un peu plus tard.",
       "compressTimeout": "Cette image est trop lourde à réduire. Essayez une autre capture.",
+      "fileTooBig": "Cette image est trop lourde (8 Mo maximum). Choisissez une capture plus légère.",
       "compressing": "Réduction de l’image…"
     }
   }

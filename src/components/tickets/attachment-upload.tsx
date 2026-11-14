@@ -11,6 +11,10 @@ const MAX_IMAGES = 3;
 // Le serveur refuse au-delà : on réduit déjà dans le navigateur (économise le réseau mobile).
 const MAX_SIZE_MB = 1;
 
+// Au-delà, la réduction figerait la page (fil principal) : on refuse sans rien décoder.
+export const MAX_SOURCE_BYTES = 8 * 1024 * 1024;
+const MAX_SIDE_PX = 1600;
+
 type Chip = { id: string; name: string };
 
 // Message d'erreur du serveur (format API_SPEC §3), ou null si la réponse n'en contient pas.
@@ -48,17 +52,54 @@ const COMPRESS_TIMEOUT_MS = 20_000;
 
 class CompressTimeout extends Error {}
 
+// Réduit d'abord les pixels (travail borné, indépendant du contenu) : le décodage est natif et asynchrone,
+// puis la bibliothèque n'a plus qu'une petite image à ajuster.
+export async function downscale(file: File): Promise<File | Blob> {
+  if (typeof createImageBitmap !== 'function') return file;
+  const bitmap = await createImageBitmap(file);
+  const ratio = Math.min(1, MAX_SIDE_PX / Math.max(bitmap.width, bitmap.height));
+  if (ratio === 1) {
+    bitmap.close();
+    return file;
+  }
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.round(bitmap.width * ratio);
+  canvas.height = Math.round(bitmap.height * ratio);
+  const ctx = canvas.getContext('2d');
+  if (!ctx) {
+    bitmap.close();
+    return file;
+  }
+  // Fond blanc : le JPEG n'a pas de transparence.
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  bitmap.close();
+  const blob = await new Promise<Blob | null>((resolve) =>
+    canvas.toBlob(resolve, 'image/jpeg', 0.8),
+  );
+  return blob ?? file;
+}
+
+async function compressSteps(file: File): Promise<File | Blob> {
+  // Sans createImageBitmap (vieux navigateur), la bibliothèque est appelée tout de suite.
+  const reduced = typeof createImageBitmap === 'function' ? await downscale(file) : file;
+  const source =
+    reduced instanceof File ? reduced : new File([reduced], 'image.jpg', { type: 'image/jpeg' });
+  return imageCompression(source, {
+    maxSizeMB: MAX_SIZE_MB,
+    maxWidthOrHeight: MAX_SIDE_PX,
+    // Le worker charge du code depuis un CDN, bloqué par le CSP : on reste sur le fil principal.
+    useWebWorker: false,
+  });
+}
+
 function compressWithTimeout(file: File): Promise<File | Blob> {
   let timer: ReturnType<typeof setTimeout> | undefined;
   const timeout = new Promise<never>((_, reject) => {
     timer = setTimeout(() => reject(new CompressTimeout()), COMPRESS_TIMEOUT_MS);
   });
-  const work = imageCompression(file, {
-    maxSizeMB: MAX_SIZE_MB,
-    maxWidthOrHeight: 1600,
-    // Le worker charge du code depuis un CDN, bloqué par le CSP : on reste sur le fil principal.
-    useWebWorker: false,
-  });
+  const work = compressSteps(file);
   return Promise.race([work, timeout]).finally(() => clearTimeout(timer));
 }
 
@@ -98,6 +139,10 @@ export function AttachmentUpload({ onChange }: { onChange: (ids: string[]) => vo
     if (files.length === 0) return;
     if (files.some((f) => !ACCEPT.includes(f.type))) {
       setError(t('errors.fileType'));
+      return;
+    }
+    if (files.some((f) => f.size > MAX_SOURCE_BYTES)) {
+      setError(t('errors.fileTooBig'));
       return;
     }
     const slots = MAX_IMAGES - current.current.length;

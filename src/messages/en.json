@@ -682,6 +682,8 @@
       "title": "My tickets",
       "empty": "You have no tickets.",
       "new": "New ticket",
+      "more": "See more",
+      "backToStart": "Back to the start",
       "status": {
         "open": "Open",
         "answered": "Answered",
@@ -710,6 +712,7 @@
       "openTickets": "You already have 3 open tickets. Close one to open a new one.",
       "uploadLimit": "Too many screenshots sent. Try again a bit later.",
       "compressTimeout": "This image is too heavy to shrink. Try another screenshot.",
+      "fileTooBig": "This image is too heavy (8 MB maximum). Choose a lighter screenshot.",
       "compressing": "Shrinking the image…"
     }
   }
