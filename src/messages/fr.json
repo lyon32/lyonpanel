@@ -626,5 +626,95 @@
   },
   "service": {
     "ref": "Réf. {id}"
+  },
+  "support": {
+    "title": "Support",
+    "responseTime": "Nous répondons sous 24 h.",
+    "faq": {
+      "title": "Questions fréquentes",
+      "items": {
+        "delivery": {
+          "question": "Ma commande n’a pas encore commencé, que faire ?",
+          "answer": "Une commande démarre en général en quelques minutes, parfois jusqu’à quelques heures. Si rien ne bouge après 24 h, ouvrez un ticket avec le numéro de la commande."
+        },
+        "partial": {
+          "question": "Ma commande est livrée en partie, pourquoi ?",
+          "answer": "Parfois, seule une partie de la quantité peut être livrée. Vous êtes alors débité uniquement de ce qui a été livré, le reste vous est rendu."
+        },
+        "refund": {
+          "question": "Puis-je être remboursé ?",
+          "answer": "Chaque demande est examinée par notre équipe. Ouvrez un ticket en expliquant le problème : nous vous répondons sous 24 h."
+        },
+        "rechargeMissing": {
+          "question": "J’ai payé mais mon solde n’a pas changé.",
+          "answer": "Un paiement peut mettre quelques minutes à arriver. Sans changement après 30 minutes, ouvrez un ticket avec le montant et l’heure du paiement."
+        },
+        "privateLink": {
+          "question": "Pourquoi mon lien doit-il être public ?",
+          "answer": "Un compte ou une publication privée ne peut pas recevoir la commande. Passez le compte en public pendant la livraison, puis remettez-le en privé."
+        }
+      }
+    },
+    "subjects": {
+      "order": "Une commande",
+      "recharge": "Une recharge",
+      "account": "Mon compte",
+      "other": "Autre chose"
+    },
+    "form": {
+      "title": "Ouvrir un ticket",
+      "subject": "Sujet",
+      "order": "Commande concernée",
+      "orderPlaceholder": "Choisir une commande",
+      "body": "Votre message",
+      "attach": "Ajouter une capture",
+      "attachHint": "3 images au maximum (JPEG, PNG ou WebP).",
+      "send": "Envoyer",
+      "sending": "Envoi…",
+      "sent": "Envoyé",
+      "remove": "Retirer",
+      "emptyBody": "Écrivez votre message.",
+      "needOrder": "Choisissez la commande concernée.",
+      "choose": "Choisir un sujet",
+      "networkError": "Connexion impossible. Réessayez."
+    },
+    "list": {
+      "title": "Mes tickets",
+      "empty": "Vous n’avez aucun ticket.",
+      "new": "Nouveau ticket",
+      "more": "Voir plus",
+      "backToStart": "Retour au début",
+      "status": {
+        "open": "Ouvert",
+        "answered": "Répondu",
+        "closed": "Fermé"
+      }
+    },
+    "thread": {
+      "you": "Vous",
+      "team": "L’équipe",
+      "reply": "Votre réponse",
+      "send": "Répondre",
+      "sending": "Envoi…",
+      "sent": "Envoyé",
+      "close": "Fermer le ticket",
+      "closing": "Fermeture…",
+      "closed": "Fermé",
+      "closedNotice": "Ce ticket est fermé. Écrire un message le rouvrira.",
+      "back": "Retour au support",
+      "attachment": "Capture jointe"
+    },
+    "errors": {
+      "openLimit": "Vous avez déjà 3 tickets ouverts. Attendez une réponse ou fermez-en un.",
+      "rateLimit": "Trop de messages envoyés. Réessayez dans une heure.",
+      "fileType": "Seules les images JPEG, PNG et WebP sont acceptées.",
+      "fileTooMany": "Vous pouvez joindre 3 images au maximum.",
+      "openTickets": "Vous avez déjà 3 tickets ouverts. Fermez-en un pour en ouvrir un nouveau.",
+      "uploadLimit": "Trop de captures envoyées. Réessayez un peu plus tard.",
+      "compressTimeout": "Cette image est trop lourde à réduire. Essayez une autre capture.",
+      "tooHeavyToReduce": "Cette image est trop lourde pour être réduite. Veuillez en choisir une autre.",
+      "fileTooBig": "Cette image est trop lourde (8 Mo maximum). Choisissez une capture plus légère.",
+      "compressing": "Réduction de l’image…"
+    }
   }
 }

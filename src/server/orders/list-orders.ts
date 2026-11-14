@@ -52,9 +52,9 @@ export function decodeCursor(cursor: string): { createdAt: string; id: string } 
 }
 
 // Valeurs déjà validées (ISO, UUID) : rien de libre n'entre dans le filtre.
-export function keysetFilter(c: { createdAt: string; id: string }): string {
+export function keysetFilter(c: { createdAt: string; id: string }, column = 'created_at'): string {
   const date = c.createdAt.replace('+00:00', 'Z');
-  return ['created_at.lt.', date, ',and(created_at.eq.', date, ',id.lt.', c.id, ')'].join('');
+  return [column, '.lt.', date, ',and(', column, '.eq.', date, ',id.lt.', c.id, ')'].join('');
 }
 
 /** Noms localisés du catalogue (repli sur name_fr si le service n'est pas classé). */

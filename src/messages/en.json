@@ -626,5 +626,95 @@
   },
   "service": {
     "ref": "Ref. {id}"
+  },
+  "support": {
+    "title": "Support",
+    "responseTime": "We reply within 24 h.",
+    "faq": {
+      "title": "Frequently asked questions",
+      "items": {
+        "delivery": {
+          "question": "My order has not started yet, what should I do?",
+          "answer": "An order usually starts within minutes, sometimes up to a few hours. If nothing moves after 24 h, open a ticket with the order number."
+        },
+        "partial": {
+          "question": "My order was only partly delivered, why?",
+          "answer": "Sometimes only part of the quantity can be delivered. You are then charged only for what was delivered, and the rest is returned to you."
+        },
+        "refund": {
+          "question": "Can I get a refund?",
+          "answer": "Every request is reviewed by our team. Open a ticket explaining the problem: we reply within 24 h."
+        },
+        "rechargeMissing": {
+          "question": "I paid but my balance did not change.",
+          "answer": "A payment can take a few minutes to arrive. If nothing changes after 30 minutes, open a ticket with the amount and the time of the payment."
+        },
+        "privateLink": {
+          "question": "Why must my link be public?",
+          "answer": "A private account or post cannot receive the order. Make the account public during delivery, then set it back to private."
+        }
+      }
+    },
+    "subjects": {
+      "order": "An order",
+      "recharge": "A top-up",
+      "account": "My account",
+      "other": "Something else"
+    },
+    "form": {
+      "title": "Open a ticket",
+      "subject": "Subject",
+      "order": "Order concerned",
+      "orderPlaceholder": "Choose an order",
+      "body": "Your message",
+      "attach": "Add a screenshot",
+      "attachHint": "Up to 3 images (JPEG, PNG or WebP).",
+      "send": "Send",
+      "sending": "Sending…",
+      "sent": "Sent",
+      "remove": "Remove",
+      "emptyBody": "Write your message.",
+      "needOrder": "Choose the order concerned.",
+      "choose": "Choose a subject",
+      "networkError": "Connection failed. Try again."
+    },
+    "list": {
+      "title": "My tickets",
+      "empty": "You have no tickets.",
+      "new": "New ticket",
+      "more": "See more",
+      "backToStart": "Back to the start",
+      "status": {
+        "open": "Open",
+        "answered": "Answered",
+        "closed": "Closed"
+      }
+    },
+    "thread": {
+      "you": "You",
+      "team": "The team",
+      "reply": "Your reply",
+      "send": "Reply",
+      "sending": "Sending…",
+      "sent": "Sent",
+      "close": "Close ticket",
+      "closing": "Closing…",
+      "closed": "Closed",
+      "closedNotice": "This ticket is closed. Writing a message will reopen it.",
+      "back": "Back to support",
+      "attachment": "Attached screenshot"
+    },
+    "errors": {
+      "openLimit": "You already have 3 open tickets. Wait for a reply or close one.",
+      "rateLimit": "Too many messages sent. Try again in an hour.",
+      "fileType": "Only JPEG, PNG and WebP images are accepted.",
+      "fileTooMany": "You can attach up to 3 images.",
+      "openTickets": "You already have 3 open tickets. Close one to open a new one.",
+      "uploadLimit": "Too many screenshots sent. Try again a bit later.",
+      "compressTimeout": "This image is too heavy to shrink. Try another screenshot.",
+      "tooHeavyToReduce": "This image is too heavy to be reduced. Please choose another one.",
+      "fileTooBig": "This image is too heavy (8 MB maximum). Choose a lighter screenshot.",
+      "compressing": "Shrinking the image…"
+    }
   }
 }

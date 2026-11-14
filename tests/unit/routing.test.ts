@@ -12,6 +12,7 @@ const table: Record<string, { fr: string; en: string }> = {
   '/register': { fr: '/inscription', en: '/register' },
   '/forgot-password': { fr: '/mot-de-passe-oublie', en: '/forgot-password' },
   '/tickets': { fr: '/support', en: '/support' },
+  '/tickets/[id]': { fr: '/support/[id]', en: '/support/[id]' },
   '/referral': { fr: '/parrainage', en: '/referral' },
   '/account': { fr: '/compte', en: '/account' },
   '/privacy': { fr: '/confidentialite', en: '/privacy' },
@@ -25,7 +26,7 @@ describe('routing', () => {
     expect(routing.localePrefix).toBe('always');
   });
 
-  it('contient exactement les 14 adresses internes', () => {
+  it('contient exactement les 15 adresses internes', () => {
     expect(Object.keys(pathnames).sort()).toEqual(Object.keys(table).sort());
   });
 
