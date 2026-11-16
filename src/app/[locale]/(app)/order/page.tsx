@@ -6,7 +6,10 @@ import { WalletBalance } from '@/components/order/order-parts';
 import { OrderForm, type OrderService } from '@/components/order/order-form';
 import { CURRENCY_COOKIE, parseCurrency } from '@/lib/currency';
 import { formatCatalogMoney } from '@/lib/money';
-import { Link } from '@/i18n/navigation';
+import { ServicePicker } from '@/components/order/service-picker';
+import { loadCatalogView } from '@/server/catalog/load-catalog';
+import { asCatalogLocale } from '@/server/catalog/page-params';
+import { buildPicker } from '@/server/catalog/picker';
 import { requireUser } from '@/server/auth/require-user';
 import { getPublicService, getUsdXafRateCached } from '@/server/catalog/public-catalog';
 import { createAdminClient } from '@/server/db/supabase-admin';
@@ -15,7 +18,14 @@ import { listFavorites } from '@/server/favorites/favorites';
 
 type Props = {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ service?: string; quantity?: string }>;
+  searchParams: Promise<{
+    service?: string;
+    quantity?: string;
+    network?: string;
+    type?: string;
+    q?: string;
+    page?: string;
+  }>;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -59,7 +69,9 @@ function initialQuantity(raw: string | undefined, service: OrderService): number
 
 export default async function OrderPage({ params, searchParams }: Props) {
   const { locale } = await params;
-  const { service: serviceParam, quantity: quantityParam } = await searchParams;
+  const sp = await searchParams;
+  const { service: serviceParam, quantity: quantityParam } = sp;
+  const pickerParams = { network: sp.network, type: sp.type, q: sp.q, page: sp.page };
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: 'order' });
   const user = await requireUser(locale === 'en' ? 'en' : 'fr');
@@ -92,18 +104,21 @@ export default async function OrderPage({ params, searchParams }: Props) {
       ) : (
         <>
           <WalletBalance amount={formatCatalogMoney(balanceXaf, currency, locale, usdXafRate)} />
-          <div className="border-gris-200 bg-blanc flex max-w-md flex-col gap-3 rounded-xl border p-4 sm:p-6">
+          <div className="flex max-w-md flex-col gap-1">
             <h2 className="text-encre text-lg font-semibold">
               {serviceParam ? t('unknownService') : t('noService')}
             </h2>
             <p className="text-gris-600 text-sm">{t('noServiceHelp')}</p>
-            <Link
-              href="/services"
-              className="bg-bleu-600 text-blanc hover:bg-bleu-700 focus-visible:ring-bleu-100 inline-flex min-h-11 items-center justify-center rounded-lg px-4 font-semibold outline-none focus-visible:ring-4"
-            >
-              {t('browseServices')}
-            </Link>
           </div>
+          <ServicePicker
+            view={buildPicker(
+              (await loadCatalogView(asCatalogLocale(locale))).catalog,
+              pickerParams,
+            )}
+            locale={locale}
+            currency={currency}
+            usdXafRate={usdXafRate}
+          />
         </>
       )}
     </section>

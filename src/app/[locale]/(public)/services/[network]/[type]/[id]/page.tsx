@@ -7,6 +7,7 @@ import { JsonLd } from '@/components/seo/json-ld';
 import { asLang, breadcrumbLd, catalogMetadata, fitTitle } from '@/lib/seo/catalog-seo';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Link } from '@/i18n/navigation';
 import { formatCatalogMoney } from '@/lib/money';
 import { networkLabel, typeLabel } from '@/server/catalog/labels';
 import { loadServiceView } from '@/server/catalog/load-catalog';
@@ -91,13 +92,10 @@ export default async function ServicePage({ params }: Props) {
         </p>
         {currency === 'USD' ? <p className="text-gris-600 text-sm">{t('indicative')}</p> : null}
         <div>
-          {/* Le formulaire de commande arrive en phase 6 : bouton éteint en attendant. */}
-          <Button disabled aria-describedby="order-soon">
-            {t('order')}
+          <Button asChild>
+            <Link href={{ pathname: '/order', query: { service: service.id } }}>{t('order')}</Link>
           </Button>
-          <p id="order-soon" className="text-gris-600 mt-2 text-sm">
-            {t('orderSoon')}
-          </p>
+          <p className="text-gris-600 mt-2 text-sm">{t('orderHelp')}</p>
         </div>
       </Card>
     </div>
