@@ -3,7 +3,7 @@ export type AdminResponse = { ok: boolean; status: number; data: unknown };
 
 export async function adminFetch(
   path: string,
-  method: 'GET' | 'POST' | 'PUT',
+  method: 'GET' | 'POST' | 'PUT' | 'PATCH',
   body?: Record<string, unknown>,
 ): Promise<AdminResponse> {
   try {
@@ -30,4 +30,13 @@ export function asMfaStatus(data: unknown): MfaStatus | null {
     needsMoreDevices: d.needsMoreDevices === true,
     aal2: d.aal2 === true,
   };
+}
+
+/** Message d'erreur renvoyé par l'API (format API_SPEC §3), ou null si absent. */
+export function apiErrorMessage(data: unknown): string | null {
+  if (typeof data !== 'object' || data === null) return null;
+  const error = (data as Record<string, unknown>).error;
+  if (typeof error !== 'object' || error === null) return null;
+  const message = (error as Record<string, unknown>).message;
+  return typeof message === 'string' ? message : null;
 }

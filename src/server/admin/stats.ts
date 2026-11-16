@@ -1,7 +1,8 @@
 import 'server-only';
+import type { StatsRange } from './stats-range';
 import { createAdminClient } from '@/server/db/supabase-admin';
 
-export type StatsRange = 'today' | '7d' | '30d';
+export type { StatsRange };
 
 export interface AdminStats {
   range: StatsRange;
