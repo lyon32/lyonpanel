@@ -19,7 +19,14 @@ export function CopyButton({ value, label, copiedLabel, testId }: Props) {
   }
   const Icon = copied ? Check : Copy;
   return (
-    <Button type="button" variant="outline" size="sm" onClick={copy} data-testid={testId}>
+    <Button
+      type="button"
+      variant="outline"
+      size="sm"
+      className="min-h-11"
+      onClick={copy}
+      data-testid={testId}
+    >
       <Icon size={16} aria-hidden="true" />
       <span aria-live="polite">{copied ? copiedLabel : label}</span>
     </Button>

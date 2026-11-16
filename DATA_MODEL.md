@@ -74,7 +74,7 @@ create type currency_code  as enum ('XAF','XOF','USD');
 | status | user_status | défaut `active` |
 | is_admin | boolean | défaut false ; un seul `true` (le propriétaire) |
 | referral_code | text | unique, 8 caractères, généré à l'inscription |
-| referred_by | uuid | FK → profiles.id, null |
+| referred_by | uuid | FK → profiles.id, null ; contrainte `profiles_no_self_referral` : jamais égal à `id` (phase 10) |
 | custom_discount_pct | numeric(5,2) | null ; 0–50 |
 | daily_spend_limit_xaf | bigint | défaut 500 000 ; plafond de commandes sur 24 h glissantes (SECURITY_NOTES §5) |
 | blocked_reason | text | null |

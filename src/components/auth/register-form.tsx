@@ -226,7 +226,9 @@ export function RegisterForm({ referralCode }: { referralCode?: string }) {
           />
         </StepItem>
         <StepItem step={2} current={step} className="col-span-2 lg:col-span-2">
+          {/* key : le code arrive après l'hydratation ; seul ce champ est recréé, pas le widget Turnstile. */}
           <Field
+            key={referralCode ?? ''}
             label={t('register.referralLabel')}
             name="referral_code"
             defaultValue={referralCode ?? ''}

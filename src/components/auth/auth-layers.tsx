@@ -36,7 +36,7 @@ export function RegisterLayer() {
   const ref = useQuery('ref').slice(0, 32);
   return (
     <AuthCard compactOnPhone title={t('register.title')} intro={t('register.intro')}>
-      <RegisterForm key={ref} referralCode={ref || undefined} />
+      <RegisterForm referralCode={ref || undefined} />
     </AuthCard>
   );
 }
