@@ -1,6 +1,6 @@
 # Plan — Phase 11 : Admin (1) — accès, stats, clients
 
-Branche : `feat/phase-11-admin-1` (depuis `main`, a093598). Statut : **plan écrit, rien de codé (2026-11-16)**.
+Branche : `feat/phase-11-admin-1` (depuis `main`, a093598). Statut : **faite – en attente de validation du propriétaire (2026-11-16)**. Bilan : `docs/reports/phase-11/bilan.md`.
 
 ## Objectif (ROADMAP.md)
 `ADMIN_PATH` secret, code à 6 chiffres sur 2 appareils (secours), `/admin` = 404, `noindex`. Tableau de bord : ventes, bénéfice, solde JAP, pays. Clients : recherche, fiche, blocage, remise perso, plafond journalier, notes privées.
@@ -34,13 +34,29 @@ Ajustement de solde, remboursements, commandes `to_review`, services, réglages,
 ## Tâches (ordre de TEAM.md)
 | # | Tâche | Agent | Statut |
 |---|---|---|---|
-| 11.0 | Plan, décisions, documents, CLAUDE.md | chef de projet | faite |
-| 11.1 | Tests d'abord : accès (404, aal2, 2 appareils), stats, clients, bonus annulé, borne `referral_pct`, purge, alerte (unit, base, e2e) | lp-tester | à faire |
-| 11.2 | Migration (annoncée avant) : colonnes client, notes, borne `referral_pct`, fonction d'annulation de bonus | lp-db | à faire |
-| 11.3 | Serveur : garde admin, `/admin/mfa/*`, `/admin/stats`, `/admin/users*`, annulation bonus, purge, alerte Telegram ; défaut D | lp-coder (jusqu'à 3 en parallèle) | à faire |
-| 11.4 | Écrans admin : connexion cachée, tableau de bord, liste et fiche client | lp-coder puis lp-designer ∥ lp-seo (`noindex`) | à faire |
-| 11.5 | Contrôles : relecture ∥ QA navigateur ∥ sécurité (admin + argent) | lp-reviewer ∥ lp-qa ∥ lp-security | à faire |
-| 11.6 | Rapports, bilan, ROADMAP, CHANGELOG, Obsidian | lp-reporter | à faire |
+| 11.0 | Plan, décisions, documents, CLAUDE.md | chef de projet | rapportée |
+| 11.1 | Tests d'abord : accès (404, aal2, 2 appareils), stats, clients, bonus annulé, borne `referral_pct`, purge, alerte (unit, base, e2e) | lp-tester | rapportée |
+| 11.2 | Migration : colonnes client, notes, borne `referral_pct`, fonction d'annulation de bonus | lp-db | rapportée |
+| 11.3 | Serveur : garde admin, `/admin/mfa/*`, `/admin/stats`, `/admin/users*`, annulation bonus, purge, alerte Telegram ; défaut D (lots A, B, C) | lp-coder | rapportée |
+| 11.4 | Écrans admin : connexion cachée, tableau de bord, liste et fiche client | lp-coder | rapportée |
+| 11.5 | Contrôles : relecture, QA navigateur, sécurité, design, SEO | lp-reviewer, lp-qa, lp-security, lp-designer, lp-seo | rapportée |
+| 11.6 | Rapports, bilan, ROADMAP, CHANGELOG, Obsidian | lp-reporter | rapportée |
+
+### Tâches de correctifs ajoutées pendant la phase (toutes rapportées)
+| # | Objet | Agent |
+|---|---|---|
+| 11.1b | 4 tests rouges, connexion admin dédiée, `ALREADY_CANCELLED` | lp-tester |
+| 11.1c | Tests d'abord des correctifs (dette, verrou du code, durée minimale, Sentry, enrôlement, statuts, alertes) | lp-tester |
+| 11.1d | Correctifs de tests (dette, verrou, `debt_xaf`) | lp-tester |
+| 11.1e | Plancher de durée des connexions : test à 1000 ms | lp-tester |
+| 11.1f | Tests unitaires et plancher de 1 s | lp-tester |
+| 11.2b | Faille du solde négatif (CHECK à NULL), migration `120000` | lp-db |
+| 11.2c | Dette et recharge (déclencheur « pas de nouvelle dette »), migration `130000` | lp-db |
+| 11.3b | Connexion admin dédiée, échappement de la recherche, `ALREADY_CANCELLED` | lp-coder |
+| 11.3c | Correctifs des contrôles (verrou du code, durée minimale, Sentry, enrôlement, statuts, dette côté client) | lp-coder |
+| 11.3d | Durée minimale de connexion portée à 1 s | lp-coder |
+| 11.3e | 3 correctifs de la QA ciblée (message du verrou, bandeau, milliers par pays) | lp-coder |
+| 11.5b | Fiche client en cartes sur téléphone, squelettes de chargement | lp-designer |
 
 ## À faire par le propriétaire (🧑)
 Enregistrer ses **2 appareils** de code à 6 chiffres au premier accès à l'admin ; tester le blocage d'un client de test.

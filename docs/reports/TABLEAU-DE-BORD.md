@@ -1,10 +1,10 @@
 # Tableau de bord LyonPanel
-Mis à jour le 2026-11-16 (phases 0 à 10 validées et fusionnées ; phase 11 en cours, plan écrit). Chiffres lus dans les comptes-rendus des phases 1 à 10.
+Mis à jour le 2026-11-16 (phases 0 à 10 validées et fusionnées ; phase 11 faite, en attente de validation). Chiffres lus dans les comptes-rendus des phases 1 à 11.
 
-**En 5 secondes :** les phases 0 à 10 sont validées et fusionnées (phase 10 : PR 22, a093598). La phase 11 (admin 1 : accès, stats, clients) est en cours : décisions prises, plan écrit, rien de codé. Rien ne bloque.
+**En 5 secondes :** les phases 0 à 10 sont validées et fusionnées. La phase 11 (admin 1 : accès, stats, clients) est faite et attend ton « validé » : tests unitaires 1 670 sur 1 670, tests de base 1 014 sur 1 014, contrôle de sécurité accepté. Reste : lire la CI de la PR, ton « validé », puis la fusion. Rien ne bloque.
 
 ## 1. Avancement des phases
-Bleu : validée. Jaune : en cours ou en attente de validation. Gris : à faire. Dates réelles : phases 0 et 1 le 2026-11-07, phase 2 le 2026-11-08, phase 3 le 2026-11-09, phases 4 à 7 le 2026-11-10, phase 8 le 2026-11-11, phases 9 et 10 le 2026-11-16.
+Bleu : validée. Jaune : en cours ou en attente de validation. Gris : à faire. Dates réelles : phases 0 et 1 le 2026-11-07, phase 2 le 2026-11-08, phase 3 le 2026-11-09, phases 4 à 7 le 2026-11-10, phase 8 le 2026-11-11, phases 9 à 11 le 2026-11-16 (phase 11 : faite, pas encore validée).
 
 ```mermaid
 flowchart LR
@@ -18,7 +18,7 @@ flowchart LR
   P7 --> P8["Phase 8 Espace client<br/>validée<br/>2026-11-11"]
   P8 --> P9["Phase 9 Support<br/>validée<br/>2026-11-16"]
   P9 --> P10["Phase 10 Parrainage<br/>validée<br/>2026-11-16"]
-  P10 --> P11["11 Admin 1"]
+  P10 --> P11["Phase 11 Admin 1<br/>faite, en attente<br/>2026-11-16"]
   P11 --> P12["12 Admin 2"]
   P12 --> P13["13 Mise en ligne de test"]
   P13 --> P14["14 Accueil et SEO"]
@@ -32,7 +32,8 @@ flowchart LR
   class P12,P13,P14,P15,P16 afaire
 ```
 
-## 2. Tâches de la phase 10 (tableau Kanban)
+## 2. Tâches de la phase 11 (tableau Kanban)
+Les 12 tâches de correctifs (11.1b à 11.1f, 11.2b, 11.2c, 11.3b à 11.3e, 11.5b) sont aussi rapportées.
 ```mermaid
 flowchart LR
   subgraph A["À faire"]
@@ -61,50 +62,52 @@ flowchart LR
   end
   subgraph G["Rapportée"]
     direction TB
-    g0["10.0 Plan"]
-    g1["10.1 Tests"]
-    g2["10.2 Migration"]
-    g3["10.3 Serveur et écran"]
-    g4["10.4 Design"]
-    g5["10.5 Contrôles"]
-    g6["10.6 Rapport et bilan"]
+    g0["11.0 Plan"]
+    g1["11.1 Tests"]
+    g2["11.2 Migration"]
+    g3["11.3 Serveur"]
+    g4["11.4 Écrans"]
+    g5["11.5 Contrôles"]
+    g6["11.6 Rapport et bilan"]
+    g7["12 correctifs"]
   end
   A --> B --> C --> D --> E --> F --> G
   classDef fait fill:#DBEAFE,stroke:#1D4ED8,color:#000
   classDef vide fill:#F3F4F6,stroke:#9CA3AF,color:#6B7280
-  class g0,g1,g2,g3,g4,g5,g6 fait
+  class g0,g1,g2,g3,g4,g5,g6,g7 fait
   class a0,b0,c0,d0,e0,f0 vide
 ```
 
-## 3. Répartition des tâches de la phase 10
+## 3. Répartition des tâches de la phase 11
 ```mermaid
 pie showData
-  title Tâches de la phase 10 par statut
+  title Tâches de la phase 11 par statut (hors correctifs)
   "Rapportée" : 7
 ```
 
 ## 4. Qui fait quoi maintenant
-Plus aucun agent actif. Les rapports de la phase 10 sont écrits. Reste : lire la CI de la PR, ton « validé », puis la fusion. Les corrections de la relecture et de la QA n'ont pas été re-contrôlées par les agents.
+Plus aucun agent actif. Les rapports de la phase 11 sont écrits. Reste : ouvrir la PR et lire la CI, ton « validé », puis la fusion. Les trois derniers petits correctifs (message du verrou, bandeau, milliers par pays) n'ont pas été revus visuellement par lp-qa.
 
 ```mermaid
 flowchart TD
-  T0["10.0 Plan<br/>chef de projet"] --> T1["10.1 Tests<br/>lp-tester"]
-  T1 --> T2["10.2 Migration<br/>lp-db"]
-  T2 --> T3["10.3 Serveur et écran<br/>lp-coder"]
-  T3 --> T4["10.4 Design<br/>lp-designer"]
-  T4 --> R["10.5 Relecture<br/>corrigée"]
-  T4 --> Q["10.5 QA<br/>corrigée"]
-  T4 --> S["10.5 Sécurité<br/>acceptée"]
-  R --> RP["10.6 Rapport<br/>lp-reporter : fait"]
+  T0["11.0 Plan<br/>chef de projet"] --> T1["11.1 Tests<br/>lp-tester"]
+  T1 --> T2["11.2 Migration<br/>lp-db"]
+  T2 --> T3["11.3 Serveur<br/>lp-coder"]
+  T3 --> T4["11.4 Écrans<br/>lp-coder"]
+  T4 --> T5["11.5 Design et SEO<br/>lp-designer, lp-seo"]
+  T5 --> R["11.5 Relecture<br/>corrigée"]
+  T5 --> Q["11.5 QA<br/>corrigée"]
+  T5 --> S["11.5 Sécurité<br/>acceptée"]
+  R --> RP["11.6 Rapport<br/>lp-reporter : fait"]
   Q --> RP
   S --> RP
   RP --> CI["CI de la PR<br/>à lire"]
   CI --> OWN["Propriétaire : validé ?"]
-  OWN --> NEXT["Phase 11 Admin 1"]
+  OWN --> NEXT["Phase 12 Admin 2"]
   classDef fait fill:#DBEAFE,stroke:#1D4ED8,color:#000
   classDef attente fill:#FEF3C7,stroke:#B45309,color:#000
   classDef afaire fill:#E5E7EB,stroke:#6B7280,color:#000
-  class T0,T1,T2,T3,T4,R,Q,S,RP fait
+  class T0,T1,T2,T3,T4,T5,R,Q,S,RP fait
   class CI,OWN attente
   class NEXT afaire
 ```
@@ -123,17 +126,21 @@ flowchart TD
 | 8 | 1 334 Vitest + 8 Playwright + base 597 sur 598 | 1 334 Vitest, 8 Playwright, base : 1 échec corrigé (`orders-sync`, commandes de test résiduelles), fichier 15 sur 15 | non relancée, aucune fonction d'argent modifiée | relecture 2 passes ; sécurité 2 passes (1 moyenne et 1 basse corrigées) ; QA 2 passes (3 importants et 6 mineurs traités) |
 | 9 | 1 517 Vitest (phase 8 : 1 334) | 1 517 Vitest ; base et navigateur non relancés en total | non relancée, aucune fonction d'argent modifiée | relecture acceptée ; QA 4 passes (acceptée au 4e) ; sécurité 3 passes (acceptée au 3e) |
 | 10 | 1 545 Vitest + 27 base (parrainage) + 5 Playwright | 1 545 Vitest, 27 base, 5 Playwright (clés Turnstile de test) | non relancée ; bonus et remise testés (seuil 49 999 / 50 000, un seul bonus) | sécurité acceptée (4 points bas) ; relecture et QA À CORRIGER puis corrigées, non re-contrôlées par les agents |
+| 11 | 1 670 Vitest + 1 014 base (environ 283 tests écrits en 11.1, plus ceux des correctifs) + 17 Playwright d'accès écrits | 1 670 Vitest, 1 014 base ; Playwright non relancés dans ce lot | non relancée ; la dette, l'annulation de bonus et la recharge sur dette sont testées (un seul retrait même avec 5 annulations simultanées) | sécurité : 1 Haute, 4 Moyennes, 5 Basses puis ACCEPTÉ ; relecture 2 passes À CORRIGER, corrigées sans 3e passe ; QA 2 passes À CORRIGER, corrigées sans 3e passe visuelle |
 
-Lire chaque ligne comme « état de la phase », pas comme un cumul. Phase 4 : le total Vitest (1 048) compte aussi les tests des phases précédentes ; les 278 tests de base incluent ceux de la phase 1. Les 13 tests Playwright datent d'avant la dernière retouche de redirection.
+Lire chaque ligne comme « état de la phase », pas comme un cumul. Phase 4 : le total Vitest (1 048) compte aussi les tests des phases précédentes ; les 278 tests de base incluent ceux de la phase 1. Les 13 tests Playwright datent d'avant la dernière retouche de redirection. Phase 11 : 1 670 et 1 014 sont les totaux du dernier passage, pas seulement les tests de la phase.
 
-Performance de la démo (LCP médian, téléphone lent, build de production) : 5,85 s avant, 2,37 s après (phase 2). Temps de chargement de l'espace client non mesuré (phase 8).
+Performance de la démo (LCP médian, téléphone lent, build de production) : 5,85 s avant, 2,37 s après (phase 2). Temps de chargement de l'espace client non mesuré (phase 8). Écrans admin (phase 11, build de production, téléphone lent) : environ 0,5 à 1,3 s, connexion environ 2,5 à 3 s.
 
 ```mermaid
 xychart-beta
   title "Tests Vitest par phase (écrits puis verts)"
-  x-axis ["Phase 0", "Phase 1", "Phase 2", "Phase 3", "Phase 4", "Phase 5", "Phase 6", "Phase 7", "Phase 8", "Phase 9", "Phase 10"]
-  y-axis "Nombre de tests" 0 --> 1600
-  bar [29, 253, 270, 543, 1048, 1124, 1252, 1313, 1334, 1517, 1545]
-  bar [29, 253, 270, 543, 1048, 1124, 1252, 1313, 1334, 1517, 1545]
+  x-axis ["Phase 0", "Phase 1", "Phase 2", "Phase 3", "Phase 4", "Phase 5", "Phase 6", "Phase 7", "Phase 8", "Phase 9", "Phase 10", "Phase 11"]
+  y-axis "Nombre de tests" 0 --> 1800
+  bar [29, 253, 270, 543, 1048, 1124, 1252, 1313, 1334, 1517, 1545, 1670]
+  bar [29, 253, 270, 543, 1048, 1124, 1252, 1313, 1334, 1517, 1545, 1670]
 ```
-Première barre : tests écrits. Deuxième barre : tests verts. Phases 4 à 10 : Vitest seulement (1 048, 1 124, 1 252, 1 313, 1 334, 1 517 puis 1 545 verts, cumulés) ; les autres phases comptent aussi les tests de base et de navigateur.
+Première barre : tests écrits. Deuxième barre : tests verts. Phases 4 à 11 : Vitest seulement (1 048, 1 124, 1 252, 1 313, 1 334, 1 517, 1 545 puis 1 670 verts, cumulés) ; les autres phases comptent aussi les tests de base et de navigateur.
+
+## 6. Carte du code
+La carte graphify (`graphify-out/graph.html`) n'a **pas été relancée** pour la phase 11 : elle date d'avant les écrans admin. À relancer (`graphify update .`) avant la fusion si tu veux une carte à jour.

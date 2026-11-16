@@ -2,6 +2,34 @@
 
 Écrit pour le propriétaire. Une section par phase. Seul le propriétaire valide une phase.
 
+## Phase 11 — Admin (1) : accès, stats, clients (2026-11-16) — faite, en attente de validation
+
+### Nouveau
+- Accès caché : seule l'adresse secrète `ADMIN_PATH` ouvre la connexion. `/admin` et toute autre adresse donnent « introuvable ». La page n'est pas indexée et n'apparaît ni dans `robots.txt` ni dans le sitemap.
+- Connexion en deux temps : mot de passe, puis code à 6 chiffres. Tu enregistres 2 appareils (téléphone et gestionnaire de mots de passe). Session de 12 h. 5 mauvais codes : pause de 15 minutes. 5 échecs de connexion : une alerte Telegram, sans donnée.
+- Tableau de bord : ventes, bénéfice, commandes, recharges, nouveaux clients, pays, sur Aujourd'hui, 7 jours ou 30 jours. Solde fournisseur en dollars, bannière rouge sous 5 $.
+- Clients : recherche (email, téléphone, code de parrainage), fiche complète, blocage avec motif, remise perso de 0 à 50 %, plafond journalier, notes privées. Un client bloqué ne peut plus commander.
+- Annulation d'un bonus de parrainage depuis la fiche. Si le parrain l'avait déjà dépensé, son solde peut passer sous zéro (une dette). Il ne peut plus commander ; sa prochaine recharge rembourse d'abord la dette, le reste arrive sur son solde.
+- Tickets : 3 messages d'affilée au maximum sans réponse de ta part, une alerte Telegram par message (sans le texte).
+- Fichiers orphelins des tickets : liste, puis purge seulement avec confirmation (fichiers de plus de 60 minutes, non rattachés).
+- Pourcentage de parrainage borné entre 0 et 100 en base. Chemin des captures vérifié strictement en base.
+- Écrans pensés pour téléphone (360 px), en français et en anglais.
+
+### Base de données (3 migrations, appliquées en local seulement)
+- `20261116110000` : annulation de bonus, dette limitée à ce seul cas, limite de messages, bornes. `20261116120000` : correction d'une faille (un solde négatif passait). `20261116130000` : une recharge sur une dette réussit toujours. À appliquer en production en phase 15, avec celles des phases 9 et 10.
+
+### Sécurité
+- Contrôle accepté après correction. Une faille Haute trouvée puis corrigée : un client en dette qui rechargeait pouvait payer sans être crédité. Les failles Moyennes et la plupart des Basses sont corrigées (essais de code, adresse secrète envoyée à Sentry, premier appareil enrôlable avec le mot de passe seul, temps de réponse).
+- Un filtre du proxy cassé (page de connexion admin introuvable) a été réparé, avec un test.
+
+### Chiffres
+- 1 670 tests unitaires verts (phase 10 : 1 545), 1 014 tests de base verts. Build et types OK. Lint : 0 erreur, 13 avertissements anciens.
+
+### À surveiller
+- Non vérifié : CI GitHub, page d'erreur de l'admin, vrai envoi Telegram, vraie vérification anti-robot en production, nouveau passage visuel après les 3 derniers petits correctifs, rejeu complet des migrations avec la dernière.
+- Reportés en phase 12 : vérification de l'origine avant la garde (Basse), audit et modification en une seule écriture, « réservations ». Aucune contrainte en base n'impose un seul administrateur.
+- Documents validés modifiés, à valider : `ENV_SETUP.md`, `LLD.md`, `API_SPEC.md`, `openapi.yaml`, `DATA_MODEL.md`, `TESTING.md`.
+
 ## Phase 10 — Parrainage + remises (2026-11-16) — faite, en attente de validation
 
 ### Nouveau
