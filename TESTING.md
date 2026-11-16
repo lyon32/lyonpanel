@@ -106,6 +106,14 @@ Mesure : `vitest --coverage` (v8), seuils dans `vitest.config.ts`. Seuil non att
 | Horloge | `vi.useFakeTimers()` pour délais, polling et dates |
 | Comptes E2E | créés par le test au début (email unique horodaté) |
 
+### Tests base : redémarrage avec la clé captcha de test
+
+La connexion par mot de passe passe par le captcha vérifié par Supabase. Si la base locale a été lancée sans la clé de test, tous les tests base qui créent un utilisateur échouent avec `captcha protection: invalid-input-secret`. Procédure :
+
+1. Vérifier que personne d'autre n'utilise la base (autre session, essais manuels) : `docker ps` doit montrer `supabase_*_lyonpanel`.
+2. Redémarrer avec la clé de test publique : `supabase stop` puis `SUPABASE_AUTH_CAPTCHA_SECRET=1x0000000000000000000000000000000AA supabase start` (voir `ENV_SETUP.md`).
+3. Charger les clés locales dans l'environnement (`supabase status -o env`, sans jamais les afficher ni les écrire dans le dépôt) et lancer `PROVIDER_MODE=mock ADMIN_PATH=test-admin-path-1234 npm run test:db`.
+
 ## 5. Bug corrigé = test ajouté
 
 1. Écrire d'abord un test qui **échoue** en reproduisant le bug.

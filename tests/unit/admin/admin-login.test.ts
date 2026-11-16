@@ -25,7 +25,7 @@ import { ApiError } from '@/server/http/api-error';
  *   - `admin_path` doit être exactement ADMIN_PATH, sinon 404 NOT_FOUND avant tout (rien d'enregistré, rien d'appelé) ;
  *   - jeton Turnstile obligatoire ; réponse d'échec NEUTRE : INVALID_CREDENTIALS, identique pour mauvais mot de passe
  *     de l'admin, compte inconnu, téléphone inconnu et client ordinaire (même avec le bon mot de passe) ;
- *   - alerte Telegram `admin_login_failed` tous les 5 échecs sur 15 min (5e, 10e…), contenu : { failures } seulement.
+ *   - alerte Telegram `admin_login_failed` au 5e échec sur 15 min, une seule par fenêtre, contenu : { failures } seulement.
  */
 
 const ADMIN_PATH = 'k7q2-test-path-9f3a';
@@ -168,12 +168,10 @@ describe('adminLogin : alerte Telegram admin_login_failed', () => {
     expect(notify.fn).toHaveBeenCalledWith('admin_login_failed', { failures: 5 });
   });
 
-  it('6e à 9e : pas de nouvelle alerte ; le 10e : une deuxième', async () => {
-    for (let i = 0; i < 9; i++) await failure(attempt(deps));
+  // Décision du chef de projet (relecture 11.5, point 2) : une seule alerte par fenêtre de 15 min.
+  it('6e à 12e : aucune nouvelle alerte (une seule alerte par fenêtre de 15 minutes)', async () => {
+    for (let i = 0; i < 12; i++) await failure(attempt(deps));
     expect(notify.fn).toHaveBeenCalledTimes(1);
-    await failure(attempt(deps));
-    expect(notify.fn).toHaveBeenCalledTimes(2);
-    expect(notify.fn).toHaveBeenLastCalledWith('admin_login_failed', { failures: 10 });
   });
 
   it('l’alerte ne contient ni mot de passe, ni email, ni identifiant, ni IP', async () => {
