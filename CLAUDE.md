@@ -116,11 +116,11 @@ Un agent ne démarre jamais avant ce dont il dépend ; ce qui est indépendant t
 
 > À mettre à jour au début de chaque phase (`ROADMAP.md`).
 
-**Phase 9 — Support : terminée côté code (2026-11-14), en attente du « validé » du propriétaire** (bilan : `docs/reports/phase-9/bilan.md`, branche `feat/phase-9-support`, PR à ouvrir). **Prochaine phase : Phase 10 — Parrainage + remises, à ouvrir dans une nouvelle session** après la discussion habituelle. Ne rien démarrer de la phase 10 dans cette session.
+**Phase en cours : Phase 10 — Parrainage + remises** (décisions du 2026-11-16, plan : `docs/plans/phase-10.md`, branche `feat/phase-10-parrainage`). Phase 9 fusionnée (PR 19). Phases 0 et 1 validées le 2026-11-07, 2 le 2026-11-08, 3 le 2026-11-09, 4 à 7 le 2026-11-10, 8 le 2026-11-11, 9 le 2026-11-16.
 
-Phase 9 pour mémoire (plan validé le 2026-11-12, décisions dans `docs/plans/phase-9.md`). Phases 0 et 1 validées le 2026-11-07, phase 2 le 2026-11-08, phase 3 le 2026-11-09, phases 4, 5, 6 et 7 le 2026-11-10, phase 8 le 2026-11-11 (PR 18).
+**Périmètre phase 10 (seulement ceci)** : page `/parrainage` (code, lien `?ref=`, nombre de filleuls, total gagné, explication du 5 %), route `GET /referral`, palier de remise dans `/wallet` (barre « encore X XAF pour 10 % »), tests complets du bonus 5 % (une seule fois, arrondi à l'inférieur) et de la remise 10 % dès 50 000 XAF (auto contre personnalisée, jamais cumulées). Pas de liste de filleuls, pas de minimum de recharge, pas d'admin (11-12), pas de nouvelle règle de prix. Migration seulement si un test révèle un manque, annoncée avant.
 
-**Périmètre phase 9 (seulement ceci)** : tickets du client (4 sujets fixes, lien à une commande, messages, 3 captures ≤ 2 Mo compressées dans le navigateur, bucket privé, fermeture et réouverture), FAQ fixe, délai « sous 24 h », limites anti-abus (10/heure, 3 tickets non fermés), alerte Telegram (n° et sujet seulement), FR/EN, sombre `.lp-app`. Pas d'admin (11-12), pas d'email, pas de lien Telegram client, pas de remboursement. Nouvelle migration seulement si nécessaire, annoncée avant. Seule nouvelle bibliothèque autorisée : `browser-image-compression`.
+**Terminé quand** : un filleul recharge → le parrain reçoit 5 % une seule fois ; la remise s'applique au bon seuil ; écran correct sur 360 px, FR et EN ; lint, types, tests, build et CI verts (CI lue sur la PR) ; `lp-security` accepté ; rapport dans `docs/reports/phase-10/`.
 
 **Phase 8 pour mémoire** :
 
