@@ -45,7 +45,10 @@ export function fakeSession(userId: string | null, o: FakeSessionOptions = {}) {
   const verify = vi.fn(async ({ factorId, code }: { factorId: string; code: string }) =>
     validCodes[factorId] === code
       ? { data: { access_token: 'x' }, error: null }
-      : { data: null, error: { message: 'Invalid TOTP code entered', code: 'mfa_verification_failed' } },
+      : {
+          data: null,
+          error: { message: 'Invalid TOTP code entered', code: 'mfa_verification_failed' },
+        },
   );
   return {
     auth: {
@@ -72,6 +75,31 @@ export function fakeSession(userId: string | null, o: FakeSessionOptions = {}) {
 /** Date de départ aléatoire (an 2100 à 2899) : les lignes de test ne se mélangent jamais aux autres tests. */
 export function isolatedNow(): Date {
   return new Date(Date.UTC(2100 + randomInt(0, 800), 2, 15, 12, 30, 0));
+}
+/**
+ * Comme isolatedNow, mais vérifie que la fenêtre des 41 derniers jours est vide (commandes, recharges,
+ * profils) : des lignes laissées par d'anciens passages ne doublent jamais les totaux.
+ */
+export async function freeWindowNow(): Promise<Date> {
+  const db = adminClient();
+  for (let i = 0; i < 50; i++) {
+    const now = new Date(
+      Date.UTC(2100 + randomInt(0, 800), randomInt(0, 12), randomInt(1, 28), randomInt(0, 24), 30),
+    );
+    const from = new Date(now.getTime() - 41 * 86_400_000).toISOString();
+    const to = new Date(now.getTime() + 86_400_000).toISOString();
+    const counts = await Promise.all(
+      ['orders', 'payments', 'profiles'].map((t) =>
+        db
+          .from(t)
+          .select('id', { count: 'exact', head: true })
+          .gte('created_at', from)
+          .lt('created_at', to),
+      ),
+    );
+    if (counts.every((c) => c.count === 0)) return now;
+  }
+  throw new Error('Aucune fenêtre libre trouvée pour les statistiques');
 }
 export const hoursAgo = (now: Date, h: number): string =>
   new Date(now.getTime() - h * 3_600_000).toISOString();

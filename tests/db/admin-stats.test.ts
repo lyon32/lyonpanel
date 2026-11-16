@@ -7,7 +7,7 @@ import {
   ensureAdmin,
   fakeSession,
   hoursAgo,
-  isolatedNow,
+  freeWindowNow,
   load,
 } from '../helpers/admin-db';
 import { getReq } from '../helpers/client-area-db';
@@ -67,7 +67,7 @@ afterAll(async () => {
 });
 
 beforeEach(async () => {
-  now = isolatedNow();
+  now = await freeWindowNow();
   await setSetting('usd_xaf_rate', 600);
   await setSetting('provider_low_balance_usd', 5);
   const service = await makeService();

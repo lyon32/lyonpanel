@@ -49,8 +49,12 @@ type Mod = {
 };
 const mod = () => load<Mod>('@/server/tickets/purge-orphans');
 const list = async (min = 0) => (await mod()).listOrphanAttachments({ minAgeMinutes: min });
-const purge = async (paths: string[], confirm: unknown = true, min = 0) =>
-  (await mod()).purgeOrphanAttachments({ paths, confirm, minAgeMinutes: min }, admin.id);
+// `confirm` vaut true seulement si l'appel ne le précise pas : un `undefined` explicite arrive tel quel au service.
+const purge = async (paths: string[], ...rest: [confirm?: unknown, min?: number]) =>
+  (await mod()).purgeOrphanAttachments(
+    { paths, confirm: rest.length > 0 ? rest[0] : true, minAgeMinutes: rest[1] ?? 0 },
+    admin.id,
+  );
 
 async function exists(path: string): Promise<boolean> {
   const dir = path.slice(0, path.lastIndexOf('/'));

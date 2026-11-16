@@ -372,6 +372,17 @@ describe('POST /admin/referrals/{id}/cancel et fiche client', () => {
     expect(b.debt_xaf).toBe(0);
   });
 
+  it('deuxième annulation : code ALREADY_CANCELLED (et non IDEMPOTENCY_CONFLICT), message FR et EN', async () => {
+    const { reward } = await pairWithBonus();
+    await post(reward.id, { reason: 'x' });
+    const again = await post(reward.id, { reason: 'x' });
+    expect(again.status).toBe(409);
+    const body = (await again.json()) as ErrorBody;
+    expect(body.error.code).toBe('ALREADY_CANCELLED');
+    expect(body.error.message).toBeTruthy();
+    expect(body.error.message).not.toBe('ALREADY_CANCELLED');
+  });
+
   it('deuxième annulation : 409', async () => {
     const { reward } = await pairWithBonus();
     await post(reward.id, { reason: 'x' });

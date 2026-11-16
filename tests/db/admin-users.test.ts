@@ -117,8 +117,10 @@ describe('GET /admin/users : recherche', () => {
   it.each(['%', '_', 'a,b', '),id.neq.0', "x'--", '\\', '*'])(
     'caractères spéciaux %j : traités comme du texte, jamais comme un filtre (aucun client renvoyé)',
     async (q) => {
-      await cohort(1);
-      const res = await list(`?q=${encodeURIComponent(q)}`);
+      // Le client existe (email « <mot>-0@… ») ; la recherche remplace « - » par le caractère spécial.
+      // Comme joker (%, _, *) elle le retrouverait ; comme texte, aucun email ne la contient.
+      const { token } = await cohort(1);
+      const res = await list(`?q=${encodeURIComponent(`${token}${q}0@lyonpanel.test`)}`);
       expect(res.status).toBe(200);
       expect(((await res.json()) as List).items).toEqual([]);
     },
