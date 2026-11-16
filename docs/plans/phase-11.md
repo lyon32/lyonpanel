@@ -21,6 +21,13 @@ Branche : `feat/phase-11-admin-1` (depuis `main`, a093598). Statut : **plan écr
 - **Schéma** : toute migration est annoncée avant (blocage, plafond, remise perso, notes, bonus annulé, borne `referral_pct`) ; vérifier d'abord ce qui existe déjà dans `DATA_MODEL.md`.
 - Un seul admin (`is_admin`), routes `/api/v1/admin/*` renvoient **404** (pas 403) aux non-admins. Aucun champ fournisseur hors `/admin`.
 
+## Décisions complémentaires après les tests (2026-11-16)
+- **Solde négatif** : seule `cancel_referral_bonus` peut descendre sous 0 ; commandes, retraits et ajustements restent interdits. Les deux contraintes `>= 0` sont assouplies pour ce seul cas ; le test `tests/db/schema.test.ts:156` est adapté en conséquence (accord du propriétaire).
+- **Signal 2e compte** : « même IP à l'inscription » seulement (empreinte HMAC `profiles.signup_ip_hash`, jamais l'IP). « Même téléphone » abandonné (`profiles.phone` est unique). Indice, pas preuve.
+- **Limite 3 messages** : par ticket, le message d'ouverture compte pour 1.
+- **Stats** : `?range=today|7d|30d`, « aujourd'hui » en UTC+1. `API_SPEC.md` §8 et `openapi.yaml` corrigés (accord du propriétaire).
+- Mon choix : mauvais code à 6 chiffres = 401 `MFA_REQUIRED` ; événement Telegram `admin_login_failed` après 5 échecs ; l'enrôlement des 2 appareils passe par l'API MFA de Supabase.
+
 ## Hors périmètre
 Ajustement de solde, remboursements, commandes `to_review`, services, réglages, réponse aux tickets, journal d'audit complet (phase 12) ; mise en ligne (13) ; pages publiques (14) ; vrais paiements (15).
 

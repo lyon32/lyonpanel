@@ -567,8 +567,7 @@ paths:
       tags: [admin]
       security: [ { session: [], adminMfa: [] } ]
       parameters:
-        - { name: from, in: query, schema: { type: string, format: date } }
-        - { name: to, in: query, schema: { type: string, format: date } }
+        - { name: range, in: query, schema: { type: string, enum: [today, 7d, 30d], default: 7d } }
       responses:
         '200':
           description: Statistiques

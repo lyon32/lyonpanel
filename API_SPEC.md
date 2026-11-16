@@ -219,7 +219,10 @@ Accès : admin + MFA (`aal2`). Toute personne non admin reçoit **404**. Chaque 
 | Méthode | Chemin | Rôle |
 |---|---|---|
 | POST | `/admin/mfa/verify` | `{code}` 6 chiffres → session `aal2` |
-| GET | `/admin/stats?from=&to=` | ventes, bénéfice, nb commandes, recharges, nouveaux clients, **répartition par pays**, solde fournisseur, réservations |
+| GET | `/admin/stats?range=today\|7d\|30d` | ventes, bénéfice, nb commandes, recharges, nouveaux clients, **répartition par pays**, solde fournisseur (alerte sous 5 $), réservations. « Aujourd'hui » compté en UTC+1 (décision du 2026-11-16 : pas de dates libres) |
+| POST | `/admin/referrals/{id}/cancel` | `{reason}` → annule un bonus de parrainage ; le solde du parrain peut passer négatif (seule fonction autorisée à le faire) |
+| GET | `/admin/storage/orphans` | liste des fichiers de tickets sans ticket (jamais de suppression ici) |
+| POST | `/admin/storage/orphans/purge` | `{confirm: true}` → supprime la liste affichée, après délai de grâce de 60 min |
 | GET | `/admin/users?q=&country=&status=` | liste paginée |
 | GET | `/admin/users/{id}` | profil, solde, total rechargé, commandes, notes, filleuls |
 | PATCH | `/admin/users/{id}` | `{status?, blocked_reason?, custom_discount_pct?}` |
