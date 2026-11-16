@@ -1,0 +1,221 @@
+'use client';
+
+import imageCompression from 'browser-image-compression';
+import { Loader2, Paperclip, X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { useRef, useState, type ChangeEvent } from 'react';
+import { FormAlert } from '@/components/auth/form-alert';
+
+const ACCEPT = ['image/jpeg', 'image/png', 'image/webp'];
+const MAX_IMAGES = 3;
+// Le serveur refuse au-delà : on réduit déjà dans le navigateur (économise le réseau mobile).
+const MAX_SIZE_MB = 1;
+
+// Au-delà, la réduction figerait la page (fil principal) : on refuse sans rien décoder.
+export const MAX_SOURCE_BYTES = 8 * 1024 * 1024;
+const MAX_SIDE_PX = 1600;
+
+type Chip = { id: string; name: string };
+
+// Message d'erreur du serveur (format API_SPEC §3), ou null si la réponse n'en contient pas.
+export async function readApiError(res: Response): Promise<string | null> {
+  try {
+    const data = (await res.json()) as { error?: { message?: string } };
+    return data.error?.message ?? null;
+  } catch {
+    return null;
+  }
+}
+
+type Translate = (key: string) => string;
+
+// Message affiché pour une réponse en erreur : les limites (429) ont chacune leur phrase,
+// sinon le message du serveur, sinon l'erreur réseau.
+export async function ticketErrorMessage(res: Response, t: Translate): Promise<string> {
+  let data: { error?: { message?: string; details?: { reason?: string } } } = {};
+  try {
+    data = await res.json();
+  } catch {
+    return t('form.networkError');
+  }
+  const reasons: Record<string, string> = {
+    open_tickets: 'errors.openTickets',
+    rate: 'errors.rateLimit',
+    upload: 'errors.uploadLimit',
+  };
+  const key = reasons[data.error?.details?.reason ?? ''];
+  return key ? t(key) : (data.error?.message ?? t('form.networkError'));
+}
+
+// Délai maximal de réduction : une image impossible à compresser prendrait plus d'une minute sur téléphone.
+const COMPRESS_TIMEOUT_MS = 20_000;
+
+class CompressTimeout extends Error {}
+class TooHeavy extends Error {}
+
+const TARGET_BYTES = 1024 * 1024;
+// Au-delà, même à la qualité la plus basse, l'image est jugée impossible à réduire.
+const GIVE_UP_BYTES = 2 * 1024 * 1024;
+const QUALITIES = [0.8, 0.6, 0.4];
+
+function toJpeg(canvas: HTMLCanvasElement, quality: number): Promise<Blob | null> {
+  return new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', quality));
+}
+
+// Chemin natif : décodage asynchrone puis réencodage JPEG par le canvas, toujours.
+// La bibliothèque boucle sur le fil principal avec un PNG de bruit déjà petit en pixels ; ici le travail est borné.
+// Renvoie null si le canvas est indisponible (on retombe alors sur la bibliothèque).
+export async function downscale(file: File): Promise<Blob | null> {
+  const bitmap = await createImageBitmap(file);
+  const ratio = Math.min(1, MAX_SIDE_PX / Math.max(bitmap.width, bitmap.height));
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.round(bitmap.width * ratio);
+  canvas.height = Math.round(bitmap.height * ratio);
+  const ctx = canvas.getContext('2d');
+  if (!ctx) {
+    bitmap.close();
+    return null;
+  }
+  // Fond blanc : le JPEG n'a pas de transparence.
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  bitmap.close();
+  let blob: Blob | null = null;
+  for (const quality of QUALITIES) {
+    blob = await toJpeg(canvas, quality);
+    if (!blob) return null;
+    if (blob.size <= TARGET_BYTES) return blob;
+  }
+  if (blob && blob.size > GIVE_UP_BYTES) throw new TooHeavy();
+  return blob;
+}
+
+async function compressSteps(file: File): Promise<File | Blob> {
+  if (typeof createImageBitmap === 'function') {
+    const blob = await downscale(file);
+    if (blob) return blob;
+  }
+  // Repli (vieux navigateur) : la bibliothèque, sur le fil principal.
+  return imageCompression(file, {
+    maxSizeMB: MAX_SIZE_MB,
+    maxWidthOrHeight: MAX_SIDE_PX,
+    // Le worker charge du code depuis un CDN, bloqué par le CSP : on reste sur le fil principal.
+    useWebWorker: false,
+  });
+}
+
+function compressWithTimeout(file: File): Promise<File | Blob> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => reject(new CompressTimeout()), COMPRESS_TIMEOUT_MS);
+  });
+  const work = compressSteps(file);
+  return Promise.race([work, timeout]).finally(() => clearTimeout(timer));
+}
+
+export function AttachmentUpload({ onChange }: { onChange: (ids: string[]) => void }) {
+  const t = useTranslations('support');
+  const [chips, setChips] = useState<Chip[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  // Copie à jour de la liste : les envois se suivent dans une même boucle asynchrone.
+  const current = useRef<Chip[]>([]);
+
+  function update(next: Chip[]) {
+    current.current = next;
+    setChips(next);
+    onChange(next.map((c) => c.id));
+  }
+
+  async function sendOne(file: File): Promise<void> {
+    let small: File | Blob;
+    try {
+      small = await compressWithTimeout(file);
+    } catch (e) {
+      if (e instanceof TooHeavy) throw new Error(t('errors.tooHeavyToReduce'));
+      throw e instanceof CompressTimeout ? new Error(t('errors.compressTimeout')) : e;
+    }
+    const body = new FormData();
+    body.append('file', small);
+    const res = await fetch('/api/v1/tickets/attachments', { method: 'POST', body });
+    if (!res.ok) throw new Error(await ticketErrorMessage(res, t));
+    const { id } = (await res.json()) as { id: string };
+    update([...current.current, { id, name: file.name }]);
+  }
+
+  async function handleChange(event: ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(event.target.files ?? []);
+    event.target.value = '';
+    setError(null);
+    if (files.length === 0) return;
+    if (files.some((f) => !ACCEPT.includes(f.type))) {
+      setError(t('errors.fileType'));
+      return;
+    }
+    if (files.some((f) => f.size > MAX_SOURCE_BYTES)) {
+      setError(t('errors.fileTooBig'));
+      return;
+    }
+    const slots = MAX_IMAGES - current.current.length;
+    if (files.length > slots) setError(t('errors.fileTooMany'));
+    setBusy(true);
+    for (const file of files.slice(0, Math.max(slots, 0))) {
+      try {
+        await sendOne(file);
+      } catch (e) {
+        setError(e instanceof Error ? e.message : t('form.networkError'));
+        break;
+      }
+    }
+    setBusy(false);
+  }
+
+  return (
+    <div className="flex flex-col gap-2">
+      <label className="border-gris-400 text-encre focus-within:outline-bleu-600 flex min-h-11 cursor-pointer items-center gap-2 rounded-lg border px-3 text-sm font-semibold focus-within:outline-2">
+        <Paperclip className="size-4" aria-hidden="true" />
+        {t('form.attach')}
+        <input
+          type="file"
+          data-testid="ticket-attach"
+          accept={ACCEPT.join(',')}
+          multiple
+          disabled={busy}
+          onChange={handleChange}
+          className="sr-only"
+        />
+      </label>
+      <p className="text-gris-600 text-sm">{t('form.attachHint')}</p>
+      {chips.length > 0 ? (
+        <ul className="flex flex-wrap gap-2">
+          {chips.map((chip) => (
+            <li
+              key={chip.id}
+              data-testid="attachment-chip"
+              className="bg-gris-50 text-encre flex min-h-11 max-w-full items-center gap-1 rounded-lg pl-3 text-sm"
+            >
+              <span className="truncate">{chip.name}</span>
+              <button
+                type="button"
+                data-testid="attachment-remove"
+                aria-label={t('form.remove')}
+                onClick={() => update(current.current.filter((c) => c.id !== chip.id))}
+                className="focus-visible:outline-bleu-600 flex size-11 items-center justify-center focus-visible:outline-2"
+              >
+                <X className="size-4" aria-hidden="true" />
+              </button>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+      {busy ? (
+        <p role="status" className="text-gris-600 flex min-h-11 items-center gap-2 text-sm">
+          <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+          {t('errors.compressing')}
+        </p>
+      ) : null}
+      {error ? <FormAlert kind="error">{error}</FormAlert> : null}
+    </div>
+  );
+}

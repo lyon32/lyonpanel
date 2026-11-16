@@ -174,7 +174,7 @@ Pages par pays, blog, commandes en lot, notifications client, email « nouvelle 
 | 6 | validée (2026-11-10) | — |
 | 7 | validée (2026-11-10) | — |
 | 8 | validée (2026-11-11) | — |
-| 9 | à faire | — |
+| 9 | faite – en attente de validation (2026-11-14) | — |
 | 10 | à faire | — |
 | 11 | à faire | — |
 | 12 | à faire | — |

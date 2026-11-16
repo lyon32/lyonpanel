@@ -40,7 +40,10 @@ export function buildSecurityHeaders({
     ['script-src', ...scriptSrc],
     // Next et les polices du design system posent des styles en ligne.
     ['style-src', "'self'", "'unsafe-inline'"],
-    ['img-src', "'self'", 'data:', 'blob:'],
+    // Captures des tickets : URL signées du stockage du projet Supabase (origine précise, jamais https:).
+    ['img-src', ...["'self'", 'data:', 'blob:', supabase].filter(Boolean)],
+    // La compression des images (browser-image-compression) lance un Web Worker depuis une URL blob:.
+    ['worker-src', "'self'"],
     ['font-src', "'self'", 'data:'],
     ['connect-src', ...connectSrc.filter(Boolean)],
     ['frame-src', TURNSTILE],

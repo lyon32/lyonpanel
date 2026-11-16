@@ -116,7 +116,13 @@ Un agent ne démarre jamais avant ce dont il dépend ; ce qui est indépendant t
 
 > À mettre à jour au début de chaque phase (`ROADMAP.md`).
 
-**Phase en cours : Phase 8 — Espace client (terminée, validée le 2026-11-11, PR 18 ; la phase 9 démarre dans une nouvelle session)** (Phases 0 et 1 validées le 2026-11-07, phase 2 le 2026-11-08, phase 3 le 2026-11-09, phases 4, 5, 6 et 7 le 2026-11-10, phase 8 le 2026-11-11)
+**Phase 9 — Support : terminée côté code (2026-11-14), en attente du « validé » du propriétaire** (bilan : `docs/reports/phase-9/bilan.md`, branche `feat/phase-9-support`, PR à ouvrir). **Prochaine phase : Phase 10 — Parrainage + remises, à ouvrir dans une nouvelle session** après la discussion habituelle. Ne rien démarrer de la phase 10 dans cette session.
+
+Phase 9 pour mémoire (plan validé le 2026-11-12, décisions dans `docs/plans/phase-9.md`). Phases 0 et 1 validées le 2026-11-07, phase 2 le 2026-11-08, phase 3 le 2026-11-09, phases 4, 5, 6 et 7 le 2026-11-10, phase 8 le 2026-11-11 (PR 18).
+
+**Périmètre phase 9 (seulement ceci)** : tickets du client (4 sujets fixes, lien à une commande, messages, 3 captures ≤ 2 Mo compressées dans le navigateur, bucket privé, fermeture et réouverture), FAQ fixe, délai « sous 24 h », limites anti-abus (10/heure, 3 tickets non fermés), alerte Telegram (n° et sujet seulement), FR/EN, sombre `.lp-app`. Pas d'admin (11-12), pas d'email, pas de lien Telegram client, pas de remboursement. Nouvelle migration seulement si nécessaire, annoncée avant. Seule nouvelle bibliothèque autorisée : `browser-image-compression`.
+
+**Phase 8 pour mémoire** :
 
 **Périmètre (seulement ceci)** : détail dans `docs/plans/phase-8.md` — tableau de bord, historiques commandes et transactions, favoris, page compte (devise, langue, téléphone, suppression), suggestion de commande calculée côté serveur (carte discrète, fermable pour la visite, désactivable sur tous les appareils : colonne `profiles.suggestions_enabled`, FR/EN), états de chargement et de succès sur toutes les actions. Décisions du propriétaire (2026-11-11) : **espace client en thème sombre seulement**, palette Radix (accent `#425EFF`, gris `#D7D7DA`, fond `#111111`) en variables CSS sous `.lp-app` (`docs/05` §11) ; accueil, catalogue et connexion inchangés (blanc, bleu `#1D4ED8`, jaune) ; **aucune bibliothèque ajoutée** (ni Radix Colors ni HeroUI, shadcn/ui seulement) ; skills de design utilisés partout (`unslop`, `antislop-*`, `baseline-ui`, `improve-ui`, `fixing-accessibility`, `ui-ux-pro-max`, `apple-design-hig`, `ponytail`). Points reportés de la phase 7 : solde de l'en-tête « — », bouton « Nouvelle commande » sur 2 lignes, nom de service à vérifier (`#` ≠ identifiant fournisseur).
 

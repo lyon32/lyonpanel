@@ -565,13 +565,15 @@ describe('Storage ticket-attachments (chemin <user_id>/<fichier>)', () => {
     expect(other.data ?? []).toEqual([]);
   });
 
-  it('A envoie un fichier dans son dossier', async () => {
+  // Phase 9 (migration 20261114100000) : le dépôt ne passe plus que par le serveur,
+  // qui vérifie le type réel, la taille et les limites. Le client direct est refusé.
+  it('A ne peut plus déposer directement : le dépôt passe par le serveur', async () => {
     const { error } = await a.client.storage
       .from(BUCKET)
       .upload(`${a.id}/${randomUUID()}.png`, new Uint8Array([137, 80, 78, 71]), {
         contentType: 'image/png',
       });
-    expect(error).toBeNull();
+    expect(error).not.toBeNull();
   });
 
   it('A ne peut pas écrire ni supprimer dans le dossier de B', async () => {

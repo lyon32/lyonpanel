@@ -2,6 +2,33 @@
 
 Écrit pour le propriétaire. Une section par phase. Seul le propriétaire valide une phase.
 
+## Phase 9 — Support (2026-11-14) — faite, en attente de validation
+
+### Nouveau
+- Page Support : FAQ de 5 questions, « Nous répondons sous 24 h », liste de tes tickets (20 par page, « Voir plus »), nouveau ticket avec 4 sujets (Commande, Recharge, Compte, Autre). « Commande » oblige à choisir une de tes commandes.
+- Conversation par ticket : tu écris, l'équipe répond, tu fermes. Un message dans un ticket fermé le rouvre. Statut automatique : ouvert, répondu, fermé.
+- Captures d'écran : 3 par message (JPEG, PNG, WebP), réduites dans le navigateur, 2 Mo maximum chacune, stockage privé, adresses valables 10 minutes. Refus au-delà de 8 Mo.
+- Alerte Telegram à chaque nouveau ticket et chaque message du client : numéro court et sujet seulement, jamais le texte, l'email ou le téléphone.
+- Limites : 10 envois par heure, 3 tickets ouverts à la fois, 4 000 caractères par message, 20 envois de captures par heure. FR et EN, thème sombre.
+- Nouvelle bibliothèque : `browser-image-compression` (prévue dans `LLD.md`).
+
+### Base de données (3 migrations, appliquées en local seulement)
+- `20261112100000` : limite de 3 tickets ouverts et statut automatique.
+- `20261113100000` : une image ne se rattache qu'une fois.
+- `20261114100000` : dépôt direct dans le stockage retiré (seul le serveur dépose), limite de 4 000 caractères en base, lecture du stockage limitée aux chemins prévus.
+
+### Sécurité
+- Contrôle accepté au 3e passage : aucune faille critique, haute ni moyenne. Corrigées : dépôt direct dans le stockage, messages illimités en accès direct, code d'un site externe possible dans la compression.
+- Le dernier correctif (compression des captures, côté navigateur seulement) n'a pas relancé la sécurité.
+
+### Chiffres
+- 1 517 tests unitaires sur 1 517 (phase 8 : 1 334). Types, format et build OK. Lint : 0 erreur, 11 avertissements. QA navigateur acceptée au 4e passage.
+
+### À surveiller
+- Non vérifié : expiration des adresses signées, vraie alerte Telegram, état d'erreur de la liste, repli sans `createImageBitmap`, rejeu complet des migrations, CI GitHub.
+- Reportés : nettoyage des fichiers orphelins, défaut D (règle de la table des pièces jointes, non exploitable), HTTP 200 sur la page « Introuvable » d'un ticket d'autrui, détail de validation en anglais dans l'API brute, une alerte par message du client.
+- Accord requis : mettre à jour `DATA_MODEL.md` et `PRD.md` (le PRD dit encore « lien Telegram »).
+
 ## Phase 8 — Espace client (2026-11-11) — validée
 
 ### Nouveau
