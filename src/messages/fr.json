@@ -716,5 +716,21 @@
       "fileTooBig": "Cette image est trop lourde (8 Mo maximum). Choisissez une capture plus légère.",
       "compressing": "Réduction de l’image…"
     }
+  },
+  "referral": {
+    "title": "Parrainage",
+    "code": "Votre code",
+    "link": "Votre lien d’invitation",
+    "copy": "Copier",
+    "copyLink": "Copier le lien",
+    "copied": "Copié",
+    "count": "Filleuls inscrits",
+    "earned": "Total gagné",
+    "explainer": "Quand un filleul fait sa première recharge, vous recevez {pct} % du montant, une seule fois. Exemple : il recharge {example}, vous gagnez {bonus}. Le bonus va sur votre solde, non retirable.",
+    "discountTitle": "Remise de 10 %",
+    "discountRemaining": "Encore {amount} à recharger pour la remise de 10 %.",
+    "discountReached": "Vous avez la remise de 10 % sur toutes vos commandes.",
+    "countEmpty": "Aucun filleul pour le moment. Partagez votre code ou votre lien.",
+    "earnedEmpty": "Aucun bonus pour le moment."
   }
 }

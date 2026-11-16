@@ -716,5 +716,21 @@
       "fileTooBig": "This image is too heavy (8 MB maximum). Choose a lighter screenshot.",
       "compressing": "Shrinking the image…"
     }
+  },
+  "referral": {
+    "title": "Referral",
+    "code": "Your code",
+    "link": "Your invitation link",
+    "copy": "Copy",
+    "copyLink": "Copy link",
+    "copied": "Copied",
+    "count": "Friends signed up",
+    "earned": "Total earned",
+    "explainer": "When a friend makes their first top-up, you get {pct}% of the amount, once only. Example: they top up {example}, you earn {bonus}. The bonus goes to your balance and cannot be withdrawn.",
+    "discountTitle": "10% discount",
+    "discountRemaining": "{amount} more to top up for the 10% discount.",
+    "discountReached": "You get 10% off all your orders.",
+    "countEmpty": "No friends yet. Share your code or link.",
+    "earnedEmpty": "No bonus yet."
   }
 }

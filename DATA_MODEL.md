@@ -74,7 +74,7 @@ create type currency_code  as enum ('XAF','XOF','USD');
 | status | user_status | défaut `active` |
 | is_admin | boolean | défaut false ; un seul `true` (le propriétaire) |
 | referral_code | text | unique, 8 caractères, généré à l'inscription |
-| referred_by | uuid | FK → profiles.id, null |
+| referred_by | uuid | FK → profiles.id, null ; contrainte `profiles_no_self_referral` : jamais égal à `id` (phase 10) |
 | custom_discount_pct | numeric(5,2) | null ; 0–50 |
 | daily_spend_limit_xaf | bigint | défaut 500 000 ; plafond de commandes sur 24 h glissantes (SECURITY_NOTES §5) |
 | blocked_reason | text | null |
@@ -185,6 +185,7 @@ user_id uuid FK · service_id int FK · created_at. PK (user_id, service_id).
 - **ticket_attachments** : id uuid PK · message_id FK · storage_path text · mime text (`image/jpeg|png|webp`) · size_bytes int (≤ 2 Mo) · created_at.
 
 Fichiers dans **Supabase Storage**, bucket privé `ticket-attachments`, compressés dans le navigateur avant envoi (mon choix).
+Contraintes ajoutées en phase 9 : `ticket_messages_body_len` (message ≤ 4 000 caractères) ; index unique `ticket_attachments_storage_path_key` sur `storage_path` ; le dépôt direct dans le bucket par le client est retiré (envoi uniquement par le serveur).
 
 ### admin_notes — notes privées du propriétaire
 id uuid PK · user_id FK → profiles · body text · created_at. **Jamais lisible par le client.**
