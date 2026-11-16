@@ -21,7 +21,7 @@ const MAX_DISCOUNT_PCT = 50;
 // Jamais de solde ici : le serveur refuse tout autre champ.
 export function UserSettingsForm({ userId, status, discountPct, dailyLimitXaf }: Props) {
   const t = useTranslations('admin');
-  const { pending, feedback, run } = useAdminAction({
+  const { pending, feedback, run, clearFeedback } = useAdminAction({
     error: t('common.error'),
     success: t('common.saved'),
   });
@@ -68,6 +68,7 @@ export function UserSettingsForm({ userId, status, discountPct, dailyLimitXaf }:
       <form
         onSubmit={saveSettings}
         noValidate
+        onChange={clearFeedback}
         className="flex flex-col gap-3 sm:flex-row sm:items-end"
       >
         <Field
@@ -115,7 +116,10 @@ export function UserSettingsForm({ userId, status, discountPct, dailyLimitXaf }:
           <Field
             label={t('user.blockReason')}
             value={reason}
-            onChange={(e) => setReason(e.target.value)}
+            onChange={(e) => {
+              setReason(e.target.value);
+              clearFeedback();
+            }}
             maxLength={500}
             required
             className="flex-1"

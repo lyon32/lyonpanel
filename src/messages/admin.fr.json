@@ -11,7 +11,8 @@
       "intro": "Saisissez le code à 6 chiffres de l'un de vos deux appareils.",
       "label": "Code à 6 chiffres",
       "submit": "Valider le code",
-      "error": "Code incorrect. Réessayez."
+      "error": "Code incorrect. Réessayez.",
+      "locked": "Trop d'essais, réessayez dans 15 minutes."
     },
     "enroll": {
       "intro": "Enregistrez un appareil de code à 6 chiffres. Il en faut deux : votre téléphone et un gestionnaire de mots de passe.",

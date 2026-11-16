@@ -49,3 +49,10 @@ export function apiErrorCode(data: unknown): string | null {
   const code = (error as Record<string, unknown>).code;
   return typeof code === 'string' ? code : null;
 }
+
+/** Clé du message à afficher quand la vérification d'un code échoue : verrou (429) ou code faux. */
+export function mfaCodeErrorKey(res: AdminResponse): 'code.locked' | 'code.error' {
+  return res.status === 429 || apiErrorCode(res.data) === 'RATE_LIMITED'
+    ? 'code.locked'
+    : 'code.error';
+}

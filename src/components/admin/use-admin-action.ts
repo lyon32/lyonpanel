@@ -37,5 +37,11 @@ export function useAdminAction(texts: { error: string; success: string }) {
     return res;
   }
 
-  return { pending, feedback, run };
+  // Efface le bandeau dès qu'un champ du formulaire est modifié.
+  function clearFeedback() {
+    window.clearTimeout(timer.current);
+    setFeedback(null);
+  }
+
+  return { pending, feedback, run, clearFeedback };
 }

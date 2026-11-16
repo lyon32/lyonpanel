@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { useState, type FormEvent } from 'react';
-import { adminFetch } from './admin-api';
+import { adminFetch, mfaCodeErrorKey } from './admin-api';
 import { FormAlert } from '@/components/auth/form-alert';
 import { Button } from '@/components/ui/button';
 import { Field } from '@/components/ui/field';
@@ -30,16 +30,16 @@ function readCode(event: FormEvent<HTMLFormElement>): string {
 export function CodeStep({ onDone }: { onDone: () => Promise<void> }) {
   const t = useTranslations('admin');
   const [pending, setPending] = useState(false);
-  const [failed, setFailed] = useState(false);
+  const [failed, setFailed] = useState<string | null>(null);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const code = readCode(event);
     setPending(true);
-    setFailed(false);
+    setFailed(null);
     const res = await adminFetch('/api/v1/admin/mfa/verify', 'POST', { code });
     if (res.ok) await onDone();
-    else setFailed(true);
+    else setFailed(mfaCodeErrorKey(res));
     setPending(false);
   }
 
@@ -57,7 +57,7 @@ export function CodeStep({ onDone }: { onDone: () => Promise<void> }) {
         inputClassName={codeInput}
         data-testid="admin-code"
       />
-      {failed ? <FormAlert kind="error">{t('code.error')}</FormAlert> : null}
+      {failed ? <FormAlert kind="error">{t(failed)}</FormAlert> : null}
       <Button type="submit" className="w-full" loading={pending} loadingLabel={t('loading')}>
         {t('code.submit')}
       </Button>
@@ -80,15 +80,16 @@ export function EnrollStep({ onDone }: { onDone: () => Promise<void> }) {
   const t = useTranslations('admin');
   const [device, setDevice] = useState<Device | null>(null);
   const [pending, setPending] = useState(false);
-  const [failed, setFailed] = useState(false);
+  const [failed, setFailed] = useState<string | null>(null);
+  const [startFailed, setStartFailed] = useState(false);
 
   async function start() {
     setPending(true);
-    setFailed(false);
+    setStartFailed(false);
     const res = await adminFetch('/api/v1/admin/mfa/enroll', 'POST');
     const created = res.ok ? asDevice(res.data) : null;
     if (created) setDevice(created);
-    else setFailed(true);
+    else setStartFailed(true);
     setPending(false);
   }
 
@@ -97,7 +98,7 @@ export function EnrollStep({ onDone }: { onDone: () => Promise<void> }) {
     if (!device) return;
     const code = readCode(event);
     setPending(true);
-    setFailed(false);
+    setFailed(null);
     const res = await adminFetch('/api/v1/admin/mfa/enroll', 'PUT', {
       factor_id: device.factorId,
       code,
@@ -105,7 +106,7 @@ export function EnrollStep({ onDone }: { onDone: () => Promise<void> }) {
     if (res.ok) {
       setDevice(null);
       await onDone();
-    } else setFailed(true);
+    } else setFailed(mfaCodeErrorKey(res));
     setPending(false);
   }
 
@@ -113,7 +114,7 @@ export function EnrollStep({ onDone }: { onDone: () => Promise<void> }) {
     return (
       <div className="flex flex-col gap-4" data-testid="admin-enroll">
         <p className="text-gris-600 text-sm">{t('enroll.intro')}</p>
-        {failed ? <FormAlert kind="error">{t('enroll.error')}</FormAlert> : null}
+        {startFailed ? <FormAlert kind="error">{t('enroll.error')}</FormAlert> : null}
         <Button
           type="button"
           className="w-full"
@@ -151,7 +152,7 @@ export function EnrollStep({ onDone }: { onDone: () => Promise<void> }) {
         inputClassName={codeInput}
         data-testid="admin-code"
       />
-      {failed ? <FormAlert kind="error">{t('code.error')}</FormAlert> : null}
+      {failed ? <FormAlert kind="error">{t(failed)}</FormAlert> : null}
       <Button type="submit" className="w-full" loading={pending} loadingLabel={t('loading')}>
         {t('enroll.confirm')}
       </Button>

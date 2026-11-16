@@ -11,7 +11,8 @@
       "intro": "Enter the 6-digit code from either of your two devices.",
       "label": "6-digit code",
       "submit": "Confirm code",
-      "error": "Incorrect code. Please try again."
+      "error": "Incorrect code. Please try again.",
+      "locked": "Too many attempts, try again in 15 minutes."
     },
     "enroll": {
       "intro": "Register a 6-digit code device. You need two: your phone and a password manager.",

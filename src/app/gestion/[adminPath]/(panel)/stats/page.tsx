@@ -127,7 +127,7 @@ export default async function AdminStatsPage({ params, searchParams }: Props) {
                 {stats.by_country.map((c) => (
                   <tr key={c.country} className="border-gris-200 border-t">
                     <td className="px-4 py-3 font-semibold">{c.country}</td>
-                    <td className="px-4 py-3 text-right">{c.orders_count}</td>
+                    <td className="px-4 py-3 text-right">{formatInt(c.orders_count, locale)}</td>
                     <td className="px-4 py-3 text-right">{formatXaf(c.sales_xaf, locale)}</td>
                   </tr>
                 ))}
