@@ -185,6 +185,7 @@ user_id uuid FK · service_id int FK · created_at. PK (user_id, service_id).
 - **ticket_attachments** : id uuid PK · message_id FK · storage_path text · mime text (`image/jpeg|png|webp`) · size_bytes int (≤ 2 Mo) · created_at.
 
 Fichiers dans **Supabase Storage**, bucket privé `ticket-attachments`, compressés dans le navigateur avant envoi (mon choix).
+Contraintes ajoutées en phase 9 : `ticket_messages_body_len` (message ≤ 4 000 caractères) ; index unique `ticket_attachments_storage_path_key` sur `storage_path` ; le dépôt direct dans le bucket par le client est retiré (envoi uniquement par le serveur).
 
 ### admin_notes — notes privées du propriétaire
 id uuid PK · user_id FK → profiles · body text · created_at. **Jamais lisible par le client.**

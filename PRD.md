@@ -16,7 +16,7 @@ Voir aussi : `PROJECT_BRIEF.md`, `docs/00` à `docs/05`.
 5. Choix de la devise d'affichage (XAF, XOF, USD).
 6. Suivi des commandes (statuts, reste à livrer) et historique des transactions.
 7. Statut des paiements (en attente, réussi, échoué).
-8. Tickets de support + lien Telegram.
+8. Tickets de support avec captures (aucun lien Telegram pour le client ; l'alerte Telegram va au propriétaire seulement).
 9. Remise 10 % automatique dès 50 000 XAF rechargés.
 10. Admin : ventes, bénéfice, solde fournisseur, commandes « à examiner », remboursements manuels, tickets, réglages (taux, marges, services).
 11. Alertes Telegram au propriétaire (commande en échec, solde fournisseur bas, gros écart de prix).
