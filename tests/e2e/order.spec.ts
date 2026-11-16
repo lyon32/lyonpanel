@@ -206,15 +206,12 @@ test.describe('commande', () => {
     await fund(email, 5000);
 
     await page.goto('/fr/commander');
-    await expect(page.locator('[data-testid="service-picker"]')).toBeVisible();
-    // Recherche par numéro de service, tous réseaux confondus.
-    await page.locator('#picker-q').fill(String(service.id));
-    await page.locator('#picker-q').press('Enter');
-    const row = page.locator('[data-testid="picker-service"]').first();
-    await expect(row).toContainText(/1\D?155/);
-    await row.getByRole('link').click();
-    await expect(page).toHaveURL(new RegExp(`service=${service.id}`));
-
+    await expect(page.locator('[data-testid="order-workbench"]')).toBeVisible();
+    // Tuile « Tous » puis recherche par numéro (le réseau du service de test est inconnu ici) : tout se passe sur la même page.
+    await page.locator('[data-testid="picker-network"]').first().click();
+    await page.locator('#wb-q').fill(String(service.id));
+    await page.locator('#wb-service').selectOption(String(service.id));
+    await expect(page).toHaveURL(/\/fr\/commander$/);
     await page.locator('[data-testid="order-link"]').fill(LINK);
     await page.locator('[data-testid="order-quantity"]').fill('1000');
     await expect(page.locator('[data-testid="quote-total"]')).toContainText(/1\D?155/);
