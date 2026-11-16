@@ -1,0 +1,25 @@
+{
+  "admin": {
+    "title": "Management area",
+    "email": "Email address",
+    "password": "Password",
+    "submit": "Sign in",
+    "loading": "Signing in…",
+    "error": "Unable to sign in. Check your details.",
+    "code": {
+      "intro": "Enter the 6-digit code from either of your two devices.",
+      "label": "6-digit code",
+      "submit": "Confirm code",
+      "error": "Incorrect code. Please try again."
+    },
+    "enroll": {
+      "intro": "Register a 6-digit code device. You need two: your phone and a password manager.",
+      "start": "Add a device",
+      "scan": "Scan this QR code with the app, then enter the code it shows.",
+      "qrAlt": "QR code to scan with the authenticator app",
+      "manual": "Or copy this key:",
+      "confirm": "Confirm device",
+      "error": "Unable to add the device. Please try again."
+    }
+  }
+}

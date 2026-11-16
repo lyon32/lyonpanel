@@ -1,6 +1,6 @@
 import 'server-only';
 import { isCommonPassword } from './password-policy';
-import type { RateLimiter } from './rate-limit';
+import { hashIp, type RateLimiter } from './rate-limit';
 import { apiError } from '@/server/http/api-error';
 import type { RegisterInput } from '@/lib/schemas/auth';
 
@@ -14,6 +14,8 @@ export type RegisterDeps = {
     metadata: { country: string; language: string; referral?: string };
   }): Promise<{ ok: true; userId: string } | { ok: false; reason: 'EMAIL_TAKEN' | 'PHONE_TAKEN' }>;
   setDisplayCurrency(userId: string, currency: string): Promise<void>;
+  /** Enregistre l'empreinte (HMAC) de l'IP d'inscription, jamais l'IP elle-même. */
+  setSignupIpHash?(userId: string, ipHash: string): Promise<void>;
 };
 
 export async function registerUser(input: RegisterInput, ip: string, deps: RegisterDeps) {
@@ -44,6 +46,11 @@ export async function registerUser(input: RegisterInput, ip: string, deps: Regis
 
   // Le trigger de la base crée le profil ; la devise d'affichage se pose juste après.
   await deps.setDisplayCurrency(created.userId, input.display_currency);
+
+  // Indice « même IP » pour l'admin (parrain et filleul). Une panne ici ne doit jamais empêcher l'inscription.
+  if (ip !== 'unknown' && deps.setSignupIpHash) {
+    await deps.setSignupIpHash(created.userId, hashIp(ip)).catch(() => {});
+  }
 
   return {
     user: {

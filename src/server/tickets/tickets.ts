@@ -92,7 +92,13 @@ async function insertMessage(
     .insert({ ticket_id: ticketId, body, from_admin: false })
     .select('id')
     .single();
-  if (error) throw new Error(`ticket_messages: ${error.message}`);
+  if (error) {
+    // Déclencheur en base : 4e message client d'affilée sans réponse du propriétaire.
+    if (error.message.includes('MESSAGE_LIMIT_REACHED')) {
+      apiError('RATE_LIMITED', { reason: 'unanswered_messages' });
+    }
+    throw new Error(`ticket_messages: ${error.message}`);
+  }
   if (files.length > 0) {
     const { error: attError } = await supabase.from('ticket_attachments').insert(
       files.map((f) => ({

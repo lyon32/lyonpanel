@@ -42,6 +42,7 @@ export async function ticketErrorMessage(res: Response, t: Translate): Promise<s
     open_tickets: 'errors.openTickets',
     rate: 'errors.rateLimit',
     upload: 'errors.uploadLimit',
+    unanswered_messages: 'errors.unansweredMessages',
   };
   const key = reasons[data.error?.details?.reason ?? ''];
   return key ? t(key) : (data.error?.message ?? t('form.networkError'));

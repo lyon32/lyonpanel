@@ -86,6 +86,13 @@ export function buildRegisterDeps(): RegisterDeps {
         .eq('id', userId);
       if (error) throw new Error(`profiles: ${error.message}`);
     },
+    async setSignupIpHash(userId, ipHash) {
+      const { error } = await admin
+        .from('profiles')
+        .update({ signup_ip_hash: ipHash })
+        .eq('id', userId);
+      if (error) throw new Error(`profiles: ${error.message}`);
+    },
   };
 }
 

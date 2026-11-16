@@ -707,6 +707,7 @@
     "errors": {
       "openLimit": "Vous avez déjà 3 tickets ouverts. Attendez une réponse ou fermez-en un.",
       "rateLimit": "Trop de messages envoyés. Réessayez dans une heure.",
+      "unansweredMessages": "Vous avez envoyé 3 messages sans réponse. Merci d’attendre notre réponse avant d’écrire à nouveau.",
       "fileType": "Seules les images JPEG, PNG et WebP sont acceptées.",
       "fileTooMany": "Vous pouvez joindre 3 images au maximum.",
       "openTickets": "Vous avez déjà 3 tickets ouverts. Fermez-en un pour en ouvrir un nouveau.",

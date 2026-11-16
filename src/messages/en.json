@@ -707,6 +707,7 @@
     "errors": {
       "openLimit": "You already have 3 open tickets. Wait for a reply or close one.",
       "rateLimit": "Too many messages sent. Try again in an hour.",
+      "unansweredMessages": "You have sent 3 messages without a reply. Please wait for our answer before writing again.",
       "fileType": "Only JPEG, PNG and WebP images are accepted.",
       "fileTooMany": "You can attach up to 3 images.",
       "openTickets": "You already have 3 open tickets. Close one to open a new one.",

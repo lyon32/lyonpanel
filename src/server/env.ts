@@ -7,11 +7,23 @@ const optionalString = z.preprocess(
   z.string().optional(),
 );
 
+// Adresse secrète de l'admin : lettres, chiffres, « - » et « _ », 8 caractères au moins,
+// et jamais un mot que le site utilise déjà. Vide = admin fermé.
+const RESERVED_SEGMENTS = ['admin', 'api', 'fr', 'en', 'login', 'dashboard', 'administrator'];
+const adminPathSchema = z.preprocess(
+  (value) => (value === '' ? undefined : value),
+  z
+    .string()
+    .regex(/^[A-Za-z0-9_-]{8,64}$/, 'ADMIN_PATH : 8 à 64 caractères (lettres, chiffres, - et _)')
+    .refine((v) => !RESERVED_SEGMENTS.includes(v.toLowerCase()), 'ADMIN_PATH : mot réservé')
+    .optional(),
+);
+
 const envSchema = z
   .object({
     NODE_ENV: optionalString,
     NEXT_PUBLIC_SITE_URL: optionalString,
-    ADMIN_PATH: optionalString,
+    ADMIN_PATH: adminPathSchema,
     NEXT_PUBLIC_SUPABASE_URL: optionalString,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: optionalString,
     SUPABASE_SERVICE_ROLE_KEY: optionalString,
@@ -89,7 +101,7 @@ export class MissingEnvError extends Error {
 
 // Insensible à la casse : un secret mal nommé ne doit jamais partir au navigateur.
 const SECRET_NAME =
-  /SECRET|TOKEN|PASSWORD|PRIVATE|SERVICE|PROVIDER_|SASPAY_|API_KEY|CRON|TELEGRAM/i;
+  /SECRET|TOKEN|PASSWORD|PRIVATE|SERVICE|PROVIDER_|SASPAY_|API_KEY|CRON|TELEGRAM|ADMIN/i;
 
 export function loadServerEnv(source: Record<string, string | undefined> = process.env): ServerEnv {
   // Tout ce qui est NEXT_PUBLIC_ part dans le navigateur : aucun secret ne doit y être.

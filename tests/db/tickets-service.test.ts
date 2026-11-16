@@ -284,13 +284,21 @@ describe('addMessage', () => {
   it('plafonne à 10 actions par heure : ticket (1) + 9 messages passent, le suivant est refusé', async () => {
     const u = await login();
     const { id } = await createTicket(u.id, body('premier'));
-    for (let i = 0; i < 9; i++) await addMessage(u.id, id, { body: `m${i}` });
+    // La limite de 3 messages d'affilée (phase 11) est évitée en intercalant une réponse du propriétaire.
+    for (let i = 0; i < 9; i++) {
+      if (i % 2 === 0) {
+        await adminClient()
+          .from('ticket_messages')
+          .insert({ ticket_id: id, from_admin: true, body: 'R' });
+      }
+      await addMessage(u.id, id, { body: `m${i}` });
+    }
     await expect(addMessage(u.id, id, { body: 'trop' })).rejects.toMatchObject({
       code: 'RATE_LIMITED',
       status: 429,
       details: { reason: 'rate' },
     });
-    expect(await messagesOf(id)).toHaveLength(10);
+    expect(await messagesOf(id)).toHaveLength(15);
   });
 });
 

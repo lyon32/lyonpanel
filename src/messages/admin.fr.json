@@ -1,0 +1,25 @@
+{
+  "admin": {
+    "title": "Espace de gestion",
+    "email": "Adresse email",
+    "password": "Mot de passe",
+    "submit": "Se connecter",
+    "loading": "Connexion…",
+    "error": "Connexion impossible. Vérifiez vos informations.",
+    "code": {
+      "intro": "Saisissez le code à 6 chiffres de l'un de vos deux appareils.",
+      "label": "Code à 6 chiffres",
+      "submit": "Valider le code",
+      "error": "Code incorrect. Réessayez."
+    },
+    "enroll": {
+      "intro": "Enregistrez un appareil de code à 6 chiffres. Il en faut deux : votre téléphone et un gestionnaire de mots de passe.",
+      "start": "Ajouter un appareil",
+      "scan": "Scannez ce QR code avec l'application, puis saisissez le code affiché.",
+      "qrAlt": "QR code à scanner avec l'application d'authentification",
+      "manual": "Ou recopiez cette clé :",
+      "confirm": "Confirmer l'appareil",
+      "error": "Impossible d'ajouter l'appareil. Réessayez."
+    }
+  }
+}
