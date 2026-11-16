@@ -45,6 +45,17 @@ beforeEach(() => {
 });
 afterEach(() => vi.unstubAllEnvs());
 
+describe('enrollDevice : QR code', () => {
+  it('retire le retour à la ligne final du SVG (next/image le refuse sinon)', async () => {
+    const { fake, run } = enroll({ factors: [] });
+    fake.mfa.enroll.mockResolvedValueOnce({
+      data: { id: 'f', totp: { qr_code: 'data:image/svg+xml;utf-8,<svg/>\n', secret: 'S' } },
+      error: null,
+    });
+    await expect(run()).resolves.toMatchObject({ qrCode: 'data:image/svg+xml;utf-8,<svg/>' });
+  });
+});
+
 describe('enrollDevice : nettoyage des appareils non confirmés', () => {
   it('retire un appareil jamais confirmé puis enrôle le nouveau', async () => {
     const { fake, run } = enroll({ factors: [pendingFactor('old')] });

@@ -150,7 +150,8 @@ export async function enrollDevice(supabase: SupabaseClient) {
     }
     throw new Error(`mfa.enroll: ${error.message}`);
   }
-  return { factorId: data.id, qrCode: data.totp.qr_code, secret: data.totp.secret };
+  // Supabase termine le SVG par un retour à la ligne : next/image refuse une source qui finit par un espace.
+  return { factorId: data.id, qrCode: data.totp.qr_code.trimEnd(), secret: data.totp.secret };
 }
 
 /** Confirme l'appareil avec un premier code ; un mauvais code est compté comme un échec (même verrou). */
