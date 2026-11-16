@@ -26,7 +26,7 @@ export function resolveSiteUrl(siteUrl: string | undefined, nodeEnv: string | un
   if (nodeEnv === 'production') {
     throw new Error('NEXT_PUBLIC_SITE_URL est obligatoire en production');
   }
-  return 'http://localhost:3000';
+  return 'http://localhost:3100';
 }
 
 const pctSchema = z.coerce.number().min(0).max(100);

@@ -139,7 +139,7 @@ export function buildForgotDeps(locale: 'fr' | 'en' = 'fr'): PasswordResetDeps {
   return {
     rateLimiter: createRateLimiter({ store: createAttemptStore(createAdminClient()) }),
     sendReset(email, captchaToken) {
-      const site = loadServerEnv().NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
+      const site = loadServerEnv().NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3100';
       const sending = createStatelessClient()
         .auth.resetPasswordForEmail(email, {
           redirectTo: `${site}/${RESET_PATH[locale]}`,

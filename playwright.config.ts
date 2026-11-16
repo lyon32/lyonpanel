@@ -1,7 +1,7 @@
 import { defineConfig } from '@playwright/test';
 
-// Port lu dans PLAYWRIGHT_PORT (3000 par défaut).
-const port = Number(process.env.PLAYWRIGHT_PORT ?? 3000);
+// Port lu dans PLAYWRIGHT_PORT (3100 par défaut).
+const port = Number(process.env.PLAYWRIGHT_PORT ?? 3100);
 const baseURL = `http://localhost:${port}`;
 
 export default defineConfig({

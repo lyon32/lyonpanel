@@ -76,7 +76,7 @@ Date : <AAAA-MM-JJ> · Phase <N> · Statut : rapportée
 - <liste>
 
 ## Ce que tu peux tester toi-même
-1. <étape concrète, ex. « ouvre http://localhost:3000/fr/inscription et crée un compte »>
+1. <étape concrète, ex. « ouvre http://localhost:3100/fr/inscription et crée un compte »>
 
 ## Ce qui reste / réserves
 - <ou « rien »>

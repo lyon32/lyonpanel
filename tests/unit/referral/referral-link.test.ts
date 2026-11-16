@@ -31,7 +31,7 @@ describe('resolveSiteUrl', () => {
     expect(resolveSiteUrl('https://lyonpanel.com', 'production')).toBe('https://lyonpanel.com');
   });
   it('accepte localhost hors production', () => {
-    expect(resolveSiteUrl(undefined, 'development')).toBe('http://localhost:3000');
+    expect(resolveSiteUrl(undefined, 'development')).toBe('http://localhost:3100');
   });
   it('échoue clairement en production sans adresse', () => {
     expect(() => resolveSiteUrl(undefined, 'production')).toThrow(/NEXT_PUBLIC_SITE_URL/);

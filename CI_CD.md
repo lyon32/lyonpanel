@@ -31,7 +31,7 @@ flowchart LR
 
 | Environnement | Déclencheur | Base | fournisseur | SasPay | Adresse |
 |---|---|---|---|---|---|
-| Local | `npm run dev` | Supabase local (Docker) | mock | test | localhost:3000 |
+| Local | `npm run dev` | Supabase local (Docker) | mock | test | localhost:3100 |
 | Preview | chaque push sur une branche / PR | Supabase **test** | mock | test | `lyonpanel-git-<branche>.vercel.app` (protégée par mot de passe Vercel, mon choix) |
 | Production | fusion dans `main` | Supabase **prod** | live | live | lyonpanel.com |
 
