@@ -93,3 +93,32 @@ Critères pour ACCEPTÉ
 - [x] npm audit sans haute.
 
 Après correction de la faille 1 (obligatoire) et des failles 3, 4, 7 (recommandées avant la mise en ligne), relancer l'essai de recharge sous dette (client et filleul) et l'essai des 30 codes.
+
+---
+
+# Nouvel audit — correctifs c286112 (diff 618f1c7..HEAD relu)
+
+VERDICT : ACCEPTÉ (une réserve Basse sur la durée minimale, voir ci-dessous)
+
+Essais rejoués (serveur de test sur la copie de c286112, Supabase local sans reset ni redémarrage)
+- Faille 1, recharge 500 sur dette 1000 → attendu crédit, solde -500 / obtenu credited true, solde -500 ; rejeu du même paiement → credited false, solde inchangé → OK
+- Faille 1, filleul recharge 1000, parrain en dette 1000 → attendu crédit du filleul / obtenu credited true, bonus 50, solde du parrain -950 → OK
+- admin_adjust +300 sur dette → -700 ; admin_adjust -10 sur solde négatif → INSUFFICIENT_BALANCE → OK (refund_order : couvert par le déclencheur, toute hausse est permise ; non rejoué séparément)
+- Contournements du déclencheur wallets_no_new_debt : baisse sous zéro sans réglage → refusée ; baisse d'une dette (-1000 → -2000) avec réglage vide → refusée ; réglage « yes » → refusé ; insertion de portefeuille négatif → refusée ; déclencheur actif (tgenabled O) → OK
+- Client (rôle authenticated) : set_config puis UPDATE wallets → permission denied ; INSERT wallets → permission denied ; admin_adjust, credit_payment → permission denied ; DISABLE TRIGGER → must be owner ; /rpc/set_config → 404 (déjà vu) → OK
+- Faille 3 : 30 mauvais codes → 401 ×5 puis 429 (Retry-After 900) dès le 6e ; la route de confirmation d'appareil est verrouillée aussi (429) ; admin aal1 reste 401 → OK. (Le verrou utilise l'empreinte HMAC de MON serveur de test : il n'a pas touché aux essais des autres sessions.)
+- Faille 6 : 2e appareil avec session aal1 → 401 MFA_REQUIRED propre (plus de 500, plus d'alerte internal_error) → OK
+- Faille 7 : scrubEvent avec ADMIN_PATH défini → url, transaction, fil d'Ariane et span sortent avec « [admin] » → OK
+- Faille 5 : String.raw sur le chemin ; faille 10 : chemins dans l'audit de purge → relus dans le diff, OK
+- Faille 2 : ADMIN_ENROLL_OPEN (false = 404 avant tout enrôlement), documenté dans ENV_SETUP.md:40 et :106 (procédure : 2 appareils avant usage, puis fermer) → code relu, OK (non rejoué : demanderait de redémarrer le serveur avec la variable ; couvert par tests/unit/admin/mfa-enroll*.test.ts)
+- Faille 8 : sortie de secours documentée (ENV_SETUP.md:110) ; le limiteur passe avant le compteur global, une tentative refusée n'est plus comptée ni alertée (plus de provocation d'alertes en insistant) → OK
+- Secrets : aucun ajout dans 618f1c7..HEAD (ADMIN_ENROLL_OPEN= vide dans .env.example) ; aucune dépendance ajoutée → OK
+
+Faille 4 (temps de réponse) : corrigée en grande partie, réserve Basse
+- Mesures sur 12 comptes chacun, serveur de développement sous charge : /admin/login compte existant médiane ≈ 333 ms, inconnu ≈ 327 ms (indiscernable) ; /auth/login existant médiane ≈ 385 ms, inconnu ≈ 345 ms (écart d'environ 40 ms, moyenne 437 contre 360 ms avec valeurs extrêmes).
+- Cause : le plancher de 300 ms (min-duration.ts) est inférieur au temps réel d'un échec (≈ 330 ms ici, plus sur Supabase hébergé) ; il n'égalise donc rien dès que le chemin réel le dépasse.
+- Correction recommandée (Basse, ne bloque pas) : relever MIN_AUTH_DURATION_MS à 1000 ms, ou utiliser un vrai compte leurre. Responsable : lp-coder.
+- Failles non reprises, inchangées : 9 (garde avant assertSameOrigin, facultative, Basse).
+
+Résultat : plus aucune faille Critique ni Haute ; faille 1 close avec preuves SQL ; failles 2, 3, 5, 6, 7, 8, 10 closes ; 4 partielle (Basse) ; 9 acceptée.
+Effets de bord : aucun fichier du projet modifié hors ce rapport ; serveur de test arrêté ; un 2e appareil TOTP vérifié de l'admin local existe (enrôlé par une autre session), non touché.

@@ -9,7 +9,7 @@ import { login } from '@/server/auth/login';
  * Faille 4 (énumération de comptes par le temps de réponse). DEUX modules attendus :
  *
  *   src/server/http/min-duration.ts
- *     export const MIN_AUTH_DURATION_MS = 300;
+ *     export const MIN_AUTH_DURATION_MS = 1000;
  *     export function withMinDuration<T>(minMs: number, fn: () => Promise<T>): Promise<T>
  *       attend que `minMs` se soit écoulé depuis le début de l'appel, que fn réussisse OU échoue (l'erreur est
  *       relancée telle quelle, après le délai) ; un fn plus lent n'est pas rallongé (plancher, pas ajout).
@@ -44,8 +44,8 @@ afterEach(() => {
 });
 
 describe('withMinDuration', () => {
-  it('la constante vaut au moins 300 ms', async () => {
-    expect((await dur()).MIN_AUTH_DURATION_MS).toBeGreaterThanOrEqual(300);
+  it('la constante vaut exactement 1000 ms', async () => {
+    expect((await dur()).MIN_AUTH_DURATION_MS).toBe(1000);
   });
 
   it('une réussite instantanée n’est rendue qu’après le délai minimal', async () => {
@@ -99,10 +99,11 @@ describe('login (connexion client) : durée minimale identique', () => {
     ['compte connu, bon mot de passe', KNOWN, 'bon-mdp-12345'],
     ['compte connu, mauvais mot de passe', KNOWN, 'mauvais-mdp-1'],
     ['compte inconnu', 'inconnu@lyonpanel.test', 'mauvais-mdp-1'],
-  ])('%s : terminé à 300 ms, pas avant', async (_label, identifier, password) => {
+  ])('%s : terminé à MIN_AUTH_DURATION_MS, pas avant', async (_label, identifier, password) => {
     const p = login(loginInput(identifier, password), loginDeps());
     p.catch(() => {});
-    expect(await settledAt(p, 299)).toBe(false);
+    const { MIN_AUTH_DURATION_MS } = await dur();
+    expect(await settledAt(p, MIN_AUTH_DURATION_MS - 1)).toBe(false);
     expect(await settledAt(p, 1)).toBe(true);
   });
 });
@@ -122,7 +123,7 @@ describe('adminLogin (connexion admin) : durée minimale identique', () => {
     ['compte admin, bon mot de passe', KNOWN, 'bon-mdp-12345'],
     ['compte admin, mauvais mot de passe', KNOWN, 'mauvais-mdp-1'],
     ['compte inconnu', 'inconnu@lyonpanel.test', 'mauvais-mdp-1'],
-  ])('%s : terminé à 300 ms, pas avant', async (_label, identifier, password) => {
+  ])('%s : terminé à MIN_AUTH_DURATION_MS, pas avant', async (_label, identifier, password) => {
     const store = (await import('../../helpers/memory-attempt-store')).memoryStore().store;
     const deps = {
       ...loginDeps(),
@@ -133,7 +134,8 @@ describe('adminLogin (connexion admin) : durée minimale identique', () => {
     const { adminLogin } = await load<Mod>('@/server/admin/login');
     const p = adminLogin({ ...loginInput(identifier, password), admin_path: ADMIN_PATH }, deps);
     p.catch(() => {});
-    expect(await settledAt(p, 299)).toBe(false);
+    const { MIN_AUTH_DURATION_MS } = await dur();
+    expect(await settledAt(p, MIN_AUTH_DURATION_MS - 1)).toBe(false);
     expect(await settledAt(p, 1)).toBe(true);
   });
 });

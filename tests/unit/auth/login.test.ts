@@ -1,6 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('server-only', () => ({}));
+// Plancher de durée neutralisé ici (logique d'alertes/limiteur) ; le plancher réel est prouvé dans min-duration.test.ts.
+vi.mock('@/server/http/min-duration', () => ({
+  MIN_AUTH_DURATION_MS: 1000,
+  withMinDuration: <T>(_ms: number, fn: () => Promise<T>) => fn(),
+}));
 
 import { memoryStore } from '../../helpers/memory-attempt-store';
 import { login, type LoginDeps } from '@/server/auth/login';

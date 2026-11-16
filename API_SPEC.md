@@ -148,7 +148,7 @@ Mot de passe : 8 caractères minimum (mon choix). Téléphone : format internati
 | DELETE | `/me` | `{password}` → **204** ; anonymise le compte (DATA_MODEL §6) |
 
 ### 6.3 Solde et transactions
-| GET | `/wallet` | `{balance_xaf, total_recharged_xaf, discount_pct, next_discount_threshold_xaf}` |
+| GET | `/wallet` | `{balance_xaf, debt_xaf, total_recharged_xaf, discount_pct, next_discount_threshold_xaf}` ; `debt_xaf = max(0, -balance_xaf)` : dette après annulation d'un bonus, une recharge la rembourse d'abord (phase 11) |
 |---|---|---|
 | GET | `/wallet/transactions` | liste paginée `{id, type, amount_xaf, balance_after_xaf, order_short_id?, created_at}` |
 

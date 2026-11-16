@@ -148,6 +148,7 @@ paths:
                 type: object
                 properties:
                   balance_xaf: { type: integer }
+                  debt_xaf: { type: integer, minimum: 0, description: 'max(0, -balance_xaf)' }
                   total_recharged_xaf: { type: integer }
                   discount_pct: { type: number }
                   next_discount_threshold_xaf: { type: [integer, 'null'] }

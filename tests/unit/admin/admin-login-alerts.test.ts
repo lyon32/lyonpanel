@@ -1,6 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('server-only', () => ({}));
+// Plancher de durée neutralisé ici (logique d'alertes/limiteur) ; le plancher réel est prouvé dans min-duration.test.ts.
+vi.mock('@/server/http/min-duration', () => ({
+  MIN_AUTH_DURATION_MS: 1000,
+  withMinDuration: <T>(_ms: number, fn: () => Promise<T>) => fn(),
+}));
 const notify = vi.hoisted(() => ({ fn: vi.fn(async () => {}) }));
 vi.mock('@/server/providers/telegram', () => ({ notifyOwner: notify.fn }));
 
