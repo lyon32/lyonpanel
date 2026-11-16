@@ -65,7 +65,7 @@ Contrôles :
 - Repli de la bibliothèque de compression sans `createImageBitmap`.
 - Message « image trop lourde pour être réduite » à l'écran (inatteignable en pratique : la source est limitée à 8 Mo et 1 600 px).
 - Rejouer les migrations depuis zéro (`db reset`).
-- CI GitHub : pas de PR, donc pas lue.
+- CI GitHub : lue sur la PR 19, job `ci` vert sur le commit 3e8b409 (15 min 7 s), après deux échecs corrigés (test de stockage, tests de la page Support).
 - Obsidian, tableau de bord et carte graphify : non mis à jour (serveur Obsidian indisponible).
 
 ## Points reportés (certains demandent ton accord)
