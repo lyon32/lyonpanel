@@ -35,7 +35,7 @@ Modèle : [`.env.example`](.env.example). En local : copier en `.env.local` (ign
 
 | Variable | Secret ? | Rôle | Où l'obtenir | En local |
 |---|---|---|---|---|
-| `NEXT_PUBLIC_SITE_URL` | non | Adresse du site (liens, retour SasPay) | — | `http://localhost:3000` |
+| `NEXT_PUBLIC_SITE_URL` | non | Adresse du site (liens, retour SasPay) | — | `http://localhost:3100` |
 | `ADMIN_PATH` | **oui** | Segment secret de l'admin | `openssl rand -hex 12` | une valeur au choix |
 | `ADMIN_ENROLL_OPEN` | non | Enrôlement des appareils admin : vide ou `true` = ouvert tant qu'il y a moins de 2 appareils vérifiés ; `false` = fermé (404). Jamais de 3e appareil | — | vide |
 | `NEXT_PUBLIC_SUPABASE_URL` | non | Adresse Supabase | Supabase → Settings → API | donnée par `supabase start` |
@@ -93,15 +93,15 @@ npx supabase db reset
 ```bash
 npm run dev
 ```
-- Site : http://localhost:3000/fr
+- Site : http://localhost:3100/fr
 - Studio Supabase local : http://localhost:54323
 - Boîte mail locale (emails de mot de passe oublié) : http://localhost:54324
 
-**Créer ton compte admin en local** : s'inscrire sur le site, puis :
+**Créer ton compte admin en local** : s'inscrire sur le site, puis donner le rôle admin à ce compte dans la base locale (un seul admin est autorisé : retirer d'abord le rôle à un éventuel ancien admin) :
 ```bash
-npm run admin:promote -- ton@email.com
+docker exec supabase_db_lyonpanel psql -U postgres -c "update public.profiles set is_admin=true where id=(select id from auth.users where email='ton@email.com');"
 ```
-Ensuite activer le code à 6 chiffres sur `http://localhost:3000/<ADMIN_PATH>` (la page de connexion de l'admin est directement à cette adresse, pas de `/login`).
+Ensuite activer le code à 6 chiffres sur `http://localhost:3100/<ADMIN_PATH>` (la page de connexion de l'admin est directement à cette adresse, pas de `/login`).
 
 **Deux appareils pour le code à 6 chiffres (obligatoire).** Il faut enrôler les 2 appareils (téléphone et gestionnaire de mots de passe) avant toute utilisation de l'adresse admin. Après l'enrôlement, mettre `ADMIN_ENROLL_OPEN=false`.
 
@@ -114,7 +114,7 @@ Ensuite activer le code à 6 chiffres sur `http://localhost:3000/<ADMIN_PATH>` (
 | Service | Étape | Quand |
 |---|---|---|
 | **Bot Telegram** | @BotFather → `/newbot` → copier le jeton ; envoyer un message au bot ; ouvrir `https://api.telegram.org/bot<JETON>/getUpdates` et noter `chat.id` | Avant l'étape « alertes » |
-| **SasPay** | Compte marchand, clés de test, URL de webhook (en local : tunnel `cloudflared tunnel --url http://localhost:3000`) | Avant l'étape « recharge » |
+| **SasPay** | Compte marchand, clés de test, URL de webhook (en local : tunnel `cloudflared tunnel --url http://localhost:3100`) | Avant l'étape « recharge » |
 | **Fournisseur** | Peakerr, API v2, `POST https://peakerr.com/api/v2`, actions `services` / `add` / `status` / `refill` / `refill_status` / `cancel` / `balance`, prix et solde en USD, clé dans le champ `key`. Mettre la clé seulement dans Vercel Production | Avant le test final |
 | **Supabase** | 2 projets : `lyonpanel-test` et `lyonpanel-prod` ; SMTP Hostinger dans Auth → SMTP | Avant la 1re mise en ligne |
 | **Cloudflare** | Acheter `lyonpanel.com`, créer un widget Turnstile | Avant la 1re mise en ligne |
@@ -137,7 +137,6 @@ Ensuite activer le code à 6 chiffres sur `http://localhost:3000/<ADMIN_PATH>` (
 | `npm run db:reset` | Réinitialiser la base locale |
 | `npm run db:migration -- nom` | Créer une migration |
 | `npm run db:types` | Régénérer `src/server/db/types.ts` |
-| `npm run admin:promote -- email` | Donner le rôle admin en local |
 
 ## 5 bis. Email de réinitialisation du mot de passe (Supabase)
 
