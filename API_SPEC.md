@@ -219,6 +219,9 @@ Accès : admin + MFA (`aal2`). Toute personne non admin reçoit **404**. Chaque 
 
 | Méthode | Chemin | Rôle |
 |---|---|---|
+| POST | `/admin/login` | `{email, password, turnstile}` → connexion admin dédiée (alerte Telegram `admin_login_failed` tous les 5 échecs en 15 min) ; réponse neutre, 404 hors adresse secrète |
+| GET | `/admin/mfa/status` | appareils de code enregistrés (0, 1 ou 2) |
+| POST / PUT | `/admin/mfa/enroll` | enregistre un appareil de code (POST : démarre, PUT : confirme avec le code) ; 2 appareils attendus |
 | POST | `/admin/mfa/verify` | `{code}` 6 chiffres → session `aal2` |
 | GET | `/admin/stats?range=today\|7d\|30d` | ventes, bénéfice, nb commandes, recharges, nouveaux clients, **répartition par pays**, solde fournisseur (alerte sous 5 $). Les « réservations » sont reportées (phase 12). « Aujourd'hui » compté en UTC+1 (décision du 2026-11-16 : pas de dates libres) |
 | POST | `/admin/referrals/{id}/cancel` | `{reason}` → annule un bonus de parrainage ; le solde du parrain peut passer négatif (seule fonction autorisée à le faire) |

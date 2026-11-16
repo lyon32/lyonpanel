@@ -73,7 +73,7 @@ lyonpanel/
 │  │  │     ├─ tickets/[id]/page.tsx
 │  │  │     ├─ referral/page.tsx           # /fr/parrainage
 │  │  │     └─ account/page.tsx            # /fr/compte
-│  │  ├─ [adminPath]/                      # adresse secrète (env ADMIN_PATH), noindex
+│  │  ├─ gestion/[adminPath]/              # adresse secrète (env ADMIN_PATH) réécrite par proxy.ts, noindex
 │  │  │  ├─ layout.tsx                     # 404 si non admin ou si segment ≠ ADMIN_PATH
 │  │  │  ├─ login/page.tsx                 # mot de passe + code 6 chiffres
 │  │  │  ├─ page.tsx                       # tableau de bord
@@ -132,7 +132,7 @@ lyonpanel/
 
 **app/[locale]** — Pages et mise en page. **Aucune** logique métier : lit les données via `server/*` (composants serveur) ou via l'API (React Query). Gère le SEO (métadonnées, données structurées) et les traductions.
 
-**app/[adminPath]** — Interface du propriétaire. Le layout vérifie que le segment est égal à `ADMIN_PATH`, que l'utilisateur est admin et en MFA `aal2`, sinon `notFound()`. En-tête `X-Robots-Tag: noindex, nofollow`.
+**app/gestion/[adminPath]** — Interface du propriétaire (phase 11 : Next refuse deux segments dynamiques à la racine à côté de `[locale]` ; `src/proxy.ts` réécrit `/<ADMIN_PATH>` vers `/gestion/<ADMIN_PATH>`, et `/admin` ou `/gestion/...` direct restent en 404). Le layout vérifie que le segment est égal à `ADMIN_PATH`, que l'utilisateur est admin et en MFA `aal2`, sinon `notFound()`. En-tête `X-Robots-Tag: noindex, nofollow`.
 
 **app/api** — Couche mince : valide l'entrée (Zod), appelle un service de `server/`, renvoie JSON ou `apiError`. Jamais d'accès direct à la base dans une route.
 
