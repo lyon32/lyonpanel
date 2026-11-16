@@ -2,6 +2,33 @@
 
 Écrit pour le propriétaire. Une section par phase. Seul le propriétaire valide une phase.
 
+## Phase 10 — Parrainage + remises (2026-11-16) — faite, en attente de validation
+
+### Nouveau
+- Page Parrainage : ton code de 8 caractères et ton lien d'invitation avec boutons copier, nombre de filleuls, total gagné, explication du bonus de 5 %. Aucune information sur tes filleuls.
+- Bonus : quand un filleul recharge pour la première fois, tu reçois 5 % (arrondi vers le bas), une seule fois, sur le solde non retirable. Pas de minimum de recharge.
+- Barre « encore X XAF pour la remise 10 % » : la remise s'applique dès 50 000 XAF rechargés. Remise automatique et remise personnalisée ne se cumulent jamais.
+- Le lien d'invitation suit la langue (FR ou EN). Le widget anti-robot s'affiche aussi quand le lien contient un code. Boutons copier de 44 px.
+- Aucune nouvelle règle de prix.
+
+### Base de données (1 migration, appliquée en local seulement)
+- `20261116100000` : un compte ne peut plus être son propre parrain. À appliquer en production en phase 15. Un rejeu complet des migrations est impossible pour l'instant (clé `[inbucket]` obsolète dans `supabase/config.toml`, problème existant).
+
+### Sécurité
+- Contrôle accepté : aucune faille critique, haute ni moyenne. Un seul bonus même avec deux appels simultanés ou un paiement rejoué.
+- Corrigés : lien forcé en français, adresse du site absente en production.
+- Les corrections demandées par la relecture et la QA n'ont pas été re-contrôlées par les agents, seulement par les tests.
+
+### Chiffres
+- 1 545 tests unitaires verts (phase 9 : 1 517), 27 tests de base du parrainage verts, 5 tests navigateur verts. Types OK. Lint : 0 erreur, 11 avertissements.
+
+### À surveiller
+- Décision du propriétaire : un client peut parrainer un second compte à lui et gagner 5 % sur son propre argent. Pas de faille technique, à surveiller.
+- À faire en phase admin : borner `referral_pct` entre 0 et 100 en base.
+- Non vérifié : CI GitHub, vraie expérience Turnstile en production.
+- Documents validés modifiés, à valider : `DATA_MODEL.md` (contrainte, écarts de la phase 9), `PRD.md` (écarts de la phase 9).
+- Reportés : « 10 % » écrit en dur dans les textes, défaut D et fichiers orphelins de la phase 9.
+
 ## Phase 9 — Support (2026-11-14) — faite, en attente de validation
 
 ### Nouveau

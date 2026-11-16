@@ -1,6 +1,6 @@
 # Plan — Phase 10 : Parrainage + remises
 
-Branche : `feat/phase-10-parrainage` (depuis `main`, merge d52ff3f). Statut : **décisions validées le 2026-11-16, plan en cours d'exécution**.
+Branche : `feat/phase-10-parrainage` (depuis `main`, merge d52ff3f). Statut : **faite – en attente de validation (2026-11-16)**. Toutes les tâches 10.0 à 10.6 : rapportée.
 
 ## Objectif (ROADMAP.md)
 Code et lien de parrainage, page parrainage ; bonus 5 % à la 1re recharge ; remise 10 % dès 50 000 XAF.
@@ -26,14 +26,14 @@ Colonnes `profiles.referral_code` / `referred_by`, rattachement à l'inscription
 Admin (annulation de bonus, remise perso : 11-12), retrait du solde, pages publiques, vrais paiements (15).
 
 ## Tâches (ordre de TEAM.md)
-| # | Tâche | Agent |
-|---|---|---|
-| 10.0 | Plan, documents, CLAUDE.md | chef de projet |
-| 10.1 | Tests d'abord (unit, base, e2e) | lp-tester |
-| 10.2 | Migration si nécessaire | lp-db |
-| 10.3 | Serveur : `referral.ts`, route `/referral`, palier dans `/wallet` ; écran `/parrainage` | lp-coder |
-| 10.4 | Design FR/EN, sombre, 360 px | lp-designer |
-| 10.5 | Contrôles : relecture ∥ QA navigateur ∥ sécurité (argent) | lp-reviewer ∥ lp-qa ∥ lp-security |
-| 10.6 | Rapports, bilan, ROADMAP, CHANGELOG | lp-reporter |
+| # | Tâche | Agent | Statut |
+|---|---|---|---|
+| 10.0 | Plan, documents, CLAUDE.md | chef de projet | rapportée |
+| 10.1 | Tests d'abord (unit, base, e2e) | lp-tester | rapportée |
+| 10.2 | Migration si nécessaire | lp-db | rapportée |
+| 10.3 | Serveur : `referral.ts`, route `/referral`, palier dans `/wallet` ; écran `/parrainage` | lp-coder | rapportée |
+| 10.4 | Design FR/EN, sombre, 360 px | lp-designer | rapportée |
+| 10.5 | Contrôles : relecture ∥ QA navigateur ∥ sécurité (argent) | lp-reviewer ∥ lp-qa ∥ lp-security | rapportée |
+| 10.6 | Rapports, bilan, ROADMAP, CHANGELOG | lp-reporter | rapportée |
 
 Fin de phase : PR vers `main`, CI lue, `lp-security` ACCEPTÉ, fusion seulement sur « validé » écrit du propriétaire.
