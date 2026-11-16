@@ -50,7 +50,7 @@ Code et lien de parrainage, page parrainage ; bonus 5 % à la 1re recharge ; rem
 - CI GitHub : à lire sur la PR.
 - Vraie expérience Turnstile en production (seules les clés de test ont servi).
 - Rejeu complet des migrations (`db reset`) : impossible, la clé `[inbucket]` de `supabase/config.toml` est obsolète (problème existant).
-- Obsidian indisponible (serveur `mcp-tools-istefox` : connexion refusée) : aucune note écrite. Carte graphify non relancée.
+- Obsidian : notes de la phase 10 écrites après reconnexion du serveur (suivi, tâches 10.0 à 10.5, bilan, tableau de bord). Carte graphify non relancée.
 
 ## Points reportés ou à décider
 - **Décision du propriétaire** : un client peut créer un second compte, le parrainer et y recharger : il gagne 5 % sur son propre argent. Pas de faille technique, à surveiller (même IP, même téléphone).

@@ -1,5 +1,5 @@
 # Tableau de bord LyonPanel
-Mis à jour le 2026-11-16 (phase 10 faite, en attente de validation). Chiffres lus dans les comptes-rendus des phases 1 à 10. Obsidian est indisponible : la copie `LyonPanel/Tableau de bord.md` n'a pas été mise à jour.
+Mis à jour le 2026-11-16 (phase 10 faite, en attente de validation). Chiffres lus dans les comptes-rendus des phases 1 à 10. Obsidian a été mis à jour après reconnexion.
 
 **En 5 secondes :** les phases 0 à 8 sont validées. La phase 9 (support) est faite et la phase 10 (parrainage) est faite, toutes deux en attente de ton « validé ». Rien ne bloque. À lire sur la PR : la CI GitHub de la phase 10. Ensuite : phase 11 (admin 1), installe une appli d'authentification.
 
