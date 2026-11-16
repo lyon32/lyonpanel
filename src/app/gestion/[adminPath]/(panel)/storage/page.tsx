@@ -15,29 +15,24 @@ export default async function AdminStoragePage() {
   return (
     <>
       <h1 className="text-encre text-2xl font-bold">{t('storage.title')}</h1>
-      <p className="text-gris-600">{t('storage.intro')}</p>
+      <p className="text-gris-600 text-sm">{t('storage.intro')}</p>
       {shown.length === 0 ? (
-        <p>{t('storage.empty')}</p>
+        <p className="border-gris-200 bg-blanc text-gris-600 rounded-xl border p-5 text-sm">
+          {t('storage.empty')}
+        </p>
       ) : (
         <>
-          <table className="w-full text-left text-sm">
-            <thead>
-              <tr className="text-gris-600">
-                <th className="py-2">{t('storage.path')}</th>
-                <th className="py-2">{t('storage.size')}</th>
-                <th className="py-2">{t('storage.created')}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {shown.map((o) => (
-                <tr key={o.path} className="border-gris-200 border-t">
-                  <td className="py-2 font-mono text-xs break-all">{o.path}</td>
-                  <td className="py-2">{formatBytes(o.size_bytes)}</td>
-                  <td className="py-2">{formatDateTime(o.created_at, locale)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <ul className="border-gris-200 bg-blanc divide-gris-200 divide-y overflow-hidden rounded-xl border">
+            {shown.map((o) => (
+              <li key={o.path} className="flex flex-col gap-1 px-4 py-3">
+                <span className="text-encre font-mono text-xs break-all">{o.path}</span>
+                <span className="text-gris-600 text-sm tabular-nums">
+                  {formatBytes(o.size_bytes)} · {t('storage.created')}{' '}
+                  {formatDateTime(o.created_at, locale)}
+                </span>
+              </li>
+            ))}
+          </ul>
           {orphans.length > shown.length ? (
             <p className="text-gris-600 text-sm">{t('storage.limit', { max: MAX_PURGE_PATHS })}</p>
           ) : null}

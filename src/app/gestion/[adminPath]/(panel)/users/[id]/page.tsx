@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react';
 import { CancelBonusForm } from '@/components/admin/cancel-bonus-form';
 import { UserNoteForm } from '@/components/admin/user-note-form';
 import { UserSettingsForm } from '@/components/admin/user-settings-form';
@@ -12,6 +13,13 @@ import { getUserDetail } from '@/server/admin/users';
 import { ApiError } from '@/server/http/api-error';
 
 type Props = { params: Promise<{ adminPath: string; id: string }> };
+
+// Couleur de la pastille d'après le sens du statut (terminé, échec, en cours).
+function orderBadge(status: string): 'success' | 'failed' | 'pending' {
+  if (['completed', 'delivered'].includes(status)) return 'success';
+  if (['failed', 'canceled', 'cancelled', 'refunded', 'partial'].includes(status)) return 'failed';
+  return 'pending';
+}
 
 async function loadDetail(id: string) {
   try {
@@ -41,23 +49,25 @@ export default async function AdminUserPage({ params }: Props) {
     [t('user.recharged'), money(wallet.total_recharged_xaf)],
   ];
 
+  const h2 = 'text-encre text-lg font-bold';
+  const panel = 'border-gris-200 bg-blanc flex flex-col gap-3 rounded-xl border p-4 sm:p-5';
+  const empty = 'text-gris-600 text-sm';
+  const th = 'px-3 py-3 font-semibold';
   return (
     <>
-      <Link href={`/${adminPath}/users`} className="text-bleu-600 font-semibold">
+      <Link
+        href={`/${adminPath}/users`}
+        className="text-bleu-600 focus-visible:ring-bleu-100 inline-flex min-h-11 w-fit items-center gap-1 rounded-lg font-semibold outline-none focus-visible:ring-4"
+      >
+        <ArrowLeft className="size-4" aria-hidden="true" />
         {t('user.back')}
       </Link>
-      <h1 className="text-encre text-2xl font-bold">{profile.email ?? profile.phone}</h1>
+      <h1 className="text-encre text-2xl font-bold break-all">{profile.email ?? profile.phone}</h1>
 
-      <section className="flex flex-col gap-3">
-        <h2 className="text-encre text-lg font-bold">{t('user.profile')}</h2>
-        <dl className="grid gap-x-6 gap-y-2 sm:grid-cols-2">
-          {rows.map(([label, value]) => (
-            <div key={label}>
-              <dt className="text-gris-600 text-sm">{label}</dt>
-              <dd className="text-encre font-semibold">{value}</dd>
-            </div>
-          ))}
-        </dl>
+      <section aria-labelledby="user-profile" className={panel}>
+        <h2 id="user-profile" className={h2}>
+          {t('user.profile')}
+        </h2>
         {debt_xaf > 0 ? (
           <FormAlert kind="error">
             {`${t('user.debt', { amount: money(debt_xaf) })} ${t('user.debtHint')}`}
@@ -68,12 +78,22 @@ export default async function AdminUserPage({ params }: Props) {
             {t('user.blockedReason', { reason: profile.blocked_reason ?? '-' })}
           </FormAlert>
         ) : null}
+        <dl className="grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-3">
+          {rows.map(([label, value]) => (
+            <div key={label} className="min-w-0">
+              <dt className="text-gris-600 text-sm">{label}</dt>
+              <dd className="text-encre font-semibold break-words tabular-nums">{value}</dd>
+            </div>
+          ))}
+        </dl>
       </section>
 
-      <section className="flex flex-col gap-3">
-        <h2 className="text-encre text-lg font-bold">{t('user.settings')}</h2>
+      <section aria-labelledby="user-settings" className={panel}>
+        <h2 id="user-settings" className={h2}>
+          {t('user.settings')}
+        </h2>
         {profile.status === 'deleted' ? (
-          <p className="text-gris-600">{t('user.deletedNote')}</p>
+          <p className={empty}>{t('user.deletedNote')}</p>
         ) : (
           <UserSettingsForm
             userId={profile.id}
@@ -86,49 +106,73 @@ export default async function AdminUserPage({ params }: Props) {
         )}
       </section>
 
-      <section className="flex flex-col gap-2">
-        <h2 className="text-encre text-lg font-bold">{t('user.orders')}</h2>
+      <section aria-labelledby="user-orders" className="flex flex-col gap-3">
+        <h2 id="user-orders" className={h2}>
+          {t('user.orders')}
+        </h2>
         {orders.length === 0 ? (
-          <p className="text-gris-600">{t('user.noOrders')}</p>
+          <p className={`${panel} ${empty}`}>{t('user.noOrders')}</p>
         ) : (
-          <table className="w-full text-left text-sm">
-            <thead>
-              <tr className="text-gris-600">
-                <th className="py-2">{t('user.orderId')}</th>
-                <th className="py-2">{t('user.quantity')}</th>
-                <th className="py-2">{t('user.charged')}</th>
-                <th className="py-2">{t('user.orderProfit')}</th>
-                <th className="py-2">{t('user.orderStatus')}</th>
-                <th className="py-2">{t('common.date')}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {orders.map((o) => (
-                <tr key={o.id} className="border-gris-200 border-t">
-                  <td className="py-2">{o.short_id}</td>
-                  <td className="py-2">{o.quantity}</td>
-                  <td className="py-2">{money(o.charged_xaf)}</td>
-                  <td className="py-2">{o.profit_xaf === null ? '-' : money(o.profit_xaf)}</td>
-                  <td className="py-2">{o.status}</td>
-                  <td className="py-2">{formatDateTime(o.created_at, locale)}</td>
+          <div className="border-gris-200 bg-blanc overflow-x-auto rounded-xl border">
+            <table className="w-full min-w-[34rem] text-left text-sm">
+              <thead className="bg-gris-50 text-gris-600">
+                <tr>
+                  <th scope="col" className={th}>
+                    {t('user.orderId')}
+                  </th>
+                  <th scope="col" className={`${th} text-right`}>
+                    {t('user.quantity')}
+                  </th>
+                  <th scope="col" className={`${th} text-right`}>
+                    {t('user.charged')}
+                  </th>
+                  <th scope="col" className={`${th} text-right`}>
+                    {t('user.orderProfit')}
+                  </th>
+                  <th scope="col" className={th}>
+                    {t('user.orderStatus')}
+                  </th>
+                  <th scope="col" className={th}>
+                    {t('common.date')}
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="tabular-nums">
+                {orders.map((o) => (
+                  <tr key={o.id} className="border-gris-200 border-t">
+                    <td className="px-3 py-3 font-semibold">{o.short_id}</td>
+                    <td className="px-3 py-3 text-right">{o.quantity}</td>
+                    <td className="px-3 py-3 text-right">{money(o.charged_xaf)}</td>
+                    <td className="px-3 py-3 text-right">
+                      {o.profit_xaf === null ? '-' : money(o.profit_xaf)}
+                    </td>
+                    <td className="px-3 py-3">
+                      <Badge status={orderBadge(o.status)}>{o.status}</Badge>
+                    </td>
+                    <td className="px-3 py-3 whitespace-nowrap">
+                      {formatDateTime(o.created_at, locale)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </section>
 
-      <section className="flex flex-col gap-3">
-        <h2 className="text-encre text-lg font-bold">{t('user.notes')}</h2>
+      <section aria-labelledby="user-notes" className={panel}>
+        <h2 id="user-notes" className={h2}>
+          {t('user.notes')}
+        </h2>
         {notes.length === 0 ? (
-          <p className="text-gris-600">{t('user.noNotes')}</p>
+          <p className={empty}>{t('user.noNotes')}</p>
         ) : (
           <ul className="flex flex-col gap-2">
             {notes.map((n) => (
-              <li key={n.id} className="border-gris-200 rounded-lg border p-3">
+              <li key={n.id} className="bg-jaune-50 rounded-lg p-3">
                 <p className="text-gris-600 text-xs">{formatDateTime(n.created_at, locale)}</p>
                 {/* Texte brut : React échappe le contenu, retours à la ligne conservés. */}
-                <p className="whitespace-pre-wrap">{n.body}</p>
+                <p className="text-encre text-sm break-words whitespace-pre-wrap">{n.body}</p>
               </li>
             ))}
           </ul>
@@ -136,22 +180,24 @@ export default async function AdminUserPage({ params }: Props) {
         <UserNoteForm userId={profile.id} />
       </section>
 
-      <section className="flex flex-col gap-3">
-        <h2 className="text-encre text-lg font-bold">{t('user.referrals')}</h2>
+      <section aria-labelledby="user-referrals" className="flex flex-col gap-3">
+        <h2 id="user-referrals" className={h2}>
+          {t('user.referrals')}
+        </h2>
         {referrals.length === 0 ? (
-          <p className="text-gris-600">{t('user.noReferrals')}</p>
+          <p className={`${panel} ${empty}`}>{t('user.noReferrals')}</p>
         ) : (
           <ul className="flex flex-col gap-3">
             {referrals.map((r) => (
-              <li key={r.id} className="border-gris-200 flex flex-col gap-2 rounded-lg border p-3">
-                <div className="flex flex-wrap items-center gap-3">
+              <li key={r.id} className={panel}>
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
                   <Link
                     href={`/${adminPath}/users/${r.referee_id}`}
-                    className="text-bleu-600 font-semibold"
+                    className="text-bleu-600 focus-visible:ring-bleu-100 inline-flex min-h-11 items-center rounded-lg font-semibold outline-none focus-visible:ring-4"
                   >
                     {t('user.referee')}
                   </Link>
-                  <span>{`${t('user.bonus')} : ${money(r.bonus_xaf)}`}</span>
+                  <span className="font-semibold tabular-nums">{`${t('user.bonus')} : ${money(r.bonus_xaf)}`}</span>
                   <span className="text-gris-600 text-sm">
                     {formatDateTime(r.created_at, locale)}
                   </span>

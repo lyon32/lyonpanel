@@ -46,7 +46,7 @@ export function UserSettingsForm({ userId, status, discountPct, dailyLimitXaf }:
     <div className="flex flex-col gap-4">
       {feedback ? <FormAlert kind={feedback.kind}>{feedback.text}</FormAlert> : null}
 
-      <form onSubmit={saveSettings} className="flex flex-wrap items-end gap-3">
+      <form onSubmit={saveSettings} className="flex flex-col gap-3 sm:flex-row sm:items-end">
         <Field
           name="discount"
           label={t('user.discount')}
@@ -55,6 +55,8 @@ export function UserSettingsForm({ userId, status, discountPct, dailyLimitXaf }:
           max={50}
           step="any"
           defaultValue={discountPct ?? ''}
+          inputMode="decimal"
+          className="flex-1"
         />
         <Field
           name="limit"
@@ -64,16 +66,19 @@ export function UserSettingsForm({ userId, status, discountPct, dailyLimitXaf }:
           step={1}
           required
           defaultValue={dailyLimitXaf}
+          inputMode="numeric"
+          className="flex-1"
         />
-        <Button type="submit" disabled={pending}>
+        <Button type="submit" loading={pending} loadingLabel={t('common.loading')}>
           {t('user.saveSettings')}
         </Button>
       </form>
 
       {blocked ? (
-        <div>
+        <div className="border-gris-200 border-t pt-4">
           <Button
             variant="secondary"
+            className="w-full sm:w-fit"
             disabled={pending}
             onClick={() => void run(path, 'PATCH', { status: 'active' })}
           >
@@ -81,14 +86,17 @@ export function UserSettingsForm({ userId, status, discountPct, dailyLimitXaf }:
           </Button>
         </div>
       ) : (
-        <form onSubmit={block} className="flex flex-wrap items-end gap-3">
+        <form
+          onSubmit={block}
+          className="border-gris-200 flex flex-col gap-3 border-t pt-4 sm:flex-row sm:items-end"
+        >
           <Field
             label={t('user.blockReason')}
             value={reason}
             onChange={(e) => setReason(e.target.value)}
             maxLength={500}
             required
-            className="min-w-64 flex-1"
+            className="flex-1"
           />
           <Button type="submit" variant="destructive" disabled={pending || reason.trim() === ''}>
             {t('user.blockSubmit')}

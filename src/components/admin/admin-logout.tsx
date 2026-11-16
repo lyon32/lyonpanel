@@ -12,7 +12,7 @@ export function AdminLogout({ adminPath, label }: { adminPath: string; label: st
     window.location.assign(`/${adminPath}`);
   }
   return (
-    <Button variant="secondary" size="sm" onClick={logout} disabled={pending}>
+    <Button variant="secondary" size="sm" className="min-h-11" onClick={logout} disabled={pending}>
       {label}
     </Button>
   );

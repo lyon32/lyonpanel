@@ -18,6 +18,9 @@ const codeField = {
   required: true,
 };
 
+// Code à 6 chiffres : gros chiffres espacés, faciles à relire sur téléphone.
+const codeInput = 'text-center text-2xl tracking-[0.4em] tabular-nums';
+
 function readCode(event: FormEvent<HTMLFormElement>): string {
   const value = new FormData(event.currentTarget).get('code');
   return typeof value === 'string' ? value.trim() : '';
@@ -43,14 +46,19 @@ export function CodeStep({ onDone }: { onDone: () => Promise<void> }) {
   return (
     <form
       onSubmit={submit}
-      className="flex flex-col gap-3"
+      className="flex flex-col gap-4"
       noValidate
       data-testid="admin-code-form"
     >
       <p className="text-gris-600 text-sm">{t('code.intro')}</p>
-      <Field label={t('code.label')} {...codeField} data-testid="admin-code" />
+      <Field
+        label={t('code.label')}
+        {...codeField}
+        inputClassName={codeInput}
+        data-testid="admin-code"
+      />
       {failed ? <FormAlert kind="error">{t('code.error')}</FormAlert> : null}
-      <Button type="submit" loading={pending} loadingLabel={t('loading')}>
+      <Button type="submit" className="w-full" loading={pending} loadingLabel={t('loading')}>
         {t('code.submit')}
       </Button>
     </form>
@@ -103,10 +111,16 @@ export function EnrollStep({ onDone }: { onDone: () => Promise<void> }) {
 
   if (!device) {
     return (
-      <div className="flex flex-col gap-3" data-testid="admin-enroll">
+      <div className="flex flex-col gap-4" data-testid="admin-enroll">
         <p className="text-gris-600 text-sm">{t('enroll.intro')}</p>
         {failed ? <FormAlert kind="error">{t('enroll.error')}</FormAlert> : null}
-        <Button type="button" loading={pending} loadingLabel={t('loading')} onClick={start}>
+        <Button
+          type="button"
+          className="w-full"
+          loading={pending}
+          loadingLabel={t('loading')}
+          onClick={start}
+        >
           {t('enroll.start')}
         </Button>
       </div>
@@ -115,18 +129,30 @@ export function EnrollStep({ onDone }: { onDone: () => Promise<void> }) {
   return (
     <form
       onSubmit={confirm}
-      className="flex flex-col gap-3"
+      className="flex flex-col gap-4"
       noValidate
       data-testid="admin-enroll-form"
     >
       <p className="text-gris-600 text-sm">{t('enroll.scan')}</p>
-      <Image src={device.qrCode} alt={t('enroll.qrAlt')} width={192} height={192} unoptimized />
-      <p className="text-sm">
+      <Image
+        src={device.qrCode}
+        alt={t('enroll.qrAlt')}
+        width={192}
+        height={192}
+        unoptimized
+        className="border-gris-200 mx-auto rounded-lg border p-2"
+      />
+      <p className="bg-gris-50 rounded-lg p-3 text-sm">
         {t('enroll.manual')} <code className="font-mono break-all">{device.secret}</code>
       </p>
-      <Field label={t('code.label')} {...codeField} data-testid="admin-code" />
+      <Field
+        label={t('code.label')}
+        {...codeField}
+        inputClassName={codeInput}
+        data-testid="admin-code"
+      />
       {failed ? <FormAlert kind="error">{t('code.error')}</FormAlert> : null}
-      <Button type="submit" loading={pending} loadingLabel={t('loading')}>
+      <Button type="submit" className="w-full" loading={pending} loadingLabel={t('loading')}>
         {t('enroll.confirm')}
       </Button>
     </form>

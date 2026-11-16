@@ -8,8 +8,10 @@ export default async function AdminLoginPage({
 }) {
   const { adminPath } = await params;
   return (
-    <main className="mx-auto flex min-h-dvh max-w-md flex-col justify-center px-4 py-10">
-      <AdminLogin adminPath={adminPath} />
+    <main className="bg-gris-50 flex min-h-dvh flex-col justify-center px-4 py-10">
+      <div className="mx-auto w-full max-w-md">
+        <AdminLogin adminPath={adminPath} />
+      </div>
     </main>
   );
 }

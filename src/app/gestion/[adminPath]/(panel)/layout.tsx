@@ -1,6 +1,6 @@
-import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { AdminLogout } from '@/components/admin/admin-logout';
+import { AdminNav } from '@/components/admin/admin-nav';
 import { getAdminTranslator } from '@/server/admin/page-i18n';
 import { requireAdminPage } from '@/server/admin/page-guard';
 
@@ -17,18 +17,21 @@ export default async function AdminPanelLayout({ children, params }: Props) {
     { href: `/${adminPath}/storage`, label: t('nav.storage') },
   ];
   return (
-    <div className="mx-auto flex min-h-dvh max-w-5xl flex-col gap-6 px-4 py-6">
-      <header className="border-gris-200 flex flex-wrap items-center justify-between gap-3 border-b pb-4">
-        <nav aria-label={t('nav.label')} className="flex flex-wrap gap-4">
-          {links.map((l) => (
-            <Link key={l.href} href={l.href} className="text-bleu-600 font-semibold">
-              {l.label}
-            </Link>
-          ))}
-        </nav>
-        <AdminLogout adminPath={adminPath} label={t('nav.logout')} />
+    <div className="bg-gris-50 min-h-dvh">
+      <header className="border-gris-200 bg-blanc border-b">
+        <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-x-4 gap-y-1 px-4 py-2">
+          <p className="text-bleu-600 border-jaune-500 border-b-2 text-base font-bold">
+            {t('nav.brand')}
+          </p>
+          <div className="ml-auto sm:order-3">
+            <AdminLogout adminPath={adminPath} label={t('nav.logout')} />
+          </div>
+          <div className="w-full sm:order-2 sm:w-auto sm:flex-1">
+            <AdminNav links={links} label={t('nav.label')} />
+          </div>
+        </div>
       </header>
-      <main className="flex flex-col gap-6">{children}</main>
+      <main className="mx-auto flex max-w-5xl flex-col gap-6 px-4 py-6 sm:py-8">{children}</main>
     </div>
   );
 }

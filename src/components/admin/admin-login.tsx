@@ -63,12 +63,18 @@ export function AdminLogin({ adminPath }: { adminPath: string }) {
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      <h1 className="text-encre text-2xl font-bold">{t('title')}</h1>
+    <div className="border-gris-200 bg-blanc flex flex-col gap-5 rounded-xl border p-5 shadow-[0_1px_3px_rgba(14,23,38,0.08)] sm:p-6">
+      <div className="flex flex-col gap-1">
+        <p className="text-bleu-600 border-jaune-500 w-fit border-b-2 text-sm font-bold">
+          LyonPanel
+        </p>
+        <h1 className="text-encre text-2xl font-bold">{t('title')}</h1>
+        <p className="text-gris-600 text-sm">{t(`step.${step}`)}</p>
+      </div>
       {step === 'password' ? (
         <form
           onSubmit={handlePassword}
-          className="flex flex-col gap-3"
+          className="flex flex-col gap-4"
           noValidate
           data-testid="admin-login-form"
         >
@@ -98,6 +104,7 @@ export function AdminLogin({ adminPath }: { adminPath: string }) {
           ) : null}
           <Button
             type="submit"
+            className="w-full"
             loading={pending}
             loadingLabel={t('loading')}
             data-testid="admin-submit"

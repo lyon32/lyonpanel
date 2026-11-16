@@ -26,7 +26,8 @@
       "stats": "Tableau de bord",
       "users": "Clients",
       "storage": "Fichiers orphelins",
-      "logout": "Se déconnecter"
+      "logout": "Se déconnecter",
+      "brand": "LyonPanel · Gestion"
     },
     "common": {
       "error": "L'action a échoué. Réessayez.",
@@ -37,7 +38,11 @@
       "next": "Page suivante",
       "reset": "Réinitialiser",
       "date": "Date",
-      "status": "Statut"
+      "status": "Statut",
+      "loading": "Enregistrement…",
+      "errorTitle": "La page ne s’est pas affichée",
+      "errorText": "Un problème est survenu de notre côté. Réessayez dans un instant.",
+      "retry": "Réessayer"
     },
     "stats": {
       "title": "Tableau de bord",
@@ -57,12 +62,13 @@
       "country": "Pays",
       "noSales": "Aucune vente sur cette période.",
       "provider": "Solde fournisseur",
-      "providerUnknown": "Solde inconnu pour le moment.",
-      "providerLow": "Solde bas : rechargez le fournisseur."
+      "providerUnknown": "Inconnu",
+      "providerLow": "Il reste moins de 5 $ chez le fournisseur. Rechargez-le vite : sinon les nouvelles commandes échoueront.",
+      "providerLowTitle": "Solde fournisseur bas"
     },
     "users": {
       "title": "Clients",
-      "search": "Recherche (email, téléphone, code de parrainage)",
+      "search": "Email, téléphone ou code de parrainage",
       "searchSubmit": "Rechercher",
       "empty": "Aucun client trouvé.",
       "email": "Email",
@@ -119,9 +125,10 @@
       "cancelled": "Bonus annulé",
       "cancelBonus": "Annuler le bonus",
       "cancelReason": "Motif de l'annulation (obligatoire)",
-      "cancelWarning": "Le solde du parrain peut passer négatif.",
-      "cancelConfirm": "Je comprends : annuler ce bonus, même si le parrain l'a déjà dépensé.",
-      "cancelSubmit": "Annuler le bonus définitivement"
+      "cancelWarning": "Le client qui a parrainé perd ce bonus. S’il l’a déjà dépensé, son solde devient négatif (une dette). Cela ne peut pas être défait.",
+      "cancelConfirm": "Je comprends. J’annule ce bonus, même s’il a déjà été dépensé.",
+      "cancelSubmit": "Annuler le bonus définitivement",
+      "cancelWarningTitle": "Attention : action définitive"
     },
     "storage": {
       "title": "Fichiers de tickets orphelins",
@@ -131,9 +138,14 @@
       "size": "Taille",
       "created": "Envoyé le",
       "limit": "Seuls les {max} premiers fichiers sont purgés à la fois.",
-      "confirm": "Je confirme la suppression définitive de ces fichiers.",
+      "confirm": "Je confirme : ces fichiers seront supprimés pour de bon.",
       "purge": "Supprimer ces fichiers",
       "result": "{deleted} supprimé(s), {skipped} ignoré(s)."
+    },
+    "step": {
+      "password": "Connexion",
+      "code": "Vérification",
+      "enroll": "Enregistrer vos appareils"
     }
   }
 }

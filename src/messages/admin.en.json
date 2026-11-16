@@ -26,7 +26,8 @@
       "stats": "Dashboard",
       "users": "Customers",
       "storage": "Orphan files",
-      "logout": "Sign out"
+      "logout": "Sign out",
+      "brand": "LyonPanel · Admin"
     },
     "common": {
       "error": "The action failed. Try again.",
@@ -37,7 +38,11 @@
       "next": "Next page",
       "reset": "Reset",
       "date": "Date",
-      "status": "Status"
+      "status": "Status",
+      "loading": "Saving…",
+      "errorTitle": "The page did not load",
+      "errorText": "Something went wrong on our side. Try again in a moment.",
+      "retry": "Try again"
     },
     "stats": {
       "title": "Dashboard",
@@ -57,12 +62,13 @@
       "country": "Country",
       "noSales": "No sales in this period.",
       "provider": "Provider balance",
-      "providerUnknown": "Balance not known yet.",
-      "providerLow": "Low balance: top up the provider."
+      "providerUnknown": "Unknown",
+      "providerLow": "Less than $5 is left at the provider. Top it up soon, or new orders will fail.",
+      "providerLowTitle": "Provider balance is low"
     },
     "users": {
       "title": "Customers",
-      "search": "Search (email, phone, referral code)",
+      "search": "Email, phone or referral code",
       "searchSubmit": "Search",
       "empty": "No customer found.",
       "email": "Email",
@@ -119,9 +125,10 @@
       "cancelled": "Bonus cancelled",
       "cancelBonus": "Cancel bonus",
       "cancelReason": "Cancellation reason (required)",
-      "cancelWarning": "The referrer's balance may go negative.",
-      "cancelConfirm": "I understand: cancel this bonus even if the referrer already spent it.",
-      "cancelSubmit": "Cancel the bonus for good"
+      "cancelWarning": "The customer who referred loses this bonus. If they already spent it, their balance goes negative (a debt).",
+      "cancelConfirm": "I understand. Cancel this bonus, even if it was already spent.",
+      "cancelSubmit": "Cancel the bonus for good",
+      "cancelWarningTitle": "Warning: this cannot be undone"
     },
     "storage": {
       "title": "Orphan ticket files",
@@ -131,9 +138,14 @@
       "size": "Size",
       "created": "Uploaded",
       "limit": "Only the first {max} files are purged at a time.",
-      "confirm": "I confirm the permanent deletion of these files.",
+      "confirm": "I confirm: these files will be deleted for good.",
       "purge": "Delete these files",
       "result": "{deleted} deleted, {skipped} skipped."
+    },
+    "step": {
+      "password": "Sign in",
+      "code": "Verification",
+      "enroll": "Register your devices"
     }
   }
 }

@@ -36,7 +36,13 @@ export function UserNoteForm({ userId }: { userId: string }) {
       />
       {feedback ? <FormAlert kind={feedback.kind}>{feedback.text}</FormAlert> : null}
       <div>
-        <Button type="submit" disabled={pending || body.trim() === ''}>
+        <Button
+          type="submit"
+          className="w-full sm:w-fit"
+          loading={pending}
+          loadingLabel={t('common.loading')}
+          disabled={body.trim() === ''}
+        >
           {t('user.noteSubmit')}
         </Button>
       </div>

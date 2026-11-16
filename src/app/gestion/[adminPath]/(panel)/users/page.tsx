@@ -43,63 +43,58 @@ export default async function AdminUsersPage({ params, searchParams }: Props) {
   return (
     <>
       <h1 className="text-encre text-2xl font-bold">{t('users.title')}</h1>
-      <form method="get" className="flex flex-wrap items-end gap-3">
+      <form method="get" role="search" className="flex flex-col gap-3 sm:flex-row sm:items-end">
         <Field
           name="q"
+          type="search"
           label={t('users.search')}
           defaultValue={query.q ?? ''}
           maxLength={100}
-          className="min-w-64 flex-1"
+          autoCapitalize="none"
+          spellCheck={false}
+          className="flex-1"
         />
         <Button type="submit">{t('users.searchSubmit')}</Button>
       </form>
 
       {result.items.length === 0 ? (
-        <p className="text-gris-600">{t('users.empty')}</p>
+        <p className="border-gris-200 bg-blanc text-gris-600 rounded-xl border p-5 text-sm">
+          {t('users.empty')}
+        </p>
       ) : (
-        <table className="w-full text-left text-sm">
-          <thead>
-            <tr className="text-gris-600">
-              <th className="py-2">{t('users.email')}</th>
-              <th className="py-2">{t('users.phone')}</th>
-              <th className="py-2">{t('users.country')}</th>
-              <th className="py-2">{t('users.balance')}</th>
-              <th className="py-2">{t('common.status')}</th>
-              <th className="py-2">{t('users.created')}</th>
-              <th className="py-2" />
-            </tr>
-          </thead>
-          <tbody>
-            {result.items.map((u) => (
-              <tr key={u.id} className="border-gris-200 border-t">
-                <td className="py-2">{u.email}</td>
-                <td className="py-2">{u.phone}</td>
-                <td className="py-2">{u.country}</td>
-                <td className="py-2">{formatXaf(u.balance_xaf, locale)}</td>
-                <td className="py-2">
+        <ul className="border-gris-200 bg-blanc divide-gris-200 divide-y overflow-hidden rounded-xl border">
+          {result.items.map((u) => (
+            <li key={u.id}>
+              <Link
+                href={`/${adminPath}/users/${u.id}`}
+                aria-label={`${t('users.open')} : ${u.email ?? u.phone ?? ''}`}
+                className="hover:bg-bleu-50 focus-visible:ring-bleu-100 flex min-h-11 flex-col gap-1 px-4 py-3 outline-none focus-visible:ring-4 focus-visible:ring-inset"
+              >
+                <span className="flex items-start justify-between gap-3">
+                  <span className="text-encre font-semibold break-all">{u.email ?? u.phone}</span>
                   <Badge status={isKnownStatus(u.status) ? BADGE[u.status] : 'info'}>
                     {isKnownStatus(u.status) ? t(`users.status.${u.status}`) : u.status}
                   </Badge>
-                </td>
-                <td className="py-2">{formatDateTime(u.created_at, locale)}</td>
-                <td className="py-2">
-                  <Link
-                    href={`/${adminPath}/users/${u.id}`}
-                    className="text-bleu-600 font-semibold"
-                  >
-                    {t('users.open')}
-                  </Link>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                </span>
+                <span className="text-gris-600 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 text-sm">
+                  <span>{[u.phone, u.country].filter(Boolean).join(' · ')}</span>
+                  <span className="text-encre font-semibold tabular-nums">
+                    {t('users.balance')} : {formatXaf(u.balance_xaf, locale)}
+                  </span>
+                </span>
+                <span className="text-gris-600 text-xs">
+                  {t('users.created')} {formatDateTime(u.created_at, locale)}
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
       )}
 
       {result.next_cursor ? (
         <Link
           href={`/${adminPath}/users?${nextParams.toString()}`}
-          className="text-bleu-600 font-semibold"
+          className="border-gris-200 bg-blanc text-bleu-600 hover:bg-bleu-50 focus-visible:ring-bleu-100 inline-flex min-h-11 items-center justify-center rounded-lg border px-4 font-semibold outline-none focus-visible:ring-4 sm:w-fit"
         >
           {t('common.next')}
         </Link>
