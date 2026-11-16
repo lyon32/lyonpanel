@@ -78,6 +78,7 @@ create type currency_code  as enum ('XAF','XOF','USD');
 | custom_discount_pct | numeric(5,2) | null ; 0–50 |
 | daily_spend_limit_xaf | bigint | défaut 500 000 ; plafond de commandes sur 24 h glissantes (SECURITY_NOTES §5) |
 | blocked_reason | text | null |
+| signup_ip_hash | text | null ; empreinte HMAC de l'IP d'inscription (jamais l'IP) ; **illisible par le client** (phase 11) |
 | created_at / updated_at | timestamptz | défaut now() |
 | deleted_at | timestamptz | null |
 
@@ -85,11 +86,11 @@ create type currency_code  as enum ('XAF','XOF','USD');
 | Champ | Type | Contraintes |
 |---|---|---|
 | user_id | uuid | PK, FK → profiles |
-| balance_xaf | bigint | ≥ 0 (check) |
+| balance_xaf | bigint | ≥ 0 (check), **sauf** dette créée par `cancel_referral_bonus` (drapeau `lyonpanel.allow_debt`, local à la transaction) — phase 11 |
 | total_recharged_xaf | bigint | ≥ 0 ; sert au seuil de remise 50 000 XAF |
 | updated_at | timestamptz | |
 
-Le solde ne se modifie **que** par les fonctions SQL (§6), qui écrivent aussi `wallet_transactions`.
+Le solde ne se modifie **que** par les fonctions SQL (§6), qui écrivent aussi `wallet_transactions`. Phase 11 (décision du propriétaire) : seule `cancel_referral_bonus` peut faire passer le solde sous 0 (dette) ; `balance_after_xaf < 0` n'est accepté dans le journal que pour une ligne `ref like 'referral_cancel:%'` ; tant que le solde est négatif, `place_order` refuse (`INSUFFICIENT_BALANCE`).
 
 ### wallet_transactions — journal de chaque mouvement (jamais modifié)
 | Champ | Type | Contraintes |
@@ -186,6 +187,7 @@ user_id uuid FK · service_id int FK · created_at. PK (user_id, service_id).
 
 Fichiers dans **Supabase Storage**, bucket privé `ticket-attachments`, compressés dans le navigateur avant envoi (mon choix).
 Contraintes ajoutées en phase 9 : `ticket_messages_body_len` (message ≤ 4 000 caractères) ; index unique `ticket_attachments_storage_path_key` sur `storage_path` ; le dépôt direct dans le bucket par le client est retiré (envoi uniquement par le serveur).
+Phase 11 : déclencheur `ticket_messages_limit` (4e message client d'affilée sans réponse du propriétaire, par ticket = `MESSAGE_LIMIT_REACHED`) ; règle d'insertion `ticket_attachments_insert` : `storage_path` = `<uid>/<uuid minuscule>.(jpg|png|webp)` strict.
 
 ### admin_notes — notes privées du propriétaire
 id uuid PK · user_id FK → profiles · body text · created_at. **Jamais lisible par le client.**
@@ -199,10 +201,11 @@ id uuid PK · user_id FK → profiles · body text · created_at. **Jamais lisib
 | payment_id | uuid | FK → payments (1re recharge) |
 | amount_xaf | bigint | = 5 % de `credited_xaf`, arrondi à l'inférieur |
 | created_at | timestamptz | |
+| cancelled_at / cancelled_by / cancel_reason | timestamptz / uuid FK → profiles / text | null ; remplis par `cancel_referral_bonus` (phase 11) |
 
 ### settings — réglages (admin seulement)
 key text PK · value jsonb · updated_at.
-Clés : `usd_xaf_rate` (600), `default_multiplier` (3), `min_recharge_xaf` (500), `max_recharge_xaf` (500 000), `auto_discount` ({threshold_xaf: 50000, pct: 10}), `referral_pct` (5), `provider_low_balance_usd` (5), `saspay_fee_pct` (3), `price_alert_pct` (20). Les deux dernières valeurs sont provisoires (seed), confirmées par le propriétaire le 2026-11-07 ; ajustables.
+Clés : `usd_xaf_rate` (600), `default_multiplier` (3), `min_recharge_xaf` (500), `max_recharge_xaf` (500 000), `auto_discount` ({threshold_xaf: 50000, pct: 10}), `referral_pct` (5 ; contrainte `settings_referral_pct_range` : nombre de 0 à 100), `provider_low_balance_usd` (5), `saspay_fee_pct` (3), `price_alert_pct` (20). Les deux dernières valeurs sont provisoires (seed), confirmées par le propriétaire le 2026-11-07 ; ajustables.
 
 ### login_attempts — essais de connexion (blocage 5 échecs / 15 min)
 id bigserial PK · identifier_hash text (email/téléphone haché) · ip_hash text · success bool · created_at. Index (identifier_hash, created_at), (ip_hash, created_at). Purge après 30 jours.
@@ -269,6 +272,7 @@ Colonnes cachées au client : `orders.cost_usd`, `orders.error`, `orders.provide
 | `place_order(user, service, link, qty, comments, idem_key)` | verrouille le portefeuille, recalcule prix + remise (total arrondi au multiple de 5 XAF supérieur, minimum 5 : `ceil(prix_1000 × quantité × (100 − remise) / 100 000 / 5) × 5` ; plafond 24 h = min(`settings.daily_order_cap_xaf`, `daily_spend_limit_xaf`) ; commentaires validés (`COMMENTS_INVALID`)), vérifie statut client, min/max, solde ; débite ; crée la commande |
 | `refund_order(order_id, amount, admin_id)` | un seul remboursement par commande, total ou partiel, qui clôt la commande (`refunded`) : crédite, journalise, écrit `audit_log` |
 | `admin_adjust(user, amount, note, admin_id)` | ajustement manuel + audit |
+| `cancel_referral_bonus(reward, reason, admin_id)` | (phase 11) retire le bonus au parrain (le solde peut passer négatif), ligne `referral_cancel:<reward_id>`, marque le bonus annulé, audit ; erreurs `NOT_ADMIN`, `NOTE_REQUIRED`, `REWARD_NOT_FOUND`, `ALREADY_CANCELLED` ; `service_role` seul |
 | `verify_user_password(user, password)` | renvoie `true` si le mot de passe correspond (compte non supprimé), sinon `false` ; `service_role` seul ; sert à `DELETE /me` (pas de captcha) |
 | `anonymize_user(user_id)` | email/téléphone/messages → null, `status='deleted'`, supprime pièces jointes, favoris, sessions, jetons, mot de passe et sujet des tickets, garde commandes/paiements |
 
