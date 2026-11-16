@@ -24,6 +24,11 @@ const envSchema = z
     NODE_ENV: optionalString,
     NEXT_PUBLIC_SITE_URL: optionalString,
     ADMIN_PATH: adminPathSchema,
+    // Enrôlement des appareils admin : absente ou « true » = ouvert (moins de 2 appareils), « false » = fermé.
+    ADMIN_ENROLL_OPEN: z.preprocess(
+      (value) => (value === '' ? undefined : value),
+      z.enum(['true', 'false']).optional(),
+    ),
     NEXT_PUBLIC_SUPABASE_URL: optionalString,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: optionalString,
     SUPABASE_SERVICE_ROLE_KEY: optionalString,

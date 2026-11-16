@@ -130,6 +130,11 @@ export function AddFundsForm({
         <span className="text-gris-600">{t('currentBalance')}</span>
         <span className="text-bleu-600 text-lg font-bold">{xaf(balanceXaf)}</span>
       </p>
+      {balanceXaf < 0 ? (
+        <p data-testid="debt-notice" className="text-gris-600 text-sm">
+          {t('debtNotice', { amount: xaf(-balanceXaf) })}
+        </p>
+      ) : null}
       <Field
         inputClassName="border-gris-400"
         label={t('amountLabel')}

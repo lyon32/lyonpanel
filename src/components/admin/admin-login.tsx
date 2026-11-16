@@ -2,7 +2,7 @@
 
 import { useLocale, useTranslations } from 'next-intl';
 import { useState, type FormEvent } from 'react';
-import { adminFetch, asMfaStatus } from './admin-api';
+import { adminFetch, apiErrorCode, asMfaStatus } from './admin-api';
 import { CodeStep, EnrollStep } from './admin-mfa-steps';
 import { FormAlert } from '@/components/auth/form-alert';
 import { TurnstileWidget, resetTurnstile } from '@/components/auth/turnstile-widget';
@@ -19,6 +19,7 @@ export function AdminLogin({ adminPath }: { adminPath: string }) {
   const [step, setStep] = useState<Step>('password');
   const [pending, setPending] = useState(false);
   const [error, setError] = useState(false);
+  const [locked, setLocked] = useState(false);
 
   // Décide l'étape suivante d'après l'état réel côté serveur.
   async function next() {
@@ -41,6 +42,7 @@ export function AdminLogin({ adminPath }: { adminPath: string }) {
     event.preventDefault();
     setPending(true);
     setError(false);
+    setLocked(false);
     const form = new FormData(event.currentTarget);
     const text = (name: string) => {
       const value = form.get(name);
@@ -56,7 +58,10 @@ export function AdminLogin({ adminPath }: { adminPath: string }) {
     if (result.ok) await next();
     else {
       // Message unique : rien ne dit si c'est l'adresse ou le mot de passe qui est faux.
-      setError(true);
+      // Seul le verrou (15 min) a son message, et il n'existe que si l'adresse secrète est juste.
+      const code = apiErrorCode(result.data);
+      if (code === 'AUTH_LOCKED' || code === 'RATE_LIMITED') setLocked(true);
+      else setError(true);
       resetTurnstile();
     }
     setPending(false);
@@ -97,6 +102,11 @@ export function AdminLogin({ adminPath }: { adminPath: string }) {
             data-testid="admin-password"
           />
           <TurnstileWidget />
+          {locked ? (
+            <div data-testid="admin-locked">
+              <FormAlert kind="error">{t('locked')}</FormAlert>
+            </div>
+          ) : null}
           {error ? (
             <div data-testid="admin-error">
               <FormAlert kind="error">{t('error')}</FormAlert>

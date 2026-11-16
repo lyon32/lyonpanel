@@ -449,6 +449,7 @@
   "wallet": {
     "title": "Add funds",
     "currentBalance": "Current balance",
+    "debtNotice": "Your top-up will repay your debt of {amount} first.",
     "amountLabel": "Amount to add (XAF)",
     "amountHint": "Payment fees are added on top. Your balance receives the exact amount.",
     "fee": "Payment fee",

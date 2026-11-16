@@ -15,6 +15,11 @@ export function formatXaf(amountXaf: number, locale: string): string {
   return `${new Intl.NumberFormat(locale, { maximumFractionDigits: 0 }).format(amountXaf)} XAF`;
 }
 
+/** Entier avec séparateur de milliers (« 1 174 »). */
+export function formatInt(value: number, locale: string): string {
+  return new Intl.NumberFormat(locale, { maximumFractionDigits: 0 }).format(value);
+}
+
 export function formatUsd(amountUsd: number, locale: string): string {
   return new Intl.NumberFormat(locale, { style: 'currency', currency: 'USD' }).format(amountUsd);
 }
@@ -31,4 +36,9 @@ export function formatBytes(bytes: number): string {
   if (bytes < 1024) return `${bytes} o`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} Ko`;
   return `${(bytes / 1024 / 1024).toFixed(1)} Mo`;
+}
+
+/** Libellé traduit d'un statut de commande ; un statut inconnu reste affiché tel quel. */
+export function orderStatusLabel(status: string, labels: Record<string, string>): string {
+  return labels[status] ?? status;
 }

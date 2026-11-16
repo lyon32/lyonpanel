@@ -40,3 +40,12 @@ export function apiErrorMessage(data: unknown): string | null {
   const message = (error as Record<string, unknown>).message;
   return typeof message === 'string' ? message : null;
 }
+
+/** Code d'erreur de l'API (format API_SPEC §3), ou null. */
+export function apiErrorCode(data: unknown): string | null {
+  if (typeof data !== 'object' || data === null) return null;
+  const error = (data as Record<string, unknown>).error;
+  if (typeof error !== 'object' || error === null) return null;
+  const code = (error as Record<string, unknown>).code;
+  return typeof code === 'string' ? code : null;
+}

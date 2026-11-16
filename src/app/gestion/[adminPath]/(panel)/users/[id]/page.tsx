@@ -6,13 +6,24 @@ import { UserNoteForm } from '@/components/admin/user-note-form';
 import { UserSettingsForm } from '@/components/admin/user-settings-form';
 import { FormAlert } from '@/components/auth/form-alert';
 import { Badge } from '@/components/ui/badge';
-import { formatDateTime, formatXaf } from '@/lib/admin-format';
+import { formatDateTime, formatInt, formatXaf, orderStatusLabel } from '@/lib/admin-format';
 import { getAdminTranslator } from '@/server/admin/page-i18n';
 import { requireAdminPage } from '@/server/admin/page-guard';
 import { getUserDetail } from '@/server/admin/users';
 import { ApiError } from '@/server/http/api-error';
 
 type Props = { params: Promise<{ adminPath: string; id: string }> };
+
+// Statuts de l'enum order_status (traductions dans admin.*.json).
+const ORDER_STATUSES = [
+  'pending',
+  'in_progress',
+  'completed',
+  'partial',
+  'canceled',
+  'to_review',
+  'refunded',
+] as const;
 
 // Couleur de la pastille d'après le sens du statut (terminé, échec, en cours).
 function orderBadge(status: string): 'success' | 'failed' | 'pending' {
@@ -37,6 +48,9 @@ export default async function AdminUserPage({ params }: Props) {
   const { t, locale } = await getAdminTranslator();
   const { profile, wallet, orders, notes, referrals, debt_xaf } = await loadDetail(id);
   const money = (n: number) => formatXaf(n, locale);
+  const statusLabels = Object.fromEntries(
+    ORDER_STATUSES.map((status) => [status, t(`user.orderStatuses.${status}`)]),
+  );
 
   const rows: [string, string][] = [
     [t('user.email'), profile.email ?? '-'],
@@ -113,50 +127,81 @@ export default async function AdminUserPage({ params }: Props) {
         {orders.length === 0 ? (
           <p className={`${panel} ${empty}`}>{t('user.noOrders')}</p>
         ) : (
-          <div className="border-gris-200 bg-blanc overflow-x-auto rounded-xl border">
-            <table className="w-full min-w-[34rem] text-left text-sm">
-              <thead className="bg-gris-50 text-gris-600">
-                <tr>
-                  <th scope="col" className={th}>
-                    {t('user.orderId')}
-                  </th>
-                  <th scope="col" className={`${th} text-right`}>
-                    {t('user.quantity')}
-                  </th>
-                  <th scope="col" className={`${th} text-right`}>
-                    {t('user.charged')}
-                  </th>
-                  <th scope="col" className={`${th} text-right`}>
-                    {t('user.orderProfit')}
-                  </th>
-                  <th scope="col" className={th}>
-                    {t('user.orderStatus')}
-                  </th>
-                  <th scope="col" className={th}>
-                    {t('common.date')}
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="tabular-nums">
-                {orders.map((o) => (
-                  <tr key={o.id} className="border-gris-200 border-t">
-                    <td className="px-3 py-3 font-semibold">{o.short_id}</td>
-                    <td className="px-3 py-3 text-right">{o.quantity}</td>
-                    <td className="px-3 py-3 text-right">{money(o.charged_xaf)}</td>
-                    <td className="px-3 py-3 text-right">
-                      {o.profit_xaf === null ? '-' : money(o.profit_xaf)}
-                    </td>
-                    <td className="px-3 py-3">
-                      <Badge status={orderBadge(o.status)}>{o.status}</Badge>
-                    </td>
-                    <td className="px-3 py-3 whitespace-nowrap">
-                      {formatDateTime(o.created_at, locale)}
-                    </td>
+          <>
+            <ul className="flex flex-col gap-3 sm:hidden">
+              {orders.map((o) => (
+                <li
+                  key={o.id}
+                  className="border-gris-200 bg-blanc flex flex-col gap-2 rounded-xl border p-4"
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="font-semibold tabular-nums">{o.short_id}</span>
+                    <Badge status={orderBadge(o.status)}>
+                      {orderStatusLabel(o.status, statusLabels)}
+                    </Badge>
+                  </div>
+                  <div className="flex items-baseline justify-between gap-3 tabular-nums">
+                    <span className="text-encre font-semibold">{money(o.charged_xaf)}</span>
+                    <span className="text-gris-600 text-sm">{`${t('user.quantity')} : ${formatInt(o.quantity, locale)}`}</span>
+                  </div>
+                  <div className="text-gris-600 flex items-baseline justify-between gap-3 text-sm tabular-nums">
+                    <span>{formatDateTime(o.created_at, locale)}</span>
+                    <span>
+                      {o.profit_xaf === null
+                        ? ''
+                        : `${t('user.orderProfit')} : ${money(o.profit_xaf)}`}
+                    </span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+            <div className="border-gris-200 bg-blanc hidden overflow-x-auto rounded-xl border sm:block">
+              <table className="w-full min-w-[34rem] text-left text-sm">
+                <thead className="bg-gris-50 text-gris-600">
+                  <tr>
+                    <th scope="col" className={th}>
+                      {t('user.orderId')}
+                    </th>
+                    <th scope="col" className={`${th} text-right`}>
+                      {t('user.quantity')}
+                    </th>
+                    <th scope="col" className={`${th} text-right`}>
+                      {t('user.charged')}
+                    </th>
+                    <th scope="col" className={`${th} text-right`}>
+                      {t('user.orderProfit')}
+                    </th>
+                    <th scope="col" className={th}>
+                      {t('user.orderStatus')}
+                    </th>
+                    <th scope="col" className={th}>
+                      {t('common.date')}
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="tabular-nums">
+                  {orders.map((o) => (
+                    <tr key={o.id} className="border-gris-200 border-t">
+                      <td className="px-3 py-3 font-semibold">{o.short_id}</td>
+                      <td className="px-3 py-3 text-right">{formatInt(o.quantity, locale)}</td>
+                      <td className="px-3 py-3 text-right">{money(o.charged_xaf)}</td>
+                      <td className="px-3 py-3 text-right">
+                        {o.profit_xaf === null ? '-' : money(o.profit_xaf)}
+                      </td>
+                      <td className="px-3 py-3">
+                        <Badge status={orderBadge(o.status)}>
+                          {orderStatusLabel(o.status, statusLabels)}
+                        </Badge>
+                      </td>
+                      <td className="px-3 py-3 whitespace-nowrap">
+                        {formatDateTime(o.created_at, locale)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
       </section>
 
@@ -195,7 +240,7 @@ export default async function AdminUserPage({ params }: Props) {
                     href={`/${adminPath}/users/${r.referee_id}`}
                     className="text-bleu-600 focus-visible:ring-bleu-100 inline-flex min-h-11 items-center rounded-lg font-semibold outline-none focus-visible:ring-4"
                   >
-                    {t('user.referee')}
+                    {r.referee_label ?? t('user.referee')}
                   </Link>
                   <span className="font-semibold tabular-nums">{`${t('user.bonus')} : ${money(r.bonus_xaf)}`}</span>
                   <span className="text-gris-600 text-sm">

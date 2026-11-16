@@ -5,6 +5,7 @@
     "password": "Mot de passe",
     "submit": "Se connecter",
     "loading": "Connexion…",
+    "locked": "Trop d'essais, réessayez dans 15 minutes.",
     "error": "Connexion impossible. Vérifiez vos informations.",
     "code": {
       "intro": "Saisissez le code à 6 chiffres de l'un de vos deux appareils.",
@@ -27,7 +28,7 @@
       "users": "Clients",
       "storage": "Fichiers orphelins",
       "logout": "Se déconnecter",
-      "brand": "LyonPanel · Gestion"
+      "brand": "Admin"
     },
     "common": {
       "error": "L'action a échoué. Réessayez.",
@@ -105,6 +106,8 @@
       "unblock": "Débloquer le compte",
       "discount": "Remise personnelle (%, vide = aucune)",
       "limit": "Plafond journalier (XAF)",
+      "discountInvalid": "La remise doit être un nombre de 0 à 50.",
+      "limitInvalid": "Le plafond doit être un nombre entier de XAF, 0 ou plus.",
       "saveSettings": "Enregistrer",
       "orders": "Dernières commandes",
       "noOrders": "Aucune commande.",
@@ -112,6 +115,15 @@
       "quantity": "Quantité",
       "charged": "Facturé",
       "orderProfit": "Bénéfice",
+      "orderStatuses": {
+        "pending": "En attente",
+        "in_progress": "En cours",
+        "completed": "Terminée",
+        "partial": "Partielle",
+        "canceled": "Annulée",
+        "to_review": "À examiner",
+        "refunded": "Remboursée"
+      },
       "orderStatus": "Statut",
       "notes": "Notes privées",
       "noNotes": "Aucune note.",

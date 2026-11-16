@@ -9,6 +9,8 @@ import {
 
 export interface Wallet {
   balance_xaf: number;
+  /** Dette = solde négatif (bonus de parrainage annulé après dépense) ; 0 sinon. */
+  debt_xaf: number;
   total_recharged_xaf: number;
   discount_pct: number;
   next_discount_threshold_xaf: number | null;
@@ -44,6 +46,7 @@ export async function getWallet(userId: string): Promise<Wallet> {
     : { thresholdXaf: Number.POSITIVE_INFINITY, pct: 0 };
   return {
     balance_xaf: wallet.data.balance_xaf,
+    debt_xaf: Math.max(0, -wallet.data.balance_xaf),
     total_recharged_xaf: total,
     discount_pct: resolveDiscountPct(total, auto, custom),
     next_discount_threshold_xaf: parsed.success

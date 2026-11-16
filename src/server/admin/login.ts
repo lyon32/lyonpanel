@@ -4,6 +4,7 @@ import { isAdminSegment } from '@/server/auth/admin-path';
 import type { LoginDeps } from '@/server/auth/login';
 import { hashIdentifier, type AttemptStore } from '@/server/auth/rate-limit';
 import { apiError } from '@/server/http/api-error';
+import { MIN_AUTH_DURATION_MS, withMinDuration } from '@/server/http/min-duration';
 
 export type AdminLoginDeps = LoginDeps & {
   isAdmin(userId: string): Promise<boolean>;
@@ -18,8 +19,9 @@ const DECOY_EMAIL = 'inconnu@invalid.lyonpanel.test';
 const FAILURES_KEY = 'admin-login:failures';
 
 /**
- * Connexion dédiée de l'administrateur. L'échec est compté AVANT le limiteur par identifiant :
- * sinon le limiteur (blocage dès le 4e essai) empêcherait d'atteindre le 5e échec et l'alerte.
+ * Connexion dédiée de l'administrateur. Le limiteur passe d'abord : une tentative refusée n'est ni comptée
+ * ni alertée (sinon on provoquerait des alertes en insistant). Ensuite l'échec est compté AVANT la vérification,
+ * pour que le 5e échec déclenche l'alerte (une seule par fenêtre de 15 min).
  */
 export async function adminLogin(
   input: {
@@ -33,12 +35,20 @@ export async function adminLogin(
 ): Promise<{ user: { id: string } }> {
   // Mauvaise adresse secrète : 404 avant tout, rien d'enregistré.
   if (!isAdminSegment(input.admin_path, process.env.ADMIN_PATH)) apiError('NOT_FOUND');
+  return withMinDuration(MIN_AUTH_DURATION_MS, () => runAdminLogin(input, deps));
+}
+
+async function runAdminLogin(
+  input: { identifier: string; password: string; ip: string; turnstile_token: string },
+  deps: AdminLoginDeps,
+): Promise<{ user: { id: string } }> {
   if (!input.turnstile_token.trim()) apiError('TURNSTILE_FAILED');
 
+  const attempt = await deps.limiter.begin(input.identifier, input.ip);
   const hash = hashIdentifier(FAILURES_KEY);
   const { id } = await deps.store.record({ identifierHash: hash, ipHash: hash, success: false });
   try {
-    const user = await verify(input, deps);
+    const user = await verify(input, deps, attempt);
     // Une réussite sort cette tentative du compte des échecs.
     await deps.store.markSuccess(id);
     return { user };
@@ -50,10 +60,10 @@ export async function adminLogin(
 }
 
 async function verify(
-  input: { identifier: string; password: string; ip: string; turnstile_token: string },
+  input: { identifier: string; password: string; turnstile_token: string },
   deps: AdminLoginDeps,
+  attempt: { succeed(): Promise<void> },
 ): Promise<{ id: string }> {
-  const attempt = await deps.limiter.begin(input.identifier, input.ip);
   const email = input.identifier.includes('@')
     ? input.identifier
     : await deps.findEmailByPhone(input.identifier);

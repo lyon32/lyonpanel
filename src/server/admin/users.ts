@@ -18,6 +18,15 @@ type ListQuery = z.infer<typeof listUsersQuerySchema>;
 type Patch = z.infer<typeof patchUserSchema>;
 
 const one = <T>(v: T | T[] | null): T | null => (Array.isArray(v) ? (v[0] ?? null) : v);
+/** Identité lisible mais pas complète : « j***@gmail.com » ou « ***1234 ». */
+export function maskIdentity(email: string | null, phone: string | null): string | null {
+  if (email) {
+    const [name = '', domain = ''] = email.split('@');
+    return `${name.slice(0, 1)}***@${domain}`;
+  }
+  return phone ? `***${phone.slice(-4)}` : null;
+}
+
 const userNotFound = (): never => apiError('USER_NOT_FOUND');
 
 /** Recherche : morceau d'email, de téléphone ou code de parrainage. `_` est échappé (joker SQL). */
@@ -85,7 +94,7 @@ export async function getUserDetail(id: string) {
     db
       .from('referral_rewards')
       .select(
-        'id, referee_id, amount_xaf, created_at, cancelled_at, referee:profiles!referral_rewards_referee_id_fkey(signup_ip_hash)',
+        'id, referee_id, amount_xaf, created_at, cancelled_at, referee:profiles!referral_rewards_referee_id_fkey(signup_ip_hash, email, phone)',
       )
       .eq('referrer_id', id)
       .order('created_at', { ascending: false }),
@@ -124,6 +133,7 @@ export async function getUserDetail(id: string) {
       return {
         id: r.id,
         referee_id: r.referee_id,
+        referee_label: maskIdentity(one(r.referee)?.email ?? null, one(r.referee)?.phone ?? null),
         created_at: r.created_at,
         bonus_xaf: Number(r.amount_xaf),
         bonus_cancelled: r.cancelled_at !== null,

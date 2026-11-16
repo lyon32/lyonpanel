@@ -56,18 +56,20 @@ describe('GET /api/v1/wallet', () => {
     expect(((await res.json()) as ErrorBody).error.code).toBe('UNAUTHENTICATED');
   });
 
-  it('renvoie le solde et le total rechargé en entiers XAF, avec les 4 clés prévues', async () => {
+  it('renvoie le solde et le total rechargé en entiers XAF, avec les 5 clés prévues (dont debt_xaf)', async () => {
     await login({ balance: 4200, recharged: 12_000 });
     const res = await wallet(getReq('/api/v1/wallet'));
     expect(res.status).toBe(200);
     const json = await res.json();
     expect(Object.keys(json).sort()).toEqual([
       'balance_xaf',
+      'debt_xaf',
       'discount_pct',
       'next_discount_threshold_xaf',
       'total_recharged_xaf',
     ]);
     expect(json.balance_xaf).toBe(4200);
+    expect(json.debt_xaf).toBe(0);
     expect(json.total_recharged_xaf).toBe(12_000);
     expect(json.discount_pct).toBe(0);
     expect(json.next_discount_threshold_xaf).toBe(50_000);

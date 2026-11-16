@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 // Même forme que la règle de la base : <uuid client>/<uuid fichier>.(jpg|png|webp), rien d'autre.
 const UUID = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}';
-export const ATTACHMENT_PATH = new RegExp(`^${UUID}/${UUID}\.(jpg|png|webp)$`);
+export const ATTACHMENT_PATH = new RegExp(String.raw`^${UUID}/${UUID}\.(jpg|png|webp)$`);
 
 export const MAX_PURGE_PATHS = 200;
 

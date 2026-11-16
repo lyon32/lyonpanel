@@ -3,6 +3,7 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } 
 import { cleanupUsers, makeFundedUser } from '../helpers/orders-db';
 import { ensureAdmin, fakeSession, load } from '../helpers/admin-db';
 import { getReq, sendReq, type ErrorBody } from '../helpers/client-area-db';
+import { adminClient } from './helpers/client';
 
 vi.mock('server-only', () => ({}));
 const notify = vi.hoisted(() => ({ fn: vi.fn(async () => {}) }));
@@ -158,6 +159,14 @@ describe('POST /admin/mfa/verify : code à 6 chiffres, 2 appareils', () => {
     (await load<{ POST: Handler }>('@/app/api/v1/admin/mfa/verify/route')).POST(
       sendReq('POST', '/api/v1/admin/mfa/verify', body),
     );
+  // Remise à zéro du verrou (5 échecs / 15 min par admin) entre les tests : ils partagent le même admin.
+  beforeEach(async () => {
+    const { hashIdentifier } = await load<{ hashIdentifier: (v: string) => string }>(
+      '@/server/auth/rate-limit',
+    );
+    const hashes = [`admin-mfa:${admin.id}`, `admin-mfa-ok:${admin.id}`].map(hashIdentifier);
+    await adminClient().from('login_attempts').delete().in('identifier_hash', hashes);
+  });
   const adminAal1 = (validCodes: Record<string, string> = { f1: '123456', f2: '654321' }) =>
     fakeSession(admin.id, { current: 'aal1', next: 'aal2', factors: [...FACTORS], validCodes });
 
@@ -213,5 +222,16 @@ describe('POST /admin/mfa/verify : code à 6 chiffres, 2 appareils', () => {
     const calls = notify.fn.mock.calls as unknown as [string, Record<string, unknown>][];
     expect(calls.some(([event]) => event === 'admin_login_failed')).toBe(true);
     expect(JSON.stringify(calls)).not.toContain('000000');
+  });
+
+  it('6e essai de suite : 429 RATE_LIMITED sans contacter Supabase', async () => {
+    const s = adminAal1();
+    session.client = s;
+    for (let i = 0; i < 5; i++) expect((await post({ code: '000000' })).status).toBe(401);
+    s.auth.mfa.verify.mockClear();
+    const res = await post({ code: '123456' });
+    expect(res.status).toBe(429);
+    expect(await code(res)).toBe('RATE_LIMITED');
+    expect(s.auth.mfa.verify).not.toHaveBeenCalled();
   });
 });

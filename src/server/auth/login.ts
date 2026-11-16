@@ -1,6 +1,7 @@
 import 'server-only';
 import type { LoginLimiter } from './rate-limit';
 import { apiError } from '@/server/http/api-error';
+import { MIN_AUTH_DURATION_MS, withMinDuration } from '@/server/http/min-duration';
 
 export type LoginDeps = {
   limiter: LoginLimiter;
@@ -13,7 +14,15 @@ export type LoginDeps = {
 // Email qui n'existe pas : sert à faire le même travail pour un compte inconnu (temps de réponse égal).
 const DECOY_EMAIL = 'inconnu@invalid.lyonpanel.test';
 
-export async function login(
+/** Durée minimale fixe : le temps de réponse ne révèle pas si le compte existe. */
+export function login(
+  input: { identifier: string; password: string; ip: string; turnstile_token: string },
+  deps: LoginDeps,
+): Promise<{ user: { id: string } }> {
+  return withMinDuration(MIN_AUTH_DURATION_MS, () => runLogin(input, deps));
+}
+
+async function runLogin(
   input: { identifier: string; password: string; ip: string; turnstile_token: string },
   deps: LoginDeps,
 ): Promise<{ user: { id: string } }> {

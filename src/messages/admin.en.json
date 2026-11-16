@@ -5,6 +5,7 @@
     "password": "Password",
     "submit": "Sign in",
     "loading": "Signing in…",
+    "locked": "Too many attempts, try again in 15 minutes.",
     "error": "Unable to sign in. Check your details.",
     "code": {
       "intro": "Enter the 6-digit code from either of your two devices.",
@@ -27,7 +28,7 @@
       "users": "Customers",
       "storage": "Orphan files",
       "logout": "Sign out",
-      "brand": "LyonPanel · Admin"
+      "brand": "Admin"
     },
     "common": {
       "error": "The action failed. Try again.",
@@ -105,6 +106,8 @@
       "unblock": "Unblock the account",
       "discount": "Personal discount (%, empty = none)",
       "limit": "Daily limit (XAF)",
+      "discountInvalid": "The discount must be a number from 0 to 50.",
+      "limitInvalid": "The limit must be a whole number of XAF, 0 or more.",
       "saveSettings": "Save",
       "orders": "Latest orders",
       "noOrders": "No orders.",
@@ -112,6 +115,15 @@
       "quantity": "Quantity",
       "charged": "Charged",
       "orderProfit": "Profit",
+      "orderStatuses": {
+        "pending": "Pending",
+        "in_progress": "In progress",
+        "completed": "Completed",
+        "partial": "Partial",
+        "canceled": "Canceled",
+        "to_review": "To review",
+        "refunded": "Refunded"
+      },
       "orderStatus": "Status",
       "notes": "Private notes",
       "noNotes": "No notes.",

@@ -110,7 +110,7 @@ export async function purgeOrphanAttachments(
       actor_id: adminId,
       action: 'purge_orphan_attachments',
       target_table: 'storage.objects',
-      details: { count: toRemove.length },
+      details: { count: toRemove.length, paths: toRemove },
     });
     if (auditError) throw new Error(`audit: ${auditError.message}`);
   }

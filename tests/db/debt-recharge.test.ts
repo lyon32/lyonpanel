@@ -43,7 +43,7 @@ describe('credit_payment : recharge d’un client en dette', () => {
     expect(error).toBeNull();
     expect(await balanceXaf(u.id)).toBe(-500);
     const { data: pay } = await db.from('payments').select('status').eq('id', paymentId).single();
-    expect(pay!.status).toBe('credited');
+    expect(pay!.status).toBe('succeeded');
     const { data: tx } = await db
       .from('wallet_transactions')
       .select('amount_xaf, balance_after_xaf, type')

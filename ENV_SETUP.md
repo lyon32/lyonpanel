@@ -37,6 +37,7 @@ Modèle : [`.env.example`](.env.example). En local : copier en `.env.local` (ign
 |---|---|---|---|---|
 | `NEXT_PUBLIC_SITE_URL` | non | Adresse du site (liens, retour SasPay) | — | `http://localhost:3000` |
 | `ADMIN_PATH` | **oui** | Segment secret de l'admin | `openssl rand -hex 12` | une valeur au choix |
+| `ADMIN_ENROLL_OPEN` | non | Enrôlement des appareils admin : vide ou `true` = ouvert tant qu'il y a moins de 2 appareils vérifiés ; `false` = fermé (404). Jamais de 3e appareil | — | vide |
 | `NEXT_PUBLIC_SUPABASE_URL` | non | Adresse Supabase | Supabase → Settings → API | donnée par `supabase start` |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | non | Clé publique (protégée par RLS) | idem | donnée par `supabase start` |
 | `SUPABASE_SERVICE_ROLE_KEY` | **oui** | Clé serveur (fonctions d'argent, admin) | idem | donnée par `supabase start` |
@@ -100,7 +101,13 @@ npm run dev
 ```bash
 npm run admin:promote -- ton@email.com
 ```
-Ensuite activer le code à 6 chiffres sur `http://localhost:3000/<ADMIN_PATH>/login`.
+Ensuite activer le code à 6 chiffres sur `http://localhost:3000/<ADMIN_PATH>` (la page de connexion de l'admin est directement à cette adresse, pas de `/login`).
+
+**Deux appareils pour le code à 6 chiffres (obligatoire).** Il faut enrôler les 2 appareils (téléphone et gestionnaire de mots de passe) avant toute utilisation de l'adresse admin. Après l'enrôlement, mettre `ADMIN_ENROLL_OPEN=false`.
+
+**À la mise en ligne** : vérifier `GET /api/v1/admin/mfa/status` : `verified = 2`. Sinon, ne pas ouvrir l'admin.
+
+**Sortie de secours si l'admin est verrouillé** : 5 mauvais codes (ou mots de passe) bloquent l'accès 15 minutes ; il suffit d'attendre 15 minutes. Si un appareil est perdu, ou en cas de blocage durable : réinitialisation par un script local avec la clé `service_role` (supprimer les appareils de l'admin dans Supabase Auth, puis les enrôler de nouveau avec `ADMIN_ENROLL_OPEN` laissé ouvert). La clé `service_role` ne quitte jamais ta machine.
 
 ## 4. Services externes à préparer
 

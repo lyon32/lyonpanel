@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { TriangleAlert } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { STATS_RANGES, formatUsd, formatXaf, parseRange } from '@/lib/admin-format';
+import { STATS_RANGES, formatInt, formatUsd, formatXaf, parseRange } from '@/lib/admin-format';
 import { getAdminTranslator } from '@/server/admin/page-i18n';
 import { requireAdminPage } from '@/server/admin/page-guard';
 import { getAdminStats } from '@/server/admin/stats';
@@ -21,13 +21,13 @@ export default async function AdminStatsPage({ params, searchParams }: Props) {
   const cards = [
     { label: t('stats.sales'), value: formatXaf(stats.sales_xaf, locale), hint: null },
     { label: t('stats.profit'), value: formatXaf(stats.profit_xaf, locale), hint: null },
-    { label: t('stats.orders'), value: String(stats.orders_count), hint: null },
+    { label: t('stats.orders'), value: formatInt(stats.orders_count, locale), hint: null },
     {
       label: t('stats.recharges'),
       value: formatXaf(stats.recharges_xaf, locale),
-      hint: t('stats.rechargesCount', { count: stats.recharges_count }),
+      hint: t('stats.rechargesCount', { count: formatInt(stats.recharges_count, locale) }),
     },
-    { label: t('stats.newUsers'), value: String(stats.new_users_count), hint: null },
+    { label: t('stats.newUsers'), value: formatInt(stats.new_users_count, locale), hint: null },
   ];
 
   const low = stats.provider_low;

@@ -86,11 +86,11 @@ create type currency_code  as enum ('XAF','XOF','USD');
 | Champ | Type | Contraintes |
 |---|---|---|
 | user_id | uuid | PK, FK → profiles |
-| balance_xaf | bigint | ≥ 0 (check), **sauf** dette créée par `cancel_referral_bonus` (drapeau `lyonpanel.allow_debt`, local à la transaction) — phase 11 |
+| balance_xaf | bigint | jamais **baissé** sous 0 (déclencheur `wallets_no_new_debt`), **sauf** par `cancel_referral_bonus` (drapeau `lyonpanel.allow_debt`, local à la transaction) ; toute **augmentation** est acceptée même si le solde reste négatif — phase 11 |
 | total_recharged_xaf | bigint | ≥ 0 ; sert au seuil de remise 50 000 XAF |
 | updated_at | timestamptz | |
 
-Le solde ne se modifie **que** par les fonctions SQL (§6), qui écrivent aussi `wallet_transactions`. Phase 11 (décision du propriétaire) : seule `cancel_referral_bonus` peut faire passer le solde sous 0 (dette) ; `balance_after_xaf < 0` n'est accepté dans le journal que pour une ligne `ref like 'referral_cancel:%'` ; tant que le solde est négatif, `place_order` refuse (`INSUFFICIENT_BALANCE`).
+Le solde ne se modifie **que** par les fonctions SQL (§6), qui écrivent aussi `wallet_transactions`. Phase 11 (décision du propriétaire) : seule `cancel_referral_bonus` peut faire passer le solde sous 0 (dette) ; `balance_after_xaf < 0` n'est accepté dans le journal que pour une entrée d'argent (`amount_xaf > 0`) ou une ligne `ref like 'referral_cancel:%'`; une recharge d'un client en dette rembourse d'abord la dette (solde + recharge, -1000 + 500 = -500), le paiement n'est jamais perdu ; tant que le solde est négatif, `place_order` refuse (`INSUFFICIENT_BALANCE`).
 
 ### wallet_transactions — journal de chaque mouvement (jamais modifié)
 | Champ | Type | Contraintes |
@@ -271,7 +271,7 @@ Colonnes cachées au client : `orders.cost_usd`, `orders.error`, `orders.provide
 | `credit_payment(payment_id)` | si non `succeeded` (un paiement `failed` est refusé : `PAYMENT_NOT_PAYABLE`) et si `net_amount` = montant demandé : passe `succeeded`, crédite, journalise, augmente `total_recharged_xaf`, verse le bonus parrain si 1re recharge |
 | `place_order(user, service, link, qty, comments, idem_key)` | verrouille le portefeuille, recalcule prix + remise (total arrondi au multiple de 5 XAF supérieur, minimum 5 : `ceil(prix_1000 × quantité × (100 − remise) / 100 000 / 5) × 5` ; plafond 24 h = min(`settings.daily_order_cap_xaf`, `daily_spend_limit_xaf`) ; commentaires validés (`COMMENTS_INVALID`)), vérifie statut client, min/max, solde ; débite ; crée la commande |
 | `refund_order(order_id, amount, admin_id)` | un seul remboursement par commande, total ou partiel, qui clôt la commande (`refunded`) : crédite, journalise, écrit `audit_log` |
-| `admin_adjust(user, amount, note, admin_id)` | ajustement manuel + audit |
+| `admin_adjust(user, amount, note, admin_id)` | ajustement manuel + audit ; un retrait ne peut pas passer sous 0 (`INSUFFICIENT_BALANCE`), un ajout sur une dette est permis |
 | `cancel_referral_bonus(reward, reason, admin_id)` | (phase 11) retire le bonus au parrain (le solde peut passer négatif), ligne `referral_cancel:<reward_id>`, marque le bonus annulé, audit ; erreurs `NOT_ADMIN`, `NOTE_REQUIRED`, `REWARD_NOT_FOUND`, `ALREADY_CANCELLED` ; `service_role` seul |
 | `verify_user_password(user, password)` | renvoie `true` si le mot de passe correspond (compte non supprimé), sinon `false` ; `service_role` seul ; sert à `DELETE /me` (pas de captcha) |
 | `anonymize_user(user_id)` | email/téléphone/messages → null, `status='deleted'`, supprime pièces jointes, favoris, sessions, jetons, mot de passe et sujet des tickets, garde commandes/paiements |
