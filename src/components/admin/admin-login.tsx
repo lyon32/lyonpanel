@@ -46,15 +46,13 @@ export function AdminLogin({ adminPath }: { adminPath: string }) {
       const value = form.get(name);
       return typeof value === 'string' ? value : '';
     };
-    const result = await postAuth(
-      'login',
-      {
-        identifier: text('email'),
-        password: text('password'),
-        turnstile_token: text('cf-turnstile-response'),
-      },
-      locale,
-    );
+    // Route dédiée : l'adresse secrète est dans le corps, le serveur répond 404 si elle est fausse.
+    const result = await adminFetch('/api/v1/admin/login', 'POST', {
+      identifier: text('email'),
+      password: text('password'),
+      turnstile_token: text('cf-turnstile-response'),
+      admin_path: adminPath,
+    });
     if (result.ok) await next();
     else {
       // Message unique : rien ne dit si c'est l'adresse ou le mot de passe qui est faux.

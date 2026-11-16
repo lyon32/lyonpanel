@@ -19,7 +19,7 @@ vi.mock('@/server/admin/login', () => svc);
 type Handler = (req: Request) => Promise<Response>;
 const post = async (body: unknown, headers: Record<string, string> = {}) =>
   (await load<{ POST: Handler }>('@/app/api/v1/admin/login/route')).POST(
-    sendReq('POST', '/api/v1/admin/login', body, { 'x-forwarded-for': '203.0.113.9', ...headers }),
+    sendReq('POST', '/api/v1/admin/login', body, { 'cf-connecting-ip': '203.0.113.9', ...headers }),
   );
 const valid = {
   identifier: 'proprietaire@lyonpanel.test',

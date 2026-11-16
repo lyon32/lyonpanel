@@ -2,7 +2,7 @@ import 'server-only';
 import type { z } from 'zod';
 import type { listUsersQuerySchema, patchUserSchema } from '@/server/schemas/admin-users';
 import { createAdminClient } from '@/server/db/supabase-admin';
-import { ApiError, apiError } from '@/server/http/api-error';
+import { apiError } from '@/server/http/api-error';
 import { decodeCursor, encodeCursor, keysetFilter } from '@/server/orders/list-orders';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -22,7 +22,7 @@ const userNotFound = (): never => apiError('USER_NOT_FOUND');
 
 /** Recherche : morceau d'email, de téléphone ou code de parrainage. `_` est échappé (joker SQL). */
 function searchFilter(q: string): string {
-  const pattern = `*${q.replace(/_/g, '\_')}*`;
+  const pattern = `*${q.replace(/_/g, '\\_')}*`;
   return ['email', 'phone', 'referral_code'].map((c) => `${c}.ilike.${pattern}`).join(',');
 }
 
@@ -212,9 +212,8 @@ export async function cancelReferralBonus(adminId: string, rewardId: string, rea
     if (m.includes('REWARD_NOT_FOUND') || m.includes('USER_NOT_FOUND')) {
       return apiError('NOT_FOUND');
     }
-    // Pas de code dédié dans API_SPEC §3 : 409 avec le code de conflit existant (à confirmer par le chef de projet).
     if (m.includes('ALREADY_CANCELLED')) {
-      throw new ApiError('IDEMPOTENCY_CONFLICT', 409, { reason: 'ALREADY_CANCELLED' });
+      return apiError('ALREADY_CANCELLED');
     }
     if (m.includes('NOTE_REQUIRED')) return apiError('NOTE_REQUIRED');
     if (m.includes('NOT_ADMIN')) return apiError('NOT_ADMIN');

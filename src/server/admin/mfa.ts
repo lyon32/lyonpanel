@@ -1,6 +1,6 @@
 import 'server-only';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { createAttemptStore, hashIdentifier } from '@/server/auth/rate-limit';
+import { createAttemptStore, hashIdentifier, type AttemptStore } from '@/server/auth/rate-limit';
 import { createAdminClient } from '@/server/db/supabase-admin';
 import { apiError } from '@/server/http/api-error';
 import { notifyOwner } from '@/server/providers/telegram';
@@ -39,20 +39,30 @@ export async function getMfaStatus(supabase: SupabaseClient) {
   return mfaSetupStatus(await listFactors(supabase));
 }
 
-/** Compte l'échec (par administrateur : le code est lié au compte) et alerte tous les 5. */
-async function recordCodeFailure(userId: string): Promise<void> {
-  const store = createAttemptStore(createAdminClient());
-  const hash = hashIdentifier(`admin-mfa:${userId}`);
+/** Enregistre un échec sous une clé fixe, puis alerte le propriétaire à chaque multiple de 5 (fenêtre de 15 min). */
+export async function recordFailureAndAlert(store: AttemptStore, hash: string): Promise<void> {
   await store.record({ identifierHash: hash, ipHash: hash, success: false });
+  await alertIfThreshold(store, hash);
+}
+
+/** Alerte si le nombre d'échecs de la fenêtre est un multiple de 5. Ni mot de passe, ni email, ni IP dans l'alerte. */
+export async function alertIfThreshold(store: AttemptStore, hash: string): Promise<void> {
   const { byIdentifier } = await store.countFailures({
     identifierHash: hash,
     ipHash: hash,
     since: new Date(Date.now() - FAILURE_WINDOW_MS),
   });
-  // Ni le code saisi ni l'adresse email dans l'alerte : seulement le nombre d'échecs.
   if (byIdentifier > 0 && byIdentifier % ALERT_EVERY === 0) {
     await notifyOwner('admin_login_failed', { failures: byIdentifier });
   }
+}
+
+/** Compte l'échec du code à 6 chiffres (par administrateur : le code est lié au compte). */
+async function recordCodeFailure(userId: string): Promise<void> {
+  await recordFailureAndAlert(
+    createAttemptStore(createAdminClient()),
+    hashIdentifier(`admin-mfa:${userId}`),
+  );
 }
 
 /** Essaie le code sur chaque appareil vérifié (téléphone, puis secours). Mauvais code : 401 MFA_REQUIRED. */
