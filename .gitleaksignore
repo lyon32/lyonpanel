@@ -1,6 +1,8 @@
-# Faux positifs gitleaks : mots de passe fictifs dans des tests unitaires (aucun secret réel)
-0603e4c05d6a37039eba99522ae646284307a1a3:tests/unit/auth/login.test.ts:generic-api-key:12
-0603e4c05d6a37039eba99522ae646284307a1a3:tests/unit/auth/schemas.test.ts:generic-api-key:14
-
-# Phase 8 : faux mauvais mot de passe du test de suppression de compte (aucun secret réel)
-a1f43ecde7048835f6bb75b9fc10a026a82bd5bc:tests/db/me-routes.test.ts:generic-api-key:217
+# Faux positifs gitleaks : faux mots de passe écrits dans des tests (phase 11), aucun vrai secret.
+# Une ligne = une empreinte précise (commit:fichier:règle:ligne). Le reste du dépôt reste analysé.
+13b2b369c5929372d52e5297cdab8ca65903c564:tests/db/admin-login-route.test.ts:generic-api-key:26
+13b2b369c5929372d52e5297cdab8ca65903c564:tests/unit/admin/admin-login.test.ts:generic-api-key:33
+13b2b369c5929372d52e5297cdab8ca65903c564:tests/unit/admin/admin-login.test.ts:generic-api-key:70
+eb9caa0cead7642c87778a2e0e8bd39920a0b494:tests/unit/admin/admin-access.test.ts:generic-api-key:26
+fb6638f7f7f14c3e3b2e1499fb6ce6acf2f49cf1:tests/unit/admin/admin-login-alerts.test.ts:generic-api-key:49
+fb6638f7f7f14c3e3b2e1499fb6ce6acf2f49cf1:tests/unit/http/min-duration.test.ts:generic-api-key:87
