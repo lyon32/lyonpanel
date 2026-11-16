@@ -1,10 +1,10 @@
 # Tableau de bord LyonPanel
-Mis à jour le 2026-11-16 (phase 10 faite, en attente de validation). Chiffres lus dans les comptes-rendus des phases 1 à 10. Obsidian a été mis à jour après reconnexion.
+Mis à jour le 2026-11-16 (phases 0 à 10 validées et fusionnées ; phase 11 en cours, plan écrit). Chiffres lus dans les comptes-rendus des phases 1 à 10.
 
-**En 5 secondes :** les phases 0 à 8 sont validées. La phase 9 (support) est faite et la phase 10 (parrainage) est faite, toutes deux en attente de ton « validé ». Rien ne bloque. À lire sur la PR : la CI GitHub de la phase 10. Ensuite : phase 11 (admin 1), installe une appli d'authentification.
+**En 5 secondes :** les phases 0 à 10 sont validées et fusionnées (phase 10 : PR 22, a093598). La phase 11 (admin 1 : accès, stats, clients) est en cours : décisions prises, plan écrit, rien de codé. Rien ne bloque.
 
 ## 1. Avancement des phases
-Bleu : validée. Jaune : faite, en attente de validation. Gris : à faire. Dates réelles : phases 0 et 1 le 2026-11-07, phase 2 le 2026-11-08, phase 3 le 2026-11-09, phases 4 à 7 le 2026-11-10, phase 8 le 2026-11-11, phase 9 le 2026-11-14, phase 10 le 2026-11-16.
+Bleu : validée. Jaune : en cours ou en attente de validation. Gris : à faire. Dates réelles : phases 0 et 1 le 2026-11-07, phase 2 le 2026-11-08, phase 3 le 2026-11-09, phases 4 à 7 le 2026-11-10, phase 8 le 2026-11-11, phases 9 et 10 le 2026-11-16.
 
 ```mermaid
 flowchart LR
@@ -16,8 +16,8 @@ flowchart LR
   P5 --> P6["Phase 6 Commande<br/>validée<br/>2026-11-10"]
   P6 --> P7["Phase 7 Suivi et alertes<br/>validée<br/>2026-11-10"]
   P7 --> P8["Phase 8 Espace client<br/>validée<br/>2026-11-11"]
-  P8 --> P9["Phase 9 Support<br/>en attente<br/>2026-11-14"]
-  P9 --> P10["Phase 10 Parrainage<br/>en attente<br/>2026-11-16"]
+  P8 --> P9["Phase 9 Support<br/>validée<br/>2026-11-16"]
+  P9 --> P10["Phase 10 Parrainage<br/>validée<br/>2026-11-16"]
   P10 --> P11["11 Admin 1"]
   P11 --> P12["12 Admin 2"]
   P12 --> P13["13 Mise en ligne de test"]
@@ -27,9 +27,9 @@ flowchart LR
   classDef valide fill:#DBEAFE,stroke:#1D4ED8,color:#000
   classDef enattente fill:#FEF3C7,stroke:#B45309,color:#000
   classDef afaire fill:#E5E7EB,stroke:#6B7280,color:#000
-  class P0,P1,P2,P3,P4,P5,P6,P7,P8 valide
-  class P9,P10 enattente
-  class P11,P12,P13,P14,P15,P16 afaire
+  class P0,P1,P2,P3,P4,P5,P6,P7,P8,P9,P10 valide
+  class P11 enattente
+  class P12,P13,P14,P15,P16 afaire
 ```
 
 ## 2. Tâches de la phase 10 (tableau Kanban)
