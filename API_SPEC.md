@@ -82,6 +82,7 @@ Liés : `ARCHITECTURE.md` (flux), `DATA_MODEL.md` (tables).
 | ORDER_NOT_FOUND / PAYMENT_NOT_FOUND / USER_NOT_FOUND | 404 | Commande, paiement ou client introuvable (fonctions SQL) |
 | EMAIL_TAKEN / PHONE_TAKEN | 409 | Déjà utilisé |
 | IDEMPOTENCY_CONFLICT | 409 | Même clé réutilisée avec un contenu différent |
+| ALREADY_CANCELLED | 409 | Bonus de parrainage déjà annulé (admin) |
 | ALREADY_REFUNDED | 409 | Commande déjà remboursée (un seul remboursement par commande) |
 | PAYMENT_NOT_PAYABLE | 409 | Paiement `failed` : crédit refusé |
 | INSUFFICIENT_BALANCE | 422 | Solde client trop bas (`details.missing_xaf`) |
@@ -219,7 +220,7 @@ Accès : admin + MFA (`aal2`). Toute personne non admin reçoit **404**. Chaque 
 | Méthode | Chemin | Rôle |
 |---|---|---|
 | POST | `/admin/mfa/verify` | `{code}` 6 chiffres → session `aal2` |
-| GET | `/admin/stats?range=today\|7d\|30d` | ventes, bénéfice, nb commandes, recharges, nouveaux clients, **répartition par pays**, solde fournisseur (alerte sous 5 $), réservations. « Aujourd'hui » compté en UTC+1 (décision du 2026-11-16 : pas de dates libres) |
+| GET | `/admin/stats?range=today\|7d\|30d` | ventes, bénéfice, nb commandes, recharges, nouveaux clients, **répartition par pays**, solde fournisseur (alerte sous 5 $). Les « réservations » sont reportées (phase 12). « Aujourd'hui » compté en UTC+1 (décision du 2026-11-16 : pas de dates libres) |
 | POST | `/admin/referrals/{id}/cancel` | `{reason}` → annule un bonus de parrainage ; le solde du parrain peut passer négatif (seule fonction autorisée à le faire) |
 | GET | `/admin/storage/orphans` | liste des fichiers de tickets sans ticket (jamais de suppression ici) |
 | POST | `/admin/storage/orphans/purge` | `{confirm: true}` → supprime la liste affichée, après délai de grâce de 60 min |
