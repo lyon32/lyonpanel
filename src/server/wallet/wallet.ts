@@ -1,6 +1,11 @@
 import 'server-only';
 import { z } from 'zod';
 import { createAdminClient } from '@/server/db/supabase-admin';
+import {
+  nextDiscountThresholdXaf,
+  resolveDiscountPct,
+  type AutoDiscount,
+} from '@/server/pricing/resolve-discount-pct';
 
 export interface Wallet {
   balance_xaf: number;
@@ -30,15 +35,19 @@ export async function getWallet(userId: string): Promise<Wallet> {
   if (profile.error) throw new Error(`profiles: ${profile.error.message}`);
   if (setting.error) throw new Error(`settings: ${setting.error.message}`);
 
-  const auto = autoDiscountSchema.safeParse(setting.data?.value);
+  const parsed = autoDiscountSchema.safeParse(setting.data?.value);
   const total = wallet.data.total_recharged_xaf;
-  const autoPct = auto.success && total >= auto.data.threshold_xaf ? auto.data.pct : 0;
+  const custom = profile.data.custom_discount_pct ?? null;
+  // Réglage absent ou invalide : aucune remise automatique (seuil infini).
+  const auto: AutoDiscount = parsed.success
+    ? { thresholdXaf: parsed.data.threshold_xaf, pct: parsed.data.pct }
+    : { thresholdXaf: Number.POSITIVE_INFINITY, pct: 0 };
   return {
     balance_xaf: wallet.data.balance_xaf,
     total_recharged_xaf: total,
-    discount_pct: Math.max(autoPct, profile.data.custom_discount_pct ?? 0),
-    // Seuil de la remise automatique, ou null s'il est déjà atteint (ou réglage absent).
-    next_discount_threshold_xaf:
-      auto.success && total < auto.data.threshold_xaf ? auto.data.threshold_xaf : null,
+    discount_pct: resolveDiscountPct(total, auto, custom),
+    next_discount_threshold_xaf: parsed.success
+      ? nextDiscountThresholdXaf(total, auto, custom)
+      : null,
   };
 }
