@@ -7,7 +7,7 @@ import { requireUser } from '@/server/auth/require-user';
 import { loadCatalogView } from '@/server/catalog/load-catalog';
 import { asCatalogLocale } from '@/server/catalog/page-params';
 import { toWorkbench } from '@/server/catalog/workbench';
-import { getUsdXafRateCached } from '@/server/catalog/public-catalog';
+import { getPublicService, getUsdXafRateCached } from '@/server/catalog/public-catalog';
 import { createAdminClient } from '@/server/db/supabase-admin';
 import { createSessionClient } from '@/server/db/supabase-server';
 import { listFavorites } from '@/server/favorites/favorites';
@@ -55,8 +55,33 @@ export default async function OrderPage({ params, searchParams }: Props) {
   ]);
   const networks = toWorkbench(view.catalog, comments);
   const wanted = positiveInt(sp.service);
-  const known =
-    wanted !== undefined && networks.some((n) => n.services.some((s) => s.id === wanted));
+  let known = wanted !== undefined && networks.some((n) => n.services.some((s) => s.id === wanted));
+  // Le catalogue est en cache 5 min : un service tout neuf est lu directement et ajouté.
+  if (wanted !== undefined && !known) {
+    const row = await getPublicService(wanted);
+    if (row) {
+      const extra = {
+        id: row.id,
+        name: row.name_fr,
+        type: row.category,
+        priceXaf1000: row.price_xaf_1000,
+        minQty: row.min_qty,
+        maxQty: row.max_qty,
+        needsComments: comments.has(row.id),
+      };
+      const home = networks.find((n) => n.network === row.platform);
+      if (home) home.services.push(extra);
+      else {
+        networks.push({
+          network: row.platform,
+          label: row.platform,
+          types: [],
+          services: [extra],
+        });
+      }
+      known = true;
+    }
+  }
   return (
     <section className="flex max-w-4xl flex-col gap-4">
       <h1 className="text-encre text-2xl font-bold">{t('title')}</h1>
