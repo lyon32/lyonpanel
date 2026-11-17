@@ -15,6 +15,7 @@ import { filterServices, MAX_OPTIONS } from '@/lib/workbench-filter';
 interface WService {
   id: number;
   name: string;
+  description: string;
   type: string;
   priceXaf1000: number;
   minQty: number;
@@ -194,6 +195,7 @@ export function OrderWorkbench(props: Props) {
             service={{
               id: selected.service.id,
               name: selected.service.name,
+              description: selected.service.description,
               platform: selected.network,
               priceXaf1000: selected.service.priceXaf1000,
               minQty: selected.service.minQty,

@@ -35,5 +35,19 @@
   "AUTH_LOCKED": "Too many attempts. Please try again in {duration}.",
   "PROVIDER_ERROR": "Our partner service returned an error. Please try again later.",
   "PROVIDER_TIMEOUT": "Our partner service did not respond in time. Check your balance before retrying.",
-  "INTERNAL_ERROR": "An unexpected error occurred. Give the request number to support."
+  "INTERNAL_ERROR": "An unexpected error occurred. Give the request number to support.",
+  "SERVICE_NOT_FOUND": "Service not found.",
+  "TICKET_NOT_FOUND": "Ticket not found.",
+  "ALREADY_RESENT": "This order has already been resent once.",
+  "ACTION_IN_PROGRESS": "An action is already running on this order. Try again in 2 minutes.",
+  "ORDER_NOT_CLOSABLE": "This order cannot be closed.",
+  "ORDER_NOT_RESENDABLE": "This order cannot be resent.",
+  "ORDER_NOT_REFUNDABLE": "This order cannot be refunded.",
+  "REASON_REQUIRED": "A reason is required.",
+  "EMPTY_CHANGES": "Nothing to save.",
+  "INVALID_FIELD": "A value is invalid.",
+  "INVALID_BODY": "The text is empty or too long.",
+  "INVALID_STATUS": "Invalid status.",
+  "INVALID_SETTING": "Invalid setting value.",
+  "UNKNOWN_SETTING": "Unknown setting."
 }

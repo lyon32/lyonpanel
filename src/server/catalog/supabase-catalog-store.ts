@@ -49,7 +49,7 @@ export function createSupabaseCatalogStore(): CatalogStore {
         const { data, error } = await db
           .from('services')
           .select(
-            'id, platform, category, name_fr, provider_name, provider_type, cost_usd_1000, multiplier, price_xaf_1000, min_qty, max_qty, refill, cancel, dripfeed, active, available',
+            'id, platform, category, name_fr, name_en, description_fr, description_en, provider_name, provider_type, cost_usd_1000, multiplier, price_xaf_1000, min_qty, max_qty, refill, cancel, dripfeed, active, available',
           )
           .order('id')
           .range(from, from + PAGE - 1);

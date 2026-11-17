@@ -83,8 +83,20 @@ Liés : `ARCHITECTURE.md` (flux), `DATA_MODEL.md` (tables).
 | EMAIL_TAKEN / PHONE_TAKEN | 409 | Déjà utilisé |
 | IDEMPOTENCY_CONFLICT | 409 | Même clé réutilisée avec un contenu différent |
 | ALREADY_CANCELLED | 409 | Bonus de parrainage déjà annulé (admin) |
-| ORDER_NOT_CANCELLABLE | 409 | Commande déjà démarrée (ou service sans annulation) : annulation impossible |
-| ALREADY_REFUNDED | 409 | Commande déjà remboursée (un seul remboursement par commande) |
+| ORDER_NOT_CANCELLABLE | 409 | Annulation client possible seulement si le fournisseur répond « en attente » (ou service sans annulation) : sinon impossible |
+| ALREADY_REFUNDED | 409 | Commande déjà remboursée en totalité (plafond de la part non livrée atteint) |
+| ALREADY_RESENT | 409 | Commande déjà renvoyée une fois au fournisseur (admin) |
+| ACTION_IN_PROGRESS | 409 | Annulation ou renvoi déjà en cours sur cette commande (admin) |
+| ORDER_NOT_CLOSABLE | 409 | Clôture impossible (la commande n'est pas `to_review`) |
+| ORDER_NOT_RESENDABLE | 409 | Renvoi impossible pour cette commande |
+| ORDER_NOT_REFUNDABLE | 409 | Remboursement impossible pour cette commande |
+| SERVICE_NOT_FOUND | 404 | Service inconnu (admin) |
+| TICKET_NOT_FOUND | 404 | Ticket inconnu |
+| REASON_REQUIRED | 422 | Motif obligatoire (remboursement, annulation, renvoi, clôture) |
+| EMPTY_CHANGES | 422 | Aucune modification demandée |
+| INVALID_FIELD / INVALID_BODY | 422 | Champ ou corps non accepté |
+| INVALID_STATUS | 422 | Statut non accepté |
+| INVALID_SETTING / UNKNOWN_SETTING | 422 | Réglage hors bornes ou inconnu |
 | PAYMENT_NOT_PAYABLE | 409 | Paiement `failed` : crédit refusé |
 | INSUFFICIENT_BALANCE | 422 | Solde client trop bas (`details.missing_xaf`) |
 | QUANTITY_OUT_OF_RANGE | 422 | Hors min/max (`details.min`, `details.max`) |
@@ -240,8 +252,8 @@ Accès : admin + MFA (`aal2`). Toute personne non admin reçoit **404**. Chaque 
 | POST | `/admin/orders/{id}/resend` | renvoie la commande à fournisseur |
 | POST | `/admin/orders/{id}/close` | `to_review` → `completed` sans remboursement |
 | GET | `/admin/payments?status=` | liste paginée |
-| GET | `/admin/services?platform=&active=` | catalogue complet (coût, marge, nom fournisseur) |
-| PATCH | `/admin/services/{id}` | `{active?, name_fr?, name_en?, multiplier?, sort_order?}` ; la marge par service est `multiplier` (`margin_pct` n'existe plus depuis la phase 4) ; un changement de `multiplier` demande une confirmation après aperçu de l'ancien et du nouveau prix |
+| GET | `/admin/services?platform=&active=&q=&page=&limit=` | catalogue paginé (défaut 50, max 200 ; `q` = nom ou id ; réponse `{items,total,page,limit,hasMore}`) avec coût, marge, nom fournisseur |
+| PATCH | `/admin/services/{id}` | `{active?, name_fr?, name_en?, custom_name_fr?, custom_name_en?, custom_description_fr?, custom_description_en?, multiplier?, sort_order?}` (champs custom_* : 400 caractères max, vide = retour au texte généré ; à valider par le propriétaire) ; la marge par service est `multiplier` (`margin_pct` n'existe plus depuis la phase 4) ; un changement de `multiplier` demande une confirmation après aperçu de l'ancien et du nouveau prix |
 | POST | `/admin/orders/{id}/cancel` | `{reason}` → annule une commande en cours chez le fournisseur ; la commande passe `to_review`, aucun remboursement automatique (le remboursement se fait ensuite par `/refund`) |
 | GET / PATCH | `/admin/settings` | taux, marges, minimum, remise auto, parrainage, seuils |
 | GET | `/admin/tickets?status=` | liste paginée |

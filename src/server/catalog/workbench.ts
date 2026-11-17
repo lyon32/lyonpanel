@@ -4,6 +4,7 @@ import type { PublicCatalog } from './present-catalog';
 export interface WorkbenchService {
   id: number;
   name: string;
+  description: string;
   type: string;
   priceXaf1000: number;
   minQty: number;
@@ -28,6 +29,7 @@ export function toWorkbench(catalog: PublicCatalog, commentIds: Set<number>): Wo
       t.services.map((s) => ({
         id: s.id,
         name: s.name,
+        description: s.description,
         type: s.type,
         priceXaf1000: s.priceXaf1000,
         minQty: s.minQty,

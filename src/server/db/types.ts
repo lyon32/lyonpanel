@@ -602,6 +602,12 @@ export type Database = {
           available: boolean;
           cancel: boolean;
           category: string | null;
+          custom_description_en: string | null;
+          custom_description_fr: string | null;
+          custom_name_en: string | null;
+          custom_name_fr: string | null;
+          description_en: string | null;
+          description_fr: string | null;
           cost_usd_1000: number | null;
           dripfeed: boolean;
           id: number;
@@ -623,6 +629,12 @@ export type Database = {
           available?: boolean;
           cancel?: boolean;
           category?: string | null;
+          custom_description_en?: string | null;
+          custom_description_fr?: string | null;
+          custom_name_en?: string | null;
+          custom_name_fr?: string | null;
+          description_en?: string | null;
+          description_fr?: string | null;
           cost_usd_1000?: number | null;
           dripfeed?: boolean;
           id: number;
@@ -644,6 +656,12 @@ export type Database = {
           available?: boolean;
           cancel?: boolean;
           category?: string | null;
+          custom_description_en?: string | null;
+          custom_description_fr?: string | null;
+          custom_name_en?: string | null;
+          custom_name_fr?: string | null;
+          description_en?: string | null;
+          description_fr?: string | null;
           cost_usd_1000?: number | null;
           dripfeed?: boolean;
           id?: number;
@@ -891,6 +909,12 @@ export type Database = {
         Row: {
           cancel: boolean | null;
           category: string | null;
+          custom_description_en: string | null;
+          custom_description_fr: string | null;
+          custom_name_en: string | null;
+          custom_name_fr: string | null;
+          description_en: string | null;
+          description_fr: string | null;
           dripfeed: boolean | null;
           id: number | null;
           max_qty: number | null;
@@ -905,6 +929,12 @@ export type Database = {
         Insert: {
           cancel?: boolean | null;
           category?: string | null;
+          custom_description_en?: string | null;
+          custom_description_fr?: string | null;
+          custom_name_en?: string | null;
+          custom_name_fr?: string | null;
+          description_en?: string | null;
+          description_fr?: string | null;
           dripfeed?: boolean | null;
           id?: number | null;
           max_qty?: number | null;
@@ -919,6 +949,12 @@ export type Database = {
         Update: {
           cancel?: boolean | null;
           category?: string | null;
+          custom_description_en?: string | null;
+          custom_description_fr?: string | null;
+          custom_name_en?: string | null;
+          custom_name_fr?: string | null;
+          description_en?: string | null;
+          description_fr?: string | null;
           dripfeed?: boolean | null;
           id?: number | null;
           max_qty?: number | null;
@@ -1273,6 +1309,12 @@ export type Database = {
           available: boolean;
           cancel: boolean;
           category: string | null;
+          custom_description_en: string | null;
+          custom_description_fr: string | null;
+          custom_name_en: string | null;
+          custom_name_fr: string | null;
+          description_en: string | null;
+          description_fr: string | null;
           cost_usd_1000: number | null;
           dripfeed: boolean;
           id: number;

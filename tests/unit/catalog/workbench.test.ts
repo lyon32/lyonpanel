@@ -50,6 +50,7 @@ function svc(id: number, network: PublicService['network'], type: PublicService[
     refill: true,
     cancel: true,
     dripfeed: false,
+    description: 'Description de test',
     displayPrice1000: 1155,
     displayMinOrder: 12,
   } satisfies PublicService;
@@ -83,6 +84,7 @@ describe('toWorkbench', () => {
   it('n’expose que des champs de vente : rien du fournisseur', () => {
     const [tiktok] = toWorkbench(catalog, new Set());
     expect(Object.keys(tiktok!.services[0]!).sort()).toEqual([
+      'description',
       'id',
       'maxQty',
       'minQty',

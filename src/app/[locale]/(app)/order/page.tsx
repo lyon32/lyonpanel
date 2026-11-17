@@ -6,6 +6,7 @@ import { CURRENCY_COOKIE, parseCurrency } from '@/lib/currency';
 import { requireUser } from '@/server/auth/require-user';
 import { loadCatalogView } from '@/server/catalog/load-catalog';
 import { asCatalogLocale } from '@/server/catalog/page-params';
+import { toPublicService } from '@/server/catalog/present-catalog';
 import { toWorkbench } from '@/server/catalog/workbench';
 import { getPublicService, getUsdXafRateCached } from '@/server/catalog/public-catalog';
 import { createAdminClient } from '@/server/db/supabase-admin';
@@ -60,9 +61,15 @@ export default async function OrderPage({ params, searchParams }: Props) {
   if (wanted !== undefined && !known) {
     const row = await getPublicService(wanted);
     if (row) {
+      const shown = toPublicService(row, {
+        currency: 'XAF',
+        locale: asCatalogLocale(locale),
+        usdXafRate: 1,
+      });
       const extra = {
         id: row.id,
-        name: row.name_fr,
+        name: shown.name,
+        description: shown.description,
         type: row.category,
         priceXaf1000: row.price_xaf_1000,
         minQty: row.min_qty,

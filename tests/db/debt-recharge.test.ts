@@ -101,7 +101,7 @@ describe('autres entrées d’argent sur un solde négatif : acceptées', () => 
   it('refund_order rembourse 150 sur un solde de -500 : -350', async () => {
     const u = await debtor(500);
     const s = await makeService();
-    const o = await makeOrder(u.id, s.id, { charged_xaf: 150, status: 'canceled' });
+    const o = await makeOrder(u.id, s.id, { charged_xaf: 150, status: 'to_review' });
     const tx = await db.from('wallet_transactions').insert({
       user_id: u.id,
       type: 'order',
@@ -115,6 +115,7 @@ describe('autres entrées d’argent sur un solde négatif : acceptées', () => 
       p_order: o.id,
       p_amount: 150,
       p_admin: admin.id,
+      p_reason: 'test dette',
     });
     expect(error).toBeNull();
     expect(await balanceXaf(u.id)).toBe(-350);

@@ -1,6 +1,7 @@
 import 'server-only';
 import type { z } from 'zod';
 import type { listUsersQuerySchema, patchUserSchema } from '@/server/schemas/admin-users';
+import type { Json } from '@/server/db/types';
 import { createAdminClient } from '@/server/db/supabase-admin';
 import { apiError } from '@/server/http/api-error';
 import { decodeCursor, encodeCursor, keysetFilter } from '@/server/orders/list-orders';
@@ -146,34 +147,29 @@ export async function getUserDetail(id: string) {
   };
 }
 
-async function audit(adminId: string, action: string, targetId: string, details: object) {
-  const { error } = await createAdminClient().from('audit_log').insert({
-    actor_id: adminId,
-    action,
-    target_table: 'profiles',
-    target_id: targetId,
-    details,
-  });
-  if (error) throw new Error('audit_write_failed');
+const USER_ERRORS = [
+  'USER_NOT_FOUND',
+  'FORBIDDEN',
+  'REASON_REQUIRED',
+  'INVALID_FIELD',
+  'EMPTY_CHANGES',
+  'INVALID_BODY',
+  'NOT_ADMIN',
+] as const;
+
+/** Traduit l'erreur d'une fonction SQL en erreur API ; le reste est une vraie panne. */
+function userError(message: string, where: string): never {
+  const code = USER_ERRORS.find((c) => message.includes(c));
+  if (code) return apiError(code);
+  throw new Error(`${where}_failed`);
 }
 
-async function loadTarget(id: string) {
-  if (!UUID.test(id)) return userNotFound();
-  const { data } = await createAdminClient()
-    .from('profiles')
-    .select('id, is_admin, status')
-    .eq('id', id)
-    .maybeSingle();
-  return data ?? userNotFound();
-}
-
-/** Blocage, remise perso, plafond. Jamais de solde ici (phase 12). */
+/**
+ * Blocage, remise perso, plafond. Jamais de solde ici.
+ * Changement et trace d'audit dans la même transaction SQL : si la trace échoue, rien ne change.
+ */
 export async function updateUser(adminId: string, id: string, patch: Patch) {
-  const target = await loadTarget(id);
-  if (patch.status === 'blocked' && target.is_admin) apiError('FORBIDDEN');
-  // Un compte supprimé ne se réactive pas par cette route.
-  if (patch.status && target.status === 'deleted') apiError('FORBIDDEN');
-
+  if (!UUID.test(id)) return userNotFound();
   const changes: Record<string, unknown> = {};
   if (patch.status) {
     changes.status = patch.status;
@@ -185,28 +181,31 @@ export async function updateUser(adminId: string, id: string, patch: Patch) {
   if (patch.daily_spend_limit_xaf !== undefined) {
     changes.daily_spend_limit_xaf = patch.daily_spend_limit_xaf;
   }
-
-  const { data, error } = await createAdminClient()
+  const db = createAdminClient();
+  const { error } = await db.rpc('update_user', {
+    p_user: id,
+    p_admin: adminId,
+    p_changes: changes as Json,
+  });
+  if (error) return userError(error.message, 'admin_user_update');
+  const { data, error: readError } = await db
     .from('profiles')
-    .update(changes)
-    .eq('id', id)
     .select(PROFILE_COLUMNS)
+    .eq('id', id)
     .single();
-  if (error) throw new Error('admin_user_update_failed');
-  await audit(adminId, 'update_user', id, changes);
+  if (readError) throw new Error('admin_user_update_read_failed');
   return { profile: data };
 }
 
 export async function addNote(adminId: string, id: string, body: string) {
-  await loadTarget(id);
-  const { data, error } = await createAdminClient()
-    .from('admin_notes')
-    .insert({ user_id: id, body })
-    .select('id')
-    .single();
-  if (error) throw new Error('admin_note_failed');
-  await audit(adminId, 'add_note', id, { note_id: data.id });
-  return { id: data.id };
+  if (!UUID.test(id)) return userNotFound();
+  const { data, error } = await createAdminClient().rpc('add_note', {
+    p_user: id,
+    p_admin: adminId,
+    p_body: body,
+  });
+  if (error) return userError(error.message, 'admin_note');
+  return { id: data };
 }
 
 /** Annule un bonus : uniquement par la fonction SQL (le solde peut devenir négatif, c'est voulu). */

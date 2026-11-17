@@ -1,6 +1,8 @@
 import 'server-only';
-import { buildServiceName } from '@/server/catalog/build-name';
+import { buildServiceName, type NameableService } from '@/server/catalog/build-name';
+import { buildServiceDescription } from '@/server/catalog/build-description';
 import { classifyNetwork, classifyType } from '@/server/catalog/classify';
+import { NETWORKS, SERVICE_TYPES } from '@/server/catalog/labels';
 import { computePricePer1000Xaf } from '@/server/pricing/compute-price';
 import { resolveMultiplier, type MultiplierRule } from '@/server/pricing/multipliers';
 import { apiError } from '@/server/http/api-error';
@@ -19,12 +21,19 @@ export interface CatalogSettings {
   priceAlertPct: number;
 }
 
+const asNetwork = (v: string) => NETWORKS.find((n) => n === v) ?? 'other';
+const asType = (v: string) => SERVICE_TYPES.find((c) => c === v) ?? 'other';
+
 /** Ligne de la table services (colonnes utiles à la synchronisation). */
 export interface StoredService {
   id: number;
   platform: string;
   category: string;
   name_fr: string;
+  // Textes générés à la synchro (jamais custom_* : ceux-là restent à l'admin). Absents = non chargés.
+  name_en?: string | null;
+  description_fr?: string | null;
+  description_en?: string | null;
   provider_name: string;
   provider_type: string;
   cost_usd_1000: number;
@@ -129,25 +138,26 @@ export async function syncServices(deps: SyncDeps): Promise<SyncResult> {
         rules,
         defaultMultiplier: settings.defaultMultiplier,
       });
+      const nameable: NameableService = {
+        id: item.service,
+        platform,
+        category,
+        refill: item.refill,
+        cancel: item.cancel,
+        dripfeed: item.dripfeed,
+        min_qty: item.min,
+        max_qty: item.max,
+        providerName: item.name,
+        providerCategory: item.category,
+      };
       toInsert.push({
         id: item.service,
         platform,
         category,
-        name_fr: buildServiceName(
-          {
-            id: item.service,
-            platform,
-            category,
-            refill: item.refill,
-            cancel: item.cancel,
-            dripfeed: item.dripfeed,
-            min_qty: item.min,
-            max_qty: item.max,
-            providerName: item.name,
-            providerCategory: item.category,
-          },
-          'fr',
-        ),
+        name_fr: buildServiceName(nameable, 'fr'),
+        name_en: buildServiceName(nameable, 'en'),
+        description_fr: buildServiceDescription(nameable, 'fr'),
+        description_en: buildServiceDescription(nameable, 'en'),
         provider_name: item.name,
         provider_type: item.type,
         cost_usd_1000: item.rate,
@@ -185,6 +195,28 @@ export async function syncServices(deps: SyncDeps): Promise<SyncResult> {
       dripfeed: item.dripfeed,
       available: true,
     };
+    // Textes générés : remplis ou remis à jour à chaque synchro (le nom fournisseur peut changer).
+    // Jamais custom_* ; ignorés si le magasin ne charge pas ces colonnes.
+    // name_en défini (même null) = le magasin a chargé les colonnes de textes.
+    if (current.name_en !== undefined) {
+      const nameable: NameableService = {
+        id: current.id,
+        platform: asNetwork(current.platform),
+        category: asType(current.category),
+        refill: item.refill,
+        cancel: item.cancel,
+        dripfeed: item.dripfeed,
+        min_qty: item.min,
+        max_qty: item.max,
+        providerName: item.name,
+        providerCategory: item.category,
+      };
+      fresh.description_fr = buildServiceDescription(nameable, 'fr');
+      fresh.description_en = buildServiceDescription(nameable, 'en');
+      // Les noms suivent le générateur actuel ; les custom_* (choix du propriétaire) ne sont jamais lus ni écrits.
+      fresh.name_fr = buildServiceName(nameable, 'fr');
+      fresh.name_en = buildServiceName(nameable, 'en');
+    }
     // Un type non géré reste masqué, même si le service existait déjà et était actif.
     if (!isSupportedType(item.type) && current.active) fresh.active = false;
     for (const key of Object.keys(fresh) as (keyof StoredService)[]) {

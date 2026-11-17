@@ -491,7 +491,7 @@
     "commentsLabel": "Commentaires",
     "commentsHint": "Un commentaire par ligne. Autant de lignes que la quantité.",
     "commentsCount": "Écrivez exactement {count} commentaires, un par ligne.",
-    "total": "Total",
+    "total": "Montant à payer",
     "balanceAfter": "Solde après commande",
     "discount": "Remise",
     "quoteLoading": "Calcul du total…",

@@ -190,13 +190,15 @@ describe('syncOrderStatuses', () => {
     }));
     const { error } = await adminClient().from('orders').insert(rows);
     expect(error).toBeNull();
-    const { count } = await adminClient()
+    // Isolation : on neutralise toute autre commande suivie (in_progress ou pending avec n° fournisseur), y compris celles d'autres fichiers.
+    const { error: parkError } = await adminClient()
       .from('orders')
-      .select('id', { count: 'exact', head: true })
-      .eq('status', 'in_progress')
-      .not('provider_order_id', 'is', null);
-    const total = count ?? 0;
-    expect(total).toBeGreaterThanOrEqual(250);
+      .update({ status: 'completed' })
+      .in('status', ['in_progress', 'pending'])
+      .not('provider_order_id', 'is', null)
+      .neq('user_id', u.id);
+    expect(parkError).toBeNull();
+    const total = rows.length;
     answer({});
     await syncOrderStatuses();
     const sizes = h.provider.status.mock.calls.map((c: number[][]) => c[0]!.length);

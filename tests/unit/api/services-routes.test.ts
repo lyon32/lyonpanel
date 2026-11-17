@@ -30,12 +30,13 @@ import { GET as getService } from '@/app/api/v1/services/[id]/route';
 //        -> { currency, locale, networks: [{ network, label, types: [{ type, label, services: [PublicService] }] }] }
 //   GET /api/v1/services/{id}[?currency=&locale=] -> PublicService, ou 404 NOT_FOUND (format unique §3)
 // PublicService = { id, name, network, type, priceXaf1000, minQty, maxQty, minOrderXaf,
-//                   refill, cancel, dripfeed, displayPrice1000, displayMinOrder }
+//                   refill, cancel, dripfeed, description, displayPrice1000, displayMinOrder }
 // Module de données attendu : src/server/catalog/public-catalog.ts
 //   listPublicServices(), getPublicService(id), getUsdXafRate()  (lignes de la vue services_public)
 
 const PUBLIC_KEYS = [
   'cancel',
+  'description',
   'displayMinOrder',
   'displayPrice1000',
   'dripfeed',

@@ -24,6 +24,9 @@ export function ServiceCard({
       <p className="text-encre text-base">
         <ServiceName name={service.name} />
       </p>
+      <p data-testid="service-description" className="text-gris-600 text-sm">
+        {service.description}
+      </p>
       <dl className="flex flex-col gap-2 text-sm tabular-nums">
         <div className="flex justify-between gap-3">
           <dt className="text-gris-600">{t('pricePer1000')}</dt>

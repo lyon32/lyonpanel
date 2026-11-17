@@ -9,7 +9,10 @@ import { adminClient } from './helpers/client';
 vi.mock('server-only', () => ({}));
 vi.mock('@/server/providers/telegram', () => ({ notifyOwner: vi.fn(async () => {}) }));
 const session = vi.hoisted(() => ({ client: null as unknown }));
-vi.mock('@/server/db/supabase-server', () => ({ createSessionClient: async () => session.client }));
+vi.mock('@/server/db/supabase-server', () => ({
+  createSessionClient: async () => session.client,
+  createStatelessClient: () => adminClient(),
+}));
 
 import { GET as publicCatalog } from '@/app/api/v1/services/route';
 
@@ -71,7 +74,7 @@ describe('GET /admin/services', () => {
     const res = await callRoute(
       ROUTES.services,
       'GET',
-      '/api/v1/admin/services?platform=tiktok&active=true',
+      `/api/v1/admin/services?platform=tiktok&active=true&q=${s.id}&limit=200`,
     );
     expect(res.status).toBe(200);
     const body = (await res.json()) as { items: Record<string, unknown>[] };
@@ -103,11 +106,11 @@ describe('PATCH /admin/services/{id} : activer, nom, ordre', () => {
     const s = await service();
     expect((await patch(s.id, { active: false })).status).toBe(200);
     expect(await publicCatalog(getReq('/api/v1/services')).then((r) => r.text())).not.toContain(
-      String(s.name_fr),
+      `"id":${s.id},`,
     );
     expect((await patch(s.id, { active: true })).status).toBe(200);
     expect(await publicCatalog(getReq('/api/v1/services')).then((r) => r.text())).toContain(
-      String(s.name_fr),
+      `"id":${s.id},`,
     );
   });
 
@@ -213,7 +216,7 @@ describe('coût et nom du fournisseur : jamais côté client', () => {
     const s = await service();
     await patch(s.id, { multiplier: 4, confirm: true });
     const text = await publicCatalog(getReq('/api/v1/services')).then((r) => r.text());
-    expect(text).toContain(String(s.name_fr));
+    expect(text).toContain(`"id":${s.id},`);
     for (const secret of [
       'cost_usd',
       'provider_name',

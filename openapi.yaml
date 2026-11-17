@@ -726,6 +726,11 @@ paths:
                 active: { type: boolean }
                 name_fr: { type: string }
                 name_en: { type: string }
+                # À valider par le propriétaire : textes saisis (400 max, vide = texte généré)
+                custom_name_fr: { type: string, maxLength: 400 }
+                custom_name_en: { type: string, maxLength: 400 }
+                custom_description_fr: { type: string, maxLength: 400 }
+                custom_description_en: { type: string, maxLength: 400 }
                 multiplier: { type: number }
                 sort_order: { type: integer }
       responses:

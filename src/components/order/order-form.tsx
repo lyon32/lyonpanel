@@ -22,6 +22,7 @@ const QUOTE_DELAY_MS = 300;
 export type OrderService = {
   id: number;
   name: string;
+  description: string;
   platform: string;
   priceXaf1000: number;
   minQty: number;

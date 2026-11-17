@@ -58,7 +58,7 @@ export async function cancelOrder(userId: string, orderId: string): Promise<{ re
   const started =
     (order.start_count ?? 0) > 0 || (order.remains !== null && order.remains < order.quantity);
   const cancellable =
-    order.status === 'in_progress' &&
+    (order.status === 'in_progress' || order.status === 'pending') &&
     order.provider_order_id !== null &&
     service?.cancel === true &&
     !started;
@@ -66,6 +66,12 @@ export async function cancelOrder(userId: string, orderId: string): Promise<{ re
   if (order.cancel_requested_at === null && !cancellable) return apiError('ORDER_NOT_CANCELLABLE');
 
   if (order.cancel_requested_at === null) {
+    // Règle lue chez le fournisseur au moment du clic : la synchro peut avoir du retard.
+    // Panne du fournisseur : l'erreur remonte, refus prudent (ni annulation ni remboursement).
+    const live = (await getProvider().status([order.provider_order_id as number]))[
+      order.provider_order_id as number
+    ];
+    if (live?.status !== 'Pending') return apiError('ORDER_NOT_CANCELLABLE');
     const accepted = await getProvider().cancel(order.provider_order_id as number);
     if (!accepted) return apiError('ORDER_NOT_CANCELLABLE');
     // Garde sur le statut : une seule demande retenue même en cas de double clic.
