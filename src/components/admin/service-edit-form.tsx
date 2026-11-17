@@ -4,10 +4,10 @@ import { useTranslations } from 'next-intl';
 import { useState, type FormEvent } from 'react';
 import { adminFetch, apiErrorMessage } from './admin-api';
 import { useAdminAction } from './use-admin-action';
+import { ServiceTextFields } from './service-text-fields';
 import { FormAlert } from '@/components/auth/form-alert';
 import { Button } from '@/components/ui/button';
 import { Field } from '@/components/ui/field';
-import { Textarea } from '@/components/ui/textarea';
 import { formatXaf } from '@/lib/admin-format';
 
 export type ServiceEditData = {
@@ -25,9 +25,6 @@ export type ServiceEditData = {
 };
 
 type Preview = { multiplier: number; oldXaf: number; newXaf: number };
-
-// Même borne que le serveur (texte client personnalisé).
-const MAX_TEXT = 400;
 
 function asPreview(data: unknown, multiplier: number): Preview | null {
   if (typeof data !== 'object' || data === null) return null;
@@ -131,93 +128,16 @@ export function ServiceEditForm({ service, locale }: { service: ServiceEditData;
     preview && multiplierValid && preview.multiplier === multiplierValue ? preview : null;
   const locked = pending || previewing || confirming;
 
-  const textArea = (
-    id: string,
-    label: string,
-    value: string,
-    set: (v: string) => void,
-    generated: string | null,
-  ) => (
-    <div className="flex flex-col gap-2">
-      <label htmlFor={id} className="text-encre text-sm font-semibold">
-        {label}
-      </label>
-      <Textarea
-        id={id}
-        value={value}
-        maxLength={MAX_TEXT}
-        disabled={locked}
-        onChange={(e) => {
-          set(e.target.value);
-          touched();
-        }}
-      />
-      <p className="text-gris-600 text-sm tabular-nums">
-        {value.length} / {MAX_TEXT}
-      </p>
-      {value.trim() === '' ? (
-        <p className="text-gris-600 bg-gris-50 rounded-lg p-3 text-sm">
-          <span className="font-semibold">{t('services.generated')} : </span>
-          {generated ?? t('common.none')}
-        </p>
-      ) : null}
-    </div>
-  );
-
-  const nameField = (
-    id: string,
-    label: string,
-    value: string,
-    set: (v: string) => void,
-    generated: string,
-  ) => (
-    <Field
-      name={id}
-      label={label}
-      value={value}
-      maxLength={200}
-      disabled={locked}
-      hint={value.trim() === '' ? `${t('services.generated')} : ${generated}` : undefined}
-      onChange={(e) => {
-        set(e.target.value);
-        touched();
-      }}
-    />
-  );
-
   return (
     <form onSubmit={(e) => void submit(e)} noValidate className="flex flex-col gap-4">
-      <section className="border-gris-200 bg-blanc flex flex-col gap-4 rounded-xl border p-4 sm:p-5">
-        <h2 className="text-encre text-lg font-bold">{t('services.texts')}</h2>
-        {nameField(
-          'custom_name_fr',
-          t('services.nameFr'),
-          customNameFr,
-          setCustomNameFr,
-          service.nameFr,
-        )}
-        {nameField(
-          'custom_name_en',
-          t('services.nameEn'),
-          customNameEn,
-          setCustomNameEn,
-          service.nameEn,
-        )}
-        {textArea(
-          'custom_description_fr',
-          t('services.descriptionFr'),
-          descFr,
-          setDescFr,
-          service.descriptionFr,
-        )}
-        {textArea(
-          'custom_description_en',
-          t('services.descriptionEn'),
-          descEn,
-          setDescEn,
-          service.descriptionEn,
-        )}
-      </section>
+      <ServiceTextFields
+        locked={locked}
+        onTouch={touched}
+        nameFr={{ value: customNameFr, set: setCustomNameFr, generated: service.nameFr }}
+        nameEn={{ value: customNameEn, set: setCustomNameEn, generated: service.nameEn }}
+        descFr={{ value: descFr, set: setDescFr, generated: service.descriptionFr }}
+        descEn={{ value: descEn, set: setDescEn, generated: service.descriptionEn }}
+      />
 
       <section className="border-gris-200 bg-blanc flex flex-col gap-4 rounded-xl border p-4 sm:p-5">
         <h2 className="text-encre text-lg font-bold">{t('services.pricing')}</h2>

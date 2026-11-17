@@ -21,6 +21,11 @@ export const NETWORKS = [
 ] as const;
 export type Network = (typeof NETWORKS)[number];
 
+// Plateforme en base (texte libre) -> réseau connu, « other » sinon.
+export function toNetwork(value: string): Network {
+  return (NETWORKS as readonly string[]).includes(value) ? (value as Network) : 'other';
+}
+
 export const SERVICE_TYPES = [
   'followers',
   'likes',

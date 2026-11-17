@@ -40,7 +40,7 @@ const service = {
 
 describe('activer / masquer', () => {
   it("demande une confirmation avant d'envoyer", async () => {
-    const fetchMock = vi.fn(async (..._args: unknown[]) => Response.json({}, { status: 200 }));
+    const fetchMock = vi.fn(async () => Response.json({}, { status: 200 }));
     vi.stubGlobal('fetch', fetchMock);
     wrap(<ServiceActiveToggle serviceId={7} active />);
     fireEvent.click(screen.getByRole('button', { name: 'Masquer' }));
@@ -95,7 +95,7 @@ describe('fiche service', () => {
   });
 
   it('un champ texte vidé part comme chaîne vide (retour au texte généré)', async () => {
-    const fetchMock = vi.fn(async (..._args: unknown[]) => Response.json({ service: {} }));
+    const fetchMock = vi.fn(async () => Response.json({ service: {} }));
     vi.stubGlobal('fetch', fetchMock);
     wrap(<ServiceEditForm service={{ ...service, customNameFr: 'Perso' }} locale="fr" />);
     fireEvent.change(screen.getByLabelText('Nom en français'), { target: { value: '' } });
@@ -120,7 +120,7 @@ describe('réglages (formulaire)', () => {
   })!;
 
   it('récapitule ancienne et nouvelle valeur puis envoie après confirmation', async () => {
-    const fetchMock = vi.fn(async (..._args: unknown[]) => Response.json({ settings: {} }));
+    const fetchMock = vi.fn(async () => Response.json({ settings: {} }));
     vi.stubGlobal('fetch', fetchMock);
     wrap(<SettingsForm current={current} />, 'en');
     fireEvent.change(screen.getByLabelText(/USD exchange rate/), { target: { value: '620' } });

@@ -4,6 +4,7 @@ import { ArrowLeft } from 'lucide-react';
 import { ServiceEditForm } from '@/components/admin/service-edit-form';
 import { Badge } from '@/components/ui/badge';
 import { formatUsd, formatXaf } from '@/lib/admin-format';
+import { networkLabel, toNetwork } from '@/server/catalog/labels';
 import { getAdminService } from '@/server/admin/services';
 import { requireAdminPage } from '@/server/admin/page-guard';
 import { getAdminTranslator } from '@/server/admin/page-i18n';
@@ -55,7 +56,9 @@ export default async function AdminServicePage({ params }: Props) {
         </div>
         <div>
           <dt className="text-gris-600">{t('services.network')}</dt>
-          <dd className="text-encre font-semibold">{s.platform}</dd>
+          <dd className="text-encre font-semibold">
+            {networkLabel(toNetwork(s.platform), locale === 'en' ? 'en' : 'fr')}
+          </dd>
         </div>
       </dl>
       <ServiceEditForm

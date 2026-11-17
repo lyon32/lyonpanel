@@ -8,7 +8,7 @@ import { formatInt, formatUsd, formatXaf } from '@/lib/admin-format';
 import { listAdminServices } from '@/server/admin/services';
 import { requireAdminPage } from '@/server/admin/page-guard';
 import { getAdminTranslator } from '@/server/admin/page-i18n';
-import { networkLabel, NETWORKS } from '@/server/catalog/labels';
+import { networkLabel, NETWORKS, toNetwork } from '@/server/catalog/labels';
 import { listServicesQuerySchema } from '@/server/schemas/admin-services';
 
 type Props = {
@@ -126,7 +126,7 @@ export default async function AdminServicesPage({ params, searchParams }: Props)
                   </Badge>
                 </div>
                 <p className="text-gris-600 text-sm tabular-nums">
-                  #{s.id} · {s.platform} · {s.provider_name}
+                  #{s.id} · {networkLabel(toNetwork(s.platform), lang)} · {s.provider_name}
                 </p>
                 <p className="text-gris-600 text-sm tabular-nums">
                   {t('services.cost')} :{' '}
