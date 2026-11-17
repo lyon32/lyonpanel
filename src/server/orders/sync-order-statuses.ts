@@ -1,4 +1,5 @@
 import 'server-only';
+import { refundCanceled } from './cancel-order';
 import { flagForReview } from './flag-for-review';
 import { createAdminClient } from '@/server/db/supabase-admin';
 import { getProvider } from '@/server/providers';
@@ -7,13 +8,20 @@ import type { ProviderStatus } from '@/server/providers/types';
 const BATCH_SIZE = 100;
 const PROVIDER_TIMEOUT_MS = 10_000;
 
-type Counters = { checked: number; completed: number; flagged: number; failedBatches: number };
+type Counters = {
+  checked: number;
+  completed: number;
+  flagged: number;
+  refunded: number;
+  failedBatches: number;
+};
 type Row = {
   id: string;
   short_id: string;
   service_id: number;
   charged_xaf: number;
   provider_order_id: number;
+  cancel_requested_at: string | null;
 };
 
 function withTimeout<T>(promise: Promise<T>): Promise<T> {
@@ -46,6 +54,11 @@ async function applyStatus(row: Row, st: ProviderStatus, c: Counters): Promise<v
     if (status === 'completed') c.completed += 1;
     return;
   }
+  // Annulation demandée par le client et acceptée par le fournisseur : remboursement intégral.
+  if (st.status === 'Canceled' && row.cancel_requested_at !== null) {
+    if (await refundCanceled(row.id)) c.refunded += 1;
+    return;
+  }
   // Partial, Canceled ou inconnu : jamais ignoré, le propriétaire examine (pas de remboursement auto).
   const reason = `provider status: ${st.status}`.slice(0, 300);
   if (await flagForReview(row, { status: 'in_progress' }, reason, progress)) c.flagged += 1;
@@ -56,10 +69,10 @@ async function applyStatus(row: Row, st: ProviderStatus, c: Counters): Promise<v
  * Rejouable, aucune écriture de solde. Une erreur sur un lot ou une commande n'arrête pas les autres.
  */
 export async function syncOrderStatuses(): Promise<Counters> {
-  const c: Counters = { checked: 0, completed: 0, flagged: 0, failedBatches: 0 };
+  const c: Counters = { checked: 0, completed: 0, flagged: 0, refunded: 0, failedBatches: 0 };
   const { data, error } = await createAdminClient()
     .from('orders')
-    .select('id, short_id, service_id, charged_xaf, provider_order_id')
+    .select('id, short_id, service_id, charged_xaf, provider_order_id, cancel_requested_at')
     .eq('status', 'in_progress')
     .not('provider_order_id', 'is', null)
     .order('created_at', { ascending: true });

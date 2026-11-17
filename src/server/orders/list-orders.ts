@@ -77,7 +77,12 @@ async function toOrders(rows: PublicOrderColumns[], locale: CatalogLocale): Prom
         )
       : s.name_fr;
     // Les colonnes non lues par toPublicOrder (coût, erreur…) ne sont volontairement pas chargées.
-    return toPublicOrder(row as OrderRow, { id: s.id, name_fr: name, platform: s.platform });
+    return toPublicOrder(row as OrderRow, {
+      id: s.id,
+      name_fr: name,
+      platform: s.platform,
+      cancel: s.cancel,
+    });
   });
 }
 

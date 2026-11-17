@@ -15,14 +15,17 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:
-      - name: Suivi des recharges et des commandes
+      - name: Suivi des recharges, des commandes et du solde fournisseur
         env:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
           SITE_URL: ${{ vars.SITE_URL }}
         run: |
           set -u
           fail=0
-          for task in payments orders; do
+          tasks='payments orders'
+          # Relevé du solde fournisseur : une fois par heure (premier passage de l'heure).
+          [ "$(date -u +%M)" -lt 5 ] && tasks="$tasks provider-balance"
+          for task in $tasks; do
             code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 60 \
               -H "Authorization: Bearer ${CRON_SECRET}" "${SITE_URL}/api/cron/${task}")
             echo "${task}: HTTP ${code}"

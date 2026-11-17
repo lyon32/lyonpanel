@@ -31,6 +31,7 @@ export default async function OrdersPage({ params }: Props) {
           chargedXaf: o.charged_xaf,
           status: o.status,
           remains: o.remains,
+          cancellable: o.cancellable,
         }))}
       />
     </section>

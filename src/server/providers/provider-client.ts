@@ -3,6 +3,7 @@ import { z } from 'zod';
 import {
   providerAddSchema,
   providerBalanceSchema,
+  providerCancelSchema,
   providerServicesSchema,
   providerStatusSchema,
   type ProviderApi,
@@ -80,6 +81,11 @@ export function createProviderClient(options: ProviderClientOptions): ProviderAp
       };
       if (comments) params.comments = comments.join('\n');
       return parse(providerAddSchema, await call('add', params));
+    },
+    async cancel(orderId) {
+      const rows = parse(providerCancelSchema, await call('cancel', { orders: String(orderId) }));
+      const row = rows.find((r) => Number(r.order) === orderId);
+      return row !== undefined && Number(row.cancel) === 1;
     },
     async status(ids) {
       const raw = parse(

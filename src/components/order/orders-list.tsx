@@ -1,6 +1,7 @@
 'use client';
 
 import { useLocale, useTranslations } from 'next-intl';
+import { CancelOrderButton } from './cancel-order-button';
 import { OrderProgressBar } from './order-progress-bar';
 import { OrderStatusBadge, type OrderStatusValue } from './order-status-badge';
 import { ServiceName } from '@/components/shared/service-name';
@@ -15,6 +16,7 @@ export type OrderListItem = {
   chargedXaf: number;
   status: OrderStatusValue;
   remains: number | null;
+  cancellable: boolean;
 };
 
 // Statuts qui ne bougeront plus côté client (le reste est repris par le suivi serveur).
@@ -67,9 +69,15 @@ export function OrdersList({ orders }: { orders: OrderListItem[] }) {
             <OrderStatusBadge status={o.status} />
           </div>
           <div className="flex flex-col gap-2">
-            {o.status === 'in_progress' && o.remains !== null ? (
-              <OrderProgressBar quantity={o.quantity} remains={o.remains} />
+            {o.status === 'in_progress' ? (
+              <>
+                <OrderProgressBar quantity={o.quantity} remains={o.remains ?? o.quantity} />
+                <span className="text-gris-600 text-xs tabular-nums">
+                  {t('remaining', { count: nf.format(o.remains ?? o.quantity) })}
+                </span>
+              </>
             ) : null}
+            {o.cancellable ? <CancelOrderButton orderId={o.id} amountXaf={o.chargedXaf} /> : null}
             {REVIEW.has(o.status) ? (
               <p className="text-gris-600 text-sm">{t('reviewHint')}</p>
             ) : null}

@@ -83,6 +83,7 @@ Liés : `ARCHITECTURE.md` (flux), `DATA_MODEL.md` (tables).
 | EMAIL_TAKEN / PHONE_TAKEN | 409 | Déjà utilisé |
 | IDEMPOTENCY_CONFLICT | 409 | Même clé réutilisée avec un contenu différent |
 | ALREADY_CANCELLED | 409 | Bonus de parrainage déjà annulé (admin) |
+| ORDER_NOT_CANCELLABLE | 409 | Commande déjà démarrée (ou service sans annulation) : annulation impossible |
 | ALREADY_REFUNDED | 409 | Commande déjà remboursée (un seul remboursement par commande) |
 | PAYMENT_NOT_PAYABLE | 409 | Paiement `failed` : crédit refusé |
 | INSUFFICIENT_BALANCE | 422 | Solde client trop bas (`details.missing_xaf`) |
@@ -169,6 +170,7 @@ Mot de passe : 8 caractères minimum (mon choix). Téléphone : format internati
 | POST | `/orders/quote` | `{service_id, quantity}` → `{price_xaf_1000, discount_pct, total_xaf, balance_after_xaf}` (aucun débit) |
 | POST | `/orders` | en-tête `Idempotency-Key` ; `{service_id, link, quantity, comments?: string[], expected_total_xaf}` → **201** `Order` (`in_progress`) ou **202** `Order` (`to_review`) |
 | GET | `/orders?status=` | liste paginée de `Order` |
+| POST | `/orders/{id}/cancel` | annule une commande qui n’a pas démarré (le fournisseur doit accepter) et **rembourse le montant débité** ; `{ refunded }` |
 | GET | `/orders/{id}` | `Order` — le site le rappelle **toutes les 30 s** tant que le statut n'est pas final |
 
 `Order` = `{id, short_id, service: {id, name, platform}, link, quantity, charged_xaf, status, start_count, remains, created_at, updated_at}`.
@@ -211,6 +213,7 @@ Correspondance avec la base : `amount_xaf` (API) = `payments.credited_xaf` ; `fe
 | POST | `/api/webhooks/saspay` | signature SasPay | Confirme un paiement. Répond **200** même pour un doublon déjà traité ; **403** si signature ou horodatage invalide (comme l'attend SasPay) |
 | GET | `/api/cron/payments` | `CRON_SECRET` | Rattrapage des paiements en attente (5 min) |
 | GET | `/api/cron/orders` | `CRON_SECRET` | Statuts fournisseur par lots de 100 (10 min) |
+| GET | `/api/cron/provider-balance` | `CRON_SECRET` | Relevé du solde fournisseur + alerte sous le seuil (1 h) |
 | GET | `/api/cron/services` | `CRON_SECRET` | Sync catalogue + solde fournisseur (1 h) |
 
 ## 8. Endpoints admin (`/api/v1/admin/*`)

@@ -553,6 +553,14 @@
     "emptyHint": "Passez votre première commande : choisissez un service, un lien, une quantité.",
     "emptyCta": "Commander",
     "reviewHint": "Nous vérifions cette commande. Nous revenons vers vous dès que c’est réglé.",
+    "remaining": "Il reste {count} à livrer",
+    "cancel": "Annuler la commande",
+    "cancelConfirm": "Annuler cette commande ? Vous serez remboursé de {amount} XAF.",
+    "cancelYes": "Oui, annuler",
+    "cancelNo": "Non, garder",
+    "cancelSending": "Annulation…",
+    "cancelDone": "Commande annulée, solde remboursé.",
+    "cancelFailed": "L’annulation n’a pas pu être faite. Réessayez dans un instant.",
     "quantity": "{count} unités"
   },
   "suggestion": {
