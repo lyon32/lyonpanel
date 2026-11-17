@@ -725,7 +725,8 @@ paths:
               properties:
                 active: { type: boolean }
                 name_fr: { type: string }
-                margin_pct: { type: [number, 'null'] }
+                name_en: { type: string }
+                multiplier: { type: number }
                 sort_order: { type: integer }
       responses:
         '200': { description: Service modifié }

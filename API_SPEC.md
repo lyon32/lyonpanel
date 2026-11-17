@@ -241,7 +241,8 @@ Accès : admin + MFA (`aal2`). Toute personne non admin reçoit **404**. Chaque 
 | POST | `/admin/orders/{id}/close` | `to_review` → `completed` sans remboursement |
 | GET | `/admin/payments?status=` | liste paginée |
 | GET | `/admin/services?platform=&active=` | catalogue complet (coût, marge, nom fournisseur) |
-| PATCH | `/admin/services/{id}` | `{active?, name_fr?, margin_pct?, sort_order?}` |
+| PATCH | `/admin/services/{id}` | `{active?, name_fr?, name_en?, multiplier?, sort_order?}` ; la marge par service est `multiplier` (`margin_pct` n'existe plus depuis la phase 4) ; un changement de `multiplier` demande une confirmation après aperçu de l'ancien et du nouveau prix |
+| POST | `/admin/orders/{id}/cancel` | `{reason}` → annule une commande en cours chez le fournisseur ; la commande passe `to_review`, aucun remboursement automatique (le remboursement se fait ensuite par `/refund`) |
 | GET / PATCH | `/admin/settings` | taux, marges, minimum, remise auto, parrainage, seuils |
 | GET | `/admin/tickets?status=` | liste paginée |
 | POST | `/admin/tickets/{id}/messages` | réponse du propriétaire |
@@ -257,5 +258,5 @@ Esquisse pour garder la place : `POST /api/reseller/v2` au **format fournisseur*
 1. Toute route valide son entrée avec **Zod** et renvoie `VALIDATION_ERROR` au format §3.
 2. Une seule fonction `apiError(code, details?)` produit les erreurs ; les messages FR/EN viennent d'un seul fichier `messages/errors.{fr,en}.json`.
 3. L'argent ne bouge que par les fonctions SQL de `DATA_MODEL.md §6`.
-4. Ne jamais renvoyer de champ fournisseur (`cost_usd`, `jap_name`, `margin_pct`) hors `/admin`.
+4. Ne jamais renvoyer de champ fournisseur (`cost_usd`, `jap_name`, `multiplier`, `provider_order_id`) hors `/admin`.
 5. Appels fournisseur et SasPay : délai max 10 s, une seule reprise pour les lectures, **aucune** reprise automatique pour `add` (risque de double commande).
