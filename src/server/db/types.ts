@@ -380,6 +380,7 @@ export type Database = {
           phone: string | null;
           referral_code: string;
           referred_by: string | null;
+          signup_ip_hash: string | null;
           status: Database['public']['Enums']['user_status'];
           suggestions_enabled: boolean;
           updated_at: string;
@@ -399,6 +400,7 @@ export type Database = {
           phone?: string | null;
           referral_code: string;
           referred_by?: string | null;
+          signup_ip_hash?: string | null;
           status?: Database['public']['Enums']['user_status'];
           suggestions_enabled?: boolean;
           updated_at?: string;
@@ -418,6 +420,7 @@ export type Database = {
           phone?: string | null;
           referral_code?: string;
           referred_by?: string | null;
+          signup_ip_hash?: string | null;
           status?: Database['public']['Enums']['user_status'];
           suggestions_enabled?: boolean;
           updated_at?: string;
@@ -474,6 +477,9 @@ export type Database = {
       referral_rewards: {
         Row: {
           amount_xaf: number;
+          cancel_reason: string | null;
+          cancelled_at: string | null;
+          cancelled_by: string | null;
           created_at: string;
           id: string;
           payment_id: string;
@@ -482,6 +488,9 @@ export type Database = {
         };
         Insert: {
           amount_xaf: number;
+          cancel_reason?: string | null;
+          cancelled_at?: string | null;
+          cancelled_by?: string | null;
           created_at?: string;
           id?: string;
           payment_id: string;
@@ -490,6 +499,9 @@ export type Database = {
         };
         Update: {
           amount_xaf?: number;
+          cancel_reason?: string | null;
+          cancelled_at?: string | null;
+          cancelled_by?: string | null;
           created_at?: string;
           id?: string;
           payment_id?: string;
@@ -497,6 +509,13 @@ export type Database = {
           referrer_id?: string;
         };
         Relationships: [
+          {
+            foreignKeyName: 'referral_rewards_cancelled_by_fkey';
+            columns: ['cancelled_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
           {
             foreignKeyName: 'referral_rewards_payment_id_fkey';
             columns: ['payment_id'];
@@ -911,6 +930,10 @@ export type Database = {
       };
       anonymize_user: { Args: { p_user: string }; Returns: undefined };
       caller_not_deleted: { Args: never; Returns: boolean };
+      cancel_referral_bonus: {
+        Args: { p_admin: string; p_reason: string; p_reward: string };
+        Returns: number;
+      };
       credit_payment: {
         Args: {
           p_fee_xaf: number;

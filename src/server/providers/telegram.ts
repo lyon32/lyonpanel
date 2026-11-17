@@ -7,7 +7,8 @@ export type OwnerEvent =
   | 'price_jump'
   | 'payment_mismatch'
   | 'new_ticket'
-  | 'internal_error';
+  | 'internal_error'
+  | 'admin_login_failed';
 
 /**
  * Alerte le propriétaire sur Telegram. Ne lève jamais : une alerte ratée

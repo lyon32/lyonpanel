@@ -15,6 +15,7 @@
   "PHONE_TAKEN": "Ce numéro de téléphone est déjà utilisé.",
   "IDEMPOTENCY_CONFLICT": "Cette demande a déjà été envoyée avec un contenu différent.",
   "ALREADY_REFUNDED": "Cette commande a déjà été remboursée.",
+  "ALREADY_CANCELLED": "Ce bonus de parrainage a déjà été annulé.",
   "PAYMENT_NOT_PAYABLE": "Ce paiement a échoué et ne peut pas être crédité.",
   "INSUFFICIENT_BALANCE": "Il vous manque {missing_xaf} XAF pour passer cette commande. Rechargez votre compte.",
   "QUANTITY_OUT_OF_RANGE": "La quantité doit être comprise entre {min} et {max}.",

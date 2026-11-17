@@ -86,6 +86,13 @@ export function buildRegisterDeps(): RegisterDeps {
         .eq('id', userId);
       if (error) throw new Error(`profiles: ${error.message}`);
     },
+    async setSignupIpHash(userId, ipHash) {
+      const { error } = await admin
+        .from('profiles')
+        .update({ signup_ip_hash: ipHash })
+        .eq('id', userId);
+      if (error) throw new Error(`profiles: ${error.message}`);
+    },
   };
 }
 
@@ -132,7 +139,7 @@ export function buildForgotDeps(locale: 'fr' | 'en' = 'fr'): PasswordResetDeps {
   return {
     rateLimiter: createRateLimiter({ store: createAttemptStore(createAdminClient()) }),
     sendReset(email, captchaToken) {
-      const site = loadServerEnv().NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
+      const site = loadServerEnv().NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3100';
       const sending = createStatelessClient()
         .auth.resetPasswordForEmail(email, {
           redirectTo: `${site}/${RESET_PATH[locale]}`,

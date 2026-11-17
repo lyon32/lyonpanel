@@ -82,6 +82,7 @@ Liés : `ARCHITECTURE.md` (flux), `DATA_MODEL.md` (tables).
 | ORDER_NOT_FOUND / PAYMENT_NOT_FOUND / USER_NOT_FOUND | 404 | Commande, paiement ou client introuvable (fonctions SQL) |
 | EMAIL_TAKEN / PHONE_TAKEN | 409 | Déjà utilisé |
 | IDEMPOTENCY_CONFLICT | 409 | Même clé réutilisée avec un contenu différent |
+| ALREADY_CANCELLED | 409 | Bonus de parrainage déjà annulé (admin) |
 | ALREADY_REFUNDED | 409 | Commande déjà remboursée (un seul remboursement par commande) |
 | PAYMENT_NOT_PAYABLE | 409 | Paiement `failed` : crédit refusé |
 | INSUFFICIENT_BALANCE | 422 | Solde client trop bas (`details.missing_xaf`) |
@@ -147,7 +148,7 @@ Mot de passe : 8 caractères minimum (mon choix). Téléphone : format internati
 | DELETE | `/me` | `{password}` → **204** ; anonymise le compte (DATA_MODEL §6) |
 
 ### 6.3 Solde et transactions
-| GET | `/wallet` | `{balance_xaf, total_recharged_xaf, discount_pct, next_discount_threshold_xaf}` |
+| GET | `/wallet` | `{balance_xaf, debt_xaf, total_recharged_xaf, discount_pct, next_discount_threshold_xaf}` ; `debt_xaf = max(0, -balance_xaf)` : dette après annulation d'un bonus, une recharge la rembourse d'abord (phase 11) |
 |---|---|---|
 | GET | `/wallet/transactions` | liste paginée `{id, type, amount_xaf, balance_after_xaf, order_short_id?, created_at}` |
 
@@ -218,8 +219,14 @@ Accès : admin + MFA (`aal2`). Toute personne non admin reçoit **404**. Chaque 
 
 | Méthode | Chemin | Rôle |
 |---|---|---|
+| POST | `/admin/login` | `{email, password, turnstile}` → connexion admin dédiée (alerte Telegram `admin_login_failed` tous les 5 échecs en 15 min) ; réponse neutre, 404 hors adresse secrète |
+| GET | `/admin/mfa/status` | appareils de code enregistrés (0, 1 ou 2) |
+| POST / PUT | `/admin/mfa/enroll` | enregistre un appareil de code (POST : démarre, PUT : confirme avec le code) ; 2 appareils attendus |
 | POST | `/admin/mfa/verify` | `{code}` 6 chiffres → session `aal2` |
-| GET | `/admin/stats?from=&to=` | ventes, bénéfice, nb commandes, recharges, nouveaux clients, **répartition par pays**, solde fournisseur, réservations |
+| GET | `/admin/stats?range=today\|7d\|30d` | ventes, bénéfice, nb commandes, recharges, nouveaux clients, **répartition par pays**, solde fournisseur (alerte sous 5 $). Les « réservations » sont reportées (phase 12). « Aujourd'hui » compté en UTC+1 (décision du 2026-11-16 : pas de dates libres) |
+| POST | `/admin/referrals/{id}/cancel` | `{reason}` → annule un bonus de parrainage ; le solde du parrain peut passer négatif (seule fonction autorisée à le faire) |
+| GET | `/admin/storage/orphans` | liste des fichiers de tickets sans ticket (jamais de suppression ici) |
+| POST | `/admin/storage/orphans/purge` | `{confirm: true}` → supprime la liste affichée, après délai de grâce de 60 min |
 | GET | `/admin/users?q=&country=&status=` | liste paginée |
 | GET | `/admin/users/{id}` | profil, solde, total rechargé, commandes, notes, filleuls |
 | PATCH | `/admin/users/{id}` | `{status?, blocked_reason?, custom_discount_pct?}` |

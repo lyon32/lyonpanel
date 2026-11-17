@@ -116,11 +116,11 @@ Un agent ne démarre jamais avant ce dont il dépend ; ce qui est indépendant t
 
 > À mettre à jour au début de chaque phase (`ROADMAP.md`).
 
-**Phase en cours : Phase 10 — Parrainage + remises** (décisions du 2026-11-16, plan : `docs/plans/phase-10.md`, branche `feat/phase-10-parrainage`). Phase 9 fusionnée (PR 19). Phases 0 et 1 validées le 2026-11-07, 2 le 2026-11-08, 3 le 2026-11-09, 4 à 7 le 2026-11-10, 8 le 2026-11-11, 9 le 2026-11-16.
+**Phase en cours : Phase 11 — Admin (1) : accès, stats, clients** (décisions du 2026-11-16, plan : `docs/plans/phase-11.md`, branche `feat/phase-11-admin-1`). Phases 0 et 1 validées le 2026-11-07, 2 le 2026-11-08, 3 le 2026-11-09, 4 à 7 le 2026-11-10, 8 le 2026-11-11, 9 et 10 le 2026-11-16 (phase 10 : PR 22, a093598).
 
-**Périmètre phase 10 (seulement ceci)** : page `/parrainage` (code, lien `?ref=`, nombre de filleuls, total gagné, explication du 5 %), route `GET /referral`, palier de remise dans `/wallet` (barre « encore X XAF pour 10 % »), tests complets du bonus 5 % (une seule fois, arrondi à l'inférieur) et de la remise 10 % dès 50 000 XAF (auto contre personnalisée, jamais cumulées). Pas de liste de filleuls, pas de minimum de recharge, pas d'admin (11-12), pas de nouvelle règle de prix. Migration seulement si un test révèle un manque, annoncée avant.
+**Périmètre phase 11 (seulement ceci)** : accès admin (adresse secrète `ADMIN_PATH`, `/admin` = 404, `noindex`, mot de passe + code à 6 chiffres, 2 appareils de secours, session 12 h) ; tableau de bord (aujourd'hui / 7 j / 30 j : ventes, bénéfice, commandes, recharges, nouveaux clients, pays, solde JAP, alerte à 5 $) ; clients (recherche, fiche, blocage avec motif, remise perso, plafond journalier, notes privées) ; reportés des phases 9-10 : plafond `referral_pct` ≤ 100 %, annulation d'un bonus de parrainage, signal « 2e compte du parrain », défaut D des tickets, alerte Telegram par message client, purge des fichiers orphelins de tickets (action manuelle confirmée). Hors périmètre : ajustement de solde, remboursements, services, réglages, réponse aux tickets (phase 12).
 
-**Terminé quand** : un filleul recharge → le parrain reçoit 5 % une seule fois ; la remise s'applique au bon seuil ; écran correct sur 360 px, FR et EN ; lint, types, tests, build et CI verts (CI lue sur la PR) ; `lp-security` accepté ; rapport dans `docs/reports/phase-10/`.
+**Terminé quand** : le propriétaire entre dans l'admin avec son code, voit ses chiffres et bloque un client de test ; `/admin` renvoie 404 ; lint, types, tests, build et CI verts (CI lue sur la PR) ; `lp-security` accepté ; rapport dans `docs/reports/phase-11/`.
 
 **Phase 8 pour mémoire** :
 

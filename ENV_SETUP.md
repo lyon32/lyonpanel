@@ -35,8 +35,9 @@ Modèle : [`.env.example`](.env.example). En local : copier en `.env.local` (ign
 
 | Variable | Secret ? | Rôle | Où l'obtenir | En local |
 |---|---|---|---|---|
-| `NEXT_PUBLIC_SITE_URL` | non | Adresse du site (liens, retour SasPay) | — | `http://localhost:3000` |
+| `NEXT_PUBLIC_SITE_URL` | non | Adresse du site (liens, retour SasPay) | — | `http://localhost:3100` |
 | `ADMIN_PATH` | **oui** | Segment secret de l'admin | `openssl rand -hex 12` | une valeur au choix |
+| `ADMIN_ENROLL_OPEN` | non | Enrôlement des appareils admin : vide ou `true` = ouvert tant qu'il y a moins de 2 appareils vérifiés ; `false` = fermé (404). Jamais de 3e appareil | — | vide |
 | `NEXT_PUBLIC_SUPABASE_URL` | non | Adresse Supabase | Supabase → Settings → API | donnée par `supabase start` |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | non | Clé publique (protégée par RLS) | idem | donnée par `supabase start` |
 | `SUPABASE_SERVICE_ROLE_KEY` | **oui** | Clé serveur (fonctions d'argent, admin) | idem | donnée par `supabase start` |
@@ -92,22 +93,28 @@ npx supabase db reset
 ```bash
 npm run dev
 ```
-- Site : http://localhost:3000/fr
+- Site : http://localhost:3100/fr
 - Studio Supabase local : http://localhost:54323
 - Boîte mail locale (emails de mot de passe oublié) : http://localhost:54324
 
-**Créer ton compte admin en local** : s'inscrire sur le site, puis :
+**Créer ton compte admin en local** : s'inscrire sur le site, puis donner le rôle admin à ce compte dans la base locale (un seul admin est autorisé : retirer d'abord le rôle à un éventuel ancien admin) :
 ```bash
-npm run admin:promote -- ton@email.com
+docker exec supabase_db_lyonpanel psql -U postgres -c "update public.profiles set is_admin=true where id=(select id from auth.users where email='ton@email.com');"
 ```
-Ensuite activer le code à 6 chiffres sur `http://localhost:3000/<ADMIN_PATH>/login`.
+Ensuite activer le code à 6 chiffres sur `http://localhost:3100/<ADMIN_PATH>` (la page de connexion de l'admin est directement à cette adresse, pas de `/login`).
+
+**Deux appareils pour le code à 6 chiffres (obligatoire).** Il faut enrôler les 2 appareils (téléphone et gestionnaire de mots de passe) avant toute utilisation de l'adresse admin. Après l'enrôlement, mettre `ADMIN_ENROLL_OPEN=false`.
+
+**À la mise en ligne** : vérifier `GET /api/v1/admin/mfa/status` : `verified = 2`. Sinon, ne pas ouvrir l'admin.
+
+**Sortie de secours si l'admin est verrouillé** : 5 mauvais codes (ou mots de passe) bloquent l'accès 15 minutes ; il suffit d'attendre 15 minutes. Si un appareil est perdu, ou en cas de blocage durable : réinitialisation par un script local avec la clé `service_role` (supprimer les appareils de l'admin dans Supabase Auth, puis les enrôler de nouveau avec `ADMIN_ENROLL_OPEN` laissé ouvert). La clé `service_role` ne quitte jamais ta machine.
 
 ## 4. Services externes à préparer
 
 | Service | Étape | Quand |
 |---|---|---|
 | **Bot Telegram** | @BotFather → `/newbot` → copier le jeton ; envoyer un message au bot ; ouvrir `https://api.telegram.org/bot<JETON>/getUpdates` et noter `chat.id` | Avant l'étape « alertes » |
-| **SasPay** | Compte marchand, clés de test, URL de webhook (en local : tunnel `cloudflared tunnel --url http://localhost:3000`) | Avant l'étape « recharge » |
+| **SasPay** | Compte marchand, clés de test, URL de webhook (en local : tunnel `cloudflared tunnel --url http://localhost:3100`) | Avant l'étape « recharge » |
 | **Fournisseur** | Peakerr, API v2, `POST https://peakerr.com/api/v2`, actions `services` / `add` / `status` / `refill` / `refill_status` / `cancel` / `balance`, prix et solde en USD, clé dans le champ `key`. Mettre la clé seulement dans Vercel Production | Avant le test final |
 | **Supabase** | 2 projets : `lyonpanel-test` et `lyonpanel-prod` ; SMTP Hostinger dans Auth → SMTP | Avant la 1re mise en ligne |
 | **Cloudflare** | Acheter `lyonpanel.com`, créer un widget Turnstile | Avant la 1re mise en ligne |
@@ -130,7 +137,6 @@ Ensuite activer le code à 6 chiffres sur `http://localhost:3000/<ADMIN_PATH>/lo
 | `npm run db:reset` | Réinitialiser la base locale |
 | `npm run db:migration -- nom` | Créer une migration |
 | `npm run db:types` | Régénérer `src/server/db/types.ts` |
-| `npm run admin:promote -- email` | Donner le rôle admin en local |
 
 ## 5 bis. Email de réinitialisation du mot de passe (Supabase)
 
@@ -140,7 +146,7 @@ Ensuite activer le code à 6 chiffres sur `http://localhost:3000/<ADMIN_PATH>/lo
 - En local, `supabase/config.toml` et `supabase/templates/recovery.html` règlent cela. Le modèle choisit la langue du lien avec `{{ .Data.language }}` (la langue enregistrée à l'inscription dans les métadonnées de l'utilisateur) ; le mail est bilingue (français puis anglais dans le corps, sujet bilingue, car le sujet ne peut pas dépendre de la langue) ; le lien mène à la page de la bonne langue.
 - **Réglages Authentication du tableau de bord Supabase hébergé (Preview et Production)**, identiques à `config.toml` : « Allow new users to sign up » = **désactivé** (les comptes se créent par notre route, via `admin.createUser`), longueur minimale du mot de passe = **8**, « Secure password change » = **activé**.
 
-- **Tests de navigateur (Playwright)** : le port se règle avec `PLAYWRIGHT_PORT` (3000 par défaut), par exemple `PLAYWRIGHT_PORT=3190 npx playwright test` si le port 3000 est pris.
+- **Tests de navigateur (Playwright)** : le port se règle avec `PLAYWRIGHT_PORT` (3100 par défaut), par exemple `PLAYWRIGHT_PORT=3190 npx playwright test` si le port 3100 est pris.
 - **CLI Supabase 3** : selon la version, `supabase start` ou `status` refuse `[inbucket]` et veut `[local_smtp]`. Si cela arrive, tester sur une copie temporaire du dossier `supabase` avec cette section renommée ; la version 3.0.0 testée ici accepte encore `[inbucket]`.
 - **Captcha vérifié par Supabase** : `[auth.captcha]` de `config.toml` lit `SUPABASE_AUTH_CAPTCHA_SECRET`. Local : `SUPABASE_AUTH_CAPTCHA_SECRET=1x0000000000000000000000000000000AA supabase start` (clé de test publique). Hébergé : Authentication → Attack Protection → **Enable CAPTCHA protection** (Turnstile) avec la clé secrète de production.
 - **Réinitialisation sans brûler le lien** : le lien est échangé une seule fois (cookie httpOnly `lp_recovery` + cookies de session limités à 15 min) ; un mot de passe refusé laisse le même lien utilisable pendant 15 min. Aucune migration.

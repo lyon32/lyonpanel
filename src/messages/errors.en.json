@@ -15,6 +15,7 @@
   "PHONE_TAKEN": "This phone number is already in use.",
   "IDEMPOTENCY_CONFLICT": "This request was already sent with different content.",
   "ALREADY_REFUNDED": "This order has already been refunded.",
+  "ALREADY_CANCELLED": "This referral bonus has already been cancelled.",
   "PAYMENT_NOT_PAYABLE": "This payment failed and cannot be credited.",
   "INSUFFICIENT_BALANCE": "You are {missing_xaf} XAF short for this order. Please top up your account.",
   "QUANTITY_OUT_OF_RANGE": "The quantity must be between {min} and {max}.",

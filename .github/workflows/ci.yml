@@ -24,6 +24,7 @@ jobs:
       CRON_SECRET: ci-faux-secret-cron-test
       # Secret des routes de test (faux fournisseur) : valeur de test, pas un secret
       TEST_ROUTE_SECRET: ci-faux-secret-routes-test
+      ADMIN_PATH: ci-faux-chemin-admin-test
     steps:
       - uses: actions/checkout@v5
         with:

@@ -148,6 +148,7 @@ paths:
                 type: object
                 properties:
                   balance_xaf: { type: integer }
+                  debt_xaf: { type: integer, minimum: 0, description: 'max(0, -balance_xaf)' }
                   total_recharged_xaf: { type: integer }
                   discount_pct: { type: number }
                   next_discount_threshold_xaf: { type: [integer, 'null'] }
@@ -567,8 +568,7 @@ paths:
       tags: [admin]
       security: [ { session: [], adminMfa: [] } ]
       parameters:
-        - { name: from, in: query, schema: { type: string, format: date } }
-        - { name: to, in: query, schema: { type: string, format: date } }
+        - { name: range, in: query, schema: { type: string, enum: [today, 7d, 30d], default: 7d } }
       responses:
         '200':
           description: Statistiques

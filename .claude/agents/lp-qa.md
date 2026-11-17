@@ -27,7 +27,7 @@ Tu ne modifies **aucun** fichier du projet. Tu écris seulement ton rapport et t
 
 ## 5. Méthode, pas à pas
 1. **Dépendances** : `lp-coder` (et `lp-designer` si prévu) ont rendu `TERMINÉ`. Sinon `BLOQUÉ`.
-2. **Démarrer** : base locale (`npx supabase start`), `npm run dev` en arrière-plan, attendre que `http://localhost:3000/fr` réponde. faux fournisseur et SasPay test uniquement.
+2. **Démarrer** : base locale (`npx supabase start`), `npm run dev` en arrière-plan, attendre que `http://localhost:3100/fr` réponde. faux fournisseur et SasPay test uniquement.
 3. **Écrire un script Playwright temporaire** dans le dossier de travail temporaire (jamais dans `tests/`) qui ouvre 2 contextes :
    - **Téléphone** : 360 × 740, User-Agent Android, réseau limité (~1,6 Mbit/s, 150 ms), processeur ralenti ×4 ;
    - **Ordinateur** : 1366 × 768.

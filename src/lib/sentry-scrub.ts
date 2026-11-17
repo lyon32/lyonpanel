@@ -21,7 +21,10 @@ const PHONE = /(?:\+|00)?\d(?:[\s.\-()]*\d){7,}/g;
 const ALLOWED_HEADERS = new Set(['user-agent', 'content-type', 'accept', 'accept-language']);
 
 function maskString(value: string): string {
-  return value.replace(EMAIL, '[email]').replace(PHONE, '[téléphone]');
+  // L'adresse secrète de l'admin ne doit jamais partir chez Sentry (url, transaction, breadcrumbs…).
+  const adminPath = process.env.ADMIN_PATH;
+  const hidden = adminPath ? value.split(adminPath).join('[admin]') : value;
+  return hidden.replace(EMAIL, '[email]').replace(PHONE, '[téléphone]');
 }
 
 // Parcourt récursivement sans muter l'entrée.
