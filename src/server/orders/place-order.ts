@@ -24,13 +24,15 @@ export type Order = {
   status: OrderStatus;
   start_count: number | null;
   remains: number | null;
+  /** Vrai tant que rien n'a démarré chez le fournisseur et que le service accepte l'annulation. */
+  cancellable: boolean;
   created_at: string;
   updated_at: string;
 };
 
 export function toPublicOrder(
   row: OrderRow,
-  service: Pick<ServiceRow, 'id' | 'name_fr' | 'platform'>,
+  service: Pick<ServiceRow, 'id' | 'name_fr' | 'platform'> & { cancel?: boolean },
 ): Order {
   return {
     id: row.id,
@@ -46,6 +48,11 @@ export function toPublicOrder(
     status: row.status,
     start_count: row.start_count,
     remains: row.remains,
+    cancellable:
+      row.status === 'in_progress' &&
+      service.cancel === true &&
+      (row.start_count ?? 0) === 0 &&
+      (row.remains === null || row.remains >= row.quantity),
     created_at: row.created_at,
     updated_at: row.updated_at,
   };

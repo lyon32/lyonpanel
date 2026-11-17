@@ -196,6 +196,7 @@ export type Database = {
       orders: {
         Row: {
           alerted_at: string | null;
+          cancel_requested_at: string | null;
           charged_xaf: number;
           comments: string[] | null;
           cost_usd: number | null;
@@ -218,6 +219,7 @@ export type Database = {
         };
         Insert: {
           alerted_at?: string | null;
+          cancel_requested_at?: string | null;
           charged_xaf: number;
           comments?: string[] | null;
           cost_usd?: number | null;
@@ -240,6 +242,7 @@ export type Database = {
         };
         Update: {
           alerted_at?: string | null;
+          cancel_requested_at?: string | null;
           charged_xaf?: number;
           comments?: string[] | null;
           cost_usd?: number | null;
@@ -959,6 +962,7 @@ export type Database = {
         };
         Returns: {
           alerted_at: string | null;
+          cancel_requested_at: string | null;
           charged_xaf: number;
           comments: string[] | null;
           cost_usd: number | null;
@@ -990,6 +994,39 @@ export type Database = {
         Args: { p_admin: string; p_amount: number; p_order: string };
         Returns: {
           alerted_at: string | null;
+          cancel_requested_at: string | null;
+          charged_xaf: number;
+          comments: string[] | null;
+          cost_usd: number | null;
+          created_at: string;
+          discount_pct: number;
+          error: string | null;
+          id: string;
+          idem_key: string;
+          link: string;
+          price_xaf_1000: number;
+          provider_order_id: number | null;
+          quantity: number;
+          remains: number | null;
+          service_id: number;
+          short_id: number;
+          start_count: number | null;
+          status: Database['public']['Enums']['order_status'];
+          updated_at: string;
+          user_id: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'orders';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      refund_canceled_order: {
+        Args: { p_order: string };
+        Returns: {
+          alerted_at: string | null;
+          cancel_requested_at: string | null;
           charged_xaf: number;
           comments: string[] | null;
           cost_usd: number | null;

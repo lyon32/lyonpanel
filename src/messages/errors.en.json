@@ -8,6 +8,7 @@
   "NOT_ADMIN": "This action is not allowed.",
   "FORBIDDEN": "This request is not allowed.",
   "NOT_FOUND": "Page or resource not found.",
+  "ORDER_NOT_CANCELLABLE": "This order can no longer be cancelled: it has already started.",
   "ORDER_NOT_FOUND": "Order not found.",
   "PAYMENT_NOT_FOUND": "Payment not found.",
   "USER_NOT_FOUND": "Customer not found.",

@@ -131,6 +131,7 @@ export default async function DashboardPage({ params }: Props) {
             chargedXaf: o.charged_xaf,
             status: o.status,
             remains: o.remains,
+            cancellable: o.cancellable,
           }))}
         />
       </section>

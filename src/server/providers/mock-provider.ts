@@ -70,6 +70,13 @@ export function createMockProvider(options: MockProviderOptions = {}): ProviderA
       });
       return { order: lastOrder };
     },
+    async cancel(orderId) {
+      const known = orders.get(orderId);
+      // Seule une commande qui n'a pas démarré peut être annulée.
+      if (!known || known.status !== 'Pending') return false;
+      known.status = 'Canceled';
+      return true;
+    },
     async status(ids) {
       const out: Record<number, ProviderStatus> = {};
       for (const id of ids) {

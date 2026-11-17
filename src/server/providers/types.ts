@@ -47,6 +47,9 @@ export const providerStatusSchema = z.object({
 });
 export type ProviderStatus = z.infer<typeof providerStatusSchema>;
 
+// Réponse de `cancel` : une ligne par commande, `cancel` vaut 1 si la demande est acceptée, sinon { error }.
+export const providerCancelSchema = z.array(z.object({ order: numberLike, cancel: z.unknown() }));
+
 export interface ProviderAddInput {
   service: number;
   link: string;
@@ -60,4 +63,6 @@ export interface ProviderApi {
   balance(): Promise<ProviderBalance>;
   add(input: ProviderAddInput): Promise<{ order: number }>;
   status(ids: number[]): Promise<Record<number, ProviderStatus>>;
+  /** Demande d'annulation ; `true` seulement si le fournisseur l'accepte. */
+  cancel(orderId: number): Promise<boolean>;
 }

@@ -221,4 +221,39 @@ test.describe('commande', () => {
     );
     await expect(page.locator('[data-testid="wallet-balance"]')).toContainText(/3\D?845/);
   });
+
+  test('annulation : une commande qui n a pas démarré est annulée et remboursée', async ({
+    page,
+  }) => {
+    const service = await makeService({
+      price_xaf_1000: 1155,
+      cost_usd_1000: 0.385,
+      min_qty: 10,
+      max_qty: 10_000,
+      cancel: true,
+    });
+    const email = await signedUp(page);
+    await fund(email, 5000);
+
+    await fillOrder(page, service.id, '1000');
+    await expect(page.locator('[data-testid="quote-total"]')).toContainText(/1\D?155/);
+    await page.locator('[data-testid="order-submit"]').click();
+    await expect(page.locator('[data-testid="order-result"]')).toHaveAttribute(
+      'data-status',
+      'in_progress',
+      { timeout: 20_000 },
+    );
+    await expect(page.locator('[data-testid="wallet-balance"]')).toContainText(/3\D?845/);
+
+    await page.goto('/fr/commandes');
+    await page.locator('[data-testid="cancel-order"]').click();
+    await page.locator('[data-testid="cancel-confirm"]').click();
+    await expect(page.locator('[data-testid="order-status-badge"]')).toHaveAttribute(
+      'data-status',
+      'refunded',
+      { timeout: 20_000 },
+    );
+    await page.goto('/fr/commander');
+    await expect(page.locator('[data-testid="wallet-balance"]')).toContainText(/5\D?000/);
+  });
 });

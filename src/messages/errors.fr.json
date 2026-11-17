@@ -8,6 +8,7 @@
   "NOT_ADMIN": "Cette action n'est pas autorisée.",
   "FORBIDDEN": "Cette requête n'est pas autorisée.",
   "NOT_FOUND": "Page ou ressource introuvable.",
+  "ORDER_NOT_CANCELLABLE": "Cette commande ne peut plus être annulée : elle a déjà démarré.",
   "ORDER_NOT_FOUND": "Commande introuvable.",
   "PAYMENT_NOT_FOUND": "Paiement introuvable.",
   "USER_NOT_FOUND": "Client introuvable.",

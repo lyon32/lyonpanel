@@ -86,6 +86,21 @@ describe('syncOrderStatuses', () => {
     });
   });
 
+  it('Canceled après une demande d annulation du client : remboursement intégral, une seule fois, sans alerte', async () => {
+    const o = await inProgressOrder(created);
+    await adminClient()
+      .from('orders')
+      .update({ cancel_requested_at: new Date().toISOString() })
+      .eq('id', o.id);
+    const before = await balanceOf(o.userId);
+    answer({ [o.providerOrderId]: { status: 'Canceled', start_count: 0, remains: 1000 } });
+    await syncOrderStatuses();
+    await syncOrderStatuses();
+    expect((await reloadOrder(o.id)).status).toBe('refunded');
+    expect(await balanceOf(o.userId)).toBe(before + 1155);
+    expect(alertsFor(o.id)).toHaveLength(0);
+  });
+
   it.each(['Partial', 'Canceled'])(
     '%s : to_review, une alerte order_failed, aucun remboursement ni écriture de solde',
     async (providerStatus) => {
