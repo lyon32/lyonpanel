@@ -39,7 +39,7 @@ async function paidOrder() {
   const u = await makeUser();
   created.push(u.id);
   const s = await makeService();
-  const o = await makeOrder(u.id, s.id, { charged_xaf: 150, status: 'canceled' });
+  const o = await makeOrder(u.id, s.id, { charged_xaf: 150, status: 'to_review' });
   const { error } = await db.from('wallet_transactions').insert({
     user_id: u.id,
     type: 'order',
@@ -53,7 +53,12 @@ async function paidOrder() {
 }
 
 const refund = (order: string, amount: number, by = adminId) =>
-  db.rpc('refund_order', { p_order: order, p_amount: amount, p_admin: by });
+  db.rpc('refund_order', {
+    p_order: order,
+    p_amount: amount,
+    p_admin: by,
+    p_reason: 'Échec fournisseur',
+  });
 
 describe('refund_order : remboursement', () => {
   it('rembourse la totalité : solde crédité, commande refunded, transaction refund', async () => {
@@ -72,16 +77,15 @@ describe('refund_order : remboursement', () => {
       amount_xaf: 150,
       balance_after_xaf: 150,
       order_id: o.id,
-      ref: `refund:${o.id}`,
       created_by: adminId,
     });
   });
 
-  it('rembourse partiellement : seul le montant demandé est crédité', async () => {
+  it('rembourse partiellement : seul le montant demandé est crédité, la commande reste to_review', async () => {
     const { u, o } = await paidOrder();
     const { data, error } = await refund(o.id, 50);
     expect(error).toBeNull();
-    expect(data.status).toBe('refunded');
+    expect(data.status).toBe('to_review');
     expect((await wallet(u.id)).balance_xaf).toBe(50);
   });
 
@@ -96,17 +100,18 @@ describe('refund_order : remboursement', () => {
     expect(data).toHaveLength(1);
     expect(data![0].actor_id).toBe(adminId);
     expect(data![0].action).toBeTruthy();
-    expect(data![0].details).toMatchObject({ amount_xaf: 120 });
+    expect(data![0].details).toMatchObject({ amount_xaf: 120, reason: 'Échec fournisseur' });
   });
 });
 
 describe('refund_order : refus sans aucun changement', () => {
-  it('refuse ALREADY_REFUNDED après un remboursement partiel', async () => {
+  it('après un partiel, un 2e partiel dans le plafond est accepté puis le total clôture', async () => {
     const { u, o } = await paidOrder();
     expect((await refund(o.id, 50)).error).toBeNull();
-    const { error } = await refund(o.id, 50);
-    expect(error?.message).toContain('ALREADY_REFUNDED');
-    expect((await wallet(u.id)).balance_xaf).toBe(50);
+    expect((await refund(o.id, 50)).error).toBeNull();
+    expect((await wallet(u.id)).balance_xaf).toBe(100);
+    const { data } = await refund(o.id, 50);
+    expect(data.status).toBe('refunded');
   });
 
   it('refuse ALREADY_REFUNDED après un remboursement total', async () => {
@@ -123,7 +128,7 @@ describe('refund_order : refus sans aucun changement', () => {
     expect(error?.message).toContain('AMOUNT_TOO_HIGH');
     expect((await wallet(u.id)).balance_xaf).toBe(0);
     const { data } = await db.from('orders').select('status').eq('id', o.id).single();
-    expect(data!.status).toBe('canceled');
+    expect(data!.status).toBe('to_review');
   });
 
   it("refuse NOT_ADMIN si l'appelant n'est pas administrateur", async () => {
@@ -165,6 +170,7 @@ describe('refund_order : concurrence et droits', () => {
       p_order: o.id,
       p_amount: 150,
       p_admin: adminId,
+      p_reason: 'Test',
     });
     expect(error?.message).toMatch(/permission denied/i);
     expect((await wallet(u.id)).balance_xaf).toBe(0);

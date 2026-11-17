@@ -7,7 +7,7 @@ const h = vi.hoisted(() => ({
   tables: {} as Record<string, unknown>,
   rpc: vi.fn(),
   updates: [] as unknown[],
-  provider: { cancel: vi.fn() },
+  provider: { cancel: vi.fn(), status: vi.fn() },
 }));
 
 function chain(table: string, op: { update: boolean }) {
@@ -54,11 +54,14 @@ beforeEach(() => {
   h.updates.length = 0;
   h.rpc.mockReset().mockResolvedValue({ data: {}, error: null });
   h.provider.cancel.mockReset().mockResolvedValue(true);
+  h.provider.status
+    .mockReset()
+    .mockResolvedValue({ 555: { status: 'Pending', start_count: 0, remains: 10 } });
   h.tables = { orders: order(), services: { cancel: true } };
 });
 
 describe('cancelOrder', () => {
-  it('commande pas démarrée : le fournisseur accepte, remboursement intégral', async () => {
+  it('fournisseur « Pending » : le fournisseur accepte, remboursement intégral', async () => {
     await expect(cancelOrder('u1', ID)).resolves.toEqual({ refunded: true });
     expect(h.provider.cancel).toHaveBeenCalledWith(555);
     expect(h.rpc).toHaveBeenCalledWith('refund_canceled_order', { p_order: ID });
@@ -66,6 +69,13 @@ describe('cancelOrder', () => {
 
   it('commande déjà démarrée (reste < quantité) : refusée, aucun appel fournisseur, aucun remboursement', async () => {
     h.tables.orders = order({ remains: 6, start_count: 100 });
+    await expect(cancelOrder('u1', ID)).rejects.toMatchObject({ code: 'ORDER_NOT_CANCELLABLE' });
+    expect(h.provider.cancel).not.toHaveBeenCalled();
+    expect(h.rpc).not.toHaveBeenCalled();
+  });
+
+  it('fournisseur « In progress » (même sans rien livré) : refusée, aucun appel cancel ni remboursement', async () => {
+    h.provider.status.mockResolvedValue({ 555: { status: 'In progress', remains: 10 } });
     await expect(cancelOrder('u1', ID)).rejects.toMatchObject({ code: 'ORDER_NOT_CANCELLABLE' });
     expect(h.provider.cancel).not.toHaveBeenCalled();
     expect(h.rpc).not.toHaveBeenCalled();
