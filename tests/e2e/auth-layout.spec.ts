@@ -395,6 +395,8 @@ test.describe('bascule immédiate, indépendante du réseau', () => {
       .toBeGreaterThan(cardLeft + 400);
     // Le second clic attend la fin de la première navigation : sinon la seconde est annulée par la première.
     await expect(page).toHaveURL(/\/fr\/inscription/, { timeout: 15_000 });
+    // Le panneau ignore tout clic pendant le glissement + 100 ms (auth-shell.tsx, lockUntil) : on laisse passer ce délai.
+    await page.waitForTimeout(400);
     await page.locator('.lp-auth-panel a').click();
     await expect.poll(left, { timeout: 5000 }).toBeGreaterThan(cardLeft + 500);
     await expect
