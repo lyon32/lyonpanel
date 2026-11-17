@@ -663,6 +663,7 @@ paths:
       security: [ { session: [], adminMfa: [] } ]
       parameters:
         - { name: status, in: query, schema: { $ref: '#/components/schemas/OrderStatus' } }
+        - { name: q, in: query, description: "Numéro de commande LyonPanel ou du fournisseur, 1 à 9 chiffres (à valider par le propriétaire)", schema: { type: string, pattern: '^[0-9]{1,9}$' } }
         - $ref: '#/components/parameters/Limit'
         - $ref: '#/components/parameters/Cursor'
       responses:

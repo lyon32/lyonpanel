@@ -1,6 +1,6 @@
 # Plan — Phase 12 : Admin (2) — commandes, services, réglages, tickets
 
-Branche : `feat/phase-12-admin-2` (depuis `main`, f90c0c1). Statut : **plan écrit le 2026-11-17, en attente du « go » du propriétaire pour lancer l'équipe**.
+Branche : `feat/phase-12-admin-2` (depuis `main`, f90c0c1). Statut : **faite le 2026-11-17, en attente de validation du propriétaire** (code commité, contrôles passés, bilan : `docs/reports/phase-12/bilan.md`).
 
 ## Objectif (ROADMAP.md)
 Commandes `to_review` : rembourser (total/partiel), renvoyer, clôturer. Services : activer, renommer, marge par service. Réglages : taux, marges, minimum, seuils. Tickets : répondre, fermer. Journal d'audit.
@@ -37,13 +37,13 @@ Accueil et pages publiques (phase 14), mise en ligne (13), vrais paiements et vr
 ## Tâches (ordre de TEAM.md)
 | # | Tâche | Agent | Statut |
 |---|---|---|---|
-| 12.0 | Plan, décisions, CLAUDE.md et ROADMAP à jour | chef de projet | en cours |
-| 12.1 | Tests d'abord : audit atomique, remboursement (total, partiel, double), renvoi confirmé unique, clôture, services, réglages, tickets, garde 404/origine, un seul admin | lp-tester | à faire |
-| 12.2 | Migration : fonction d'audit atomique, contrainte un seul admin, remboursements partiels cumulés, réglages bornés, journal des services | lp-db | à faire |
-| 12.3 | Serveur : `/admin/orders*`, `/admin/services*`, `/admin/settings`, `/admin/tickets*`, `/admin/audit`, `/admin/payments`, garde avant origine (lots A commandes, B services+réglages, C tickets+audit) | lp-coder ×3 | à faire |
-| 12.4 | Écrans admin : commandes, services, réglages, tickets, journal (mobile d'abord, FR/EN) | lp-coder puis lp-designer | à faire |
-| 12.5 | Contrôles : relecture, QA navigateur, sécurité, design | lp-reviewer ∥ lp-qa ∥ lp-security | à faire |
-| 12.6 | Rapports, bilan, ROADMAP, CHANGELOG, Obsidian | lp-reporter | à faire |
+| 12.0 | Plan, décisions, CLAUDE.md et ROADMAP à jour | chef de projet | rapportée |
+| 12.1 | Tests d'abord : audit atomique, remboursement (total, partiel, double), renvoi confirmé unique, clôture, services, réglages, tickets, garde 404/origine, un seul admin | lp-tester | rapportée |
+| 12.2 | Migration : fonction d'audit atomique, contrainte un seul admin, remboursements partiels cumulés, réglages bornés, journal des services | lp-db | rapportée |
+| 12.3 | Serveur : `/admin/orders*`, `/admin/services*`, `/admin/settings`, `/admin/tickets*`, `/admin/audit`, `/admin/payments`, garde avant origine (lots A commandes, B services+réglages, C tickets+audit) | lp-coder ×3 | rapportée |
+| 12.4 | Écrans admin : commandes, services, réglages, tickets, journal (mobile d'abord, FR/EN) | lp-coder puis lp-designer | rapportée |
+| 12.5 | Contrôles : relecture, QA navigateur, sécurité, design | lp-reviewer ∥ lp-qa ∥ lp-security | rapportée |
+| 12.6 | Rapports, bilan, ROADMAP, CHANGELOG, Obsidian | lp-reporter | rapportée |
 
 Les agents `lp-seo` ne servent pas : toutes les pages sont en `noindex`.
 

@@ -2,6 +2,27 @@
 
 Écrit pour le propriétaire. Une section par phase. Seul le propriétaire valide une phase.
 
+## Phase 12 — Admin (2) : commandes, services, réglages (2026-11-17) — faite, en attente de validation
+
+### Nouveau
+- Statuts alignés sur le fournisseur : « en attente » (le client peut annuler) et « en cours » (il ne peut plus). Alerte si une commande n'est plus trouvée chez le fournisseur.
+- Commandes admin : remboursement total ou partiel (jamais plus que le montant payé), annulation envoyée au fournisseur, renvoi confirmé une seule fois, clôture sans remboursement, recherche par numéro (LyonPanel ou fournisseur).
+- Services : activer ou couper, changer la marge avec aperçu de l'ancien et du nouveau prix, textes personnalisés (400 caractères max).
+- Noms et descriptions des services écrits par nous, plus ceux du fournisseur.
+- Réglages avec bornes, tickets, journal et paiements dans l'admin. Numéro fournisseur visible dans l'admin seulement.
+
+### Base de données
+- Migration admin de la phase 12 : remboursements cumulés, actions admin et audit écrits en une seule opération. Appliquée en local seulement ; à appliquer en production en phase 15 avec celles des phases 9 à 11.
+
+### Sécurité
+- Contrôle accepté, aucune faille Critique ou Haute. 3 remarques : un remboursement depuis un 2e onglet pendant un renvoi (Basse), répondre à un ticket fermé le rouvre (Basse), `npm audit` sur `picomatch` (Moyenne, hors phase).
+
+### Chiffres
+- 1 843 tests unitaires verts (phase 11 : 1 670), 308 tests de base de sécurité verts, Playwright accès admin 25 sur 25. Lint : 0 erreur. Types et build OK.
+
+### À surveiller
+- CI GitHub non lue. Les correctifs de relecture et de QA n'ont pas été re-contrôlés par les agents. Admin en français seulement. Clé du fournisseur à régénérer.
+
 ## Phase 11 — Admin (1) : accès, stats, clients (2026-11-16) — faite, en attente de validation
 
 ### Nouveau

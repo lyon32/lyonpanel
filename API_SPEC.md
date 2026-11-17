@@ -247,7 +247,7 @@ Accès : admin + MFA (`aal2`). Toute personne non admin reçoit **404**. Chaque 
 | PATCH | `/admin/users/{id}` | `{status?, blocked_reason?, custom_discount_pct?}` |
 | POST | `/admin/users/{id}/notes` | `{body}` → 201 |
 | POST | `/admin/users/{id}/adjust` | `{amount_xaf, note}` → ajustement manuel du solde |
-| GET | `/admin/orders?status=to_review` | liste paginée (avec coût fournisseur et bénéfice) |
+| GET | `/admin/orders?status=to_review&q=` | liste paginée (avec coût fournisseur et bénéfice) ; `q` = recherche par numéro, 1 à 9 chiffres : numéro de commande LyonPanel ou numéro chez le fournisseur (à valider par le propriétaire) |
 | POST | `/admin/orders/{id}/refund` | `{amount_xaf}` → remboursement total ou partiel |
 | POST | `/admin/orders/{id}/resend` | renvoie la commande à fournisseur |
 | POST | `/admin/orders/{id}/close` | `to_review` → `completed` sans remboursement |
