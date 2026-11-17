@@ -132,6 +132,7 @@ Le solde ne se modifie **que** par les fonctions SQL (§6), qui écrivent aussi 
 | platform | text | non null (tiktok, instagram, facebook…) |
 | category | text | abonnés, likes, vues… |
 | name_fr | text | reconstruit (sans prix) |
+| name_en | text | null ; nom anglais (phase 12), modifiable par l'admin ; exposé par `services_public` |
 | provider_name | text | nom d'origine (admin seulement) |
 | provider_type | text | Default, Custom Comments… |
 | cost_usd_1000 | numeric(12,4) | coût fournisseur |
@@ -175,6 +176,9 @@ Le solde ne se modifie **que** par les fonctions SQL (§6), qui écrivent aussi 
 | start_count / remains | int | null |
 | idem_key | text | **unique** |
 | error | text | null |
+| cancel_requested_at | timestamptz | null ; posée par la demande d'annulation du client (jamais par l'admin) |
+| resent_at | timestamptz | null ; (phase 12) posée au renvoi manuel, jamais effacée : un seul renvoi par commande |
+| cancel_claimed_at | timestamptz | null ; (phase 12) réservation de 2 min de l'annulation admin (anti double clic) |
 | created_at / updated_at | timestamptz | |
 
 ### favorites
@@ -220,7 +224,7 @@ email text PK · added_at. Utilisée seulement si le réglage `limited_launch` =
 key uuid · user_id uuid · route text · request_hash text · response jsonb · created_at. PK (user_id, key). Même clé + contenu différent → `409 IDEMPOTENCY_CONFLICT`. Purge après 24 h.
 
 ### audit_log — actions sensibles
-id bigserial PK · actor_id uuid null · action text · target_table text · target_id text · details jsonb · created_at.
+id bigserial PK · actor_id uuid null · action text · target_table text · target_id text · details jsonb · created_at. Non modifiable ni supprimable. Index `(action, id desc)` pour le filtre de l'écran admin (phase 12). Actions admin : `refund_order`, `cancel_order`, `resend_order`, `close_order`, `update_service`, `update_setting`, `reply_ticket`, `update_ticket`, `update_user`, `add_note`, `admin_adjust`, `cancel_referral_bonus`.
 
 ### price_multipliers — multiplicateur par catégorie
 | Colonne | Type |
@@ -270,11 +274,13 @@ Colonnes cachées au client : `orders.cost_usd`, `orders.error`, `orders.provide
 |---|---|
 | `credit_payment(payment_id)` | si non `succeeded` (un paiement `failed` est refusé : `PAYMENT_NOT_PAYABLE`) et si `net_amount` = montant demandé : passe `succeeded`, crédite, journalise, augmente `total_recharged_xaf`, verse le bonus parrain si 1re recharge |
 | `place_order(user, service, link, qty, comments, idem_key)` | verrouille le portefeuille, recalcule prix + remise (total arrondi au multiple de 5 XAF supérieur, minimum 5 : `ceil(prix_1000 × quantité × (100 − remise) / 100 000 / 5) × 5` ; plafond 24 h = min(`settings.daily_order_cap_xaf`, `daily_spend_limit_xaf`) ; commentaires validés (`COMMENTS_INVALID`)), vérifie statut client, min/max, solde ; débite ; crée la commande |
-| `refund_order(order_id, amount, admin_id)` | un seul remboursement par commande, total ou partiel, qui clôt la commande (`refunded`) : crédite, journalise, écrit `audit_log` |
+| `refund_order(order, amount, admin, reason, idem_key = null)` | (phase 12) seule `to_review` est remboursable. Plafond = `floor(charged_xaf × remains / quantity)` (remains null : `charged_xaf`) moins le déjà rendu ; plusieurs partiels possibles, la commande passe `refunded` seulement quand le plafond est atteint ; crédite, ligne `refund` (note `refund_by_admin`, ref `refund:<order>:<uuid>` ou `refund:<order>:k:<clé>`), `audit_log` avec motif et cumul ; même `idem_key` rejouée = aucun second crédit ; erreurs `NOT_ADMIN`, `REASON_REQUIRED`, `ORDER_NOT_FOUND`, `ALREADY_REFUNDED`, `ORDER_NOT_REFUNDABLE`, `AMOUNT_TOO_HIGH` |
 | `admin_adjust(user, amount, note, admin_id)` | ajustement manuel + audit ; un retrait ne peut pas passer sous 0 (`INSUFFICIENT_BALANCE`), un ajout sur une dette est permis |
 | `cancel_referral_bonus(reward, reason, admin_id)` | (phase 11) retire le bonus au parrain (le solde peut passer négatif), ligne `referral_cancel:<reward_id>`, marque le bonus annulé, audit ; erreurs `NOT_ADMIN`, `NOTE_REQUIRED`, `REWARD_NOT_FOUND`, `ALREADY_CANCELLED` ; `service_role` seul |
 | `verify_user_password(user, password)` | renvoie `true` si le mot de passe correspond (compte non supprimé), sinon `false` ; `service_role` seul ; sert à `DELETE /me` (pas de captcha) |
 | `anonymize_user(user_id)` | email/téléphone/messages → null, `status='deleted'`, supprime pièces jointes, favoris, sessions, jetons, mot de passe et sujet des tickets, garde commandes/paiements |
+
+**Fonctions admin de la phase 12** (toutes `security definer`, `service_role` seul, garde `assert_admin`, trace `audit_log` dans la même transaction) : `claim_order_cancel` / `release_order_cancel` / `cancel_order(order, admin, reason)` (pending ou in_progress → to_review, ne pose pas `cancel_requested_at`, erreurs `ORDER_NOT_CANCELLABLE`, `ACTION_IN_PROGRESS`) ; `claim_order_resend(order, admin, reason)` + `resend_order(order, admin, reason, provider_order_id)` (to_review non remboursée, une seule fois : `ALREADY_RESENT`, `ORDER_NOT_RESENDABLE`) ; `close_order` (to_review → completed, `ORDER_NOT_CLOSABLE`) ; `update_service(service, admin, changes)` (active, name_fr, name_en, sort_order, multiplier ≤ 50 ; prix recalculé en base `ceil(coût × taux × multiplicateur / 5) × 5`, historique de prix) ; `update_setting(changes, admin)` (clés et bornes fixées, une trace par clé, `UNKNOWN_SETTING`, `INVALID_SETTING`) ; `reply_ticket(ticket, body, admin)` (message admin + `answered`) ; `update_ticket(ticket, status open|closed, admin)` ; `update_user(user, admin, changes)` et `add_note(user, admin, body)` (reprise atomique de la phase 11).
 
 Remise appliquée = la plus grande entre la remise auto 10 % (si seuil atteint) et `custom_discount_pct` ; elles ne s'additionnent pas (mon choix).
 
