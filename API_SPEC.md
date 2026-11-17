@@ -214,7 +214,7 @@ Correspondance avec la base : `amount_xaf` (API) = `payments.credited_xaf` ; `fe
 | GET | `/api/cron/payments` | `CRON_SECRET` | Rattrapage des paiements en attente (5 min) |
 | GET | `/api/cron/orders` | `CRON_SECRET` | Statuts fournisseur par lots de 100 (10 min) |
 | GET | `/api/cron/provider-balance` | `CRON_SECRET` | Relevé du solde fournisseur + alerte sous le seuil (1 h) |
-| GET | `/api/cron/services` | `CRON_SECRET` | Sync catalogue + solde fournisseur (1 h) |
+| GET | `/api/cron/services` | `CRON_SECRET` | Sync catalogue (nouveaux services, prix, alerte saut de prix) (1 h) |
 
 ## 8. Endpoints admin (`/api/v1/admin/*`)
 
