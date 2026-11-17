@@ -46,13 +46,27 @@ export const sessionStatusSchema = z.object({
   status: saspayStatusSchema,
   transaction: z.object({ id: z.string().min(1) }).nullish(),
 });
-export const verificationSchema = z.object({
-  status: saspayStatusSchema,
-  net_amount: z.string(),
-  fee: z.string(),
-  charged: z.string(),
-  currency: z.string(),
-});
+// Réponse réelle de /payments/{id}/verify/ : client_fee et debited_amount ; fee et charged
+// (noms du webhook) restent acceptés. Sans l'un des deux, la vérification échoue.
+export const verificationSchema = z
+  .object({
+    status: saspayStatusSchema,
+    net_amount: z.string(),
+    fee: z.string().optional(),
+    client_fee: z.string().optional(),
+    charged: z.string().optional(),
+    debited_amount: z.string().optional(),
+    currency: z.string(),
+  })
+  .transform((v, ctx) => {
+    const fee = v.fee ?? v.client_fee;
+    const charged = v.charged ?? v.debited_amount;
+    if (fee === undefined || charged === undefined) {
+      ctx.addIssue({ code: 'custom', message: 'frais ou montant débité manquant' });
+      return z.NEVER;
+    }
+    return { status: v.status, net_amount: v.net_amount, fee, charged, currency: v.currency };
+  });
 export const ratesSchema = z.array(z.object({ network: z.string(), fee_pct: z.coerce.number() }));
 
 // Tolérance de l'horodatage d'un webhook (docs/06-saspay.md §3).

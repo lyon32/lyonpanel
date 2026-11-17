@@ -150,6 +150,30 @@ describe('client SasPay : lectures', () => {
     expect(String(f.mock.calls[0]![0])).toBe(`${BASE}/payments/txn_9/verify/`);
   });
 
+  // Réponse réelle de SasPay (relevée en production le 2026-11-17) : client_fee et debited_amount.
+  it('verifyPayment lit aussi client_fee et debited_amount (réponse réelle de SasPay)', async () => {
+    const f = vi.fn<typeof fetch>(async () =>
+      ok({
+        id: 'txn_9',
+        status: 'SUCCESS',
+        requested_amount: '200.00',
+        net_amount: '200.00',
+        client_fee: '10.00',
+        debited_amount: '210.00',
+        currency: 'XAF',
+        fee_charge_mode: 'ADD_ON',
+      }),
+    );
+    const res = await client(f).verifyPayment('txn_9');
+    expect(res).toEqual({
+      status: 'SUCCESS',
+      netAmount: '200.00',
+      fee: '10.00',
+      charged: '210.00',
+      currency: 'XAF',
+    });
+  });
+
   it('refuse un statut inconnu (réponse invalide -> PROVIDER_ERROR)', async () => {
     const f = vi.fn<typeof fetch>(async () =>
       ok({
