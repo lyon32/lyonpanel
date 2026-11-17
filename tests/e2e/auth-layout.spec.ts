@@ -385,15 +385,22 @@ test.describe('bascule immédiate, indépendante du réseau', () => {
     const cardLeft = await page
       .locator('.lp-auth-shell main > div')
       .evaluate((el) => el.getBoundingClientRect().left);
-    expect(await left()).toBeGreaterThan(cardLeft + 500);
+    // Sous charge (CI), le panneau peut encore se placer : on attend sa position finale.
+    await expect.poll(left, { timeout: 5000 }).toBeGreaterThan(cardLeft + 500);
     await page.locator('.lp-auth-panel a').click();
     await expect.poll(left, { timeout: 5000 }).toBeLessThan(cardLeft + 2);
     // Le formulaire d'inscription est à droite du panneau.
-    const form = await page.locator('input[name="email"]').boundingBox();
-    expect(form?.x ?? 0).toBeGreaterThan(cardLeft + 400);
+    await expect
+      .poll(async () => (await page.locator('input[name="email"]').boundingBox())?.x ?? 0)
+      .toBeGreaterThan(cardLeft + 400);
+    // Le second clic attend la fin de la première navigation : sinon la seconde est annulée par la première.
+    await expect(page).toHaveURL(/\/fr\/inscription/, { timeout: 15_000 });
+    // Le panneau ignore tout clic pendant le glissement + 100 ms (auth-shell.tsx, lockUntil) : on laisse passer ce délai.
+    await page.waitForTimeout(400);
     await page.locator('.lp-auth-panel a').click();
     await expect.poll(left, { timeout: 5000 }).toBeGreaterThan(cardLeft + 500);
-    const login = await page.locator('input[name="identifier"]').boundingBox();
-    expect(login?.x ?? 9999).toBeLessThan(cardLeft + 400);
+    await expect
+      .poll(async () => (await page.locator('input[name="identifier"]').boundingBox())?.x ?? 9999)
+      .toBeLessThan(cardLeft + 400);
   });
 });
