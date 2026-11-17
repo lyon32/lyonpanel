@@ -431,7 +431,7 @@
     "quantityRange": "Quantité par commande",
     "options": "Options",
     "order": "Commander",
-    "orderSoon": "La commande en ligne arrive bientôt.",
+    "orderHelp": "Connectez-vous ou créez un compte, rechargez votre solde, puis commandez.",
     "networkIntros": {
       "instagram": "Instagram sert de vitrine à beaucoup de commerçants africains. Ici tu trouves des abonnés, des j'aime et des vues pour tes publications et tes Reels, avec le prix pour 1 000 affiché en XAF.",
       "tiktok": "Sur TikTok, les premières vues décident souvent du sort d'une vidéo. Choisis des abonnés, des j'aime ou des vues, regarde la commande minimum, puis paie depuis ton solde en Mobile Money.",
@@ -520,8 +520,15 @@
     "newOrder": "Choisir un autre service",
     "noService": "Choisissez un service",
     "unknownService": "Ce service n’existe pas",
-    "noServiceHelp": "Ouvrez le catalogue, choisissez un service, puis revenez ici pour commander.",
+    "noServiceHelp": "Cliquez sur un réseau, cherchez, puis choisissez un service. Le prix s’affiche avant de commander.",
     "browseServices": "Voir les services",
+    "pickerNetworks": "Réseaux",
+    "pickerTypes": "Type de service",
+    "pickerAll": "Tous",
+    "pickerCount": "{count, plural, one {# service} other {# services}}",
+    "pickerSearchLabel": "Rechercher un service",
+    "pickerSearchPlaceholder": "Nom ou numéro du service",
+    "pickerNoResults": "Aucun service ne correspond",
     "cardTitle": "À propos du service",
     "pricePer1000": "Prix pour 1 000",
     "minimum": "Quantité minimum",
@@ -529,7 +536,10 @@
     "howTitle": "Comment commander",
     "how1": "Collez le lien. Le profil ne doit pas être privé.",
     "how2": "Entrez la quantité et vérifiez le total.",
-    "how3": "Confirmez : le montant est débité de votre solde."
+    "how3": "Confirmez : le montant est débité de votre solde.",
+    "pickerAllTypes": "Toutes les catégories",
+    "pickerChooseService": "Choisissez un service",
+    "pickerTruncated": "{shown} services affichés sur {total}. Précisez la recherche pour voir les autres."
   },
   "orderTracking": {
     "status_pending": "En attente d’envoi",

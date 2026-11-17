@@ -197,4 +197,28 @@ test.describe('commande', () => {
     const box = await submit.boundingBox();
     expect(box!.height).toBeGreaterThanOrEqual(44);
   });
+
+  test('depuis l’espace client : réseau, service, devis, commande, solde débité, sans passer par le site public', async ({
+    page,
+  }) => {
+    const service = await newService();
+    const email = await signedUp(page);
+    await fund(email, 5000);
+
+    // Le catalogue est en cache 5 min : un service de test tout neuf n'y est pas ; on l'ouvre par son numéro.
+    await page.goto(`/fr/commander?service=${service.id}`);
+    await expect(page.locator('[data-testid="order-workbench"]')).toBeVisible();
+    await expect(page.locator('#wb-service')).toHaveValue(String(service.id));
+    await expect(page).toHaveURL(/\/fr\/commander\?service=/);
+    await page.locator('[data-testid="order-link"]').fill(LINK);
+    await page.locator('[data-testid="order-quantity"]').fill('1000');
+    await expect(page.locator('[data-testid="quote-total"]')).toContainText(/1\D?155/);
+    await page.locator('[data-testid="order-submit"]').click();
+    await expect(page.locator('[data-testid="order-result"]')).toHaveAttribute(
+      'data-status',
+      'in_progress',
+      { timeout: 20_000 },
+    );
+    await expect(page.locator('[data-testid="wallet-balance"]')).toContainText(/3\D?845/);
+  });
 });

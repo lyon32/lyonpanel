@@ -278,7 +278,7 @@ export function OrderForm({ service, currency, usdXafRate, balanceXaf, initialQu
           ) : null}
           {finished ? (
             <Link
-              href={{ pathname: '/services' }}
+              href={{ pathname: '/order' }}
               className="border-gris-200 text-encre hover:bg-gris-50 inline-flex min-h-11 items-center justify-center rounded-lg border px-4 text-base font-semibold"
             >
               {t('newOrder')}

@@ -431,7 +431,7 @@
     "quantityRange": "Quantity per order",
     "options": "Options",
     "order": "Order",
-    "orderSoon": "Online ordering is coming soon.",
+    "orderHelp": "Sign in or create an account, top up your balance, then order.",
     "networkIntros": {
       "instagram": "Instagram is the shop window for many African businesses. Find followers, likes and views for your posts and Reels, with the price per 1,000 shown in XAF.",
       "tiktok": "On TikTok, the first views often decide how far a video goes. Pick followers, likes or views, check the minimum order, then pay from your balance with Mobile Money.",
@@ -520,8 +520,15 @@
     "newOrder": "Choose another service",
     "noService": "Choose a service",
     "unknownService": "This service does not exist",
-    "noServiceHelp": "Open the catalog, pick a service, then come back here to order.",
+    "noServiceHelp": "Click a network, search, then choose a service. The price is shown before you order.",
     "browseServices": "Browse services",
+    "pickerNetworks": "Networks",
+    "pickerTypes": "Service type",
+    "pickerAll": "All",
+    "pickerCount": "{count, plural, one {# service} other {# services}}",
+    "pickerSearchLabel": "Search for a service",
+    "pickerSearchPlaceholder": "Service name or number",
+    "pickerNoResults": "No service matches",
     "cardTitle": "About this service",
     "pricePer1000": "Price per 1,000",
     "minimum": "Minimum quantity",
@@ -529,7 +536,10 @@
     "howTitle": "How to order",
     "how1": "Paste the link; the profile must not be private.",
     "how2": "Enter the quantity and check the total.",
-    "how3": "Confirm: the amount is debited from your balance."
+    "how3": "Confirm: the amount is debited from your balance.",
+    "pickerAllTypes": "All categories",
+    "pickerChooseService": "Choose a service",
+    "pickerTruncated": "Showing {shown} of {total} services. Refine your search to see the others."
   },
   "orderTracking": {
     "status_pending": "Pending",
