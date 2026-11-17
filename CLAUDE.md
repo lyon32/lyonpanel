@@ -116,7 +116,7 @@ Un agent ne démarre jamais avant ce dont il dépend ; ce qui est indépendant t
 
 > À mettre à jour au début de chaque phase (`ROADMAP.md`).
 
-**Phase en cours : Phase 11 — Admin (1) : accès, stats, clients** (décisions du 2026-11-16, plan : `docs/plans/phase-11.md`, branche `feat/phase-11-admin-1`). Phases 0 et 1 validées le 2026-11-07, 2 le 2026-11-08, 3 le 2026-11-09, 4 à 7 le 2026-11-10, 8 le 2026-11-11, 9 et 10 le 2026-11-16 (phase 10 : PR 22, a093598).
+**Phase 11 — Admin (1) : accès, stats, clients — VALIDÉE le 2026-11-17** (plan : `docs/plans/phase-11.md` ; PR 23, puis 26 à 29). Prochaine : phase 12 (Admin 2 : commandes, services, réglages, réponse aux tickets), dans une nouvelle session. Phases 0 et 1 validées le 2026-11-07, 2 le 2026-11-08, 3 le 2026-11-09, 4 à 7 le 2026-11-10, 8 le 2026-11-11, 9 et 10 le 2026-11-16 (phase 10 : PR 22, a093598).
 
 **Périmètre phase 11 (seulement ceci)** : accès admin (adresse secrète `ADMIN_PATH`, `/admin` = 404, `noindex`, mot de passe + code à 6 chiffres, 2 appareils de secours, session 12 h) ; tableau de bord (aujourd'hui / 7 j / 30 j : ventes, bénéfice, commandes, recharges, nouveaux clients, pays, solde JAP, alerte à 5 $) ; clients (recherche, fiche, blocage avec motif, remise perso, plafond journalier, notes privées) ; reportés des phases 9-10 : plafond `referral_pct` ≤ 100 %, annulation d'un bonus de parrainage, signal « 2e compte du parrain », défaut D des tickets, alerte Telegram par message client, purge des fichiers orphelins de tickets (action manuelle confirmée). Hors périmètre : ajustement de solde, remboursements, services, réglages, réponse aux tickets (phase 12).
 
