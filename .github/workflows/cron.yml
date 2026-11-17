@@ -23,8 +23,8 @@ jobs:
           set -u
           fail=0
           tasks='payments orders'
-          # Relevé du solde fournisseur : une fois par heure (premier passage de l'heure).
-          [ "$(date -u +%M)" -lt 5 ] && tasks="$tasks provider-balance"
+          # Solde fournisseur et synchro du catalogue : une fois par heure (premier passage de l'heure).
+          [ "$(date -u +%M)" -lt 5 ] && tasks="$tasks provider-balance services"
           for task in $tasks; do
             code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 60 \
               -H "Authorization: Bearer ${CRON_SECRET}" "${SITE_URL}/api/cron/${task}")
