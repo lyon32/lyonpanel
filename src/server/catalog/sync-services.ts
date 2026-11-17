@@ -8,6 +8,11 @@ import type { ProviderService } from '@/server/providers/types';
 
 export type { MultiplierRule };
 
+// Types de service que la commande sait envoyer (lien + quantité, ou commentaires).
+// Les autres (abonnements, SEO, likes de commentaires...) exigent d'autres champs : masqués pour l'instant.
+export const SUPPORTED_PROVIDER_TYPES = ['Default', 'Custom Comments'];
+export const isSupportedType = (type: string) => SUPPORTED_PROVIDER_TYPES.includes(type);
+
 export interface CatalogSettings {
   usdXafRate: number;
   defaultMultiplier: number;
@@ -153,7 +158,7 @@ export async function syncServices(deps: SyncDeps): Promise<SyncResult> {
         refill: item.refill,
         cancel: item.cancel,
         dripfeed: item.dripfeed,
-        active: true,
+        active: isSupportedType(item.type),
         available: true,
       });
       continue;
@@ -180,6 +185,8 @@ export async function syncServices(deps: SyncDeps): Promise<SyncResult> {
       dripfeed: item.dripfeed,
       available: true,
     };
+    // Un type non géré reste masqué, même si le service existait déjà et était actif.
+    if (!isSupportedType(item.type) && current.active) fresh.active = false;
     for (const key of Object.keys(fresh) as (keyof StoredService)[]) {
       if (fresh[key] !== current[key]) Object.assign(patch, { [key]: fresh[key] });
     }
