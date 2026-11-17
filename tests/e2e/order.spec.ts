@@ -205,12 +205,10 @@ test.describe('commande', () => {
     const email = await signedUp(page);
     await fund(email, 5000);
 
-    await page.goto('/fr/commander');
+    // Le catalogue est en cache 5 min : un service de test tout neuf n'y est pas ; on l'ouvre par son numéro.
+    await page.goto(`/fr/commander?service=${service.id}`);
     await expect(page.locator('[data-testid="order-workbench"]')).toBeVisible();
-    // Tuile « Tous » puis recherche par numéro (le réseau du service de test est inconnu ici) : tout se passe sur la même page.
-    await page.locator('[data-testid="picker-network"]').first().click();
-    await page.locator('#wb-q').fill(String(service.id));
-    await page.locator('#wb-service').selectOption(String(service.id));
+    await expect(page.locator('#wb-service')).toHaveValue(String(service.id));
     await expect(page).toHaveURL(/\/fr\/commander$/);
     await page.locator('[data-testid="order-link"]').fill(LINK);
     await page.locator('[data-testid="order-quantity"]').fill('1000');
