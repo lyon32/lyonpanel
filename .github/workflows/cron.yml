@@ -1,0 +1,31 @@
+name: Tâches planifiées
+
+# Appelle les tâches de suivi de la production (suivi des commandes, rattrapage des recharges).
+# Remplace le Worker Cloudflare prévu dans CI_CD.md (décision du propriétaire, 2026-11-17).
+# GitHub peut retarder une exécution de quelques minutes : les tâches sont faites pour le supporter.
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  appel:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Suivi des recharges et des commandes
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          SITE_URL: ${{ vars.SITE_URL }}
+        run: |
+          set -u
+          fail=0
+          for task in payments orders; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 60 \
+              -H "Authorization: Bearer ${CRON_SECRET}" "${SITE_URL}/api/cron/${task}")
+            echo "${task}: HTTP ${code}"
+            [ "$code" = "200" ] || fail=1
+          done
+          exit $fail

@@ -7,7 +7,12 @@ vi.mock('server-only', () => ({}));
 
 import { computePricePer1000Xaf } from '@/server/pricing/compute-price';
 import { providerServicesSchema } from '@/server/providers/types';
-import { recomputePrices, syncServices, type SyncDeps } from '@/server/catalog/sync-services';
+import {
+  isSupportedType,
+  recomputePrices,
+  syncServices,
+  type SyncDeps,
+} from '@/server/catalog/sync-services';
 
 // Module attendu : src/server/catalog/sync-services.ts (LLD §4.2, dépendances injectées)
 //   syncServices(deps: SyncDeps): Promise<{ added; removed; repriced; alerts }>
@@ -41,6 +46,30 @@ const tiktok = (o: Partial<RawProviderService> = {}) =>
     cancel: false,
     ...o,
   });
+
+describe('syncServices : types non gérés', () => {
+  it('un service Subscriptions ou SEO est inséré masqué (inactif)', async () => {
+    const store = createMemoryStore();
+    await syncServices(
+      deps(store, [
+        tiktok({ service: 1, type: 'Subscriptions' }),
+        tiktok({ service: 2, type: 'SEO' }),
+        tiktok({ service: 3, type: 'Custom Comments' }),
+      ]),
+    );
+    expect(store.services.get(1)!.active).toBe(false);
+    expect(store.services.get(2)!.active).toBe(false);
+    expect(store.services.get(3)!.active).toBe(true);
+  });
+
+  it('un service déjà actif d un type non géré est masqué à la synchro suivante', async () => {
+    const store = createMemoryStore();
+    await syncServices(deps(store, [tiktok({ service: 1 })]));
+    expect(store.services.get(1)!.active).toBe(true);
+    await syncServices(deps(store, [tiktok({ service: 1, type: 'Comment Likes' })]));
+    expect(store.services.get(1)!.active).toBe(false);
+  });
+});
 
 describe('syncServices : nouveaux services', () => {
   it('insère un nouveau service actif et disponible, avec réseau, type, nom et prix calculés', async () => {
@@ -96,7 +125,7 @@ describe('syncServices : nouveaux services', () => {
     expect(res.added).toBe(raw.length);
     expect(store.services.size).toBe(raw.length);
     for (const row of store.services.values()) {
-      expect(row.active, `service ${row.id}`).toBe(true);
+      expect(row.active, `service ${row.id}`).toBe(isSupportedType(row.provider_type));
       expect(row.available, `service ${row.id}`).toBe(true);
       expect(Number.isInteger(row.price_xaf_1000), `service ${row.id}`).toBe(true);
       expect(row.price_xaf_1000 % 5, `service ${row.id}`).toBe(0);
