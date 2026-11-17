@@ -43,7 +43,7 @@ export default async function AdminTicketPage({ params }: Props) {
       <div className="flex items-start justify-between gap-3">
         <h1 className="text-encre text-2xl font-bold break-words">{ticket.subject}</h1>
         <Badge status={badge}>
-          {t(`tickets.${ticket.status as 'open' | 'answered' | 'closed'}`)}
+          {t(`tickets.status.${ticket.status as 'open' | 'answered' | 'closed'}`)}
         </Badge>
       </div>
       <p className="text-gris-600 text-sm break-all">

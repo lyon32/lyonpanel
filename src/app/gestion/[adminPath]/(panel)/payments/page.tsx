@@ -80,7 +80,7 @@ export default async function AdminPaymentsPage({ params, searchParams }: Props)
               </span>
               <Link
                 href={`/${adminPath}/users/${p.user_id}`}
-                className="text-bleu-600 focus-visible:ring-bleu-100 text-sm break-all underline outline-none focus-visible:ring-4"
+                className="text-bleu-600 focus-visible:ring-bleu-100 inline-flex min-h-11 items-center text-sm break-all underline outline-none focus-visible:ring-4"
               >
                 {emails.get(p.user_id) ?? p.user_id}
               </Link>

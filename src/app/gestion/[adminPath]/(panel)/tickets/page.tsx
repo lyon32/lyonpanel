@@ -77,7 +77,7 @@ export default async function AdminTicketsPage({ params, searchParams }: Props) 
                 <span className="flex items-start justify-between gap-3">
                   <span className="text-encre font-semibold break-words">{i.subject}</span>
                   <Badge status={badge(i.status)}>
-                    {t(`tickets.${i.status as (typeof STATUSES)[number]}`)}
+                    {t(`tickets.status.${i.status as (typeof STATUSES)[number]}`)}
                   </Badge>
                 </span>
                 <span className="text-gris-600 text-sm break-all">

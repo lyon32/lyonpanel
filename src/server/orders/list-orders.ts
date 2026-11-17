@@ -11,7 +11,7 @@ import { apiError } from '@/server/http/api-error';
 const ORDER_COLUMNS =
   'id, short_id, service_id, link, quantity, charged_xaf, status, start_count, remains, created_at, updated_at';
 const SERVICE_COLUMNS =
-  'id, platform, category, name_fr, refill, cancel, dripfeed, min_qty, max_qty';
+  'id, platform, category, name_fr, custom_name_fr, custom_name_en, refill, cancel, dripfeed, min_qty, max_qty';
 
 type PublicOrderColumns = Pick<
   OrderRow,
@@ -70,12 +70,16 @@ async function toOrders(rows: PublicOrderColumns[], locale: CatalogLocale): Prom
   return rows.map((row) => {
     const s = byId.get(row.service_id);
     if (!s) return apiError('INTERNAL_ERROR');
-    const name = s.category
-      ? buildServiceName(
-          { ...s, platform: s.platform as Network, category: s.category as ServiceType },
-          locale,
-        )
-      : s.name_fr;
+    // Même priorité que la page de commande : nom saisi par l'admin d'abord.
+    const custom = locale === 'fr' ? s.custom_name_fr : s.custom_name_en;
+    const name = custom
+      ? custom
+      : s.category
+        ? buildServiceName(
+            { ...s, platform: s.platform as Network, category: s.category as ServiceType },
+            locale,
+          )
+        : s.name_fr;
     // Les colonnes non lues par toPublicOrder (coût, erreur…) ne sont volontairement pas chargées.
     return toPublicOrder(row as OrderRow, {
       id: s.id,

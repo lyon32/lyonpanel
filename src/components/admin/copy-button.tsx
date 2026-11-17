@@ -24,7 +24,13 @@ export function CopyButton({ value }: { value: string }) {
 
   return (
     <>
-      <Button type="button" variant="secondary" size="sm" onClick={() => void copy()}>
+      <Button
+        type="button"
+        variant="secondary"
+        size="sm"
+        className="min-h-11"
+        onClick={() => void copy()}
+      >
         {state === 'copied' ? (
           <Check className="size-4" aria-hidden="true" />
         ) : (

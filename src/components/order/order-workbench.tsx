@@ -167,7 +167,7 @@ export function OrderWorkbench(props: Props) {
             <option value="">{t('pickerChooseService')}</option>
             {options.map((s) => (
               <option key={s.id} value={s.id}>
-                {`${s.name} — ${money(s.priceXaf1000)}`}
+                {`${money(s.priceXaf1000)} — ${s.name}`}
               </option>
             ))}
           </select>
