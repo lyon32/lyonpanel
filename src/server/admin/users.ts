@@ -83,7 +83,9 @@ export async function getUserDetail(id: string) {
     db.from('wallets').select('balance_xaf, total_recharged_xaf').eq('user_id', id).maybeSingle(),
     db
       .from('orders')
-      .select('id, short_id, service_id, quantity, charged_xaf, cost_usd, status, created_at')
+      .select(
+        'id, short_id, service_id, quantity, charged_xaf, cost_usd, status, provider_order_id, created_at',
+      )
       .eq('user_id', id)
       .order('created_at', { ascending: false })
       .limit(20),
@@ -125,6 +127,7 @@ export async function getUserDetail(id: string) {
         profit_xaf:
           costUsd === null ? null : Number(o.charged_xaf) - Math.round(costUsd * usdXafRate),
         status: o.status,
+        provider_order_id: o.provider_order_id,
         created_at: o.created_at,
       };
     }),

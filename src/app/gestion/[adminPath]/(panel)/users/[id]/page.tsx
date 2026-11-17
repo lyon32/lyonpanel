@@ -6,6 +6,7 @@ import { UserNoteForm } from '@/components/admin/user-note-form';
 import { UserSettingsForm } from '@/components/admin/user-settings-form';
 import { FormAlert } from '@/components/auth/form-alert';
 import { Badge } from '@/components/ui/badge';
+import { CopyButton } from '@/components/admin/copy-button';
 import { formatDateTime, formatInt, formatXaf, orderStatusLabel } from '@/lib/admin-format';
 import { getAdminTranslator } from '@/server/admin/page-i18n';
 import { requireAdminPage } from '@/server/admin/page-guard';
@@ -62,6 +63,17 @@ export default async function AdminUserPage({ params }: Props) {
     [t('user.balance'), money(wallet.balance_xaf)],
     [t('user.recharged'), money(wallet.total_recharged_xaf)],
   ];
+
+  // Numéro fournisseur + copie ; texte clair si la commande n'est pas partie.
+  const providerId = (id: number | null) =>
+    id === null ? (
+      <span>{t('orders.providerIdNone')}</span>
+    ) : (
+      <>
+        <span className="text-encre font-semibold">{id}</span>
+        <CopyButton value={String(id)} />
+      </>
+    );
 
   const h2 = 'text-encre text-lg font-bold';
   const panel = 'border-gris-200 bg-blanc flex flex-col gap-3 rounded-xl border p-4 sm:p-5';
@@ -140,6 +152,10 @@ export default async function AdminUserPage({ params }: Props) {
                       {orderStatusLabel(o.status, statusLabels)}
                     </Badge>
                   </div>
+                  <div className="text-gris-600 flex flex-wrap items-center gap-2 text-sm">
+                    <span>{t('orders.providerId')} :</span>
+                    {providerId(o.provider_order_id)}
+                  </div>
                   <div className="flex items-baseline justify-between gap-3 tabular-nums">
                     <span className="text-encre font-semibold">{money(o.charged_xaf)}</span>
                     <span className="text-gris-600 text-sm">{`${t('user.quantity')} : ${formatInt(o.quantity, locale)}`}</span>
@@ -156,11 +172,14 @@ export default async function AdminUserPage({ params }: Props) {
               ))}
             </ul>
             <div className="border-gris-200 bg-blanc hidden overflow-x-auto rounded-xl border sm:block">
-              <table className="w-full min-w-[34rem] text-left text-sm">
+              <table className="w-full min-w-[44rem] text-left text-sm">
                 <thead className="bg-gris-50 text-gris-600">
                   <tr>
                     <th scope="col" className={th}>
                       {t('user.orderId')}
+                    </th>
+                    <th scope="col" className={th}>
+                      {t('orders.providerId')}
                     </th>
                     <th scope="col" className={`${th} text-right`}>
                       {t('user.quantity')}
@@ -183,6 +202,11 @@ export default async function AdminUserPage({ params }: Props) {
                   {orders.map((o) => (
                     <tr key={o.id} className="border-gris-200 border-t">
                       <td className="px-3 py-3 font-semibold">{o.short_id}</td>
+                      <td className="px-3 py-3">
+                        <span className="flex items-center gap-2">
+                          {providerId(o.provider_order_id)}
+                        </span>
+                      </td>
                       <td className="px-3 py-3 text-right">{formatInt(o.quantity, locale)}</td>
                       <td className="px-3 py-3 text-right">{money(o.charged_xaf)}</td>
                       <td className="px-3 py-3 text-right">

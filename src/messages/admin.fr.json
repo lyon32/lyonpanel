@@ -238,6 +238,8 @@
       "remains": "Reste à livrer",
       "startCount": "Compteur de départ",
       "providerId": "N° fournisseur",
+      "lyonId": "N° LyonPanel",
+      "customer": "Client",
       "providerIdNone": "Pas encore envoyée",
       "providerIdHint": "Visible ici seulement, jamais côté client.",
       "copy": "Copier",

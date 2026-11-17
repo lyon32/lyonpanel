@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { CopyButton } from '@/components/admin/copy-button';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Field } from '@/components/ui/field';
@@ -92,28 +93,45 @@ export default async function AdminOrdersPage({ params, searchParams }: Props) {
       ) : (
         <ul className="border-gris-200 bg-blanc divide-gris-200 divide-y overflow-hidden rounded-xl border">
           {result.items.map((o) => (
-            <li key={o.id}>
-              <Link
-                href={`/${adminPath}/orders/${o.id}`}
-                aria-label={`${t('orders.open')} #${o.short_id}`}
-                className="hover:bg-bleu-50 focus-visible:ring-bleu-100 flex min-h-11 flex-col gap-1 px-4 py-3 outline-none focus-visible:ring-4 focus-visible:ring-inset"
-              >
-                <span className="flex items-start justify-between gap-3">
-                  <span className="text-encre font-semibold tabular-nums">#{o.short_id}</span>
-                  <Badge status={orderBadgeStatus(o.status)}>
-                    {orderStatusLabel(o.status, statusLabels)}
-                  </Badge>
-                </span>
-                <span className="text-gris-600 text-sm break-all">
-                  {o.user_email ?? o.user_phone}
-                </span>
-                <span className="text-gris-600 flex flex-wrap justify-between gap-x-4 text-sm tabular-nums">
-                  <span className="text-encre font-semibold">
-                    {formatXaf(o.charged_xaf, locale)}
-                  </span>
-                  <span>{formatDateTime(o.created_at, locale)}</span>
-                </span>
-              </Link>
+            <li key={o.id} className="flex flex-col gap-2 px-4 py-3">
+              <span className="flex items-start justify-between gap-3">
+                <Link
+                  href={`/${adminPath}/orders/${o.id}`}
+                  aria-label={`${t('orders.open')} #${o.short_id}`}
+                  className="text-bleu-600 focus-visible:ring-bleu-100 flex min-h-11 items-center font-semibold tabular-nums outline-none focus-visible:ring-4"
+                >
+                  {t('orders.lyonId')} #{o.short_id}
+                </Link>
+                <Badge status={orderBadgeStatus(o.status)}>
+                  {orderStatusLabel(o.status, statusLabels)}
+                </Badge>
+              </span>
+              <span className="text-gris-600 flex flex-wrap items-center gap-2 text-sm">
+                <span>{t('orders.providerId')} :</span>
+                {o.provider_order_id === null ? (
+                  <span>{t('orders.providerIdNone')}</span>
+                ) : (
+                  <>
+                    <span className="text-encre font-semibold tabular-nums">
+                      {o.provider_order_id}
+                    </span>
+                    <CopyButton value={String(o.provider_order_id)} />
+                  </>
+                )}
+              </span>
+              <span className="text-gris-600 text-sm break-all">
+                {t('orders.customer')} :{' '}
+                <Link
+                  href={`/${adminPath}/users/${o.user_id}`}
+                  className="text-bleu-600 font-semibold underline"
+                >
+                  {o.user_email ?? o.user_phone ?? o.user_id}
+                </Link>
+              </span>
+              <span className="text-gris-600 flex flex-wrap justify-between gap-x-4 text-sm tabular-nums">
+                <span className="text-encre font-semibold">{formatXaf(o.charged_xaf, locale)}</span>
+                <span>{formatDateTime(o.created_at, locale)}</span>
+              </span>
             </li>
           ))}
         </ul>

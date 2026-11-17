@@ -238,6 +238,8 @@
       "remains": "Left to deliver",
       "startCount": "Start count",
       "providerId": "Provider order ID",
+      "lyonId": "LyonPanel no.",
+      "customer": "Customer",
       "providerIdNone": "Not sent yet",
       "providerIdHint": "Shown here only, never to customers.",
       "copy": "Copy",
