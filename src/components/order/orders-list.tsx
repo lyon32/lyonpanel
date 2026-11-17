@@ -17,6 +17,8 @@ export type OrderListItem = {
   status: OrderStatusValue;
   remains: number | null;
   cancellable: boolean;
+  // Part déjà rendue sur le solde (0 ou absent : rien à afficher).
+  refundedXaf?: number;
 };
 
 // Statuts qui ne bougeront plus côté client (le reste est repris par le suivi serveur).
@@ -78,6 +80,11 @@ export function OrdersList({ orders }: { orders: OrderListItem[] }) {
               </>
             ) : null}
             {o.cancellable ? <CancelOrderButton orderId={o.id} amountXaf={o.chargedXaf} /> : null}
+            {o.refundedXaf && o.refundedXaf > 0 && o.refundedXaf < o.chargedXaf ? (
+              <p className="text-encre text-sm font-semibold tabular-nums">
+                {t('partiallyRefunded', { amount: nf.format(o.refundedXaf) })}
+              </p>
+            ) : null}
             {REVIEW.has(o.status) ? (
               <p className="text-gris-600 text-sm">{t('reviewHint')}</p>
             ) : null}

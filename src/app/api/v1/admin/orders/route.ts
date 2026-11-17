@@ -8,6 +8,7 @@ export const GET = handler(async (req, ctx) => {
   const s = req.nextUrl.searchParams;
   const query = listAdminOrdersQuerySchema.parse({
     status: s.get('status') ?? undefined,
+    q: s.get('q') ?? undefined,
     limit: s.get('limit') ?? undefined,
     cursor: s.get('cursor') ?? undefined,
   });

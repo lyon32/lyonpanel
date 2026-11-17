@@ -21,6 +21,11 @@ export const listAdminOrdersQuerySchema = z.object({
   status: z
     .enum(['pending', 'in_progress', 'completed', 'partial', 'canceled', 'to_review', 'refunded'])
     .optional(),
+  // Recherche par numéro (n° LyonPanel ou n° fournisseur) : chiffres seulement, rien de libre dans le filtre.
+  q: z
+    .string()
+    .regex(/^\d{1,9}$/)
+    .optional(),
   limit: z.coerce.number().int().min(1).max(100).default(20),
   cursor: z.string().min(1).max(200).optional(),
 });

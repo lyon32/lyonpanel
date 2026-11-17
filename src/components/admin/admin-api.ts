@@ -5,11 +5,12 @@ export async function adminFetch(
   path: string,
   method: 'GET' | 'POST' | 'PUT' | 'PATCH',
   body?: Record<string, unknown>,
+  headers?: Record<string, string>,
 ): Promise<AdminResponse> {
   try {
     const res = await fetch(path, {
       method,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...headers },
       body: body ? JSON.stringify(body) : undefined,
     });
     const data: unknown = await res.json().catch(() => null);

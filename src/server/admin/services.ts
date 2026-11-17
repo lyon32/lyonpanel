@@ -98,3 +98,14 @@ export async function updateAdminService(adminId: string, id: number, patch: Pat
   if (readError) throw new Error('admin_service_read_failed');
   return { service: data };
 }
+
+/** Un service pour la fiche d'édition (coût et nom fournisseur compris : admin seulement). */
+export async function getAdminService(id: number) {
+  const { data, error } = await createAdminClient()
+    .from('services')
+    .select(COLUMNS)
+    .eq('id', id)
+    .maybeSingle();
+  if (error) throw new Error('admin_service_read_failed');
+  return data;
+}

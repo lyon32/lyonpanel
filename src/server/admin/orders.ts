@@ -26,6 +26,7 @@ export async function listAdminOrders(query: Query) {
     .order('id', { ascending: false })
     .limit(query.limit + 1);
   if (query.status) req = req.eq('status', query.status);
+  if (query.q) req = req.or(['short_id.eq.', query.q, ',provider_order_id.eq.', query.q].join(''));
   if (query.cursor) req = req.or(keysetFilter(decodeCursor(query.cursor)));
   const { data, error } = await req;
   if (error) throw new Error('admin_orders_list_failed');

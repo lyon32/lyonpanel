@@ -21,11 +21,12 @@ export function useAdminAction(texts: { error: string; success: string }) {
     method: 'POST' | 'PATCH',
     body: Record<string, unknown>,
     onDone?: (res: AdminResponse) => string | null,
+    headers?: Record<string, string>,
   ) {
     setPending(true);
     window.clearTimeout(timer.current);
     setFeedback(null);
-    const res = await adminFetch(path, method, body);
+    const res = await adminFetch(path, method, body, headers);
     if (res.ok) {
       setFeedback({ kind: 'success', text: onDone?.(res) ?? texts.success });
       timer.current = window.setTimeout(() => setFeedback(null), SUCCESS_DISPLAY_MS);

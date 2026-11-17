@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { OrdersList } from '@/components/order/orders-list';
 import { requireUser } from '@/server/auth/require-user';
+import { refundedXafByOrder } from '@/server/orders/refunded-amounts';
 import { listOrders } from '@/server/orders/list-orders';
 
 type Props = { params: Promise<{ locale: string }> };
@@ -19,6 +20,10 @@ export default async function OrdersPage({ params }: Props) {
   const user = await requireUser(lang);
   const t = await getTranslations({ locale, namespace: 'pages' });
   const { data } = await listOrders(user.id, { limit: 50 }, lang);
+  const refunded = await refundedXafByOrder(
+    user.id,
+    data.map((o) => o.id),
+  );
   return (
     <section className="flex flex-col gap-4">
       <h1 className="text-encre text-2xl font-bold">{t('orders')}</h1>
@@ -32,6 +37,7 @@ export default async function OrdersPage({ params }: Props) {
           status: o.status,
           remains: o.remains,
           cancellable: o.cancellable,
+          refundedXaf: refunded.get(o.id) ?? 0,
         }))}
       />
     </section>

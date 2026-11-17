@@ -13,7 +13,13 @@ export default async function AdminPanelLayout({ children, params }: Props) {
   const { t } = await getAdminTranslator();
   const links = [
     { href: `/${adminPath}/stats`, label: t('nav.stats') },
+    { href: `/${adminPath}/orders`, label: t('nav.orders') },
+    { href: `/${adminPath}/services`, label: t('nav.services') },
+    { href: `/${adminPath}/settings`, label: t('nav.settings') },
     { href: `/${adminPath}/users`, label: t('nav.users') },
+    { href: `/${adminPath}/tickets`, label: t('nav.tickets') },
+    { href: `/${adminPath}/payments`, label: t('nav.payments') },
+    { href: `/${adminPath}/audit`, label: t('nav.audit') },
     { href: `/${adminPath}/storage`, label: t('nav.storage') },
   ];
   return (

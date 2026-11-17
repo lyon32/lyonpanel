@@ -10,6 +10,7 @@ import { Link } from '@/i18n/navigation';
 import { CURRENCY_COOKIE, parseCurrency } from '@/lib/currency';
 import { firstNameFromEmail } from '@/lib/first-name';
 import { formatCatalogMoney } from '@/lib/money';
+import { refundedXafByOrder } from '@/server/orders/refunded-amounts';
 import { requireUser } from '@/server/auth/require-user';
 import { getUsdXafRateCached } from '@/server/catalog/public-catalog';
 import { listOrders } from '@/server/orders/list-orders';
@@ -50,6 +51,11 @@ export default async function DashboardPage({ params }: Props) {
     .filter((o) => o.status !== 'refunded')
     .reduce((sum, o) => sum + o.charged_xaf, 0);
   const total = orders.data.length;
+  const recent = orders.data.slice(0, RECENT);
+  const refunded = await refundedXafByOrder(
+    user.id,
+    recent.map((o) => o.id),
+  );
   const scope = more ? t('stats.lastOrders', { count: STATS_LIMIT }) : undefined;
   const suffix = more ? '+' : '';
 
@@ -123,7 +129,7 @@ export default async function DashboardPage({ params }: Props) {
           ) : null}
         </div>
         <OrdersList
-          orders={orders.data.slice(0, RECENT).map((o) => ({
+          orders={recent.map((o) => ({
             id: o.id,
             shortId: o.short_id,
             serviceName: o.service.name,
@@ -132,6 +138,7 @@ export default async function DashboardPage({ params }: Props) {
             status: o.status,
             remains: o.remains,
             cancellable: o.cancellable,
+            refundedXaf: refunded.get(o.id) ?? 0,
           }))}
         />
       </section>

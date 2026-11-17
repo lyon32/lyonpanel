@@ -42,3 +42,20 @@ export function formatBytes(bytes: number): string {
 export function orderStatusLabel(status: string, labels: Record<string, string>): string {
   return labels[status] ?? status;
 }
+
+/** Couleur de la pastille d'après le sens du statut (terminé, échec, en cours). */
+export function orderBadgeStatus(status: string): 'success' | 'failed' | 'pending' {
+  if (status === 'completed') return 'success';
+  if (['canceled', 'refunded', 'partial', 'to_review'].includes(status)) return 'failed';
+  return 'pending';
+}
+
+export const ORDER_STATUSES = [
+  'pending',
+  'in_progress',
+  'completed',
+  'partial',
+  'canceled',
+  'to_review',
+  'refunded',
+] as const;
