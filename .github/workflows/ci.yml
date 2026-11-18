@@ -63,7 +63,7 @@ jobs:
       - run: npm run check:bundle
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
-      - run: npm audit --audit-level=high
+      - run: node scripts/audit-check.mjs
       - uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
