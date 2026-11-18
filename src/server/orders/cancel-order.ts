@@ -68,9 +68,9 @@ export async function cancelOrder(userId: string, orderId: string): Promise<{ re
   if (order.cancel_requested_at === null) {
     // Règle lue chez le fournisseur au moment du clic : la synchro peut avoir du retard.
     // Panne du fournisseur : l'erreur remonte, refus prudent (ni annulation ni remboursement).
-    const live = (await getProvider().status([order.provider_order_id as number]))[
-      order.provider_order_id as number
-    ];
+    const live = (
+      await getProvider().status([order.provider_order_id as number], { readOnly: true })
+    )[order.provider_order_id as number];
     if (live?.status !== 'Pending') return apiError('ORDER_NOT_CANCELLABLE');
     const accepted = await getProvider().cancel(order.provider_order_id as number);
     if (!accepted) return apiError('ORDER_NOT_CANCELLABLE');

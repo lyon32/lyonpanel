@@ -99,6 +99,9 @@ test.describe('Espace client à 360 px', () => {
     await expect(balance).not.toContainText('—');
 
     const button = page.locator('[data-testid="new-order-button"]');
+    // Attend le texte visible : mesurer avant le rendu donne 0 ligne.
+    await expect(button).toBeVisible();
+    await expect(button).toHaveText(/\S/);
     // Nombre de lignes de texte réellement affichées (positions verticales distinctes des mots).
     const lines = await button.evaluate((el) => {
       const tops = new Set<number>();

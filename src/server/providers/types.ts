@@ -62,7 +62,8 @@ export interface ProviderApi {
   services(): Promise<ProviderService[]>;
   balance(): Promise<ProviderBalance>;
   add(input: ProviderAddInput): Promise<{ order: number }>;
-  status(ids: number[]): Promise<Record<number, ProviderStatus>>;
+  // readOnly : simple lecture (le faux fournisseur n'avance pas l'état) ; le vrai l'ignore.
+  status(ids: number[], options?: { readOnly?: boolean }): Promise<Record<number, ProviderStatus>>;
   /** Demande d'annulation ; `true` seulement si le fournisseur l'accepte. */
   cancel(orderId: number): Promise<boolean>;
 }

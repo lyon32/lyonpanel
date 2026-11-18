@@ -77,11 +77,16 @@ export function createMockProvider(options: MockProviderOptions = {}): ProviderA
       known.status = 'Canceled';
       return true;
     },
-    async status(ids) {
+    async status(ids, statusOptions) {
       const out: Record<number, ProviderStatus> = {};
       for (const id of ids) {
         const known = orders.get(id);
         if (!known) continue;
+        // Lecture seule (annulation client) : l'état courant, sans effet de bord.
+        if (statusOptions?.readOnly) {
+          out[id] = { ...known };
+          continue;
+        }
         // Un pas par appel : Pending -> In progress -> Completed (puis reste Completed).
         const forced = forcedStatuses.get(id);
         if (forced) known.status = forced;
