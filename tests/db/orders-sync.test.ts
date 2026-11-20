@@ -26,7 +26,7 @@ import { notifyOwner } from '@/server/providers/telegram';
  *   src/server/orders/sync-order-statuses.ts  : syncOrderStatuses(): Promise<unknown>
  *   src/server/orders/recover-stuck-orders.ts : recoverStuckOrders(): Promise<unknown>
  * Fournisseur : status(ids: number[]) -> { [id]: { status, start_count, remains, ... } }, un appel par lot de 100.
- * 'Pending' | 'In progress' -> in_progress ; 'Completed' -> completed ;
+ * 'Pending' -> pending ; 'In progress' -> in_progress ; 'Completed' -> completed ;
  * 'Partial' | 'Canceled' | inconnu -> to_review + UNE alerte 'order_failed' (orders.alerted_at), sans remboursement.
  */
 
@@ -68,9 +68,16 @@ describe('syncOrderStatuses', () => {
     expect(await reloadOrder(o.id)).toMatchObject({ status: 'completed', remains: 0 });
   });
 
-  it('laisse en in_progress une commande « Pending » chez le fournisseur', async () => {
+  it('passe en pending une commande « Pending » chez le fournisseur', async () => {
     const o = await inProgressOrder(created);
     answer({ [o.providerOrderId]: { status: 'Pending', start_count: 0, remains: 1000 } });
+    await syncOrderStatuses();
+    expect(await reloadOrder(o.id)).toMatchObject({ status: 'pending', remains: 1000 });
+  });
+
+  it('passe en in_progress une commande « In progress » chez le fournisseur', async () => {
+    const o = await inProgressOrder(created, { status: 'pending' });
+    answer({ [o.providerOrderId]: { status: 'In progress', start_count: 5, remains: 900 } });
     await syncOrderStatuses();
     expect(await reloadOrder(o.id)).toMatchObject({ status: 'in_progress' });
   });
@@ -183,13 +190,15 @@ describe('syncOrderStatuses', () => {
     }));
     const { error } = await adminClient().from('orders').insert(rows);
     expect(error).toBeNull();
-    const { count } = await adminClient()
+    // Isolation : on neutralise toute autre commande suivie (in_progress ou pending avec n° fournisseur), y compris celles d'autres fichiers.
+    const { error: parkError } = await adminClient()
       .from('orders')
-      .select('id', { count: 'exact', head: true })
-      .eq('status', 'in_progress')
-      .not('provider_order_id', 'is', null);
-    const total = count ?? 0;
-    expect(total).toBeGreaterThanOrEqual(250);
+      .update({ status: 'completed' })
+      .in('status', ['in_progress', 'pending'])
+      .not('provider_order_id', 'is', null)
+      .neq('user_id', u.id);
+    expect(parkError).toBeNull();
+    const total = rows.length;
     answer({});
     await syncOrderStatuses();
     const sizes = h.provider.status.mock.calls.map((c: number[][]) => c[0]!.length);

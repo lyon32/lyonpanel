@@ -35,5 +35,19 @@
   "AUTH_LOCKED": "Trop de tentatives. Réessayez dans {duration}.",
   "PROVIDER_ERROR": "Le service partenaire a rencontré une erreur. Réessayez plus tard.",
   "PROVIDER_TIMEOUT": "Le service partenaire n'a pas répondu à temps. Vérifiez votre solde avant de réessayer.",
-  "INTERNAL_ERROR": "Une erreur inattendue s'est produite. Communiquez le numéro de requête au support."
+  "INTERNAL_ERROR": "Une erreur inattendue s'est produite. Communiquez le numéro de requête au support.",
+  "SERVICE_NOT_FOUND": "Service introuvable.",
+  "TICKET_NOT_FOUND": "Ticket introuvable.",
+  "ALREADY_RESENT": "Cette commande a déjà été renvoyée une fois.",
+  "ACTION_IN_PROGRESS": "Une action est déjà en cours sur cette commande. Réessayez dans 2 minutes.",
+  "ORDER_NOT_CLOSABLE": "Cette commande ne peut pas être clôturée.",
+  "ORDER_NOT_RESENDABLE": "Cette commande ne peut pas être renvoyée.",
+  "ORDER_NOT_REFUNDABLE": "Cette commande ne peut pas être remboursée.",
+  "REASON_REQUIRED": "Le motif est obligatoire.",
+  "EMPTY_CHANGES": "Aucune modification à enregistrer.",
+  "INVALID_FIELD": "Une valeur est invalide.",
+  "INVALID_BODY": "Le texte est vide ou trop long.",
+  "INVALID_STATUS": "Statut invalide.",
+  "INVALID_SETTING": "Valeur de réglage invalide.",
+  "UNKNOWN_SETTING": "Réglage inconnu."
 }

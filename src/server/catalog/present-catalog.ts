@@ -1,4 +1,5 @@
 import { buildServiceName } from '@/server/catalog/build-name';
+import { buildServiceDescription } from '@/server/catalog/build-description';
 import {
   NETWORKS,
   SERVICE_TYPES,
@@ -17,6 +18,7 @@ import { convertFromXaf } from '@/lib/money';
 export interface PublicService {
   id: number;
   name: string;
+  description: string;
   network: Network;
   type: ServiceType;
   priceXaf1000: number;
@@ -50,9 +52,16 @@ export function toPublicService(
   const network = asNetwork(row.platform);
   const type = asType(row.category);
   const minOrderXaf = computeMinOrderXaf(row.price_xaf_1000, row.min_qty);
+  const fr = opts.locale === 'fr';
+  const nameable = { ...row, platform: network, category: type };
+  // Priorité : texte saisi par l'admin, puis texte généré à la synchro, puis texte reconstruit sans nom fournisseur.
   return {
     id: row.id,
-    name: buildServiceName({ ...row, platform: network, category: type }, opts.locale),
+    name: (fr ? row.custom_name_fr : row.custom_name_en) || buildServiceName(nameable, opts.locale),
+    description:
+      (fr ? row.custom_description_fr : row.custom_description_en) ||
+      (fr ? row.description_fr : row.description_en) ||
+      buildServiceDescription(nameable, opts.locale),
     network,
     type,
     priceXaf1000: row.price_xaf_1000,

@@ -10,6 +10,13 @@ export interface PublicServiceRow {
   platform: string;
   category: string;
   name_fr: string;
+  name_en: string | null;
+  description_fr: string | null;
+  description_en: string | null;
+  custom_name_fr: string | null;
+  custom_name_en: string | null;
+  custom_description_fr: string | null;
+  custom_description_en: string | null;
   price_xaf_1000: number;
   min_qty: number;
   max_qty: number;
@@ -20,7 +27,7 @@ export interface PublicServiceRow {
 }
 
 const COLUMNS =
-  'id, platform, category, name_fr, price_xaf_1000, min_qty, max_qty, refill, cancel, dripfeed, sort_order';
+  'id, platform, category, name_fr, name_en, description_fr, description_en, custom_name_fr, custom_name_en, custom_description_fr, custom_description_en, price_xaf_1000, min_qty, max_qty, refill, cancel, dripfeed, sort_order';
 const PAGE = 1000; // limite de lignes par requête de Supabase
 
 type RawRow = {

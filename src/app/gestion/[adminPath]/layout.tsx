@@ -25,8 +25,10 @@ export default async function AdminLayout({ children, params }: Props) {
   if (!isAdminSegment(adminPath, loadServerEnv().ADMIN_PATH)) notFound();
   const locale = (await cookies()).get('NEXT_LOCALE')?.value === 'en' ? 'en' : 'fr';
 
+  // suppressHydrationWarning sur <html> : comme le layout public, évite l'alerte quand le navigateur
+  // ou une extension ajoute des attributs avant l'hydratation.
   return (
-    <html lang={locale} className={publicSans.variable}>
+    <html lang={locale} suppressHydrationWarning className={publicSans.variable}>
       <body>
         <NextIntlClientProvider
           locale={locale}

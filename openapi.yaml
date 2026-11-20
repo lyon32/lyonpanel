@@ -663,6 +663,7 @@ paths:
       security: [ { session: [], adminMfa: [] } ]
       parameters:
         - { name: status, in: query, schema: { $ref: '#/components/schemas/OrderStatus' } }
+        - { name: q, in: query, description: "Numéro de commande LyonPanel ou du fournisseur, 1 à 9 chiffres (à valider par le propriétaire)", schema: { type: string, pattern: '^[0-9]{1,9}$' } }
         - $ref: '#/components/parameters/Limit'
         - $ref: '#/components/parameters/Cursor'
       responses:
@@ -725,7 +726,13 @@ paths:
               properties:
                 active: { type: boolean }
                 name_fr: { type: string }
-                margin_pct: { type: [number, 'null'] }
+                name_en: { type: string }
+                # À valider par le propriétaire : textes saisis (400 max, vide = texte généré)
+                custom_name_fr: { type: string, maxLength: 400 }
+                custom_name_en: { type: string, maxLength: 400 }
+                custom_description_fr: { type: string, maxLength: 400 }
+                custom_description_en: { type: string, maxLength: 400 }
+                multiplier: { type: number }
                 sort_order: { type: integer }
       responses:
         '200': { description: Service modifié }

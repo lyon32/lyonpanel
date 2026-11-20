@@ -177,7 +177,7 @@ Pages par pays, blog, commandes en lot, notifications client, email « nouvelle 
 | 9 | validée par le propriétaire, fusionnée (PR 19, 2026-11-16) | 2026-11-16 |
 | 10 | validée par le propriétaire, fusionnée (PR 22, a093598, 2026-11-16) | 2026-11-16 |
 | 11 | **validée le 2026-11-17** (PR 23, puis 26 à 29 : tâches planifiées, annulation avec remboursement, synchro du catalogue) | — |
-| 12 | à faire | — |
+| 12 | faite – en attente de validation (2026-11-17) | — |
 | 13 | à faire | — |
 | 14 | à faire | — |
 | 15 | à faire | — |

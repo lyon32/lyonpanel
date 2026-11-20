@@ -421,3 +421,36 @@ describe('recomputePrices', () => {
     expect(store.writes).toBe(0);
   });
 });
+
+describe('syncServices : noms des services déjà en base', () => {
+  it('recalcule name_fr et name_en avec le générateur actuel (vitesse par jour)', async () => {
+    const store = createMemoryStore({
+      services: [
+        makeStoredService({
+          id: 1000,
+          category: 'likes',
+          name_fr: 'Ancien nom FR',
+          name_en: 'Old name EN',
+          provider_name: 'TikTok - Likes | Real | Speed: 50K/Day',
+        }),
+      ],
+    });
+    await syncServices(
+      deps(store, [tiktok({ service: 1000, name: 'TikTok - Likes | Real | Speed: 50K/Day' })]),
+    );
+    const s = store.services.get(1000)!;
+    expect(s.name_fr).toContain('50K/jour');
+    expect(s.name_fr).not.toBe('Ancien nom FR');
+    expect(s.name_en).toContain('50K/day');
+    expect(s.name_fr).toMatch(/#1000$/);
+  });
+
+  it('ne réécrit rien quand les noms sont déjà à jour (deuxième synchro : 0 écriture)', async () => {
+    const store = createMemoryStore();
+    const list = [tiktok({ service: 1000, name: 'TikTok - Likes | Real | Speed: 50K/Day' })];
+    await syncServices(deps(store, list));
+    const before = store.writes;
+    await syncServices(deps(store, list));
+    expect(store.writes).toBe(before);
+  });
+});

@@ -3,7 +3,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('server-only', () => ({}));
 const m = vi.hoisted(() => ({
-  sync: vi.fn(async (_deps?: { onPriceJump?: (j: unknown) => unknown }) => ({
+  sync: vi.fn<
+    (deps?: { onPriceJump?: (j: unknown) => unknown }) => Promise<{
+      added: number;
+      removed: number;
+      repriced: number;
+      alerts: number;
+    }>
+  >(async () => ({
     added: 0,
     removed: 0,
     repriced: 0,

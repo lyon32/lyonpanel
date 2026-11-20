@@ -84,16 +84,21 @@ export async function suggestOrder(
 
   const { data: s, error: sErr } = await createAdminClient()
     .from('services')
-    .select('id, platform, category, name_fr, refill, cancel, dripfeed, min_qty, max_qty')
+    .select(
+      'id, platform, category, name_fr, custom_name_fr, custom_name_en, refill, cancel, dripfeed, min_qty, max_qty',
+    )
     .eq('id', serviceId)
     .maybeSingle();
   if (sErr) throw new Error(`service suggestion: ${sErr.message}`);
   if (!s) return null;
-  const name = s.category
-    ? buildServiceName(
-        { ...s, platform: s.platform as Network, category: s.category as ServiceType },
-        locale,
-      )
-    : s.name_fr;
+  const custom = locale === 'fr' ? s.custom_name_fr : s.custom_name_en;
+  const name = custom
+    ? custom
+    : s.category
+      ? buildServiceName(
+          { ...s, platform: s.platform as Network, category: s.category as ServiceType },
+          locale,
+        )
+      : s.name_fr;
   return { service: { id: s.id, name, platform: s.platform }, quantity };
 }

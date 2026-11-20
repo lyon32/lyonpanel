@@ -196,6 +196,7 @@ export type Database = {
       orders: {
         Row: {
           alerted_at: string | null;
+          cancel_claimed_at: string | null;
           cancel_requested_at: string | null;
           charged_xaf: number;
           comments: string[] | null;
@@ -210,6 +211,7 @@ export type Database = {
           provider_order_id: number | null;
           quantity: number;
           remains: number | null;
+          resent_at: string | null;
           service_id: number;
           short_id: number;
           start_count: number | null;
@@ -219,6 +221,7 @@ export type Database = {
         };
         Insert: {
           alerted_at?: string | null;
+          cancel_claimed_at?: string | null;
           cancel_requested_at?: string | null;
           charged_xaf: number;
           comments?: string[] | null;
@@ -233,6 +236,7 @@ export type Database = {
           provider_order_id?: number | null;
           quantity: number;
           remains?: number | null;
+          resent_at?: string | null;
           service_id: number;
           short_id?: number;
           start_count?: number | null;
@@ -242,6 +246,7 @@ export type Database = {
         };
         Update: {
           alerted_at?: string | null;
+          cancel_claimed_at?: string | null;
           cancel_requested_at?: string | null;
           charged_xaf?: number;
           comments?: string[] | null;
@@ -256,6 +261,7 @@ export type Database = {
           provider_order_id?: number | null;
           quantity?: number;
           remains?: number | null;
+          resent_at?: string | null;
           service_id?: number;
           short_id?: number;
           start_count?: number | null;
@@ -596,12 +602,19 @@ export type Database = {
           available: boolean;
           cancel: boolean;
           category: string | null;
+          custom_description_en: string | null;
+          custom_description_fr: string | null;
+          custom_name_en: string | null;
+          custom_name_fr: string | null;
+          description_en: string | null;
+          description_fr: string | null;
           cost_usd_1000: number | null;
           dripfeed: boolean;
           id: number;
           max_qty: number;
           min_qty: number;
           multiplier: number | null;
+          name_en: string | null;
           name_fr: string | null;
           platform: string;
           price_xaf_1000: number | null;
@@ -616,12 +629,19 @@ export type Database = {
           available?: boolean;
           cancel?: boolean;
           category?: string | null;
+          custom_description_en?: string | null;
+          custom_description_fr?: string | null;
+          custom_name_en?: string | null;
+          custom_name_fr?: string | null;
+          description_en?: string | null;
+          description_fr?: string | null;
           cost_usd_1000?: number | null;
           dripfeed?: boolean;
           id: number;
           max_qty: number;
           min_qty: number;
           multiplier?: number | null;
+          name_en?: string | null;
           name_fr?: string | null;
           platform: string;
           price_xaf_1000?: number | null;
@@ -636,12 +656,19 @@ export type Database = {
           available?: boolean;
           cancel?: boolean;
           category?: string | null;
+          custom_description_en?: string | null;
+          custom_description_fr?: string | null;
+          custom_name_en?: string | null;
+          custom_name_fr?: string | null;
+          description_en?: string | null;
+          description_fr?: string | null;
           cost_usd_1000?: number | null;
           dripfeed?: boolean;
           id?: number;
           max_qty?: number;
           min_qty?: number;
           multiplier?: number | null;
+          name_en?: string | null;
           name_fr?: string | null;
           platform?: string;
           price_xaf_1000?: number | null;
@@ -882,10 +909,17 @@ export type Database = {
         Row: {
           cancel: boolean | null;
           category: string | null;
+          custom_description_en: string | null;
+          custom_description_fr: string | null;
+          custom_name_en: string | null;
+          custom_name_fr: string | null;
+          description_en: string | null;
+          description_fr: string | null;
           dripfeed: boolean | null;
           id: number | null;
           max_qty: number | null;
           min_qty: number | null;
+          name_en: string | null;
           name_fr: string | null;
           platform: string | null;
           price_xaf_1000: number | null;
@@ -895,10 +929,17 @@ export type Database = {
         Insert: {
           cancel?: boolean | null;
           category?: string | null;
+          custom_description_en?: string | null;
+          custom_description_fr?: string | null;
+          custom_name_en?: string | null;
+          custom_name_fr?: string | null;
+          description_en?: string | null;
+          description_fr?: string | null;
           dripfeed?: boolean | null;
           id?: number | null;
           max_qty?: number | null;
           min_qty?: number | null;
+          name_en?: string | null;
           name_fr?: string | null;
           platform?: string | null;
           price_xaf_1000?: number | null;
@@ -908,10 +949,17 @@ export type Database = {
         Update: {
           cancel?: boolean | null;
           category?: string | null;
+          custom_description_en?: string | null;
+          custom_description_fr?: string | null;
+          custom_name_en?: string | null;
+          custom_name_fr?: string | null;
+          description_en?: string | null;
+          description_fr?: string | null;
           dripfeed?: boolean | null;
           id?: number | null;
           max_qty?: number | null;
           min_qty?: number | null;
+          name_en?: string | null;
           name_fr?: string | null;
           platform?: string | null;
           price_xaf_1000?: number | null;
@@ -922,6 +970,10 @@ export type Database = {
       };
     };
     Functions: {
+      add_note: {
+        Args: { p_admin: string; p_body: string; p_user: string };
+        Returns: string;
+      };
       admin_adjust: {
         Args: {
           p_admin: string;
@@ -932,10 +984,147 @@ export type Database = {
         Returns: number;
       };
       anonymize_user: { Args: { p_user: string }; Returns: undefined };
+      assert_admin: { Args: { p_admin: string }; Returns: undefined };
       caller_not_deleted: { Args: never; Returns: boolean };
+      cancel_order: {
+        Args: { p_admin: string; p_order: string; p_reason: string };
+        Returns: {
+          alerted_at: string | null;
+          cancel_claimed_at: string | null;
+          cancel_requested_at: string | null;
+          charged_xaf: number;
+          comments: string[] | null;
+          cost_usd: number | null;
+          created_at: string;
+          discount_pct: number;
+          error: string | null;
+          id: string;
+          idem_key: string;
+          link: string;
+          price_xaf_1000: number;
+          provider_order_id: number | null;
+          quantity: number;
+          remains: number | null;
+          resent_at: string | null;
+          service_id: number;
+          short_id: number;
+          start_count: number | null;
+          status: Database['public']['Enums']['order_status'];
+          updated_at: string;
+          user_id: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'orders';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
       cancel_referral_bonus: {
         Args: { p_admin: string; p_reason: string; p_reward: string };
         Returns: number;
+      };
+      claim_order_cancel: {
+        Args: { p_admin: string; p_order: string };
+        Returns: {
+          alerted_at: string | null;
+          cancel_claimed_at: string | null;
+          cancel_requested_at: string | null;
+          charged_xaf: number;
+          comments: string[] | null;
+          cost_usd: number | null;
+          created_at: string;
+          discount_pct: number;
+          error: string | null;
+          id: string;
+          idem_key: string;
+          link: string;
+          price_xaf_1000: number;
+          provider_order_id: number | null;
+          quantity: number;
+          remains: number | null;
+          resent_at: string | null;
+          service_id: number;
+          short_id: number;
+          start_count: number | null;
+          status: Database['public']['Enums']['order_status'];
+          updated_at: string;
+          user_id: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'orders';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      claim_order_resend: {
+        Args: { p_admin: string; p_order: string; p_reason: string };
+        Returns: {
+          alerted_at: string | null;
+          cancel_claimed_at: string | null;
+          cancel_requested_at: string | null;
+          charged_xaf: number;
+          comments: string[] | null;
+          cost_usd: number | null;
+          created_at: string;
+          discount_pct: number;
+          error: string | null;
+          id: string;
+          idem_key: string;
+          link: string;
+          price_xaf_1000: number;
+          provider_order_id: number | null;
+          quantity: number;
+          remains: number | null;
+          resent_at: string | null;
+          service_id: number;
+          short_id: number;
+          start_count: number | null;
+          status: Database['public']['Enums']['order_status'];
+          updated_at: string;
+          user_id: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'orders';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      close_order: {
+        Args: { p_admin: string; p_order: string; p_reason: string };
+        Returns: {
+          alerted_at: string | null;
+          cancel_claimed_at: string | null;
+          cancel_requested_at: string | null;
+          charged_xaf: number;
+          comments: string[] | null;
+          cost_usd: number | null;
+          created_at: string;
+          discount_pct: number;
+          error: string | null;
+          id: string;
+          idem_key: string;
+          link: string;
+          price_xaf_1000: number;
+          provider_order_id: number | null;
+          quantity: number;
+          remains: number | null;
+          resent_at: string | null;
+          service_id: number;
+          short_id: number;
+          start_count: number | null;
+          status: Database['public']['Enums']['order_status'];
+          updated_at: string;
+          user_id: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'orders';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
       };
       credit_payment: {
         Args: {
@@ -962,6 +1151,7 @@ export type Database = {
         };
         Returns: {
           alerted_at: string | null;
+          cancel_claimed_at: string | null;
           cancel_requested_at: string | null;
           charged_xaf: number;
           comments: string[] | null;
@@ -976,38 +1166,7 @@ export type Database = {
           provider_order_id: number | null;
           quantity: number;
           remains: number | null;
-          service_id: number;
-          short_id: number;
-          start_count: number | null;
-          status: Database['public']['Enums']['order_status'];
-          updated_at: string;
-          user_id: string;
-        };
-        SetofOptions: {
-          from: '*';
-          to: 'orders';
-          isOneToOne: true;
-          isSetofReturn: false;
-        };
-      };
-      refund_order: {
-        Args: { p_admin: string; p_amount: number; p_order: string };
-        Returns: {
-          alerted_at: string | null;
-          cancel_requested_at: string | null;
-          charged_xaf: number;
-          comments: string[] | null;
-          cost_usd: number | null;
-          created_at: string;
-          discount_pct: number;
-          error: string | null;
-          id: string;
-          idem_key: string;
-          link: string;
-          price_xaf_1000: number;
-          provider_order_id: number | null;
-          quantity: number;
-          remains: number | null;
+          resent_at: string | null;
           service_id: number;
           short_id: number;
           start_count: number | null;
@@ -1026,6 +1185,7 @@ export type Database = {
         Args: { p_order: string };
         Returns: {
           alerted_at: string | null;
+          cancel_claimed_at: string | null;
           cancel_requested_at: string | null;
           charged_xaf: number;
           comments: string[] | null;
@@ -1040,6 +1200,7 @@ export type Database = {
           provider_order_id: number | null;
           quantity: number;
           remains: number | null;
+          resent_at: string | null;
           service_id: number;
           short_id: number;
           start_count: number | null;
@@ -1053,6 +1214,155 @@ export type Database = {
           isOneToOne: true;
           isSetofReturn: false;
         };
+      };
+      refund_order: {
+        Args: {
+          p_admin: string;
+          p_amount: number;
+          p_idem_key?: string;
+          p_order: string;
+          p_reason: string;
+        };
+        Returns: {
+          alerted_at: string | null;
+          cancel_claimed_at: string | null;
+          cancel_requested_at: string | null;
+          charged_xaf: number;
+          comments: string[] | null;
+          cost_usd: number | null;
+          created_at: string;
+          discount_pct: number;
+          error: string | null;
+          id: string;
+          idem_key: string;
+          link: string;
+          price_xaf_1000: number;
+          provider_order_id: number | null;
+          quantity: number;
+          remains: number | null;
+          resent_at: string | null;
+          service_id: number;
+          short_id: number;
+          start_count: number | null;
+          status: Database['public']['Enums']['order_status'];
+          updated_at: string;
+          user_id: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'orders';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      release_order_cancel: {
+        Args: { p_admin: string; p_order: string };
+        Returns: undefined;
+      };
+      reply_ticket: {
+        Args: { p_admin: string; p_body: string; p_ticket: string };
+        Returns: string;
+      };
+      resend_order: {
+        Args: {
+          p_admin: string;
+          p_order: string;
+          p_provider_order_id: number;
+          p_reason: string;
+        };
+        Returns: {
+          alerted_at: string | null;
+          cancel_claimed_at: string | null;
+          cancel_requested_at: string | null;
+          charged_xaf: number;
+          comments: string[] | null;
+          cost_usd: number | null;
+          created_at: string;
+          discount_pct: number;
+          error: string | null;
+          id: string;
+          idem_key: string;
+          link: string;
+          price_xaf_1000: number;
+          provider_order_id: number | null;
+          quantity: number;
+          remains: number | null;
+          resent_at: string | null;
+          service_id: number;
+          short_id: number;
+          start_count: number | null;
+          status: Database['public']['Enums']['order_status'];
+          updated_at: string;
+          user_id: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'orders';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      update_service: {
+        Args: { p_admin: string; p_changes: Json; p_service: number };
+        Returns: {
+          active: boolean;
+          available: boolean;
+          cancel: boolean;
+          category: string | null;
+          custom_description_en: string | null;
+          custom_description_fr: string | null;
+          custom_name_en: string | null;
+          custom_name_fr: string | null;
+          description_en: string | null;
+          description_fr: string | null;
+          cost_usd_1000: number | null;
+          dripfeed: boolean;
+          id: number;
+          max_qty: number;
+          min_qty: number;
+          multiplier: number | null;
+          name_en: string | null;
+          name_fr: string | null;
+          platform: string;
+          price_xaf_1000: number | null;
+          provider_name: string | null;
+          provider_type: string | null;
+          refill: boolean;
+          sort_order: number;
+          updated_at: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'services';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      update_setting: {
+        Args: { p_admin: string; p_changes: Json };
+        Returns: Json;
+      };
+      update_ticket: {
+        Args: { p_admin: string; p_status: string; p_ticket: string };
+        Returns: {
+          created_at: string;
+          id: string;
+          order_id: string | null;
+          status: Database['public']['Enums']['ticket_status'];
+          subject: string;
+          updated_at: string;
+          user_id: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'tickets';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      update_user: {
+        Args: { p_admin: string; p_changes: Json; p_user: string };
+        Returns: undefined;
       };
       verify_user_password: {
         Args: { p_password: string; p_user: string };

@@ -166,6 +166,7 @@ describe('GET /api/v1/favorites', () => {
     expect(Object.keys(json[0]!).sort()).toEqual(
       [
         'cancel',
+        'description',
         'displayMinOrder',
         'displayPrice1000',
         'dripfeed',
