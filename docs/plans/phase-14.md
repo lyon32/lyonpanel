@@ -51,7 +51,7 @@ Ordre : 14.1 (prototypes) → **arrêt, choix du propriétaire** → 14.2 → 14
 - Titres de héros proposés (≤ 60 car.) : 1 « Plus d'abonnés TikTok, payés en Mobile Money » / « More TikTok followers, paid with Mobile Money » ; 2 « Ton Instagram grandit. Tu paies en XAF. » / « Your Instagram grows. You pay in XAF. » ; 3 « Le panel SMM pensé pour l'Afrique » / « The SMM panel built for Africa ».
 - Hors périmètre : aperçu du tableau de bord, faux chiffres/avis/logos, jaune, bibliothèque nouvelle.
 - Fini quand : 3 pages s'affichent sans erreur console, lisibles à 360 px, FR et EN, lint et types verts.
-- Statut : à faire
+- Statut : **terminée le 2026-11-21**
 
 **Prototype choisi : E (validé le 2026-11-21).** Rejetés (A, B, C, D, F) : dossiers à supprimer dans 14.2. Base : `src/components/prototypes/e/**` (déplacée vers `src/components/home/**`), photos `public/images/home/`, logos `public/brand/networks/` et `public/brand/payments/`.
 
@@ -72,31 +72,31 @@ Pages publiques existantes (`src/app/[locale]/(public)/`) : accueil, `services` 
 - Dépend de : 14.2 (palette et composants). Fichiers : `src/app/[locale]/(public)/services/[network]/**`, `src/components/platform/**`, `messages`. Ne touche pas aux fichiers de 14.4.
 - Agents : `lp-tester` → `lp-coder` → `lp-designer` ∥ `lp-seo` → `lp-reviewer` ∥ `lp-qa`.
 - Règles : prix calculés côté serveur depuis le catalogue ; jamais le coût fournisseur ni son nom ; réseaux à très peu de services (WhatsApp 3, Spotify 3, Twitch 6, LinkedIn 4) : pas de page propre tant que le contenu est mince (regroupés dans « Autres réseaux »).
-- Statut : à faire
+- Statut : **terminée le 2026-11-21**
 
 ### Tâche 14.4 — FAQ, contact, pages par pays
 - Objectif : page FAQ (`FAQPage`), page contact (canal de support existant, aucun nouveau service), pages par pays seulement si contenu utile (moyens de paiement locaux, prix XAF) — sinon reportées et notées au rapport.
 - Dépend de : 14.2. Parallèle à 14.3 (fichiers distincts : `src/app/[locale]/(public)/{faq,contact,countries}/**`, `src/components/faq/**`).
 - Agents : `lp-tester` → `lp-coder` → `lp-designer` ∥ `lp-seo` → `lp-reviewer` ∥ `lp-qa`.
 - Règle : aucune promesse de délai ou de résultat non vérifiée ; formulaire de contact seulement s'il réutilise un mécanisme existant, sinon simple lien.
-- Statut : à faire
+- Statut : **terminée le 2026-11-21**
 
 ### Tâche 14.5 — SEO technique
 - Objectif : `NEXT_PUBLIC_SITE_URL` (défaut `https://lyonpanel.com`), metadata par page (titre, description, canonical, hreflang fr/en/x-default, Open Graph 1200×630, Twitter), JSON-LD `Organization`/`WebSite`/`BreadcrumbList`, compléter `sitemap.ts` et `robots.ts`, `noindex` global tant que `SITE_INDEXABLE` n'est pas `true`, `noindex` permanent sur pages privées et admin. Mots-clés : `docs/plans/phase-14-seo-mots-cles-et-prompts-images.md`.
 - Dépend de : 14.3 et 14.4. Agents : `lp-tester` → `lp-seo` → `lp-reviewer`.
 - Fichiers : `src/lib/seo/**`, `src/app/sitemap.ts`, `src/app/robots.ts`, `generateMetadata` des pages publiques, `.env.example`, `ENV_SETUP.md`.
-- Statut : à faire
+- Statut : **terminée le 2026-11-21**
 
 ### Tâche 14.6 — Test CI des balises
 - Objectif : un test qui parcourt les pages publiques (titre, description, canonical, hreflang, OG, JSON-LD valide) et les pages privées/admin (`noindex`), lancé par la CI.
 - Dépend de : 14.5. Agents : `lp-tester` → `lp-reviewer`. Fichiers : `tests/unit/seo/**` ou `tests/e2e/seo/**` ; workflow CI modifié seulement s'il ne lance pas déjà ces dossiers.
-- Statut : à faire
+- Statut : **terminée le 2026-11-21**
 
 ### Tâche 14.7 — Lighthouse, rapport, PR
 - Objectif : Lighthouse mobile sur la version de production (accueil, une page plateforme, FAQ) ; contrôle du poids des images ; rapport `docs/reports/phase-14/README.md` (`lp-reporter`) ; branche + PR (jamais sur `main`) ; CI lue sur la PR ; attendre « validé ».
 - Dépend de : 14.2 à 14.6.
 - À clore avant les phases 15/16 (notés au rapport) : remplacer `PLACEHOLDER_STATS` par les vrais chiffres ; nettoyer les logos de paiement inutilisés ; images Magnific (si générées) ; volumes de mots-clés quand un outil est disponible ; passer le site en indexable à la mise en ligne.
-- Statut : à faire
+- Statut : **en attente de validation du propriétaire** (2026-11-21 ; rapport `docs/reports/phase-14/README.md`)
 
 Ordre d'exécution : 14.2 → (14.3 ∥ 14.4) → 14.5 → 14.6 → 14.7. Deux agents ne touchent jamais le même fichier en même temps (`TEAM.md` §5).
 

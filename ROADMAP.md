@@ -179,6 +179,6 @@ Pages par pays, blog, commandes en lot, notifications client, email « nouvelle 
 | 11 | **validée le 2026-11-17** (PR 23, puis 26 à 29 : tâches planifiées, annulation avec remboursement, synchro du catalogue) | — |
 | 12 | **validée le 2026-11-21** (PR 31 ; migrations appliquées en production le 2026-11-21) | — |
 | 13 | à faire | — |
-| 14 | à faire | — |
+| 14 | faite – en attente de validation (2026-11-21) | — |
 | 15 | à faire | — |
 | 16 | à faire | — |

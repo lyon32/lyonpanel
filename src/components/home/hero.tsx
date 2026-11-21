@@ -6,7 +6,7 @@ import { Arrow, BTN_GHOST, BTN_PRIMARY, CARD, NetLogo } from './ui';
 
 // Photo du héros : portrait sur téléphone, paysage dès 1024 px (une seule image chargée).
 function HeroPhoto({ alt }: { alt: string }) {
-  const common = { alt, priority: true, quality: 80 };
+  const common = { alt, priority: true, quality: 75 };
   const wide = getImageProps({
     ...common,
     src: '/images/home/femme-16x9.webp',
