@@ -63,12 +63,12 @@ Un agent ne démarre jamais avant ce dont il dépend ; ce qui est indépendant t
 - Vérifier une page dans un vrai navigateur : `webapp-testing` (Playwright) ou le navigateur intégré.
 - Concurrents, SEO, contenu de blog (Phase 14 et après) : `firecrawl-seo-audit`, `firecrawl-competitive-intel`, `competitive-ads-extractor`, `content-research-writer`.
 - Notes de version après chaque phase : `changelog-generator`.
-- Les règles du design system (`docs/05`) priment sur celles des skills en cas de conflit (ex. police Public Sans, pas de mode sombre).
+- Les règles du design system (`docs/05`) priment sur celles des skills en cas de conflit (ex. police Public Sans, pas de bouton clair/sombre).
 - Ne jamais lancer les commandes de mise à jour proposées dans les skills (`npx antislop-ai`, `npx ui-skills`, `npx @google/design.md`, `npm install -g firecrawl-cli`, `npm install -g @anthropic-ai/claude-code`) sans accord du propriétaire.
 
 ## Rappels pour plus tard
 
-- **Fin de la phase 14 (accueil terminé)** : rappeler au propriétaire de proposer 2 à 3 prototypes d'accueil très différents (couleurs du design system gardées), inspirés des références, avec tous les skills de design dont `unslop`. Détail dans `ROADMAP.md`, phase 14.
+- **Fin de la phase 14 (accueil terminé)** : rappeler au propriétaire de proposer 2 à 3 prototypes d'accueil très différents (palette sombre, `docs/05` §12), inspirés des références, avec tous les skills de design dont `unslop`. Détail dans `ROADMAP.md`, phase 14.
 - Skill de design du propriétaire à toujours utiliser pour tout ce qui est visuel : `unslop` (`.claude/skills/unslop/`), avec `antislop-*`. Les règles de `docs/05` priment en cas de conflit.
 
 ## Serveurs MCP
@@ -85,7 +85,7 @@ Un agent ne démarre jamais avant ce dont il dépend ; ce qui est indépendant t
 6. Valider toute entrée avec **Zod** ; erreurs au format unique (`API_SPEC.md §3`), messages FR/EN.
 7. Écrire les **tests en même temps que le code** ; 100 % sur l'argent ; un bug corrigé = un test.
 8. Utiliser le **faux fournisseur** (`PROVIDER_MODE=mock`) et **SasPay test** en local.
-9. Respecter le design system : blanc, bleu `#1D4ED8`, jaune en accent, Public Sans, aucun look IA.
+9. Respecter le design system : **palette sombre sur tout le site** (accent `#425EFF`, gris `#D7D7DA`, fond `#111111`, `docs/05` §11-12, décision du 2026-11-21), Public Sans, aucun look IA.
 10. Lancer lint, types et tests **avant** de dire qu'une tâche est finie, et montrer le résultat.
 11. **Demander avant d'agir** sur : prix et marges, sécurité, nouvelle bibliothèque, changement de schéma non prévu, tout ce qui coûte de l'argent réel.
 
