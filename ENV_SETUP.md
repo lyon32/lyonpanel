@@ -36,6 +36,7 @@ Modèle : [`.env.example`](.env.example). En local : copier en `.env.local` (ign
 | Variable | Secret ? | Rôle | Où l'obtenir | En local |
 |---|---|---|---|---|
 | `NEXT_PUBLIC_SITE_URL` | non | Adresse du site (liens, retour SasPay) | — | `http://localhost:3100` |
+| `NEXT_PUBLIC_SUPPORT_EMAIL` | non | Adresse de support affichée sur la page Contact. Optionnelle : vide = la ligne n’apparaît pas | Boîte de support (voir Hostinger plus bas) | vide |
 | `ADMIN_PATH` | **oui** | Segment secret de l'admin | `openssl rand -hex 12` | une valeur au choix |
 | `ADMIN_ENROLL_OPEN` | non | Enrôlement des appareils admin : vide ou `true` = ouvert tant qu'il y a moins de 2 appareils vérifiés ; `false` = fermé (404). Jamais de 3e appareil | — | vide |
 | `NEXT_PUBLIC_SUPABASE_URL` | non | Adresse Supabase | Supabase → Settings → API | donnée par `supabase start` |
