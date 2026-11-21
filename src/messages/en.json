@@ -52,13 +52,11 @@
   },
   "home": {
     "title": "The site is coming soon.",
-    "subtitle": "Followers, likes and views for your social media.",
     "heroTitle": "Grow your social accounts. Pay with <accent>Mobile Money</accent>.",
     "heroText": "Followers, likes and views for TikTok, Instagram, YouTube, Telegram and many other networks. Top up your balance, order, and follow every order in one place.",
     "createAccount": "Create an account",
     "seeServices": "See the services",
     "example": "Example",
-    "mockLabel": "Panel preview, example data",
     "mockBalance": "Balance",
     "mockOrders": "Orders",
     "mockPlace": "Place an order",
@@ -86,7 +84,6 @@
     "step2Text": "Add any amount you like to your balance.",
     "step3": "Order and follow",
     "step3Text": "Pick a service, paste your link, follow the progress.",
-    "networksTitle": "For your social networks",
     "servicesTitle": "What you can order",
     "featuresTitle": "Everything in one place",
     "feat1": "Pay with Mobile Money",
@@ -125,6 +122,102 @@
       "whatsapp": "Channel followers, reactions",
       "discord": "Server members",
       "web": "Website visits"
+    },
+    "hero": {
+      "badge": "SMM panel for creators and shops",
+      "title": "Grow your presence on social media",
+      "accent": "Grow",
+      "sub": "Followers, likes, views, comments and other engagement services for your accounts. Create an account, pick a service, follow your order.",
+      "ctaPrimary": "Create an account",
+      "ctaSecondary": "How it works",
+      "networksTitle": "Supported networks",
+      "alt": "A young woman smiles while looking at her phone"
+    },
+    "stats": {
+      "title": "In numbers",
+      "items": {
+        "1": "services in the catalogue",
+        "2": "Instagram services",
+        "3": "TikTok services",
+        "4": "orders placed",
+        "5": "registered clients",
+        "6": "countries served"
+      }
+    },
+    "steps": {
+      "title": "Order in 3 steps",
+      "lead": "No subscription. Top up, order, that’s it.",
+      "step": "Step",
+      "alt": "A man smiles at his phone",
+      "items": {
+        "1": {
+          "title": "Top up your balance",
+          "text": "Pay with Mobile Money or card, from 500 to 500,000 XAF. Your balance is credited on confirmation.",
+          "chip": "500 – 500,000 XAF"
+        },
+        "2": {
+          "title": "Pick a service",
+          "text": "Network, type, quantity. The total price shows before you confirm, from 5 XAF.",
+          "chip": "From 5 XAF"
+        },
+        "3": {
+          "title": "Follow your order",
+          "text": "The status stays up to date in your account. Problem? Open a ticket.",
+          "chip": "Tracked in your account"
+        }
+      }
+    },
+    "services": {
+      "title": "Services for every platform",
+      "lead": "Pick your network, then the service that fits your goal.",
+      "unit": "services",
+      "seeAll": "See all services",
+      "moreTitle": "And more",
+      "moreText": "Kick, Pinterest, Threads and other networks in the catalogue.",
+      "types": {
+        "followers": "followers",
+        "likes": "likes",
+        "views": "views",
+        "comments": "comments",
+        "shares": "shares",
+        "other": "other"
+      }
+    },
+    "payments": {
+      "title": "Pay the way you already do",
+      "lead": "Top-ups go through a secure payment. Your balance is credited on confirmation.",
+      "text": "Mobile Money, bank card: you pick what is offered in your country when you top up.",
+      "note": "Available methods vary by country, currency and time of payment",
+      "logoAlt": "LyonPanel logo"
+    },
+    "faq": {
+      "title": "Frequently asked questions",
+      "items": {
+        "1": {
+          "q": "How do I top up my balance?",
+          "a": "With Mobile Money or card, from 500 to 500,000 XAF. Your balance is credited once the payment is confirmed."
+        },
+        "2": {
+          "q": "What is the minimum order?",
+          "a": "From 5 XAF. The total price shows before you confirm."
+        },
+        "3": {
+          "q": "How long does delivery take?",
+          "a": "It depends on the service. You follow the order status in your account."
+        },
+        "4": {
+          "q": "Do I need to share my password?",
+          "a": "No, never. The public link or username of the account or post is enough."
+        },
+        "5": {
+          "q": "What if something goes wrong?",
+          "a": "Open a ticket from your account. The team reviews every request."
+        }
+      }
+    },
+    "cta": {
+      "title": "Ready to grow your account?",
+      "text": "Create your account for free and place your first order."
     }
   },
   "meta": {

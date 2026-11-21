@@ -7,7 +7,7 @@ import { Link } from '@/i18n/navigation';
 export default function NotFound() {
   const t = useTranslations('notFound');
   return (
-    <div className="px-4 py-16">
+    <div className="lp-app min-h-screen px-4 py-16">
       <EmptyState
         icon={FileQuestion}
         title={t('title')}

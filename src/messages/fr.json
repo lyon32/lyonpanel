@@ -52,13 +52,11 @@
   },
   "home": {
     "title": "Le site arrive bientôt.",
-    "subtitle": "Abonnés, likes et vues pour vos réseaux sociaux.",
     "heroTitle": "Faites grandir vos réseaux. Payez en <accent>Mobile Money</accent>.",
     "heroText": "Abonnés, likes et vues pour TikTok, Instagram, YouTube, Telegram et bien d’autres réseaux. Rechargez votre solde, commandez, suivez chaque commande au même endroit.",
     "createAccount": "Créer un compte",
     "seeServices": "Voir les services",
     "example": "Exemple",
-    "mockLabel": "Aperçu du panel, données d’exemple",
     "mockBalance": "Solde",
     "mockOrders": "Commandes",
     "mockPlace": "Passer une commande",
@@ -86,7 +84,6 @@
     "step2Text": "Ajoutez le montant de votre choix à votre solde.",
     "step3": "Commandez et suivez",
     "step3Text": "Choisissez un service, collez votre lien, suivez l’avancement.",
-    "networksTitle": "Pour vos réseaux",
     "servicesTitle": "Ce que vous pouvez commander",
     "featuresTitle": "Tout au même endroit",
     "feat1": "Payez en Mobile Money",
@@ -125,6 +122,102 @@
       "whatsapp": "Abonnés de chaîne, réactions",
       "discord": "Membres du serveur",
       "web": "Visites de site web"
+    },
+    "hero": {
+      "badge": "Panel SMM pour créateurs et commerçants",
+      "title": "Fais grandir ta présence sur les réseaux sociaux",
+      "accent": "grandir",
+      "sub": "Abonnés, j’aime, vues, commentaires et autres services d’engagement pour tes comptes. Tu crées ton compte, tu choisis un service, tu suis ta commande.",
+      "ctaPrimary": "Créer un compte",
+      "ctaSecondary": "Comment ça marche",
+      "networksTitle": "Les réseaux pris en charge",
+      "alt": "Une jeune femme sourit en regardant son téléphone"
+    },
+    "stats": {
+      "title": "En chiffres",
+      "items": {
+        "1": "services au catalogue",
+        "2": "services Instagram",
+        "3": "services TikTok",
+        "4": "commandes passées",
+        "5": "clients inscrits",
+        "6": "pays servis"
+      }
+    },
+    "steps": {
+      "title": "Commander en 3 étapes",
+      "lead": "Pas d’abonnement. Tu recharges, tu commandes, c’est tout.",
+      "step": "Étape",
+      "alt": "Un homme sourit à son téléphone",
+      "items": {
+        "1": {
+          "title": "Recharge ton solde",
+          "text": "Paie par Mobile Money ou par carte, de 500 à 500 000 XAF. Ton solde est crédité dès la confirmation.",
+          "chip": "500 – 500 000 XAF"
+        },
+        "2": {
+          "title": "Choisis un service",
+          "text": "Réseau, type, quantité. Le prix total s’affiche avant de valider, dès 5 XAF.",
+          "chip": "Dès 5 XAF"
+        },
+        "3": {
+          "title": "Suis ta commande",
+          "text": "Le statut est à jour dans ton espace. Un souci ? Ouvre un ticket.",
+          "chip": "Suivi dans ton espace"
+        }
+      }
+    },
+    "services": {
+      "title": "Des services pour chaque plateforme",
+      "lead": "Choisis ton réseau, puis le service qui correspond à ton objectif.",
+      "unit": "services",
+      "seeAll": "Voir tous les services",
+      "moreTitle": "Et plus encore",
+      "moreText": "Kick, Pinterest, Threads et d’autres réseaux au catalogue.",
+      "types": {
+        "followers": "abonnés",
+        "likes": "j’aime",
+        "views": "vues",
+        "comments": "commentaires",
+        "shares": "partages",
+        "other": "autres"
+      }
+    },
+    "payments": {
+      "title": "Tu paies comme tu as l’habitude",
+      "lead": "La recharge passe par un paiement sécurisé. Ton solde est crédité à la confirmation.",
+      "text": "Mobile Money, carte bancaire : tu choisis ce qui est proposé dans ton pays au moment de recharger.",
+      "note": "Les moyens disponibles varient selon le pays, la devise et le moment du paiement",
+      "logoAlt": "Logo LyonPanel"
+    },
+    "faq": {
+      "title": "Questions fréquentes",
+      "items": {
+        "1": {
+          "q": "Comment je recharge mon solde ?",
+          "a": "Par Mobile Money ou par carte, de 500 à 500 000 XAF. Le solde est crédité dès la confirmation du paiement."
+        },
+        "2": {
+          "q": "À partir de quel montant puis-je commander ?",
+          "a": "Dès 5 XAF. Le prix total est affiché avant que tu valides."
+        },
+        "3": {
+          "q": "Combien de temps dure une livraison ?",
+          "a": "Cela dépend du service. Tu suis le statut de ta commande dans ton espace."
+        },
+        "4": {
+          "q": "Dois-je donner mon mot de passe ?",
+          "a": "Non, jamais. Il suffit du lien ou du nom d’utilisateur public du compte ou de la publication."
+        },
+        "5": {
+          "q": "Que faire en cas de problème ?",
+          "a": "Ouvre un ticket depuis ton espace. L’équipe examine chaque demande."
+        }
+      }
+    },
+    "cta": {
+      "title": "Prêt à faire grandir ton compte ?",
+      "text": "Crée ton compte gratuitement et passe ta première commande."
     }
   },
   "meta": {
