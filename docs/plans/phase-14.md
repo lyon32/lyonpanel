@@ -1,6 +1,6 @@
 # Phase 14 — Page d'accueil soignée + SEO (plan de cadrage)
 
-Statut : **cadrage terminé le 2026-11-21, en attente de « validé »**. Aucun code avant validation. Réponses du propriétaire ci-dessous ; les tâches détaillées seront découpées par le chef de projet après validation.
+Statut : **plan validé par le propriétaire le 2026-11-21** (« validé »). Reste à trancher au démarrage de l'exécution : l'étendue de la palette sombre (voir « À confirmer »). Réponses du propriétaire ci-dessous ; les tâches détaillées seront découpées par le chef de projet après validation.
 
 ## Décisions du propriétaire (2026-11-21)
 
