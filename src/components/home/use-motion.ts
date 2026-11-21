@@ -13,7 +13,8 @@ export function useMotion(root: RefObject<HTMLElement | null>, locale: string) {
     let revert: (() => void) | undefined;
     const fmt = new Intl.NumberFormat(locale === 'fr' ? 'fr-FR' : 'en-US');
 
-    void (async () => {
+    // Chargement différé : GSAP après le premier rendu, contenu visible par défaut.
+    const run = async () => {
       const [{ gsap }, { ScrollTrigger }] = await Promise.all([
         import('gsap'),
         import('gsap/ScrollTrigger'),
@@ -21,16 +22,7 @@ export function useMotion(root: RefObject<HTMLElement | null>, locale: string) {
       if (cancelled) return;
       gsap.registerPlugin(ScrollTrigger);
       const ctx = gsap.context(() => {
-        // Héros en cascade
-        const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
-        tl.from('[data-hero]', {
-          y: 24,
-          opacity: 0,
-          duration: 0.7,
-          stagger: 0.09,
-          clearProps: 'transform,opacity,transition',
-          transition: 'none',
-        });
+        // Le héros reste visible dès le premier rendu (LCP) : pas de cascade différée.
 
         // Compteurs
         gsap.utils.toArray<HTMLElement>('[data-count]').forEach((node) => {
@@ -111,10 +103,20 @@ export function useMotion(root: RefObject<HTMLElement | null>, locale: string) {
         }
       }, el);
       revert = () => ctx.revert();
-    })();
+    };
+    const start = () => {
+      if (!cancelled) run().catch(() => undefined);
+    };
+    let idleId: number | undefined;
+    let timerId: ReturnType<typeof setTimeout> | undefined;
+    if ('requestIdleCallback' in window)
+      idleId = window.requestIdleCallback(start, { timeout: 2000 });
+    else timerId = setTimeout(start, 300);
 
     return () => {
       cancelled = true;
+      if (idleId !== undefined) window.cancelIdleCallback(idleId);
+      if (timerId !== undefined) clearTimeout(timerId);
       revert?.();
     };
   }, [root, locale]);

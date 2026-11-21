@@ -36,7 +36,7 @@ function PayPill({ m, i }: { m: Pay; i: number }) {
             width={96}
             height={96}
             unoptimized
-            loading="eager"
+            sizes="96px"
             onError={() => setFailed(true)}
             className={`relative size-full object-contain ${SHAPE[m.shape]} ${m.id === 'visa' ? 'rounded-lg bg-[var(--lp-gray-12)] p-1.5' : ''}`}
           />
