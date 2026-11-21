@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { PRIVATE_ROBOTS } from '@/lib/seo/indexing';
 import { PaymentStatus, type PaymentView } from '@/components/wallet/payment-status';
 import { requireUser } from '@/server/auth/require-user';
 import { createSessionClient } from '@/server/db/supabase-server';
@@ -12,7 +13,7 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'pages' });
-  return { title: t('addFunds'), robots: { index: false, follow: false } };
+  return { title: t('addFunds'), robots: PRIVATE_ROBOTS };
 }
 
 export default async function PaymentReturnPage({ params }: Props) {

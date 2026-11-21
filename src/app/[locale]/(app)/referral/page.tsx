@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { PRIVATE_ROBOTS } from '@/lib/seo/indexing';
 import { CopyButton } from '@/components/referral/copy-button';
 import { Card } from '@/components/ui/card';
 import { requireUser } from '@/server/auth/require-user';
@@ -12,7 +13,7 @@ type Props = { params: Promise<{ locale: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'pages' });
-  return { title: t('referral'), robots: { index: false, follow: false } };
+  return { title: t('referral'), robots: PRIVATE_ROBOTS };
 }
 
 const EXAMPLE_XAF = 10_000;

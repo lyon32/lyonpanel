@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { pathnames, routing } from '@/i18n/routing';
-import { SITE_NAME, SITE_URL } from '@/lib/constants';
+import { SITE_NAME } from '@/lib/constants';
+import { PRIVATE_ROBOTS } from '@/lib/seo/indexing';
+import { getSiteUrl } from '@/lib/seo/site-url';
 
 type AuthPage = 'login' | 'register' | 'forgot-password' | 'reset-password';
 type Lang = 'fr' | 'en';
@@ -66,17 +68,17 @@ function pathFor(page: AuthPage, lang: Lang): string {
 export function authMetadata(page: AuthPage, locale: string): Metadata {
   const lang: Lang = locale === 'en' ? 'en' : 'fr';
   const { title, description } = TEXTS[page][lang];
-  const url = `${SITE_URL}${pathFor(page, lang)}`;
+  const url = `${getSiteUrl()}${pathFor(page, lang)}`;
   return {
     title,
     description,
-    robots: { index: false, follow: false },
+    robots: PRIVATE_ROBOTS,
     alternates: {
       canonical: url,
       languages: {
-        fr: `${SITE_URL}${pathFor(page, 'fr')}`,
-        en: `${SITE_URL}${pathFor(page, 'en')}`,
-        'x-default': `${SITE_URL}${pathFor(page, 'fr')}`,
+        fr: `${getSiteUrl()}${pathFor(page, 'fr')}`,
+        en: `${getSiteUrl()}${pathFor(page, 'en')}`,
+        'x-default': `${getSiteUrl()}${pathFor(page, 'fr')}`,
       },
     },
     openGraph: {

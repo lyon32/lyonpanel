@@ -1,7 +1,7 @@
 import 'server-only';
 import { randomUUID } from 'node:crypto';
 import { quotePayment, type Quote } from './quote';
-import { SITE_URL } from '@/lib/constants';
+import { getSiteUrl } from '@/lib/seo/site-url';
 import { createAdminClient } from '@/server/db/supabase-admin';
 import { loadServerEnv } from '@/server/env';
 import { apiError } from '@/server/http/api-error';
@@ -31,7 +31,7 @@ type CreatedPayment = { id: string; checkoutUrl: string };
 function returnUrlFor(paymentId: string, language: string): string {
   const path = language === 'en' ? 'en/add-funds' : 'fr/recharger';
   // Adresse du site configurée (ex. lyonpanel.vercel.app avant l'ouverture du domaine).
-  return `${loadServerEnv().NEXT_PUBLIC_SITE_URL ?? SITE_URL}/${path}/${paymentId}`;
+  return `${loadServerEnv().NEXT_PUBLIC_SITE_URL ?? getSiteUrl()}/${path}/${paymentId}`;
 }
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));

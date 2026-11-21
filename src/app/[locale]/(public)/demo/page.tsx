@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { PRIVATE_ROBOTS } from '@/lib/seo/indexing';
 import { Reveal } from '@/components/motion/reveal';
 import { DemoBasics } from '@/components/shared/demo/demo-basics';
 import { HomeHero } from '@/components/shared/home-hero';
@@ -22,7 +23,7 @@ type Props = { params: Promise<{ locale: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'demo' });
-  return { title: t('metaTitle'), robots: { index: false, follow: false } };
+  return { title: t('metaTitle'), robots: PRIVATE_ROBOTS };
 }
 
 function SectionTitle({ children }: { children: string }) {

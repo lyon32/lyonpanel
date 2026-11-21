@@ -10,7 +10,10 @@ import { buildServiceJsonLd } from '@/lib/seo/service-jsonld';
 import { buildFaqJsonLd, serializeJsonLd, type FaqItem } from '@/components/faq/faq-jsonld';
 import { Link } from '@/i18n/navigation';
 import { JsonLd } from '@/components/seo/json-ld';
-import { asLang, breadcrumbLd, catalogMetadata, fitTitle } from '@/lib/seo/catalog-seo';
+import { asLang, catalogMetadata, fitTitle, gateIndexing } from '@/lib/seo/catalog-seo';
+import { buildPageMetadata } from '@/lib/seo/page-metadata';
+import { seoHomeCrumb } from '@/lib/seo/public-meta';
+import { buildBreadcrumbJsonLd } from '@/lib/seo/site-jsonld';
 import { networkLabel } from '@/server/catalog/labels';
 import { loadCatalogView } from '@/server/catalog/load-catalog';
 import { asCatalogLocale, parseNetwork } from '@/server/catalog/page-params';
@@ -21,12 +24,25 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, network } = await params;
   const t = await getTranslations({ locale, namespace: 'catalog' });
   const name = networkLabel(parseNetwork(network), asCatalogLocale(locale));
-  return catalogMetadata({
-    lang: asLang(locale),
-    path: `/services/${parseNetwork(network)}`,
-    title: fitTitle(t('networkMetaTitle', { network: name }), ''),
-    description: t('networkMetaDescription', { network: name }),
-  });
+  const seo = await getTranslations({ locale, namespace: 'seo' });
+  const key = `networks.${parseNetwork(network)}`;
+  // Réseaux riches : textes SEO rédigés ; sinon repli sur le modèle générique du catalogue.
+  if (seo.has(`${key}.title`)) {
+    return buildPageMetadata({
+      lang: asLang(locale),
+      path: `/services/${parseNetwork(network)}`,
+      title: seo(`${key}.title`),
+      description: seo(`${key}.description`),
+    });
+  }
+  return gateIndexing(
+    catalogMetadata({
+      lang: asLang(locale),
+      path: `/services/${parseNetwork(network)}`,
+      title: fitTitle(t('networkMetaTitle', { network: name }), ''),
+      description: t('networkMetaDescription', { network: name }),
+    }),
+  );
 }
 
 export default async function NetworkPage({ params }: Props) {
@@ -59,8 +75,9 @@ export default async function NetworkPage({ params }: Props) {
 
   const lang = asLang(locale);
   const crumbs = [
-    { name: t('allServices'), path: '/services' },
-    { name: entry.label, path: `/services/${network}` },
+    await seoHomeCrumb(locale),
+    { name: t('allServices'), url: `/${lang}/services` },
+    { name: entry.label, url: `/${lang}/services/${network}` },
   ];
   const intro = t.has(`networkIntros.${network}`)
     ? t(`networkIntros.${network}`)
@@ -68,7 +85,7 @@ export default async function NetworkPage({ params }: Props) {
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-8">
-      <JsonLd data={breadcrumbLd(lang, crumbs)} />
+      <JsonLd data={buildBreadcrumbJsonLd(crumbs)} />
       {fromPrice !== null ? (
         <JsonLd
           data={buildServiceJsonLd({

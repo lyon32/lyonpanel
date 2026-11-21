@@ -1042,5 +1042,62 @@
         }
       }
     }
+  },
+  "seo": {
+    "breadcrumbHome": "Home",
+    "home": {
+      "title": "SMM panel for Africa: followers, likes, views | LyonPanel",
+      "description": "LyonPanel: followers, likes and views for TikTok, Instagram and YouTube. Top up with Mobile Money, pay in XAF and follow every order from your account."
+    },
+    "services": {
+      "title": "SMM services: followers, likes, views in XAF | LyonPanel",
+      "description": "All LyonPanel services for TikTok, Instagram, YouTube and other networks: prices in XAF per 1,000, minimum order shown, payment by Mobile Money."
+    },
+    "faq": {
+      "title": "FAQ: top-ups, orders and payment | LyonPanel",
+      "description": "Answers about topping up your balance with Mobile Money, placing orders, prices in XAF and managing your LyonPanel account."
+    },
+    "contact": {
+      "title": "Contact and customer support | LyonPanel",
+      "description": "Questions about an order or a payment? Open a ticket from your LyonPanel client area or write to us by email."
+    },
+    "privacy": {
+      "title": "Privacy policy | LyonPanel",
+      "description": "How LyonPanel handles your personal data: what we collect, why, and how to exercise your rights. Page in preparation."
+    },
+    "terms": {
+      "title": "Terms of use | LyonPanel",
+      "description": "LyonPanel terms of use: account, balance top-ups, orders and the responsibilities of each side. Page in preparation."
+    },
+    "blog": {
+      "title": "Blog: growing on TikTok and Instagram | LyonPanel",
+      "description": "Tips to grow your TikTok or Instagram account, plus LyonPanel news for creators and shop owners across Africa. Coming soon."
+    },
+    "networks": {
+      "tiktok": {
+        "title": "Buy TikTok followers with Mobile Money | LyonPanel",
+        "description": "TikTok followers, likes and views: price in XAF per 1,000 and minimum order shown up front. Top up with Mobile Money and track your orders on LyonPanel."
+      },
+      "instagram": {
+        "title": "Buy Instagram followers and likes | LyonPanel",
+        "description": "Instagram followers, likes and views for your shop or account. Prices in XAF per 1,000, Mobile Money payment, order tracking on LyonPanel."
+      },
+      "youtube": {
+        "title": "Buy YouTube views and subscribers | LyonPanel",
+        "description": "YouTube views, subscribers and likes: price in XAF per 1,000 and minimum order shown before you pay. Mobile Money payment on LyonPanel."
+      },
+      "facebook": {
+        "title": "Buy Facebook followers and likes | LyonPanel",
+        "description": "Likes, followers and views for your Facebook page. Prices in XAF per 1,000, minimum order visible, payment by Mobile Money on LyonPanel."
+      },
+      "telegram": {
+        "title": "Buy Telegram members and views | LyonPanel",
+        "description": "Members, views and reactions for your Telegram channel or group. Prices in XAF per 1,000, minimum order visible, Mobile Money payment on LyonPanel."
+      },
+      "x": {
+        "title": "Buy X (Twitter) followers and likes | LyonPanel",
+        "description": "Followers, likes and views for your X (Twitter) account. Price in XAF per 1,000 and minimum order shown. Pay with Mobile Money on LyonPanel."
+      }
+    }
   }
 }

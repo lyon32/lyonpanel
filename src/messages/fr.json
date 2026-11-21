@@ -1042,5 +1042,62 @@
         }
       }
     }
+  },
+  "seo": {
+    "breadcrumbHome": "Accueil",
+    "home": {
+      "title": "Panel SMM Afrique : abonnés, likes, vues | LyonPanel",
+      "description": "LyonPanel : abonnés, likes et vues pour TikTok, Instagram et YouTube. Rechargez par Mobile Money, payez en XAF et suivez chaque commande depuis votre compte."
+    },
+    "services": {
+      "title": "Services SMM : abonnés, likes, vues en XAF | LyonPanel",
+      "description": "Tous les services LyonPanel pour TikTok, Instagram, YouTube et d’autres réseaux : prix en XAF pour 1 000, commande minimum affichée, paiement par Mobile Money."
+    },
+    "faq": {
+      "title": "FAQ : recharge, commandes et paiement | LyonPanel",
+      "description": "Réponses aux questions sur la recharge du solde par Mobile Money, les commandes, les prix en XAF et votre compte LyonPanel."
+    },
+    "contact": {
+      "title": "Contact et support client | LyonPanel",
+      "description": "Une question sur une commande ou un paiement ? Ouvrez un ticket depuis votre espace client LyonPanel ou écrivez-nous par email."
+    },
+    "privacy": {
+      "title": "Politique de confidentialité | LyonPanel",
+      "description": "Comment LyonPanel traite vos données personnelles : ce que nous collectons, pourquoi, et comment exercer vos droits. Page en préparation."
+    },
+    "terms": {
+      "title": "Conditions d’utilisation | LyonPanel",
+      "description": "Les conditions d’utilisation de LyonPanel : compte, recharge du solde, commandes et responsabilités de chacun. Page en préparation."
+    },
+    "blog": {
+      "title": "Blog : grandir sur TikTok et Instagram | LyonPanel",
+      "description": "Conseils pour faire grandir votre compte TikTok ou Instagram, et nouveautés LyonPanel pour les créateurs et commerçants d’Afrique. Bientôt en ligne."
+    },
+    "networks": {
+      "tiktok": {
+        "title": "Acheter des abonnés TikTok en Mobile Money | LyonPanel",
+        "description": "Abonnés, likes et vues TikTok : prix en XAF pour 1 000 et commande minimum affichés. Rechargez par Mobile Money et suivez vos commandes sur LyonPanel."
+      },
+      "instagram": {
+        "title": "Acheter des likes et abonnés Instagram | LyonPanel",
+        "description": "Abonnés, likes et vues Instagram pour votre boutique ou votre compte. Prix en XAF pour 1 000, paiement Mobile Money, suivi des commandes sur LyonPanel."
+      },
+      "youtube": {
+        "title": "Acheter des vues et abonnés YouTube | LyonPanel",
+        "description": "Vues, abonnés et j’aime pour YouTube : prix en XAF pour 1 000 et commande minimum affichés avant de payer. Paiement Mobile Money sur LyonPanel."
+      },
+      "facebook": {
+        "title": "Acheter des likes et abonnés Facebook | LyonPanel",
+        "description": "Likes, abonnés et vues pour votre page Facebook. Prix en XAF pour 1 000, commande minimum visible, paiement par Mobile Money sur LyonPanel."
+      },
+      "telegram": {
+        "title": "Acheter des membres Telegram | LyonPanel",
+        "description": "Membres, vues et réactions pour votre canal ou groupe Telegram. Prix en XAF pour 1 000, commande minimum visible, paiement Mobile Money sur LyonPanel."
+      },
+      "x": {
+        "title": "Acheter des abonnés X (Twitter) | LyonPanel",
+        "description": "Abonnés, j’aime et vues pour votre compte X (Twitter). Prix en XAF pour 1 000 et commande minimum affichés. Paiement Mobile Money sur LyonPanel."
+      }
+    }
   }
 }

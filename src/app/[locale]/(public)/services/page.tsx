@@ -2,7 +2,9 @@ import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Breadcrumb } from '@/components/catalog/breadcrumb';
 import { JsonLd } from '@/components/seo/json-ld';
-import { asLang, breadcrumbLd, catalogMetadata, itemListLd } from '@/lib/seo/catalog-seo';
+import { asLang, itemListLd } from '@/lib/seo/catalog-seo';
+import { seoHomeCrumb, seoPageMetadata } from '@/lib/seo/public-meta';
+import { buildBreadcrumbJsonLd } from '@/lib/seo/site-jsonld';
 import { CatalogError } from '@/components/platform/catalog-error';
 import { NetworkCard, PlatformLogo } from '@/components/platform/network-card';
 import { countServices, fromPriceXaf, splitNetworks } from '@/components/platform/network-summary';
@@ -15,13 +17,7 @@ type Props = { params: Promise<{ locale: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: 'catalog' });
-  return catalogMetadata({
-    lang: asLang(locale),
-    path: '/services',
-    title: t('metaTitle'),
-    description: t('metaDescription'),
-  });
+  return seoPageMetadata(locale, 'services', '/services');
 }
 
 export default async function ServicesPage({ params }: Props) {
@@ -30,9 +26,12 @@ export default async function ServicesPage({ params }: Props) {
   const t = await getTranslations('catalog');
   const p = await getTranslations('platform');
   const loaded = await safeLoad(() => loadCatalogView(asCatalogLocale(locale)));
+  const lang = asLang(locale);
+  const crumbs = [await seoHomeCrumb(locale), { name: t('allServices'), url: `/${lang}/services` }];
   if (!loaded.ok) {
     return (
       <div className="mx-auto w-full max-w-6xl px-4 py-8">
+        <JsonLd data={buildBreadcrumbJsonLd(crumbs)} />
         <h1 className="text-[28px] leading-tight font-bold text-[var(--lp-gray-12)] md:text-[40px]">
           {t('title')}
         </h1>
@@ -70,12 +69,9 @@ export default async function ServicesPage({ params }: Props) {
     );
   };
 
-  const lang = asLang(locale);
-  const crumbs = [{ name: t('allServices'), path: '/services' }];
-
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-8">
-      <JsonLd data={breadcrumbLd(lang, crumbs)} />
+      <JsonLd data={buildBreadcrumbJsonLd(crumbs)} />
       <JsonLd
         data={itemListLd(
           lang,

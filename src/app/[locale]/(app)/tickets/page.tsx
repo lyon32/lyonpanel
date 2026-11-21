@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { PRIVATE_ROBOTS } from '@/lib/seo/indexing';
 import { SupportFaq } from '@/components/tickets/support-faq';
 import { TicketForm } from '@/components/tickets/ticket-form';
 import { Link } from '@/i18n/navigation';
@@ -24,7 +25,7 @@ const STATUS_CLASS: Record<string, string> = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'pages' });
-  return { title: t('tickets'), robots: { index: false, follow: false } };
+  return { title: t('tickets'), robots: PRIVATE_ROBOTS };
 }
 
 // Curseur absent ou invalide : première page (jamais d'erreur 500 sur un lien modifié).

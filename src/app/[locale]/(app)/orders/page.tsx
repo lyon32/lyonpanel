@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { PRIVATE_ROBOTS } from '@/lib/seo/indexing';
 import { OrdersList } from '@/components/order/orders-list';
 import { requireUser } from '@/server/auth/require-user';
 import { refundedXafByOrder } from '@/server/orders/refunded-amounts';
@@ -10,7 +11,7 @@ type Props = { params: Promise<{ locale: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'pages' });
-  return { title: t('orders'), robots: { index: false, follow: false } };
+  return { title: t('orders'), robots: PRIVATE_ROBOTS };
 }
 
 export default async function OrdersPage({ params }: Props) {

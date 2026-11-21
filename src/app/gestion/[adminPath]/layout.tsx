@@ -5,6 +5,7 @@ import { cookies } from 'next/headers';
 import type { ReactNode } from 'react';
 
 import { publicSans } from '@/lib/fonts';
+import { PRIVATE_ROBOTS } from '@/lib/seo/indexing';
 import { isAdminSegment } from '@/server/auth/admin-path';
 import { loadServerEnv } from '@/server/env';
 import enMessages from '@/messages/admin.en.json';
@@ -14,7 +15,7 @@ import '@/styles/globals.css';
 // Jamais indexée ni suivie : doublé par l'en-tête X-Robots-Tag posé par le proxy.
 export const metadata: Metadata = {
   title: 'LyonPanel',
-  robots: { index: false, follow: false },
+  robots: PRIVATE_ROBOTS,
 };
 
 type Props = { children: ReactNode; params: Promise<{ adminPath: string }> };

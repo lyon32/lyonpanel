@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import { Heart } from 'lucide-react';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { PRIVATE_ROBOTS } from '@/lib/seo/indexing';
 import { FavoriteRow } from '@/components/order/favorite-row';
 import { EmptyState } from '@/components/shared/empty-state';
 import { Card } from '@/components/ui/card';
@@ -17,7 +18,7 @@ type Props = { params: Promise<{ locale: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'pages' });
-  return { title: t('favorites'), robots: { index: false, follow: false } };
+  return { title: t('favorites'), robots: PRIVATE_ROBOTS };
 }
 
 export default async function FavoritesPage({ params }: Props) {

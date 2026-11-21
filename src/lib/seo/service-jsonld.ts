@@ -1,4 +1,4 @@
-import { SITE_URL } from '@/lib/constants';
+import { getSiteUrl } from '@/lib/seo/site-url';
 
 export interface ServiceJsonLdInput {
   lang: 'fr' | 'en';
@@ -18,7 +18,7 @@ export function buildServiceJsonLd(i: ServiceJsonLdInput) {
     '@type': 'Service' as const,
     name: i.name,
     description: i.description,
-    url: `${SITE_URL}/${i.lang}/services/${i.network}`,
+    url: `${getSiteUrl()}/${i.lang}/services/${i.network}`,
     offers: {
       '@type': 'Offer' as const,
       priceCurrency: 'XAF' as const,

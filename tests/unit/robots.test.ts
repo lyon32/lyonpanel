@@ -1,5 +1,10 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it, vi } from 'vitest';
 import robots from '@/app/robots';
+
+// Règle de la phase 14 : noindex par défaut ; ici on teste le site indexable.
+vi.stubEnv('SITE_INDEXABLE', 'true');
+vi.stubEnv('NEXT_PUBLIC_SITE_URL', '');
+afterAll(() => vi.unstubAllEnvs());
 
 describe('robots', () => {
   const r = robots();
