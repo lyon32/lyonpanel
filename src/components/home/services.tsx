@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { RICH_NETWORKS } from '../platform/network-summary';
 import type { Copy } from './use-copy';
 import type { Loc } from './paths';
 import { MAIN_NETWORKS, MORE_NAMES, OTHER_NETWORKS, type Net } from './networks';
@@ -22,7 +23,7 @@ function Head({ children }: { children: React.ReactNode }) {
 
 type Props = { t: Copy; loc: Loc; p: Record<string, string> };
 
-// Chaque tuile mène à la page réelle du réseau (/services/<réseau>).
+// Les 6 réseaux riches mènent à leur page ; les autres à la liste (/services), sans 404.
 function Tile({
   n,
   t,
@@ -31,6 +32,7 @@ function Tile({
   big,
   span3 = false,
 }: Props & { n: Net; big: boolean; span3?: boolean }) {
+  const rich = (RICH_NETWORKS as readonly string[]).includes(n.id);
   const types = n.types.map((k) => t.typeLabels[k]).join(', ');
   return (
     <li
@@ -38,7 +40,7 @@ function Tile({
       className={`${TILE} ${big ? (span3 ? 'lg:col-span-3' : 'lg:col-span-2') : ''}`}
     >
       <span className="e-glow" aria-hidden="true" />
-      <a href={`${p.services}/${n.id}`} className={LINK}>
+      <a href={rich ? `${p.services}/${n.id}` : p.services} className={LINK}>
         <Head>
           <NetLogo id={n.id} size={big ? 28 : 24} />
         </Head>
