@@ -124,9 +124,9 @@ Remplace `docs/04-roadmap.md`. S'appuie sur : `PRD.md`, `ARCHITECTURE.md`, `DATA
 - **Terminé quand** : tu rembourses une commande en échec et le client voit son solde corrigé.
 
 ### Phase 13 — Mise en ligne de test
-- Projets Supabase test + prod, Vercel Preview + Production (offre gratuite), variables par environnement, **Cloudflare Worker des tâches planifiées**, en-têtes de sécurité, workflows de migration, notifications de déploiement.
+- Projets Supabase test + prod, Vercel Preview + Production (offre gratuite), variables par environnement, tâches planifiées par **GitHub Actions** (`cron.yml`, décision du 2026-11-21, pas de Worker Cloudflare), en-têtes de sécurité (vérifiés), workflows de migration, notifications Telegram de déploiement (GitHub Actions). Plan : `docs/plans/phase-13.md`.
 - **Terminé quand** : chaque PR a un lien Preview qui marche ; la migration prod se lance par le bouton.
-- 🧑 Acheter `lyonpanel.com` (Cloudflare), créer les 2 projets Supabase, connecter Vercel, créer `support@lyonpanel.com` chez Hostinger (MX/SPF/DKIM).
+- 🧑 Créer le projet Supabase `lyonpanel-test`, les secrets GitHub et les variables Vercel Preview. **Reportés** (site sur `lyonpanel.vercel.app` pour l'instant) : acheter `lyonpanel.com` (Cloudflare), créer `support@lyonpanel.com` chez Hostinger (MX/SPF/DKIM).
 
 ### Phase 14 — Page d'accueil soignée + SEO
 - Accueil final sans look IA, animations GSAP/Lenis légères, pages par plateforme, FAQ, confidentialité, conditions, 404.

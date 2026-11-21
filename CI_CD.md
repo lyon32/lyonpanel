@@ -71,7 +71,7 @@ Durée visée : < 12 min.
 - **Preview** automatique pour chaque PR : le lien apparaît dans la PR ; le propriétaire peut tester avant de valider.
 - **Production** automatique à la fusion dans `main`, seulement si la CI est verte (option Vercel « ignored build step » qui attend le statut, mon choix).
 - Variables d'environnement séparées Preview / Production (`ENV_SETUP.md §2`).
-- Tâches planifiées : **Cloudflare Worker** `workers/cron/` (Cron Triggers), déployé par `wrangler deploy` dans le workflow `deploy-cron.yml` ; il appelle seulement l'URL de Production. Pas de crons Vercel (offre gratuite = 1 par jour).
+- Tâches planifiées : **workflow GitHub Actions** `.github/workflows/cron.yml` (toutes les 5 min, secret `CRON_SECRET` + variable `SITE_URL`) ; il appelle seulement l'URL de Production. GitHub peut retarder une exécution de quelques minutes, les tâches le supportent. Pas de crons Vercel (offre gratuite = 1 par jour), pas de Worker Cloudflare (décision du propriétaire, 2026-11-21).
 
 Checklist de mise en ligne (Production) :
 
@@ -108,14 +108,14 @@ Même bot que les alertes (`TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` en secrets G
 | Migration prod réussie / ratée | ✅ / ❌ avec le nom de la migration |
 | Alerte sécurité Dependabot | ⚠️ « Faille dans <paquet> » |
 
-Source : webhook de déploiement Vercel → route `/api/webhooks/vercel` (signature vérifiée), et une étape `curl` à la fin des workflows GitHub (mon choix).
+Source (décision du propriétaire, 2026-11-21) : GitHub Actions seulement. `notify.yml` écoute le statut de déploiement que Vercel envoie à GitHub et la fin de la CI sur `main` ; les workflows de migration envoient leur propre message. Pas de route `/api/webhooks/vercel`, donc pas de `VERCEL_WEBHOOK_SECRET`. Alerte Dependabot : à activer dans GitHub (notifications par e-mail), pas de message Telegram.
 
 ## 9. Secrets du pipeline
 
 | Où | Secrets |
 |---|---|
-| GitHub (Actions) | `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `SUPABASE_ACCESS_TOKEN`, `SUPABASE_DB_PASSWORD_TEST`, `SUPABASE_DB_PASSWORD_PROD`, `SUPABASE_PROJECT_REF_TEST`, `SUPABASE_PROJECT_REF_PROD`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` |
-| Vercel | variables de `ENV_SETUP.md §2`, séparées Preview / Production, + `VERCEL_WEBHOOK_SECRET` |
+| GitHub (Actions) | `CRON_SECRET` (variable `SITE_URL`), `SUPABASE_ACCESS_TOKEN`, `SUPABASE_DB_PASSWORD_TEST`, `SUPABASE_DB_PASSWORD_PROD`, `SUPABASE_PROJECT_REF_TEST`, `SUPABASE_PROJECT_REF_PROD`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` |
+| Vercel | variables de `ENV_SETUP.md §2`, séparées Preview / Production, |
 
 Les secrets de production sont dans l'**environnement GitHub `production`**, accessible seulement au workflow de migration après approbation.
 
@@ -127,9 +127,9 @@ Les secrets de production sont dans l'**environnement GitHub `production`**, acc
 │  ├─ ci.yml             # vérifications sur chaque PR
 │  ├─ migrate-test.yml   # migrations auto sur Supabase test après fusion
 │  ├─ migrate-prod.yml   # bouton manuel, approbation, sauvegarde
-│  └─ deploy-cron.yml    # déploie le Worker Cloudflare des tâches planifiées
+│  ├─ cron.yml           # tâches planifiées (appelle /api/cron/*)
+│  └─ notify.yml         # Telegram : mise en ligne Production, CI rouge sur main
 ├─ dependabot.yml
 └─ pull_request_template.md
-vercel.json              # en-têtes de sécurité
-workers/cron/            # Cloudflare Worker : wrangler.toml (horaires) + index.ts (appelle /api/cron/*)
+next.config.ts           # en-têtes de sécurité (src/lib/security-headers.ts)
 ```

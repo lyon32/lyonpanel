@@ -52,7 +52,7 @@ Modèle : [`.env.example`](.env.example). En local : copier en `.env.local` (ign
 | `TELEGRAM_CHAT_ID` | non | Ton identifiant de discussion | voir §4 | le même |
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | non | Widget anti-bot | Cloudflare → Turnstile | clé de test publique Cloudflare |
 | `TURNSTILE_SECRET_KEY` | **oui** | Vérification serveur Turnstile | idem | clé de test publique Cloudflare |
-| `CRON_SECRET` | **oui** | Protéger `/api/cron/*` ; même valeur dans Vercel et dans le Worker Cloudflare (`wrangler secret put`) | `openssl rand -hex 32` | une valeur au choix |
+| `CRON_SECRET` | **oui** | Protéger `/api/cron/*` ; même valeur dans Vercel et dans les secrets GitHub (workflow `cron.yml`) | `openssl rand -hex 32` | une valeur au choix |
 | `AUTH_HASH_SECRET` | **oui** | Clé des empreintes (HMAC) des emails/IP dans `login_attempts` ; obligatoire en production (sans elle, les connexions échouent) | `openssl rand -hex 32` | vide (valeur de repli de test) |
 | `SUPABASE_AUTH_CAPTCHA_SECRET` | non (Supabase) | Clé secrète Turnstile lue par Supabase Auth, qui vérifie lui-même le captcha à la connexion et au mot de passe oublié | Cloudflare → Turnstile (même widget) ; en local `1x0000000000000000000000000000000AA` | vide |
 | `NEXT_PUBLIC_SENTRY_DSN` | non (public par nature) | Adresse d'envoi des erreurs à Sentry | Sentry → projet → Client Keys (DSN) ; **fournie par le propriétaire**, déjà dans `.env.local` | la valeur fournie |
@@ -67,6 +67,21 @@ Clés de test Turnstile : Cloudflare publie des clés factices qui répondent to
 - `PROVIDER_MODE=live` et `SASPAY_MODE=live` : **interdits** hors Production, sauf le test final avant lancement.
 - Hors production, chaque message Telegram commence par `[TEST]`.
 - Jamais de secret dans Git, une capture d'écran ou une conversation. Si une clé fuit : la régénérer immédiatement.
+
+## 2 bis. Variables Vercel par environnement (phase 13)
+
+| Variable | Preview (liens de PR) | Production |
+|---|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` | projet Supabase **test** | projet Supabase **prod** |
+| `PROVIDER_MODE` | `mock` | `live` |
+| `PROVIDER_API_KEY` | vide | clé fournisseur (régénérée) |
+| `SASPAY_MODE`, `SASPAY_API_KEY`, `SASPAY_WEBHOOK_SECRET` | `test` + clés de test | `live` + clés live |
+| `NEXT_PUBLIC_SITE_URL` | adresse du lien Preview (ou celle de Production si Vercel n'en fournit qu'une) | `https://lyonpanel.vercel.app` (puis `lyonpanel.com`) |
+| `ADMIN_PATH`, `AUTH_HASH_SECRET`, `CRON_SECRET` | valeurs **différentes** de la production | valeurs de production |
+| `TELEGRAM_*` | mêmes valeurs ; messages préfixés `[TEST]` | mêmes valeurs |
+| `SENTRY_*`, `NEXT_PUBLIC_GA_MEASUREMENT_ID` | vide ou identique | identique |
+
+Règle : aucune variable de Production ne doit être cochée « Preview ». Les tâches planifiées (`cron.yml`) n'appellent que la Production.
 
 ## 3. Installation locale (Windows, première fois)
 
@@ -120,7 +135,8 @@ Ensuite activer le code à 6 chiffres sur `http://localhost:3100/<ADMIN_PATH>` (
 | **Cloudflare** | Acheter `lyonpanel.com`, créer un widget Turnstile | Avant la 1re mise en ligne |
 | **Hostinger** | Boîte `support@lyonpanel.com` + enregistrements MX/SPF/DKIM dans Cloudflare | Après l'achat du domaine |
 | **Vercel** | Offre gratuite ; importer le dépôt GitHub, renseigner les variables par environnement | Avant la 1re mise en ligne |
-| **Cloudflare Worker (crons)** | Créer un jeton API Cloudflare (droit « Workers Scripts : Edit ») pour GitHub Actions | Avant la 1re mise en ligne |
+| **Tâches planifiées** | Secret GitHub `CRON_SECRET` + variable `SITE_URL` (workflow `cron.yml`, déjà en place) | Fait |
+| **Secrets des migrations** | Secrets GitHub : `SUPABASE_ACCESS_TOKEN`, `SUPABASE_PROJECT_REF_TEST`, `SUPABASE_DB_PASSWORD_TEST`, `SUPABASE_PROJECT_REF_PROD`, `SUPABASE_DB_PASSWORD_PROD` (prod : dans l'environnement `production`, avec le propriétaire comme validateur obligatoire), `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` | Phase 13 |
 | **GitHub** | Protéger `main`, activer Dependabot, ajouter les secrets CI | Au démarrage |
 
 ## 5. Scripts npm
