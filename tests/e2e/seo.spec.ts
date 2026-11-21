@@ -94,10 +94,12 @@ for (const lang of ['fr', 'en'] as const) {
       page,
     }) => {
       const res = await page.goto(`/${lang}/services/tiktok`);
-      test.skip(
-        !res || res.status() >= 500,
-        'Catalogue indisponible sans base : page réseau non testée',
-      );
+      const down = !res || res.status() >= 500;
+      if (process.env.CI) {
+        expect(down, 'La page réseau ne doit pas renvoyer 5xx en CI').toBe(false);
+      } else {
+        test.skip(down, 'Catalogue indisponible sans base : page réseau non testée');
+      }
       const t = await readTags(page);
       expect(t.title.length).toBeLessThanOrEqual(60);
       expect(t.canonical).toBe(`${SITE}/${lang}/services/tiktok`);

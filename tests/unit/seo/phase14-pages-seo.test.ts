@@ -187,6 +187,7 @@ describe.each(['fr', 'en'] as const)('pages publiques (%s), site indexable', (la
     expect(m.twitter?.images?.[0]).toMatch(/^https:\/\//);
     // Provisoires (privacy, terms, blog) : noindex voulu même en mode indexable.
     expect(m.robots?.index).toBe(!PUBLIC_PROVISIONAL.includes(file));
+    expect(m.robots?.follow).toBe(true);
   });
 });
 
@@ -244,13 +245,9 @@ describe('JSON-LD', () => {
     expect(JSON.parse(escapeJsonLd({ a: '<' }))).toEqual({ a: '<' });
     expect(escapeJsonLd({ a: '<' })).not.toContain('<');
   });
-  // contact : pas de JSON-LD aujourd'hui (écart signalé dans le rapport 14.6, test volontairement absent).
-  it.each(PUBLIC_INDEXABLE.filter((f) => !f.includes('/contact/')))(
-    '%s publie du JSON-LD, sans dangerouslySetInnerHTML',
-    (file) => {
-      const src = readFileSync(join(APP_DIR, file), 'utf8');
-      expect(src).toMatch(/<JsonLd\b|application\/ld\+json/);
-      expect(src).not.toContain('dangerouslySetInnerHTML');
-    },
-  );
+  it.each(PUBLIC_INDEXABLE)('%s publie du JSON-LD, sans dangerouslySetInnerHTML', (file) => {
+    const src = readFileSync(join(APP_DIR, file), 'utf8');
+    expect(src).toMatch(/<JsonLd\b|application\/ld\+json/);
+    expect(src).not.toContain('dangerouslySetInnerHTML');
+  });
 });

@@ -1,4 +1,5 @@
 import { getTranslations } from 'next-intl/server';
+import { validSupportEmail } from './support-email';
 import { Link } from '@/i18n/navigation';
 
 const FOCUS =
@@ -8,7 +9,7 @@ const PRESS = 'motion-safe:transition-colors motion-safe:duration-200';
 export async function ContactContent({ locale }: { locale: string }) {
   const t = await getTranslations({ locale, namespace: 'contact' });
   // Adresse optionnelle : sans la variable, la ligne n'est pas affichée.
-  const email = process.env.NEXT_PUBLIC_SUPPORT_EMAIL?.trim();
+  const email = validSupportEmail(process.env.NEXT_PUBLIC_SUPPORT_EMAIL);
   return (
     <div className="mx-auto max-w-2xl px-4 py-12 sm:py-16">
       <h1 className="text-3xl font-bold text-balance text-[var(--lp-gray-12)] sm:text-4xl">

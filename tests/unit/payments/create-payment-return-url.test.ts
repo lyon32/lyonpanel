@@ -51,4 +51,13 @@ describe("URL de retour d'une recharge", () => {
     await createPayment('u1', 3000, 'k2');
     expect(h.returnUrl).toMatch(/^https:\/\/lyonpanel\.com\/fr\/recharger\//);
   });
+
+  it("retombe sur l'adresse par défaut si la valeur est en http ou sans protocole", async () => {
+    const { createPayment } = await import('@/server/payments/create-payment');
+    for (const [i, bad] of ['http://exemple', 'exemple.com'].entries()) {
+      process.env.NEXT_PUBLIC_SITE_URL = bad;
+      await createPayment('u1', 3000, `k-bad-${i}`);
+      expect(h.returnUrl).toMatch(/^https:\/\/lyonpanel\.com\/fr\/recharger\//);
+    }
+  });
 });
