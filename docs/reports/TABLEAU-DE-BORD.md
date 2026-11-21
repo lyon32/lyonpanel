@@ -1,5 +1,5 @@
 # Tableau de bord LyonPanel
-Mis à jour le 2026-11-17 (phases 0 à 10 validées ; phases 11 et 12 faites, en attente de validation). Chiffres lus dans les comptes-rendus des phases 1 à 12.
+Phase 14 (accueil et SEO) : validée le 2026-11-21 (détail des vues non régénéré dans ce lot). Mis à jour le 2026-11-17 (phases 0 à 10 validées ; phases 11 et 12 faites, en attente de validation). Chiffres lus dans les comptes-rendus des phases 1 à 12.
 
 **En 5 secondes :** les phases 0 à 10 sont validées. Les phases 11 (admin 1) et 12 (admin 2) sont faites et attendent ton « validé ». Phase 12 : 1 843 tests unitaires verts, 308 tests de base de sécurité verts, Playwright accès admin 25 sur 25, sécurité acceptée. Reste : ouvrir la PR et lire la CI, tes décisions listées dans le bilan, ton « validé ». Rien ne bloque.
 

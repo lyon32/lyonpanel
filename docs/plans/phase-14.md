@@ -96,7 +96,7 @@ Pages publiques existantes (`src/app/[locale]/(public)/`) : accueil, `services` 
 - Objectif : Lighthouse mobile sur la version de production (accueil, une page plateforme, FAQ) ; contrôle du poids des images ; rapport `docs/reports/phase-14/README.md` (`lp-reporter`) ; branche + PR (jamais sur `main`) ; CI lue sur la PR ; attendre « validé ».
 - Dépend de : 14.2 à 14.6.
 - À clore avant les phases 15/16 (notés au rapport) : remplacer `PLACEHOLDER_STATS` par les vrais chiffres ; nettoyer les logos de paiement inutilisés ; images Magnific (si générées) ; volumes de mots-clés quand un outil est disponible ; passer le site en indexable à la mise en ligne.
-- Statut : **en attente de validation du propriétaire** (2026-11-21 ; rapport `docs/reports/phase-14/README.md`)
+- Statut : **phase 14 validée par le propriétaire le 2026-11-21** (rapport `docs/reports/phase-14/README.md`)
 
 Ordre d'exécution : 14.2 → (14.3 ∥ 14.4) → 14.5 → 14.6 → 14.7. Deux agents ne touchent jamais le même fichier en même temps (`TEAM.md` §5).
 

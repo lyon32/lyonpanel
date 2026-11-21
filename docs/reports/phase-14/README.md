@@ -1,5 +1,5 @@
 # Bilan — Phase 14 : Accueil soigné + SEO
-Date : 2026-11-21 · Statut : faite côté équipe, **en attente de ton « validé »**
+Date : 2026-11-21 · Statut : **validée par le propriétaire le 2026-11-21**
 
 ## En une phrase
 Le site public (accueil, services, FAQ, contact, connexion) est maintenant en palette sombre, rapide sur téléphone, et prêt pour Google : toutes les balises sont en place, mais le site reste en « ne pas indexer » tant que `lyonpanel.com` n'est pas branché.
@@ -39,6 +39,7 @@ Le site public (accueil, services, FAQ, contact, connexion) est maintenant en pa
 - Le TBT est mesuré sur un ordinateur de développement ralenti ; le vrai résultat sur un petit Android reste à confirmer en ligne.
 
 ## Ce qui est reporté ou ouvert
+Le propriétaire a validé la phase 14 le 2026-11-21. Les points ci-dessous ne sont pas faits : ils sont **reportés** (à traiter avant les phases 15 et 16 selon le cas), en particulier : Lighthouse officiel non mesuré, TBT ~1,2 s, vrais chiffres à mettre à la place de `PLACEHOLDER_STATS` (bloquant 15/16), couleur du logo, `public/og/default.png`, nettoyage des logos de paiement.
 - **Pages par pays : reportées.** Les moyens de paiement par pays ne sont pas vérifiables avant la phase 5 de test réel ; on ne publie pas de contenu non vérifié.
 - **`PLACEHOLDER_STATS`** (chiffres d'exemple sur l'accueil, avec pastille « Exemple ») : à remplacer par les vrais chiffres avant la mise en ligne. **Bloquant pour les phases 15 et 16.**
 - **Image de partage** `public/og/default.png` (1200×630) : à créer.
@@ -71,4 +72,4 @@ Le site public (accueil, services, FAQ, contact, connexion) est maintenant en pa
 ## Pour la phase suivante (🧑)
 Vrais chiffres, image de partage, domaine `lyonpanel.com`, textes légaux (avant la phase 16).
 
-## Décision attendue : « validé » ou corrections
+## Décision : « validé » reçue le 2026-11-21
