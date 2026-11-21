@@ -1,0 +1,55 @@
+name: Migrations (production)
+
+# Bouton manuel : GitHub → Actions → « Migrations (production) » → Run workflow.
+# L'environnement `production` exige l'approbation du propriétaire avant que le travail démarre.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: migrate-prod
+  cancel-in-progress: false
+
+jobs:
+  migrer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: production
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD_PROD }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - name: Lier le projet de production
+        run: supabase link --project-ref "${{ secrets.SUPABASE_PROJECT_REF_PROD }}"
+      - name: Sauvegarde avant migration
+        run: supabase db dump -f sauvegarde-prod.sql
+      - name: Garder la sauvegarde 30 jours
+        uses: actions/upload-artifact@v4
+        with:
+          name: sauvegarde-prod-${{ github.run_id }}
+          path: sauvegarde-prod.sql
+          retention-days: 30
+      - name: Migrations en attente
+        run: supabase migration list
+      - name: Appliquer les migrations
+        run: supabase db push --yes
+      - name: Telegram (réussi)
+        if: success()
+        run: |
+          curl -s --max-time 20 "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+            --data-urlencode "text=✅ Migration production réussie (commit ${GITHUB_SHA::7})" >/dev/null
+      - name: Telegram (raté)
+        if: failure()
+        run: |
+          curl -s --max-time 20 "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+            --data-urlencode "text=❌ Migration production ratée : ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" >/dev/null

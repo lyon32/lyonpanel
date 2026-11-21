@@ -1,0 +1,49 @@
+name: Notifications Telegram
+
+# Prévient le propriétaire : mise en ligne Production réussie ou ratée (statut de déploiement
+# envoyé par Vercel à GitHub) et CI rouge sur main. Rien n'est envoyé si les secrets manquent.
+on:
+  deployment_status:
+  workflow_run:
+    workflows: ['ci']
+    types: [completed]
+    branches: [main]
+
+permissions: {}
+
+jobs:
+  deploiement:
+    if: github.event_name == 'deployment_status' && github.event.deployment.environment == 'Production' && (github.event.deployment_status.state == 'success' || github.event.deployment_status.state == 'failure' || github.event.deployment_status.state == 'error')
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    env:
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      ETAT: ${{ github.event.deployment_status.state }}
+      LIEN: ${{ github.event.deployment_status.log_url }}
+      COMMIT: ${{ github.event.deployment.sha }}
+    steps:
+      - run: |
+          [ -n "${TELEGRAM_BOT_TOKEN:-}" ] || exit 0
+          if [ "$ETAT" = "success" ]; then
+            texte="✅ LyonPanel en ligne (commit ${COMMIT::7})"
+          else
+            texte="❌ Échec de mise en ligne : ${LIEN}"
+          fi
+          curl -s --max-time 20 "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" --data-urlencode "text=${texte}" >/dev/null
+
+  ci-rouge:
+    if: github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'failure'
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    env:
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      LIEN: ${{ github.event.workflow_run.html_url }}
+    steps:
+      - run: |
+          [ -n "${TELEGRAM_BOT_TOKEN:-}" ] || exit 0
+          curl -s --max-time 20 "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+            --data-urlencode "text=❌ Tests en échec sur main : ${LIEN}" >/dev/null

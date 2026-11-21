@@ -1,0 +1,33 @@
+name: Migrations (base de test)
+
+# Applique les nouvelles migrations sur le projet Supabase de TEST après chaque fusion dans main.
+# La production se migre à part, par le bouton de migrate-prod.yml.
+on:
+  push:
+    branches: [main]
+    paths: ['supabase/migrations/**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: migrate-test
+  cancel-in-progress: false
+
+jobs:
+  migrer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD_TEST }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - name: Lier le projet de test
+        run: supabase link --project-ref "${{ secrets.SUPABASE_PROJECT_REF_TEST }}"
+      - name: Appliquer les migrations
+        run: supabase db push --yes
