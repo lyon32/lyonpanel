@@ -2,6 +2,8 @@
 
 Objectif : un site **simple, clair, humain**. Fond blanc, bleu comme couleur principale, jaune pour les accents. Rien qui fasse « généré par IA ».
 
+> **Mise à jour du 2026-11-21 (décision du propriétaire, phase 14)** : tout le site public passe à la palette sombre de l'espace client, voir §12. Les sections 1 à 10 décrivent l'ancienne palette (blanc, bleu, jaune) ; là où elles contredisent §12, **§12 prime**.
+
 ## 1. Couleurs
 
 ### Principales
@@ -175,7 +177,7 @@ Dossier : `reference-design system/` (7 images fournies par le propriétaire le 
 
 ## 11. Espace client sombre (ajout du 2026-11-11, décision explicite du propriétaire)
 
-Exception à « blanc, bleu, jaune » et à « pas de mode sombre » **pour l'espace client seulement** (tableau de bord, commandes, recharge, transactions, favoris, compte). Accueil, catalogue et pages de connexion restent inchangés. Pas de bouton clair/sombre.
+Exception à « blanc, bleu, jaune » et à « pas de mode sombre » **pour l'espace client seulement** (tableau de bord, commandes, recharge, transactions, favoris, compte). ~~Accueil, catalogue et pages de connexion restent inchangés.~~ (remplacé le 2026-11-21, voir §12). Pas de bouton clair/sombre.
 
 - **Palette** : générée avec Radix Colors (outil de palette personnalisée) : accent `#425EFF`, gris `#D7D7DA`, fond `#111111`. Les 12 nuances sont des variables CSS sous la classe `.lp-app` (`src/styles/globals.css`). **Aucune bibliothèque ajoutée** (ni Radix Colors, ni HeroUI) ; composants = shadcn/ui.
 - Les rôles de §1 se transposent : fond de page = fond `#111111`, cartes = nuances 2-3 du gris, texte = nuances 11-12, bouton principal = accent, statuts (terminé, en cours, échec) gardent leur sens avec des teintes lisibles sur fond sombre.
@@ -220,3 +222,12 @@ Exception à « blanc, bleu, jaune » **pour les pages de compte seulement** (in
 - Téléphone : bande bleue en haut et feuille blanche en dessous.
 - Inscription en 2 étapes (identité, puis pays, devise et mot de passe).
 
+## 12. Site public sombre (ajout du 2026-11-21, décision explicite du propriétaire, phase 14)
+
+Le propriétaire a décidé (2026-11-21) que **tout le site public** utilise la même palette sombre que l'espace client : accueil, catalogue, connexion et pages de compte, pages plateformes, FAQ, contact, pages par pays, 404.
+
+- **Palette** : celle du §11 (accent `#425EFF`, gris `#D7D7DA`, fond `#111111`, rôles et contrastes du §11). Les variables CSS `.lp-app` deviennent la base de tout le site (nom de la classe racine à confirmer par `lp-coder`).
+- **Remplace** : fond blanc, bleu `#1D4ED8` et jaune `#D9A23B` sur le site public ; l'exception « accueil, catalogue et connexion inchangés » du §11 ; le panneau de verre bleu et la feuille blanche des pages de compte (§10), dont la forme (deux panneaux qui glissent) peut rester si le rendu sombre est validé.
+- **Inchangé** : police Public Sans, rayons, espacements, accessibilité (§2, §3, §7), mouvement léger (§6, §6 bis), pas de bouton clair/sombre, aucun look « IA ».
+- **Jaune** : plus utilisé sur le site public ; le badge « Populaire » et les accents seront définis avec le prototype d'accueil choisi par le propriétaire.
+- **Prototypes d'accueil** (phase 14) : 3 versions très différentes, toutes dans cette palette.
