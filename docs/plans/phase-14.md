@@ -1,6 +1,6 @@
 # Phase 14 — Page d'accueil soignée + SEO (plan de cadrage)
 
-Statut : **plan validé par le propriétaire le 2026-11-21** (« validé »). Reste à trancher au démarrage de l'exécution : l'étendue de la palette sombre (voir « À confirmer »). Réponses du propriétaire ci-dessous ; les tâches détaillées seront découpées par le chef de projet après validation.
+Statut : **plan validé par le propriétaire le 2026-11-21** (« validé »). Palette sombre confirmée sur **tout le site public** (accueil, catalogue, connexion, nouvelles pages), le 2026-11-21. Réponses du propriétaire ci-dessous ; les tâches détaillées seront découpées par le chef de projet après validation.
 
 ## Décisions du propriétaire (2026-11-21)
 
@@ -33,7 +33,7 @@ Confidentialité, conditions, Google Analytics, bandeau de consentement, achat d
 
 ## À confirmer par le propriétaire
 
-- La palette sombre s'applique-t-elle aussi au catalogue public et à la connexion, ou seulement à l'accueil et aux nouvelles pages ? (Conseil : tout le site public, pour rester cohérent.)
+- ~~Étendue de la palette sombre~~ : tranchée le 2026-11-21, tout le site public (modifie `docs/05` et la règle phase 8 « accueil, catalogue et connexion inchangés »).
 - Prototype et titre de héros : choisis après présentation.
 - Immatriculation de l'activité et textes légaux : à décider avant la phase 16.
 
