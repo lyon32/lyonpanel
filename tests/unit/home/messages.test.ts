@@ -15,9 +15,17 @@ describe('accueil : textes dans messages', () => {
     expect(en['home.hero.ctaPrimary']).toBe('Create an account');
     expect(en['home.hero.ctaSecondary']).toBe('How it works');
   });
-  it('les pastilles « Exemple » / « Example » existent', () => {
-    expect(fr['home.example']).toBe('Exemple');
-    expect(en['home.example']).toBe('Example');
+  it('plus de pastille « Exemple » ; vrais chiffres 100+ clients et 2000+ commandes (FR/EN)', () => {
+    expect(fr['home.example']).toBeUndefined();
+    expect(en['home.example']).toBeUndefined();
+    expect(fr['home.stats.clients']).toBe('100+ clients');
+    expect(fr['home.stats.orders']).toBe('2000+ commandes');
+    expect(en['home.stats.clients']).toBe('100+ clients');
+    expect(en['home.stats.orders']).toBe('2000+ orders');
+  });
+  it('le chiffre « pays servis » (non fourni) est retiré des deux langues', () => {
+    expect(Object.values(fr).join('|')).not.toMatch(/pays servis/);
+    expect(Object.values(en).join('|')).not.toMatch(/countries served/);
   });
   it('la mention des moyens de paiement variables est présente en FR et EN', () => {
     expect(fr['home.payments.note']).toBe(
