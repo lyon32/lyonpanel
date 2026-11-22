@@ -3,7 +3,7 @@ import { useTranslations } from 'next-intl';
 import type { Copy } from './use-copy';
 import type { Loc } from './paths';
 import { CATALOGUE_TOTAL, NETWORKS } from './networks';
-import { CARD, H2, Section, TAG, fmt } from './ui';
+import { CARD, H2, Section, fmt } from './ui';
 
 const netCount = (id: string) => NETWORKS.find((n) => n.id === id)?.count ?? 0;
 
