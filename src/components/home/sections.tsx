@@ -16,11 +16,11 @@ export function Stats({ t, loc }: { t: Copy; loc: Loc }) {
   const big = 'text-3xl font-bold text-[var(--lp-gray-12)] sm:text-4xl';
   return (
     <Section label={t.statsTitle}>
-      <dl data-reveal-group className="mx-auto grid max-w-4xl grid-cols-2 gap-3 md:grid-cols-3">
+      <dl data-reveal-group className="mx-auto grid max-w-4xl grid-cols-2 gap-3 md:grid-cols-6">
         {STAT_VALUES.map((value, i) => {
           const label = t.statsLabels[i] ?? '';
           return (
-            <div key={label} className={tile}>
+            <div key={label} className={`${tile} md:col-span-2`}>
               <dd className={`order-1 ${big} tabular-nums`} data-count={value}>
                 {fmt(value, loc)}
               </dd>
@@ -29,7 +29,7 @@ export function Stats({ t, loc }: { t: Copy; loc: Loc }) {
           );
         })}
         {[tr('stats.clients'), tr('stats.orders')].map((text) => (
-          <div key={text} className={tile}>
+          <div key={text} className={`${tile} justify-center max-md:last:col-span-2 md:col-span-3`}>
             <dt className={big}>{text}</dt>
           </div>
         ))}

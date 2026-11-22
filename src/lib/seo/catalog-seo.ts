@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { SITE_NAME } from '@/lib/constants';
 import { publicRobots } from '@/lib/seo/indexing';
+import { DEFAULT_OG_IMAGE } from '@/lib/seo/page-metadata';
 import { getSiteUrl } from '@/lib/seo/site-url';
 
 export type Lang = 'fr' | 'en';
@@ -31,6 +32,7 @@ export function catalogMetadata({
   noindex = false,
 }: CatalogMetaInput): Metadata {
   const url = catalogUrl(lang, path);
+  const image = `${getSiteUrl()}${DEFAULT_OG_IMAGE}`;
   return {
     title,
     description,
@@ -50,8 +52,9 @@ export function catalogMetadata({
       url,
       siteName: SITE_NAME,
       locale: OG_LOCALE[lang],
+      images: [{ url: image, width: 1200, height: 630, alt: title }],
     },
-    twitter: { card: 'summary_large_image', title, description },
+    twitter: { card: 'summary_large_image', title, description, images: [image] },
   };
 }
 
