@@ -4,7 +4,6 @@ import { exists, listFiles, read, sizeOf } from './helpers';
 const HOME = 'src/components/home';
 const homeSrc = () => listFiles(HOME).filter((f) => /\.(tsx?|css)$/.test(f));
 const allHome = () => homeSrc().map(read).join('\n');
-const statsDef = () => homeSrc().filter((f) => /export const PLACEHOLDER_STATS\b/.test(read(f)));
 
 describe('accueil : composants dans src/components/home', () => {
   it('le héros existe', () => {
@@ -48,7 +47,7 @@ describe('accueil : vrais chiffres (phase 15.1)', () => {
   it('plus aucune pastille « Exemple » sur les chiffres', () => {
     const f = homeSrc().filter((x) => x.endsWith('sections.tsx'));
     expect(f).toHaveLength(1);
-    expect(read(f[0]!)).not.toMatch(/tr('example')|home.example|data-exemple/);
+    expect(read(f[0]!)).not.toMatch(/tr\('example'\)|home\.example|data-exemple/);
   });
   it('les chiffres viennent des messages, sans nombre en dur', () => {
     const src = read(`${HOME}/sections.tsx`);
