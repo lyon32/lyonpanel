@@ -2,6 +2,19 @@
 
 Écrit pour le propriétaire. Une section par phase. Seul le propriétaire valide une phase.
 
+## Phase 15 — Tests finaux et préparation du lancement (2026-11-22) — partielle, en attente de décision
+
+### Nouveau
+- Accueil : « 100+ clients » et « 2000+ commandes », 5 tuiles, sans pastille « Exemple ».
+- Logo en palette sombre ; image de partage `og/default.png` (1200 x 630, en Arial) sur l'accueil et les pages du catalogue.
+- Garde-fou : le paiement SasPay en réel exige le fournisseur en réel.
+
+### Chiffres
+- 2161 tests unitaires verts. Lighthouse local : téléphone 76 (FR) et 91 (EN), ordinateur 99 et 98 ; blocage TBT 390 ms et 260 ms (objectif 200 ms non atteint).
+
+### Pas fait
+- Test de charge 100 clients et restauration : non exécutés (Docker arrêté). Essais de base, gitleaks et CI à passer. Étapes 15.6 à 15.9 (vrai fournisseur, vrai paiement, ouverture limitée) non démarrées. Aucun vrai fournisseur ni paiement utilisé.
+
 ## Phase 12 — Admin (2) : commandes, services, réglages (2026-11-17) — faite, en attente de validation
 
 ### Nouveau

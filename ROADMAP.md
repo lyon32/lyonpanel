@@ -180,5 +180,5 @@ Pages par pays, blog, commandes en lot, notifications client, email « nouvelle 
 | 12 | **validée le 2026-11-21** (PR 31 ; migrations appliquées en production le 2026-11-21) | — |
 | 13 | à faire | — |
 | 14 | **validée le 2026-11-21** (PR 40) | — |
-| 15 | à faire | — |
+| 15 | **partielle, en attente de ta décision** (2026-11-22) : 15.1, 15.2, 15.3, 15.5, 15.10 faites ; 15.4 en attente de Docker ; 15.6 à 15.9 en attente de « validé » | — |
 | 16 | à faire | — |
