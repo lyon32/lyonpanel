@@ -56,7 +56,6 @@
     "heroText": "Abonnés, likes et vues pour TikTok, Instagram, YouTube, Telegram et bien d’autres réseaux. Rechargez votre solde, commandez, suivez chaque commande au même endroit.",
     "createAccount": "Créer un compte",
     "seeServices": "Voir les services",
-    "example": "Exemple",
     "mockBalance": "Solde",
     "mockOrders": "Commandes",
     "mockPlace": "Passer une commande",
@@ -138,11 +137,10 @@
       "items": {
         "1": "services au catalogue",
         "2": "services Instagram",
-        "3": "services TikTok",
-        "4": "commandes passées",
-        "5": "clients inscrits",
-        "6": "pays servis"
-      }
+        "3": "services TikTok"
+      },
+      "clients": "100+ clients",
+      "orders": "2000+ commandes"
     },
     "steps": {
       "title": "Commander en 3 étapes",
