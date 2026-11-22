@@ -1,28 +1,26 @@
+import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
-import { HomeHero } from '@/components/shared/home-hero';
-import {
-  HomeCta,
-  HomeFaq,
-  HomeFeatures,
-  HomeNetworks,
-  HomeServices,
-} from '@/components/shared/home-sections';
-import { HomeSteps } from '@/components/shared/home-steps';
+import { Home } from '@/components/home/home-page';
+import { JsonLd } from '@/components/seo/json-ld';
+import { seoPageMetadata } from '@/lib/seo/public-meta';
+import { buildOrganizationJsonLd, buildWebSiteJsonLd } from '@/lib/seo/site-jsonld';
 
-// Accueil provisoire (héros et sections de démonstration) ; l'accueil complet arrive en phase 14.
-export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
+type Props = { params: Promise<{ locale: string }> };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  return seoPageMetadata(locale, 'home', '');
+}
+
+export default async function HomePage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
-
+  const lang = locale === 'en' ? 'en' : 'fr';
   return (
     <>
-      <HomeHero />
-      <HomeNetworks />
-      <HomeServices />
-      <HomeSteps />
-      <HomeFeatures />
-      <HomeFaq />
-      <HomeCta />
+      <JsonLd data={buildOrganizationJsonLd()} />
+      <JsonLd data={buildWebSiteJsonLd(lang)} />
+      <Home loc={lang} />
     </>
   );
 }

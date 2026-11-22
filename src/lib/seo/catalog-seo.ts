@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
-import { SITE_NAME, SITE_URL } from '@/lib/constants';
+import { SITE_NAME } from '@/lib/constants';
+import { publicRobots } from '@/lib/seo/indexing';
+import { getSiteUrl } from '@/lib/seo/site-url';
 
 export type Lang = 'fr' | 'en';
 
@@ -8,7 +10,7 @@ const OG_LOCALE: Record<Lang, string> = { fr: 'fr_FR', en: 'en_US' };
 export const asLang = (locale: string): Lang => (locale === 'en' ? 'en' : 'fr');
 
 /** URL absolue d'une page du catalogue dans une langue (les adresses /services sont les mêmes en FR et EN). */
-export const catalogUrl = (lang: Lang, path: string): string => `${SITE_URL}/${lang}${path}`;
+export const catalogUrl = (lang: Lang, path: string): string => `${getSiteUrl()}/${lang}${path}`;
 
 export interface CatalogMetaInput {
   lang: Lang;
@@ -108,4 +110,11 @@ export function catalogPaths(
 export function pickDescription(variants: string[], max = 160): string {
   const fits = variants.filter((v) => v.length <= max).sort((a, b) => b.length - a.length);
   return fits[0] ?? variants.reduce((a, b) => (b.length < a.length ? b : a));
+}
+
+/** Tant que le site n'est pas indexable, une page « index » passe en noindex ; « noindex, follow » ne change pas. */
+export function gateIndexing(meta: Metadata): Metadata {
+  const r = meta.robots;
+  const indexed = typeof r === 'object' && r !== null && 'index' in r && r.index === true;
+  return indexed ? { ...meta, robots: publicRobots() } : meta;
 }

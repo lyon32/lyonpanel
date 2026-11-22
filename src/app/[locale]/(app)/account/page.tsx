@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Heart, Receipt } from 'lucide-react';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { PRIVATE_ROBOTS } from '@/lib/seo/indexing';
 import { AccountForm } from '@/components/account/account-form';
 import { DeleteAccount } from '@/components/account/delete-account';
 import { Card } from '@/components/ui/card';
@@ -13,7 +14,7 @@ type Props = { params: Promise<{ locale: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'pages' });
-  return { title: t('account'), robots: { index: false, follow: false } };
+  return { title: t('account'), robots: PRIVATE_ROBOTS };
 }
 
 export default async function AccountPage({ params }: Props) {

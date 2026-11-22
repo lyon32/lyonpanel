@@ -7,6 +7,7 @@ import type { ReactNode } from 'react';
 import { routing } from '@/i18n/routing';
 import { atkinson, plexMono, publicSans } from '@/lib/fonts';
 import { SITE_NAME } from '@/lib/constants';
+import { publicRobots } from '@/lib/seo/indexing';
 import '@/styles/globals.css';
 
 type Props = { children: ReactNode; params: Promise<{ locale: string }> };
@@ -23,6 +24,8 @@ export async function generateMetadata({ params }: Pick<Props, 'params'>): Promi
   return {
     title: SITE_NAME,
     description: t('description'),
+    // Filet de sécurité : tant que le site n'est pas indexable, toute page sans règle propre est en noindex.
+    robots: publicRobots(),
     alternates: {
       canonical: `/${locale}`,
       languages: { fr: '/fr', en: '/en', 'x-default': '/fr' },

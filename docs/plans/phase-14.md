@@ -37,6 +37,69 @@ Confidentialité, conditions, Google Analytics, bandeau de consentement, achat d
 - Prototype et titre de héros : choisis après présentation.
 - Immatriculation de l'activité et textes légaux : à décider avant la phase 16.
 
+## Tâches (découpage du chef de projet, 2026-11-21)
+
+Ordre : 14.1 (prototypes) → **arrêt, choix du propriétaire** → 14.2 → 14.3 ∥ 14.4 → 14.5 → 14.6 → 14.7.
+
+### Tâche 14.1 — Trois prototypes d'accueil (sombres, très différents)
+- Objectif : le propriétaire ouvre 3 pages `/fr/prototypes/a|b|c` (et `/en/…`), compare, choisit un prototype et un titre.
+- Documents à lire : `docs/05` §11-12, §9 ; skills `unslop`, `antislop-*`, `baseline-ui`, `apple-design-hig`.
+- Dépend de : rien.
+- Agents : 3 × `lp-designer` en parallèle (un par prototype, dossiers distincts) → `lp-qa` (captures 360 px et ordinateur). Pas de `lp-tester` : prototypes jetables (écart assumé à `TEAM.md`, les tests viennent avec l'accueil final 14.2).
+- Fichiers : A `src/app/[locale]/prototypes/a/**` + `src/components/prototypes/a/**` ; B idem `b` ; C idem `c`. Aucun fichier partagé modifié. Textes FR/EN dans les composants (pas de `messages`). Pages en `noindex`.
+- Directions : A éditorial/typographique (grande typo, filets, tableau de prix réels) ; B parcours en 3 étapes mobile d'abord, bouton fixe, mouvement GSAP léger ; C grille de plateformes façon « atelier » (tuiles TikTok/Instagram/YouTube… avec « dès X XAF » réels).
+- Titres de héros proposés (≤ 60 car.) : 1 « Plus d'abonnés TikTok, payés en Mobile Money » / « More TikTok followers, paid with Mobile Money » ; 2 « Ton Instagram grandit. Tu paies en XAF. » / « Your Instagram grows. You pay in XAF. » ; 3 « Le panel SMM pensé pour l'Afrique » / « The SMM panel built for Africa ».
+- Hors périmètre : aperçu du tableau de bord, faux chiffres/avis/logos, jaune, bibliothèque nouvelle.
+- Fini quand : 3 pages s'affichent sans erreur console, lisibles à 360 px, FR et EN, lint et types verts.
+- Statut : **terminée le 2026-11-21**
+
+**Prototype choisi : E (validé le 2026-11-21).** Rejetés (A, B, C, D, F) : dossiers à supprimer dans 14.2. Base : `src/components/prototypes/e/**` (déplacée vers `src/components/home/**`), photos `public/images/home/`, logos `public/brand/networks/` et `public/brand/payments/`.
+
+Pages publiques existantes (`src/app/[locale]/(public)/`) : accueil, `services` (+ `[network]`, `[type]`, `[id]`), `blog`, `demo`, `privacy`, `terms` ; `(auth)` : login, register, mot de passe ; `[...rest]` (404) ; `sitemap.ts` et `robots.ts` existent déjà (à compléter, pas à recréer).
+
+### Tâche 14.2 — Accueil final (prototype E) + palette sombre sur tout le site public
+- Objectif : `/fr` et `/en` affichent l'accueil E, textes dans `messages` (FR/EN), palette `.lp-app` sur accueil, Services, Blog, connexion/inscription, 404.
+- Documents : `docs/05` §11-12, `docs/03`, `docs/01` (chiffres), `CONVENTIONS.md`. Skills : `unslop`, `antislop-*`, `baseline-ui`, `fixing-accessibility`, `fixing-motion-performance`.
+- Dépend de : rien (choix fait).
+- Agents, dans l'ordre : `lp-tester` (tests de rendu et d'accessibilité : un seul h1, liens, `PLACEHOLDER_STATS` isolé avec pastille « Exemple », aucun nom de fournisseur, aucun « n°1 ») → `lp-coder` (déplace E vers `src/components/home/`, branche `messages`, supprime les prototypes A–D et F, garde `/prototypes/e` en `noindex` jusqu'à fin de phase) → `lp-designer` (palette sur Services, Blog, auth, 404 ; recompresse les 3 images > 200 Ko ; animations légères) → `lp-reviewer` ∥ `lp-qa` (360 px et ordinateur, FR/EN).
+- Fichiers : `src/components/home/**`, `src/app/[locale]/(public)/page.tsx`, layouts `(public)` et `(auth)`, `messages/fr.json`, `messages/en.json`, styles de Services/Blog. Pas de SEO ici (14.5).
+- Hors périmètre : espace client (déjà sombre), admin, nouvelles pages.
+- Fini quand : lint, types, tests verts ; aucune erreur console ; pas de débordement à 360 px ; QA ACCEPTÉ.
+- Statut : **terminée le 2026-11-21** (lp-reviewer et lp-qa ACCEPTÉS au 2e passage ; rapports `docs/reports/phase-14/qa/tache-14.2*.md`). Reste pour 14.7 : chargement à ~13 s en réseau très dégradé (200 Ko/s, CPU ×4) à alléger ; `/services` en 500 local sans base (message d'erreur propre à faire en 14.3) ; logo bleu/jaune (identité de marque) à trancher par le propriétaire.
+
+### Tâche 14.3 — Pages plateformes, liste des services, 404
+- Objectif : une page par réseau (Instagram, TikTok, YouTube, Facebook, Telegram, X…) avec prix réels en XAF, FAQ courte, JSON-LD `Service` + `Offer` ; 404 soignée en sombre.
+- Dépend de : 14.2 (palette et composants). Fichiers : `src/app/[locale]/(public)/services/[network]/**`, `src/components/platform/**`, `messages`. Ne touche pas aux fichiers de 14.4.
+- Agents : `lp-tester` → `lp-coder` → `lp-designer` ∥ `lp-seo` → `lp-reviewer` ∥ `lp-qa`.
+- Règles : prix calculés côté serveur depuis le catalogue ; jamais le coût fournisseur ni son nom ; réseaux à très peu de services (WhatsApp 3, Spotify 3, Twitch 6, LinkedIn 4) : pas de page propre tant que le contenu est mince (regroupés dans « Autres réseaux »).
+- Statut : **terminée le 2026-11-21**
+
+### Tâche 14.4 — FAQ, contact, pages par pays
+- Objectif : page FAQ (`FAQPage`), page contact (canal de support existant, aucun nouveau service), pages par pays seulement si contenu utile (moyens de paiement locaux, prix XAF) — sinon reportées et notées au rapport.
+- Dépend de : 14.2. Parallèle à 14.3 (fichiers distincts : `src/app/[locale]/(public)/{faq,contact,countries}/**`, `src/components/faq/**`).
+- Agents : `lp-tester` → `lp-coder` → `lp-designer` ∥ `lp-seo` → `lp-reviewer` ∥ `lp-qa`.
+- Règle : aucune promesse de délai ou de résultat non vérifiée ; formulaire de contact seulement s'il réutilise un mécanisme existant, sinon simple lien.
+- Statut : **terminée le 2026-11-21**
+
+### Tâche 14.5 — SEO technique
+- Objectif : `NEXT_PUBLIC_SITE_URL` (défaut `https://lyonpanel.com`), metadata par page (titre, description, canonical, hreflang fr/en/x-default, Open Graph 1200×630, Twitter), JSON-LD `Organization`/`WebSite`/`BreadcrumbList`, compléter `sitemap.ts` et `robots.ts`, `noindex` global tant que `SITE_INDEXABLE` n'est pas `true`, `noindex` permanent sur pages privées et admin. Mots-clés : `docs/plans/phase-14-seo-mots-cles-et-prompts-images.md`.
+- Dépend de : 14.3 et 14.4. Agents : `lp-tester` → `lp-seo` → `lp-reviewer`.
+- Fichiers : `src/lib/seo/**`, `src/app/sitemap.ts`, `src/app/robots.ts`, `generateMetadata` des pages publiques, `.env.example`, `ENV_SETUP.md`.
+- Statut : **terminée le 2026-11-21**
+
+### Tâche 14.6 — Test CI des balises
+- Objectif : un test qui parcourt les pages publiques (titre, description, canonical, hreflang, OG, JSON-LD valide) et les pages privées/admin (`noindex`), lancé par la CI.
+- Dépend de : 14.5. Agents : `lp-tester` → `lp-reviewer`. Fichiers : `tests/unit/seo/**` ou `tests/e2e/seo/**` ; workflow CI modifié seulement s'il ne lance pas déjà ces dossiers.
+- Statut : **terminée le 2026-11-21**
+
+### Tâche 14.7 — Lighthouse, rapport, PR
+- Objectif : Lighthouse mobile sur la version de production (accueil, une page plateforme, FAQ) ; contrôle du poids des images ; rapport `docs/reports/phase-14/README.md` (`lp-reporter`) ; branche + PR (jamais sur `main`) ; CI lue sur la PR ; attendre « validé ».
+- Dépend de : 14.2 à 14.6.
+- À clore avant les phases 15/16 (notés au rapport) : remplacer `PLACEHOLDER_STATS` par les vrais chiffres ; nettoyer les logos de paiement inutilisés ; images Magnific (si générées) ; volumes de mots-clés quand un outil est disponible ; passer le site en indexable à la mise en ligne.
+- Statut : **phase 14 validée par le propriétaire le 2026-11-21** (rapport `docs/reports/phase-14/README.md`)
+
+Ordre d'exécution : 14.2 → (14.3 ∥ 14.4) → 14.5 → 14.6 → 14.7. Deux agents ne touchent jamais le même fichier en même temps (`TEAM.md` §5).
+
 ## Rappel
 
 La phase 13 (mise en ligne de test) reste ouverte : points restants dans `docs/reports/phase-13/README.md` (PR 36).

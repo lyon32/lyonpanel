@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { PRIVATE_ROBOTS } from '@/lib/seo/indexing';
 import { AddFundsForm } from '@/components/wallet/add-funds-form';
 import { requireUser } from '@/server/auth/require-user';
 import { createSessionClient } from '@/server/db/supabase-server';
@@ -10,7 +11,7 @@ type Props = { params: Promise<{ locale: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'pages' });
-  return { title: t('addFunds'), robots: { index: false, follow: false } };
+  return { title: t('addFunds'), robots: PRIVATE_ROBOTS };
 }
 
 export default async function AddFundsPage({ params }: Props) {

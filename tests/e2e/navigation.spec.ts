@@ -18,7 +18,12 @@ for (const locale of locales) {
     expect(hrefs.size).toBeGreaterThan(8);
     for (const href of hrefs) {
       const res = await page.request.get(href);
-      expect(res.status(), `${href}`).toBe(200);
+      // Une page réseau (/services/<réseau>) renvoie 404 tant que le réseau a moins de
+      // 10 services en base (pas de page mince indexée). Le jeu de test (seed) en compte
+      // peu : 200 ou 404 accepté ici ; le catalogue réel, lui, dépasse le seuil.
+      const isNetworkPage = /^\/(fr|en)\/services\/[^/]+$/.test(href);
+      if (isNetworkPage) expect([200, 404], `${href}`).toContain(res.status());
+      else expect(res.status(), `${href}`).toBe(200);
     }
   });
 }

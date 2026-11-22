@@ -7,6 +7,7 @@ import {
   asLang,
   breadcrumbLd,
   catalogMetadata,
+  gateIndexing,
   fitTitle,
   itemListLd,
   pickDescription,
@@ -42,18 +43,20 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
     type: typeLabel(parseType(type), l),
   };
   // Canonical sans paramètre ; une recherche (?q=) n'est jamais indexée.
-  return catalogMetadata({
-    lang: asLang(locale),
-    path: `/services/${parseNetwork(network)}/${parseType(type)}`,
-    title: fitTitle(t('typeMetaTitle', values), ''),
-    description: pickDescription([
-      t('typeMetaDescription', values),
-      t('typeMetaDescriptionLong', values),
-      t('typeMetaDescriptionLonger', values),
-      t('typeMetaDescriptionLongest', values),
-    ]),
-    noindex: Boolean(q?.trim()),
-  });
+  return gateIndexing(
+    catalogMetadata({
+      lang: asLang(locale),
+      path: `/services/${parseNetwork(network)}/${parseType(type)}`,
+      title: fitTitle(t('typeMetaTitle', values), ''),
+      description: pickDescription([
+        t('typeMetaDescription', values),
+        t('typeMetaDescriptionLong', values),
+        t('typeMetaDescriptionLonger', values),
+        t('typeMetaDescriptionLongest', values),
+      ]),
+      noindex: Boolean(q?.trim()),
+    }),
+  );
 }
 
 export default async function TypePage({ params, searchParams }: Props) {

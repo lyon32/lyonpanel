@@ -8,10 +8,10 @@ import { CURRENCY_COOKIE, parseCurrency } from '@/lib/currency';
 export default async function PublicLayout({ children }: { children: ReactNode }) {
   const currency = parseCurrency((await cookies()).get(CURRENCY_COOKIE)?.value);
   return (
-    <>
+    <div className="lp-app flex min-h-screen flex-col">
       <SiteHeader currency={currency} setCurrencyCookie={setCurrencyCookie} />
-      <main>{children}</main>
+      <main className="flex-1">{children}</main>
       <SiteFooter />
-    </>
+    </div>
   );
 }

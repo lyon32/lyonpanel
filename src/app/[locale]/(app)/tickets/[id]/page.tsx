@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { PRIVATE_ROBOTS } from '@/lib/seo/indexing';
 import { TicketThread } from '@/components/tickets/ticket-thread';
 import { Link } from '@/i18n/navigation';
 import { requireUser } from '@/server/auth/require-user';
@@ -14,7 +15,7 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'pages' });
-  return { title: t('tickets'), robots: { index: false, follow: false } };
+  return { title: t('tickets'), robots: PRIVATE_ROBOTS };
 }
 
 export default async function TicketPage({ params }: Props) {

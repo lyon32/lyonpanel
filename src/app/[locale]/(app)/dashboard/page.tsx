@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import { CheckCircle2, ListOrdered, Wallet, Banknote } from 'lucide-react';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { PRIVATE_ROBOTS } from '@/lib/seo/indexing';
 import { StatCard } from '@/components/dashboard/stat-card';
 import { SuggestionSlot } from '@/components/dashboard/suggestion-slot';
 import { OrdersList } from '@/components/order/orders-list';
@@ -26,7 +27,7 @@ const RECENT = 5;
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'pages' });
-  return { title: t('dashboard'), robots: { index: false, follow: false } };
+  return { title: t('dashboard'), robots: PRIVATE_ROBOTS };
 }
 
 export default async function DashboardPage({ params }: Props) {

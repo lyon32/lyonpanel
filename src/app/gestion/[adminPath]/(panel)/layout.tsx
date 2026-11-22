@@ -1,8 +1,12 @@
+import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { AdminLogout } from '@/components/admin/admin-logout';
 import { AdminNav } from '@/components/admin/admin-nav';
+import { PRIVATE_ROBOTS } from '@/lib/seo/indexing';
 import { getAdminTranslator } from '@/server/admin/page-i18n';
 import { requireAdminPage } from '@/server/admin/page-guard';
+
+export const metadata: Metadata = { robots: PRIVATE_ROBOTS };
 
 type Props = { children: ReactNode; params: Promise<{ adminPath: string }> };
 

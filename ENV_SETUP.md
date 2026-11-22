@@ -35,7 +35,9 @@ Modèle : [`.env.example`](.env.example). En local : copier en `.env.local` (ign
 
 | Variable | Secret ? | Rôle | Où l'obtenir | En local |
 |---|---|---|---|---|
-| `NEXT_PUBLIC_SITE_URL` | non | Adresse du site (liens, retour SasPay) | — | `http://localhost:3100` |
+| `NEXT_PUBLIC_SITE_URL` | non | Adresse du site (liens, retour SasPay, canonical et sitemap). Vide ou invalide : `https://lyonpanel.com`. `http` refusé en production | — | `http://localhost:3100` |
+| `SITE_INDEXABLE` | non | Autorise Google : `true` exactement. Sinon (défaut) : `noindex` partout, `robots.txt` interdit tout, sitemap vide. Bascule à la mise en ligne (phase 16) | — | vide ou `false` |
+| `NEXT_PUBLIC_SUPPORT_EMAIL` | non | Adresse de support affichée sur la page Contact. Optionnelle : vide = la ligne n’apparaît pas | Boîte de support (voir Hostinger plus bas) | vide |
 | `ADMIN_PATH` | **oui** | Segment secret de l'admin | `openssl rand -hex 12` | une valeur au choix |
 | `ADMIN_ENROLL_OPEN` | non | Enrôlement des appareils admin : vide ou `true` = ouvert tant qu'il y a moins de 2 appareils vérifiés ; `false` = fermé (404). Jamais de 3e appareil | — | vide |
 | `NEXT_PUBLIC_SUPABASE_URL` | non | Adresse Supabase | Supabase → Settings → API | donnée par `supabase start` |
@@ -76,6 +78,7 @@ Clés de test Turnstile : Cloudflare publie des clés factices qui répondent to
 | `PROVIDER_MODE` | `mock` | `live` |
 | `PROVIDER_API_KEY` | vide | clé fournisseur (régénérée) |
 | `SASPAY_MODE`, `SASPAY_API_KEY`, `SASPAY_WEBHOOK_SECRET` | `test` + clés de test | `live` + clés live |
+| `SITE_INDEXABLE` | `false` (jamais indexé) | `true` seulement quand `lyonpanel.com` est branché |
 | `NEXT_PUBLIC_SITE_URL` | adresse du lien Preview (ou celle de Production si Vercel n'en fournit qu'une) | `https://lyonpanel.vercel.app` (puis `lyonpanel.com`) |
 | `ADMIN_PATH`, `AUTH_HASH_SECRET`, `CRON_SECRET` | valeurs **différentes** de la production | valeurs de production |
 | `TELEGRAM_*` | mêmes valeurs ; messages préfixés `[TEST]` | mêmes valeurs |

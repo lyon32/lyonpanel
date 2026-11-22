@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { PRIVATE_ROBOTS } from '@/lib/seo/indexing';
 import { OrderWorkbench } from '@/components/order/order-workbench';
 import { CURRENCY_COOKIE, parseCurrency } from '@/lib/currency';
 import { requireUser } from '@/server/auth/require-user';
@@ -21,7 +22,7 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'pages' });
-  return { title: t('order'), robots: { index: false, follow: false } };
+  return { title: t('order'), robots: PRIVATE_ROBOTS };
 }
 
 // Seuls des numéros sortent d'ici : le type technique du service ne va jamais au navigateur.

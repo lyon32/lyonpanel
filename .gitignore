@@ -27,3 +27,4 @@ next-env.d.ts
 
 # Cache de graphify : se régénère, ne pas versionner
 graphify-out/cache/
+playwright-report/

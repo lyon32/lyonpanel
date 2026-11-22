@@ -52,13 +52,11 @@
   },
   "home": {
     "title": "The site is coming soon.",
-    "subtitle": "Followers, likes and views for your social media.",
     "heroTitle": "Grow your social accounts. Pay with <accent>Mobile Money</accent>.",
     "heroText": "Followers, likes and views for TikTok, Instagram, YouTube, Telegram and many other networks. Top up your balance, order, and follow every order in one place.",
     "createAccount": "Create an account",
     "seeServices": "See the services",
     "example": "Example",
-    "mockLabel": "Panel preview, example data",
     "mockBalance": "Balance",
     "mockOrders": "Orders",
     "mockPlace": "Place an order",
@@ -86,7 +84,6 @@
     "step2Text": "Add any amount you like to your balance.",
     "step3": "Order and follow",
     "step3Text": "Pick a service, paste your link, follow the progress.",
-    "networksTitle": "For your social networks",
     "servicesTitle": "What you can order",
     "featuresTitle": "Everything in one place",
     "feat1": "Pay with Mobile Money",
@@ -125,6 +122,102 @@
       "whatsapp": "Channel followers, reactions",
       "discord": "Server members",
       "web": "Website visits"
+    },
+    "hero": {
+      "badge": "SMM panel for creators and shops",
+      "title": "Grow your presence on social media",
+      "accent": "Grow",
+      "sub": "Followers, likes, views, comments and other engagement services for your accounts. Create an account, pick a service, follow your order.",
+      "ctaPrimary": "Create an account",
+      "ctaSecondary": "How it works",
+      "networksTitle": "Supported networks",
+      "alt": "A young woman smiles while looking at her phone"
+    },
+    "stats": {
+      "title": "In numbers",
+      "items": {
+        "1": "services in the catalogue",
+        "2": "Instagram services",
+        "3": "TikTok services",
+        "4": "orders placed",
+        "5": "registered clients",
+        "6": "countries served"
+      }
+    },
+    "steps": {
+      "title": "Order in 3 steps",
+      "lead": "No subscription. Top up, order, that’s it.",
+      "step": "Step",
+      "alt": "A man smiles at his phone",
+      "items": {
+        "1": {
+          "title": "Top up your balance",
+          "text": "Pay with Mobile Money or card, from 500 to 500,000 XAF. Your balance is credited on confirmation.",
+          "chip": "500 – 500,000 XAF"
+        },
+        "2": {
+          "title": "Pick a service",
+          "text": "Network, type, quantity. The total price shows before you confirm, from 5 XAF.",
+          "chip": "From 5 XAF"
+        },
+        "3": {
+          "title": "Follow your order",
+          "text": "The status stays up to date in your account. Problem? Open a ticket.",
+          "chip": "Tracked in your account"
+        }
+      }
+    },
+    "services": {
+      "title": "Services for every platform",
+      "lead": "Pick your network, then the service that fits your goal.",
+      "unit": "services",
+      "seeAll": "See all services",
+      "moreTitle": "And more",
+      "moreText": "Kick, Pinterest, Threads and other networks in the catalogue.",
+      "types": {
+        "followers": "followers",
+        "likes": "likes",
+        "views": "views",
+        "comments": "comments",
+        "shares": "shares",
+        "other": "other"
+      }
+    },
+    "payments": {
+      "title": "Pay the way you already do",
+      "lead": "Top-ups go through a secure payment. Your balance is credited on confirmation.",
+      "text": "Mobile Money, bank card: you pick what is offered in your country when you top up.",
+      "note": "Available methods vary by country, currency and time of payment",
+      "logoAlt": "LyonPanel logo"
+    },
+    "faq": {
+      "title": "Frequently asked questions",
+      "items": {
+        "1": {
+          "q": "How do I top up my balance?",
+          "a": "With Mobile Money or card, from 500 to 500,000 XAF. Your balance is credited once the payment is confirmed."
+        },
+        "2": {
+          "q": "What is the minimum order?",
+          "a": "From 5 XAF. The total price shows before you confirm."
+        },
+        "3": {
+          "q": "How long does delivery take?",
+          "a": "It depends on the service. You follow the order status in your account."
+        },
+        "4": {
+          "q": "Do I need to share my password?",
+          "a": "No, never. The public link or username of the account or post is enough."
+        },
+        "5": {
+          "q": "What if something goes wrong?",
+          "a": "Open a ticket from your account. The team reviews every request."
+        }
+      }
+    },
+    "cta": {
+      "title": "Ready to grow your account?",
+      "text": "Create your account for free and place your first order."
     }
   },
   "meta": {
@@ -753,5 +846,258 @@
     "discountReached": "You get 10% off all your orders.",
     "countEmpty": "No friends yet. Share your code or link.",
     "earnedEmpty": "No bonus yet."
+  },
+  "faq": {
+    "title": "Frequently asked questions",
+    "intro": "Answers to the most common questions about adding funds, orders and your account.",
+    "groups": {
+      "payment": {
+        "title": "Funds and payment",
+        "items": {
+          "1": {
+            "question": "How do I add funds to my balance?",
+            "answer": "On the Add funds page, choose an amount and pay with Mobile Money. Once the payment is confirmed, the amount is added to your balance."
+          },
+          "2": {
+            "question": "Which amounts can I add?",
+            "answer": "From 500 to 500,000 XAF per top-up. Payment fees may apply: they are shown before you confirm."
+          },
+          "3": {
+            "question": "Can I withdraw my balance?",
+            "answer": "No. Your balance is only used to pay for orders on LyonPanel. It cannot be converted to cash or withdrawn."
+          }
+        }
+      },
+      "orders": {
+        "title": "Orders",
+        "items": {
+          "1": {
+            "question": "How do I place an order?",
+            "answer": "Choose a service, paste the link to your profile or post, enter the quantity, then confirm. The site calculates the total price and takes it from your balance."
+          },
+          "2": {
+            "question": "Does my profile need to be public?",
+            "answer": "Yes. The service cannot act on a private account: set it to public while your order runs."
+          },
+          "3": {
+            "question": "What if there is a problem with an order?",
+            "answer": "Open a ticket from your account with the order number. The owner reviews each case. Refunds are never automatic: they are decided after review."
+          }
+        }
+      },
+      "accounts": {
+        "title": "Account",
+        "items": {
+          "1": {
+            "question": "How do I create an account?",
+            "answer": "Sign up with an email address and a password, then confirm your address."
+          },
+          "2": {
+            "question": "Can I change language or currency?",
+            "answer": "Yes. The site is available in French and English, and prices can be shown in XAF or another currency. Payments are always made in XAF."
+          }
+        }
+      },
+      "security": {
+        "title": "Security",
+        "items": {
+          "1": {
+            "question": "Do you ask for my Instagram or TikTok password?",
+            "answer": "Never. We only need the public link to your profile or post."
+          },
+          "2": {
+            "question": "How do I contact support?",
+            "answer": "Through a ticket from your customer area. The Contact page explains how to reach us."
+          }
+        }
+      }
+    }
+  },
+  "contact": {
+    "title": "Contact",
+    "intro": "For a question about an order or a payment, the simplest way is to open a ticket from your customer area.",
+    "ticketsCta": "Open a ticket",
+    "loginCta": "Log in",
+    "emailLabel": "You can also write to"
+  },
+  "platform": {
+    "fromPrice": "from {price} XAF / 1,000",
+    "otherNetworks": "Other networks",
+    "faqTitle": "Frequently asked questions",
+    "ctaRegister": "Create an account",
+    "typesTitle": "Service types",
+    "metaDescription": "{network} services: prices in XAF, pay with Mobile Money.",
+    "intro": "Pick a {network} service type. Prices in XAF per 1,000 units, calculated by the server.",
+    "error": {
+      "title": "Catalog unavailable",
+      "text": "We cannot show the services right now. Please try again in a few minutes."
+    },
+    "faq": {
+      "instagram": {
+        "q1": {
+          "question": "How do I order Instagram services?",
+          "answer": "Create an account, top up your balance with Mobile Money or card (500 to 500,000 XAF), pick a service, then enter the link and the quantity. The server calculates the total before you confirm."
+        },
+        "q2": {
+          "question": "How is the price calculated?",
+          "answer": "Each service has a price per 1,000 units, shown in XAF. Your order total is that price times the quantity, rounded up to the next multiple of 5 XAF. The server recalculates it on every order."
+        },
+        "q3": {
+          "question": "What quantity can I order?",
+          "answer": "Each service has its own minimum and maximum quantity, shown on the order form. They differ from one service to another."
+        },
+        "q4": {
+          "question": "Do I need my Instagram password?",
+          "answer": "No. You only give the public link to the profile or post. Never share your password."
+        }
+      },
+      "tiktok": {
+        "q1": {
+          "question": "How do I order TikTok services?",
+          "answer": "Create an account, top up your balance with Mobile Money or card (500 to 500,000 XAF), pick a service, then enter the link and the quantity. The server calculates the total before you confirm."
+        },
+        "q2": {
+          "question": "How is the price calculated?",
+          "answer": "Each service has a price per 1,000 units, shown in XAF. Your order total is that price times the quantity, rounded up to the next multiple of 5 XAF. The server recalculates it on every order."
+        },
+        "q3": {
+          "question": "What quantity can I order?",
+          "answer": "Each service has its own minimum and maximum quantity, shown on the order form. They differ from one service to another."
+        },
+        "q4": {
+          "question": "Do I need my TikTok password?",
+          "answer": "No. You only give the public link to the profile or post. Never share your password."
+        }
+      },
+      "youtube": {
+        "q1": {
+          "question": "How do I order YouTube services?",
+          "answer": "Create an account, top up your balance with Mobile Money or card (500 to 500,000 XAF), pick a service, then enter the link and the quantity. The server calculates the total before you confirm."
+        },
+        "q2": {
+          "question": "How is the price calculated?",
+          "answer": "Each service has a price per 1,000 units, shown in XAF. Your order total is that price times the quantity, rounded up to the next multiple of 5 XAF. The server recalculates it on every order."
+        },
+        "q3": {
+          "question": "What quantity can I order?",
+          "answer": "Each service has its own minimum and maximum quantity, shown on the order form. They differ from one service to another."
+        },
+        "q4": {
+          "question": "Do I need my YouTube password?",
+          "answer": "No. You only give the public link to the profile or post. Never share your password."
+        }
+      },
+      "facebook": {
+        "q1": {
+          "question": "How do I order Facebook services?",
+          "answer": "Create an account, top up your balance with Mobile Money or card (500 to 500,000 XAF), pick a service, then enter the link and the quantity. The server calculates the total before you confirm."
+        },
+        "q2": {
+          "question": "How is the price calculated?",
+          "answer": "Each service has a price per 1,000 units, shown in XAF. Your order total is that price times the quantity, rounded up to the next multiple of 5 XAF. The server recalculates it on every order."
+        },
+        "q3": {
+          "question": "What quantity can I order?",
+          "answer": "Each service has its own minimum and maximum quantity, shown on the order form. They differ from one service to another."
+        },
+        "q4": {
+          "question": "Do I need my Facebook password?",
+          "answer": "No. You only give the public link to the profile or post. Never share your password."
+        }
+      },
+      "telegram": {
+        "q1": {
+          "question": "How do I order Telegram services?",
+          "answer": "Create an account, top up your balance with Mobile Money or card (500 to 500,000 XAF), pick a service, then enter the link and the quantity. The server calculates the total before you confirm."
+        },
+        "q2": {
+          "question": "How is the price calculated?",
+          "answer": "Each service has a price per 1,000 units, shown in XAF. Your order total is that price times the quantity, rounded up to the next multiple of 5 XAF. The server recalculates it on every order."
+        },
+        "q3": {
+          "question": "What quantity can I order?",
+          "answer": "Each service has its own minimum and maximum quantity, shown on the order form. They differ from one service to another."
+        },
+        "q4": {
+          "question": "Do I need my Telegram password?",
+          "answer": "No. You only give the public link to the profile or post. Never share your password."
+        }
+      },
+      "x": {
+        "q1": {
+          "question": "How do I order X services?",
+          "answer": "Create an account, top up your balance with Mobile Money or card (500 to 500,000 XAF), pick a service, then enter the link and the quantity. The server calculates the total before you confirm."
+        },
+        "q2": {
+          "question": "How is the price calculated?",
+          "answer": "Each service has a price per 1,000 units, shown in XAF. Your order total is that price times the quantity, rounded up to the next multiple of 5 XAF. The server recalculates it on every order."
+        },
+        "q3": {
+          "question": "What quantity can I order?",
+          "answer": "Each service has its own minimum and maximum quantity, shown on the order form. They differ from one service to another."
+        },
+        "q4": {
+          "question": "Do I need my X password?",
+          "answer": "No. You only give the public link to the profile or post. Never share your password."
+        }
+      }
+    }
+  },
+  "seo": {
+    "breadcrumbHome": "Home",
+    "home": {
+      "title": "SMM panel for Africa: followers, likes, views | LyonPanel",
+      "description": "LyonPanel: followers, likes and views for TikTok, Instagram and YouTube. Top up with Mobile Money, pay in XAF and follow every order from your account."
+    },
+    "services": {
+      "title": "SMM services: followers, likes, views in XAF | LyonPanel",
+      "description": "All LyonPanel services for TikTok, Instagram, YouTube and other networks: prices in XAF per 1,000, minimum order shown, payment by Mobile Money."
+    },
+    "faq": {
+      "title": "FAQ: top-ups, orders and payment | LyonPanel",
+      "description": "Answers about topping up your balance with Mobile Money, placing orders, prices in XAF and managing your LyonPanel account."
+    },
+    "contact": {
+      "title": "Contact and customer support | LyonPanel",
+      "description": "Questions about an order or a payment? Open a ticket from your LyonPanel client area or write to us by email."
+    },
+    "privacy": {
+      "title": "Privacy policy | LyonPanel",
+      "description": "How LyonPanel handles your personal data: what we collect, why, and how to exercise your rights. Page in preparation."
+    },
+    "terms": {
+      "title": "Terms of use | LyonPanel",
+      "description": "LyonPanel terms of use: account, balance top-ups, orders and the responsibilities of each side. Page in preparation."
+    },
+    "blog": {
+      "title": "Blog: growing on TikTok and Instagram | LyonPanel",
+      "description": "Tips to grow your TikTok or Instagram account, plus LyonPanel news for creators and shop owners across Africa. Coming soon."
+    },
+    "networks": {
+      "tiktok": {
+        "title": "Buy TikTok followers with Mobile Money | LyonPanel",
+        "description": "TikTok followers, likes and views: price in XAF per 1,000 and minimum order shown up front. Top up with Mobile Money and track your orders on LyonPanel."
+      },
+      "instagram": {
+        "title": "Buy Instagram followers and likes | LyonPanel",
+        "description": "Instagram followers, likes and views for your shop or account. Prices in XAF per 1,000, Mobile Money payment, order tracking on LyonPanel."
+      },
+      "youtube": {
+        "title": "Buy YouTube views and subscribers | LyonPanel",
+        "description": "YouTube views, subscribers and likes: price in XAF per 1,000 and minimum order shown before you pay. Mobile Money payment on LyonPanel."
+      },
+      "facebook": {
+        "title": "Buy Facebook followers and likes | LyonPanel",
+        "description": "Likes, followers and views for your Facebook page. Prices in XAF per 1,000, minimum order visible, payment by Mobile Money on LyonPanel."
+      },
+      "telegram": {
+        "title": "Buy Telegram members and views | LyonPanel",
+        "description": "Members, views and reactions for your Telegram channel or group. Prices in XAF per 1,000, minimum order visible, Mobile Money payment on LyonPanel."
+      },
+      "x": {
+        "title": "Buy X (Twitter) followers and likes | LyonPanel",
+        "description": "Followers, likes and views for your X (Twitter) account. Price in XAF per 1,000 and minimum order shown. Pay with Mobile Money on LyonPanel."
+      }
+    }
   }
 }

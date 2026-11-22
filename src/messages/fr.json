@@ -52,13 +52,11 @@
   },
   "home": {
     "title": "Le site arrive bientôt.",
-    "subtitle": "Abonnés, likes et vues pour vos réseaux sociaux.",
     "heroTitle": "Faites grandir vos réseaux. Payez en <accent>Mobile Money</accent>.",
     "heroText": "Abonnés, likes et vues pour TikTok, Instagram, YouTube, Telegram et bien d’autres réseaux. Rechargez votre solde, commandez, suivez chaque commande au même endroit.",
     "createAccount": "Créer un compte",
     "seeServices": "Voir les services",
     "example": "Exemple",
-    "mockLabel": "Aperçu du panel, données d’exemple",
     "mockBalance": "Solde",
     "mockOrders": "Commandes",
     "mockPlace": "Passer une commande",
@@ -86,7 +84,6 @@
     "step2Text": "Ajoutez le montant de votre choix à votre solde.",
     "step3": "Commandez et suivez",
     "step3Text": "Choisissez un service, collez votre lien, suivez l’avancement.",
-    "networksTitle": "Pour vos réseaux",
     "servicesTitle": "Ce que vous pouvez commander",
     "featuresTitle": "Tout au même endroit",
     "feat1": "Payez en Mobile Money",
@@ -125,6 +122,102 @@
       "whatsapp": "Abonnés de chaîne, réactions",
       "discord": "Membres du serveur",
       "web": "Visites de site web"
+    },
+    "hero": {
+      "badge": "Panel SMM pour créateurs et commerçants",
+      "title": "Fais grandir ta présence sur les réseaux sociaux",
+      "accent": "grandir",
+      "sub": "Abonnés, j’aime, vues, commentaires et autres services d’engagement pour tes comptes. Tu crées ton compte, tu choisis un service, tu suis ta commande.",
+      "ctaPrimary": "Créer un compte",
+      "ctaSecondary": "Comment ça marche",
+      "networksTitle": "Les réseaux pris en charge",
+      "alt": "Une jeune femme sourit en regardant son téléphone"
+    },
+    "stats": {
+      "title": "En chiffres",
+      "items": {
+        "1": "services au catalogue",
+        "2": "services Instagram",
+        "3": "services TikTok",
+        "4": "commandes passées",
+        "5": "clients inscrits",
+        "6": "pays servis"
+      }
+    },
+    "steps": {
+      "title": "Commander en 3 étapes",
+      "lead": "Pas d’abonnement. Tu recharges, tu commandes, c’est tout.",
+      "step": "Étape",
+      "alt": "Un homme sourit à son téléphone",
+      "items": {
+        "1": {
+          "title": "Recharge ton solde",
+          "text": "Paie par Mobile Money ou par carte, de 500 à 500 000 XAF. Ton solde est crédité dès la confirmation.",
+          "chip": "500 – 500 000 XAF"
+        },
+        "2": {
+          "title": "Choisis un service",
+          "text": "Réseau, type, quantité. Le prix total s’affiche avant de valider, dès 5 XAF.",
+          "chip": "Dès 5 XAF"
+        },
+        "3": {
+          "title": "Suis ta commande",
+          "text": "Le statut est à jour dans ton espace. Un souci ? Ouvre un ticket.",
+          "chip": "Suivi dans ton espace"
+        }
+      }
+    },
+    "services": {
+      "title": "Des services pour chaque plateforme",
+      "lead": "Choisis ton réseau, puis le service qui correspond à ton objectif.",
+      "unit": "services",
+      "seeAll": "Voir tous les services",
+      "moreTitle": "Et plus encore",
+      "moreText": "Kick, Pinterest, Threads et d’autres réseaux au catalogue.",
+      "types": {
+        "followers": "abonnés",
+        "likes": "j’aime",
+        "views": "vues",
+        "comments": "commentaires",
+        "shares": "partages",
+        "other": "autres"
+      }
+    },
+    "payments": {
+      "title": "Tu paies comme tu as l’habitude",
+      "lead": "La recharge passe par un paiement sécurisé. Ton solde est crédité à la confirmation.",
+      "text": "Mobile Money, carte bancaire : tu choisis ce qui est proposé dans ton pays au moment de recharger.",
+      "note": "Les moyens disponibles varient selon le pays, la devise et le moment du paiement",
+      "logoAlt": "Logo LyonPanel"
+    },
+    "faq": {
+      "title": "Questions fréquentes",
+      "items": {
+        "1": {
+          "q": "Comment je recharge mon solde ?",
+          "a": "Par Mobile Money ou par carte, de 500 à 500 000 XAF. Le solde est crédité dès la confirmation du paiement."
+        },
+        "2": {
+          "q": "À partir de quel montant puis-je commander ?",
+          "a": "Dès 5 XAF. Le prix total est affiché avant que tu valides."
+        },
+        "3": {
+          "q": "Combien de temps dure une livraison ?",
+          "a": "Cela dépend du service. Tu suis le statut de ta commande dans ton espace."
+        },
+        "4": {
+          "q": "Dois-je donner mon mot de passe ?",
+          "a": "Non, jamais. Il suffit du lien ou du nom d’utilisateur public du compte ou de la publication."
+        },
+        "5": {
+          "q": "Que faire en cas de problème ?",
+          "a": "Ouvre un ticket depuis ton espace. L’équipe examine chaque demande."
+        }
+      }
+    },
+    "cta": {
+      "title": "Prêt à faire grandir ton compte ?",
+      "text": "Crée ton compte gratuitement et passe ta première commande."
     }
   },
   "meta": {
@@ -753,5 +846,258 @@
     "discountReached": "Vous avez la remise de 10 % sur toutes vos commandes.",
     "countEmpty": "Aucun filleul pour le moment. Partagez votre code ou votre lien.",
     "earnedEmpty": "Aucun bonus pour le moment."
+  },
+  "faq": {
+    "title": "Questions fréquentes",
+    "intro": "Les réponses aux questions les plus posées sur la recharge, les commandes et votre compte.",
+    "groups": {
+      "payment": {
+        "title": "Recharge et paiement",
+        "items": {
+          "1": {
+            "question": "Comment recharger mon solde ?",
+            "answer": "Depuis la page Recharger, choisissez un montant puis payez par Mobile Money. Une fois le paiement confirmé, le montant est ajouté à votre solde."
+          },
+          "2": {
+            "question": "Quels montants puis-je recharger ?",
+            "answer": "De 500 à 500 000 XAF par recharge. Des frais de paiement peuvent s’ajouter : ils sont affichés avant que vous confirmiez."
+          },
+          "3": {
+            "question": "Puis-je retirer mon solde ?",
+            "answer": "Non. Le solde sert uniquement à payer vos commandes sur LyonPanel. Il ne peut pas être converti en argent ni retiré."
+          }
+        }
+      },
+      "orders": {
+        "title": "Commandes",
+        "items": {
+          "1": {
+            "question": "Comment passer une commande ?",
+            "answer": "Choisissez un service, collez le lien de votre profil ou de votre publication, indiquez la quantité, puis validez. Le prix total est calculé par le site et débité de votre solde."
+          },
+          "2": {
+            "question": "Mon profil doit-il être public ?",
+            "answer": "Oui. Le service ne peut pas agir sur un compte privé : passez-le en public le temps de la commande."
+          },
+          "3": {
+            "question": "Que se passe-t-il si une commande pose problème ?",
+            "answer": "Ouvrez un ticket depuis votre espace en indiquant le numéro de commande. Le propriétaire examine chaque cas. Aucun remboursement n’est fait automatiquement : il est décidé après examen."
+          }
+        }
+      },
+      "accounts": {
+        "title": "Compte",
+        "items": {
+          "1": {
+            "question": "Comment créer un compte ?",
+            "answer": "Inscrivez-vous avec une adresse email et un mot de passe, puis confirmez votre adresse."
+          },
+          "2": {
+            "question": "Puis-je changer de langue ou de devise ?",
+            "answer": "Oui. Le site existe en français et en anglais, et les prix peuvent s’afficher en XAF ou dans une autre devise. Les paiements restent en XAF."
+          }
+        }
+      },
+      "security": {
+        "title": "Sécurité",
+        "items": {
+          "1": {
+            "question": "Vous demandez-vous mon mot de passe Instagram ou TikTok ?",
+            "answer": "Jamais. Nous avons seulement besoin du lien public de votre profil ou de votre publication."
+          },
+          "2": {
+            "question": "Comment contacter le support ?",
+            "answer": "Par un ticket depuis votre espace client. La page Contact explique comment nous joindre."
+          }
+        }
+      }
+    }
+  },
+  "contact": {
+    "title": "Contact",
+    "intro": "Pour une question sur une commande ou un paiement, le plus simple est d’ouvrir un ticket depuis votre espace client.",
+    "ticketsCta": "Ouvrir un ticket",
+    "loginCta": "Se connecter",
+    "emailLabel": "Vous pouvez aussi écrire à"
+  },
+  "platform": {
+    "fromPrice": "dès {price} XAF / 1 000",
+    "otherNetworks": "Autres réseaux",
+    "faqTitle": "Questions fréquentes",
+    "ctaRegister": "Créer un compte",
+    "typesTitle": "Types de services",
+    "metaDescription": "Services {network} : prix en XAF, paiement par Mobile Money.",
+    "intro": "Choisissez un type de service {network}. Prix en XAF pour 1 000 unités, calculés par le serveur.",
+    "error": {
+      "title": "Catalogue indisponible",
+      "text": "Nous ne pouvons pas afficher les services pour le moment. Réessayez dans quelques minutes."
+    },
+    "faq": {
+      "instagram": {
+        "q1": {
+          "question": "Comment commander des services Instagram ?",
+          "answer": "Créez un compte, rechargez votre solde par Mobile Money ou par carte (de 500 à 500 000 XAF), choisissez un service, indiquez le lien et la quantité. Le total est calculé par le serveur avant que vous confirmiez."
+        },
+        "q2": {
+          "question": "Comment le prix est-il calculé ?",
+          "answer": "Chaque service a un prix pour 1 000 unités, affiché en XAF. Le total de votre commande est ce prix multiplié par la quantité, arrondi au multiple de 5 XAF supérieur. Il est recalculé par le serveur à chaque commande."
+        },
+        "q3": {
+          "question": "Quelle quantité puis-je commander ?",
+          "answer": "Chaque service a sa quantité minimum et maximum, affichées sur le formulaire de commande. Elles varient d’un service à l’autre."
+        },
+        "q4": {
+          "question": "Ai-je besoin de mon mot de passe Instagram ?",
+          "answer": "Non. Vous donnez seulement le lien public du profil ou de la publication. Ne communiquez jamais votre mot de passe."
+        }
+      },
+      "tiktok": {
+        "q1": {
+          "question": "Comment commander des services TikTok ?",
+          "answer": "Créez un compte, rechargez votre solde par Mobile Money ou par carte (de 500 à 500 000 XAF), choisissez un service, indiquez le lien et la quantité. Le total est calculé par le serveur avant que vous confirmiez."
+        },
+        "q2": {
+          "question": "Comment le prix est-il calculé ?",
+          "answer": "Chaque service a un prix pour 1 000 unités, affiché en XAF. Le total de votre commande est ce prix multiplié par la quantité, arrondi au multiple de 5 XAF supérieur. Il est recalculé par le serveur à chaque commande."
+        },
+        "q3": {
+          "question": "Quelle quantité puis-je commander ?",
+          "answer": "Chaque service a sa quantité minimum et maximum, affichées sur le formulaire de commande. Elles varient d’un service à l’autre."
+        },
+        "q4": {
+          "question": "Ai-je besoin de mon mot de passe TikTok ?",
+          "answer": "Non. Vous donnez seulement le lien public du profil ou de la publication. Ne communiquez jamais votre mot de passe."
+        }
+      },
+      "youtube": {
+        "q1": {
+          "question": "Comment commander des services YouTube ?",
+          "answer": "Créez un compte, rechargez votre solde par Mobile Money ou par carte (de 500 à 500 000 XAF), choisissez un service, indiquez le lien et la quantité. Le total est calculé par le serveur avant que vous confirmiez."
+        },
+        "q2": {
+          "question": "Comment le prix est-il calculé ?",
+          "answer": "Chaque service a un prix pour 1 000 unités, affiché en XAF. Le total de votre commande est ce prix multiplié par la quantité, arrondi au multiple de 5 XAF supérieur. Il est recalculé par le serveur à chaque commande."
+        },
+        "q3": {
+          "question": "Quelle quantité puis-je commander ?",
+          "answer": "Chaque service a sa quantité minimum et maximum, affichées sur le formulaire de commande. Elles varient d’un service à l’autre."
+        },
+        "q4": {
+          "question": "Ai-je besoin de mon mot de passe YouTube ?",
+          "answer": "Non. Vous donnez seulement le lien public du profil ou de la publication. Ne communiquez jamais votre mot de passe."
+        }
+      },
+      "facebook": {
+        "q1": {
+          "question": "Comment commander des services Facebook ?",
+          "answer": "Créez un compte, rechargez votre solde par Mobile Money ou par carte (de 500 à 500 000 XAF), choisissez un service, indiquez le lien et la quantité. Le total est calculé par le serveur avant que vous confirmiez."
+        },
+        "q2": {
+          "question": "Comment le prix est-il calculé ?",
+          "answer": "Chaque service a un prix pour 1 000 unités, affiché en XAF. Le total de votre commande est ce prix multiplié par la quantité, arrondi au multiple de 5 XAF supérieur. Il est recalculé par le serveur à chaque commande."
+        },
+        "q3": {
+          "question": "Quelle quantité puis-je commander ?",
+          "answer": "Chaque service a sa quantité minimum et maximum, affichées sur le formulaire de commande. Elles varient d’un service à l’autre."
+        },
+        "q4": {
+          "question": "Ai-je besoin de mon mot de passe Facebook ?",
+          "answer": "Non. Vous donnez seulement le lien public du profil ou de la publication. Ne communiquez jamais votre mot de passe."
+        }
+      },
+      "telegram": {
+        "q1": {
+          "question": "Comment commander des services Telegram ?",
+          "answer": "Créez un compte, rechargez votre solde par Mobile Money ou par carte (de 500 à 500 000 XAF), choisissez un service, indiquez le lien et la quantité. Le total est calculé par le serveur avant que vous confirmiez."
+        },
+        "q2": {
+          "question": "Comment le prix est-il calculé ?",
+          "answer": "Chaque service a un prix pour 1 000 unités, affiché en XAF. Le total de votre commande est ce prix multiplié par la quantité, arrondi au multiple de 5 XAF supérieur. Il est recalculé par le serveur à chaque commande."
+        },
+        "q3": {
+          "question": "Quelle quantité puis-je commander ?",
+          "answer": "Chaque service a sa quantité minimum et maximum, affichées sur le formulaire de commande. Elles varient d’un service à l’autre."
+        },
+        "q4": {
+          "question": "Ai-je besoin de mon mot de passe Telegram ?",
+          "answer": "Non. Vous donnez seulement le lien public du profil ou de la publication. Ne communiquez jamais votre mot de passe."
+        }
+      },
+      "x": {
+        "q1": {
+          "question": "Comment commander des services X ?",
+          "answer": "Créez un compte, rechargez votre solde par Mobile Money ou par carte (de 500 à 500 000 XAF), choisissez un service, indiquez le lien et la quantité. Le total est calculé par le serveur avant que vous confirmiez."
+        },
+        "q2": {
+          "question": "Comment le prix est-il calculé ?",
+          "answer": "Chaque service a un prix pour 1 000 unités, affiché en XAF. Le total de votre commande est ce prix multiplié par la quantité, arrondi au multiple de 5 XAF supérieur. Il est recalculé par le serveur à chaque commande."
+        },
+        "q3": {
+          "question": "Quelle quantité puis-je commander ?",
+          "answer": "Chaque service a sa quantité minimum et maximum, affichées sur le formulaire de commande. Elles varient d’un service à l’autre."
+        },
+        "q4": {
+          "question": "Ai-je besoin de mon mot de passe X ?",
+          "answer": "Non. Vous donnez seulement le lien public du profil ou de la publication. Ne communiquez jamais votre mot de passe."
+        }
+      }
+    }
+  },
+  "seo": {
+    "breadcrumbHome": "Accueil",
+    "home": {
+      "title": "Panel SMM Afrique : abonnés, likes, vues | LyonPanel",
+      "description": "LyonPanel : abonnés, likes et vues pour TikTok, Instagram et YouTube. Rechargez par Mobile Money, payez en XAF et suivez chaque commande depuis votre compte."
+    },
+    "services": {
+      "title": "Services SMM : abonnés, likes, vues en XAF | LyonPanel",
+      "description": "Tous les services LyonPanel pour TikTok, Instagram, YouTube et d’autres réseaux : prix en XAF pour 1 000, commande minimum affichée, paiement par Mobile Money."
+    },
+    "faq": {
+      "title": "FAQ : recharge, commandes et paiement | LyonPanel",
+      "description": "Réponses aux questions sur la recharge du solde par Mobile Money, les commandes, les prix en XAF et votre compte LyonPanel."
+    },
+    "contact": {
+      "title": "Contact et support client | LyonPanel",
+      "description": "Une question sur une commande ou un paiement ? Ouvrez un ticket depuis votre espace client LyonPanel ou écrivez-nous par email."
+    },
+    "privacy": {
+      "title": "Politique de confidentialité | LyonPanel",
+      "description": "Comment LyonPanel traite vos données personnelles : ce que nous collectons, pourquoi, et comment exercer vos droits. Page en préparation."
+    },
+    "terms": {
+      "title": "Conditions d’utilisation | LyonPanel",
+      "description": "Les conditions d’utilisation de LyonPanel : compte, recharge du solde, commandes et responsabilités de chacun. Page en préparation."
+    },
+    "blog": {
+      "title": "Blog : grandir sur TikTok et Instagram | LyonPanel",
+      "description": "Conseils pour faire grandir votre compte TikTok ou Instagram, et nouveautés LyonPanel pour les créateurs et commerçants d’Afrique. Bientôt en ligne."
+    },
+    "networks": {
+      "tiktok": {
+        "title": "Acheter des abonnés TikTok en Mobile Money | LyonPanel",
+        "description": "Abonnés, likes et vues TikTok : prix en XAF pour 1 000 et commande minimum affichés. Rechargez par Mobile Money et suivez vos commandes sur LyonPanel."
+      },
+      "instagram": {
+        "title": "Acheter des likes et abonnés Instagram | LyonPanel",
+        "description": "Abonnés, likes et vues Instagram pour votre boutique ou votre compte. Prix en XAF pour 1 000, paiement Mobile Money, suivi des commandes sur LyonPanel."
+      },
+      "youtube": {
+        "title": "Acheter des vues et abonnés YouTube | LyonPanel",
+        "description": "Vues, abonnés et j’aime pour YouTube : prix en XAF pour 1 000 et commande minimum affichés avant de payer. Paiement Mobile Money sur LyonPanel."
+      },
+      "facebook": {
+        "title": "Acheter des likes et abonnés Facebook | LyonPanel",
+        "description": "Likes, abonnés et vues pour votre page Facebook. Prix en XAF pour 1 000, commande minimum visible, paiement par Mobile Money sur LyonPanel."
+      },
+      "telegram": {
+        "title": "Acheter des membres Telegram | LyonPanel",
+        "description": "Membres, vues et réactions pour votre canal ou groupe Telegram. Prix en XAF pour 1 000, commande minimum visible, paiement Mobile Money sur LyonPanel."
+      },
+      "x": {
+        "title": "Acheter des abonnés X (Twitter) | LyonPanel",
+        "description": "Abonnés, j’aime et vues pour votre compte X (Twitter). Prix en XAF pour 1 000 et commande minimum affichés. Paiement Mobile Money sur LyonPanel."
+      }
+    }
   }
 }

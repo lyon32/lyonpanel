@@ -236,27 +236,27 @@ export function AuthShell({ children }: { children: ReactNode }) {
     <div
       data-auth-shell
       data-side={side}
-      className="lp-auth-bg lp-auth-shell flex h-dvh flex-col overflow-hidden"
+      className="lp-app lp-auth-bg lp-auth-shell flex h-dvh flex-col overflow-hidden"
     >
       <div className="lp-auth-band shrink-0">
         <header className="mx-auto flex h-16 w-full max-w-[1100px] items-center justify-between px-4 lg:h-20 lg:px-8">
           <Link
             href="/"
-            className="focus-visible:ring-blanc inline-flex min-h-11 items-center gap-2 rounded-full outline-none focus-visible:ring-4"
+            className="focus-visible:ring-bleu-600 inline-flex min-h-11 items-center gap-2 rounded-full outline-none focus-visible:ring-4"
           >
             <Logo variant="icon" alt="" className="size-8" />
-            <span className="text-blanc lg:text-bleu-700 text-lg font-bold">{t('brandAlt')}</span>
+            <span className="text-encre text-lg font-bold">{t('brandAlt')}</span>
             <span className="sr-only">{t('homeLabel')}</span>
           </Link>
           <AuthLanguageSwitcher />
         </header>
         {/* Téléphone : phrase courte + lien de bascule dans la bande bleue. */}
-        <p className="text-blanc flex flex-wrap items-center gap-x-1 px-4 pb-8 text-base lg:hidden">
+        <p className="text-encre flex flex-wrap items-center gap-x-1 px-4 pb-8 text-base lg:hidden">
           <span>{panel.heading}</span>
           <Link
             href={SWITCH[mode].href}
             onClick={onSwitch}
-            className="focus-visible:ring-blanc/60 -my-2 inline-flex min-h-11 items-center rounded-lg px-1 font-bold underline underline-offset-4 outline-none focus-visible:ring-4"
+            className="focus-visible:ring-bleu-600 -my-2 inline-flex min-h-11 items-center rounded-lg px-1 font-bold underline underline-offset-4 outline-none focus-visible:ring-4"
           >
             {panel.cta}
           </Link>
@@ -264,7 +264,7 @@ export function AuthShell({ children }: { children: ReactNode }) {
       </div>
 
       <main className="flex min-h-0 flex-1 flex-col lg:items-center lg:justify-center lg:px-8 lg:pb-8">
-        <div className="relative -mt-5 flex min-h-0 flex-1 flex-col lg:mt-0 lg:h-[min(620px,100%)] lg:w-full lg:max-w-[1040px] lg:flex-none lg:overflow-hidden lg:rounded-3xl lg:shadow-[0_24px_60px_rgba(20,40,107,0.22)]">
+        <div className="relative -mt-5 flex min-h-0 flex-1 flex-col lg:mt-0 lg:h-[min(620px,100%)] lg:w-full lg:max-w-[1040px] lg:flex-none lg:overflow-hidden lg:rounded-3xl">
           <section
             ref={paneRef}
             className={cn(
@@ -298,7 +298,7 @@ export function AuthShell({ children }: { children: ReactNode }) {
 
           <aside
             ref={panelRef}
-            className="lp-auth-glass lp-auth-panel text-blanc absolute inset-y-0 left-0 z-10 hidden w-[40%] flex-col items-center justify-center px-10 text-center lg:flex"
+            className="lp-auth-glass lp-auth-panel text-encre absolute inset-y-0 left-0 z-10 hidden w-[40%] flex-col items-center justify-center px-10 text-center lg:flex"
           >
             <div ref={panelTextRef} className="flex max-w-xs flex-col items-center gap-4">
               <p className="text-3xl leading-tight font-bold">{panel.heading}</p>
@@ -306,7 +306,7 @@ export function AuthShell({ children }: { children: ReactNode }) {
               <Link
                 href={SWITCH[mode].href}
                 onClick={onSwitch}
-                className="border-blanc text-blanc hover:bg-blanc/15 focus-visible:ring-blanc/60 mt-2 inline-flex min-h-11 items-center justify-center rounded-full border-2 px-10 text-base font-semibold transition-colors duration-150 ease-out outline-none focus-visible:ring-4"
+                className="border-gris-200 text-encre hover:bg-gris-50 focus-visible:ring-bleu-600 mt-2 inline-flex min-h-11 items-center justify-center rounded-full border-2 px-10 text-base font-semibold transition-colors duration-150 ease-out outline-none focus-visible:ring-4"
               >
                 {panel.cta}
               </Link>

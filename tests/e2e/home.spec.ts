@@ -3,9 +3,12 @@ import { expect, test } from '@playwright/test';
 test("affiche le héros sur la page d'accueil", async ({ page }) => {
   // Mobile 360 x 740 : aucun défilement horizontal
   await page.setViewportSize({ width: 360, height: 740 });
-  await page.goto('/');
+  await page.goto('/fr');
 
-  await expect(page.getByRole('heading', { level: 1 })).toContainText('Mobile Money');
+  const h1 = page.getByRole('heading', { level: 1 });
+  await expect(h1).toHaveText('Fais grandir ta présence sur les réseaux sociaux');
+  await expect(page.getByRole('link', { name: 'Créer un compte' }).first()).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Comment ça marche' }).first()).toBeVisible();
 
   const noHorizontalScroll = await page.evaluate(
     () => document.documentElement.scrollWidth <= window.innerWidth,
@@ -13,74 +16,89 @@ test("affiche le héros sur la page d'accueil", async ({ page }) => {
   expect(noHorizontalScroll).toBe(true);
 });
 
-test('les sections réagissent : FAQ, bandeau, pas de débordement à 360 px', async ({ page }) => {
-  await page.setViewportSize({ width: 360, height: 740 });
-  await page.goto('/fr');
-  const second = page.getByRole('button', { name: 'Comment payer ?' });
-  await second.scrollIntoViewIfNeeded();
-  await expect(second).toHaveAttribute('aria-expanded', 'false');
-  await second.click();
-  await expect(second).toHaveAttribute('aria-expanded', 'true');
-  await expect(page.getByRole('list', { name: 'Réseaux pris en charge' })).toBeAttached();
-  const ok = await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth);
-  expect(ok).toBe(true);
+test('héros EN : titre et boutons, sans prix, devise, pays ni Mobile Money', async ({ page }) => {
+  await page.goto('/en');
+  const h1 = page.getByRole('heading', { level: 1 });
+  await expect(h1).toHaveText('Grow your presence on social media');
+  await expect(page.getByRole('link', { name: 'Create an account' }).first()).toBeVisible();
+  await expect(page.getByRole('link', { name: 'How it works' }).first()).toBeVisible();
+
+  const heroText = await h1.evaluate((el) => (el.closest('section') ?? el).textContent ?? '');
+  expect(heroText).not.toMatch(
+    /Mobile Money|XAF|FCFA|\d+\s?(€|\$)|Cameroun|Cameroon|Sénégal|Senegal/i,
+  );
 });
 
-test('cite tous les réseaux du catalogue (sans prix)', async ({ page }) => {
-  await page.goto('/fr');
-  for (const name of [
-    'X (Twitter)',
-    'Telegram',
-    'Spotify',
-    'Snapchat',
-    'Twitch',
-    'SoundCloud',
-    'LinkedIn',
-    'WhatsApp',
-    'Discord',
-    'Trafic web',
-  ]) {
-    await expect(page.getByRole('heading', { name, level: 3 })).toBeAttached();
-  }
-});
+const noOverflow = () => document.documentElement.scrollWidth <= window.innerWidth;
 
-test('onglets des atouts : le panneau suit le choix', async ({ page }) => {
-  await page.setViewportSize({ width: 360, height: 740 });
-  await page.goto('/fr');
-  const tab = page.getByRole('tab', { name: 'Un seul solde' });
-  await tab.scrollIntoViewIfNeeded();
-  await tab.click();
-  await expect(tab).toHaveAttribute('aria-selected', 'true');
-  await expect(page.getByRole('tabpanel')).toContainText('débitée de votre solde');
-});
+const LANGS = [
+  {
+    code: 'fr',
+    steps: ['Recharge ton solde', 'Choisis un service', 'Suis ta commande'],
+    note: /Les moyens disponibles varient/,
+    first: 'Comment je recharge mon solde ?',
+    second: 'À partir de quel montant puis-je commander ?',
+  },
+  {
+    code: 'en',
+    steps: ['Top up your balance', 'Pick a service', 'Follow your order'],
+    note: /Available methods vary/,
+    first: 'How do I top up my balance?',
+    second: 'What is the minimum order?',
+  },
+] as const;
 
-test('mouvement réduit : les trois étapes restent empilées et lisibles', async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.setViewportSize({ width: 360, height: 740 });
-  await page.goto('/fr');
-  await page.waitForTimeout(800);
-  await expect(page.locator('[data-pinned="true"]')).toHaveCount(0);
-  for (const name of ['Créez votre compte', 'Rechargez en Mobile Money', 'Commandez et suivez']) {
-    await expect(page.getByRole('heading', { name, level: 3 })).toBeVisible();
-  }
-});
+for (const l of LANGS) {
+  test.describe(`accueil ${l.code}`, () => {
+    test('section étapes (#how) : trois étapes, sans section épinglée', async ({ page }) => {
+      await page.goto(`/${l.code}`);
+      const how = page.locator('#how');
+      await expect(how).toBeAttached();
+      for (const name of l.steps) {
+        await expect(how.getByRole('heading', { name, level: 3 })).toBeAttached();
+      }
+      await expect(page.locator('[data-pinned]')).toHaveCount(0);
+    });
 
-test('étapes épinglées : une carte visible à la fois au défilement', async ({ page }) => {
-  await page.setViewportSize({ width: 360, height: 740 });
-  await page.goto('/fr');
-  const section = page.locator('section[data-pinned]');
-  await expect(section).toHaveAttribute('data-pinned', 'true');
-  const top = await section.evaluate((el) => el.getBoundingClientRect().top + window.scrollY);
-  const opacities = async () =>
-    page
-      .locator('[data-step-card]')
-      .evaluateAll((els) => els.map((e) => Number(getComputedStyle(e).opacity)));
-  await page.evaluate((y) => window.scrollTo(0, y + 5), top);
-  await page.waitForTimeout(900);
-  expect((await opacities()).every((o) => o < 0.2)).toBe(true);
-  await page.evaluate((y) => window.scrollTo(0, y + 740 * 0.55), top);
-  await page.waitForTimeout(900);
-  const mid = await opacities();
-  expect(mid[0]).toBeGreaterThan(0.8);
-  expect(mid[2]).toBeLessThan(0.2);
-});
+    test('tuiles de services : chaque tuile mène à /services/<réseau>', async ({ page }) => {
+      await page.goto(`/${l.code}`);
+      for (const id of ['instagram', 'tiktok', 'youtube', 'facebook', 'telegram', 'x']) {
+        await expect(page.locator(`[data-slot="tuile-${id}"] a`)).toHaveAttribute(
+          'href',
+          `/${l.code}/services/${id}`,
+        );
+      }
+      await expect(page.locator('[data-slot="tuile-plus"] a')).toHaveAttribute(
+        'href',
+        `/${l.code}/services`,
+      );
+    });
+
+    test('section paiements : 7 logos et mention de variation des moyens', async ({ page }) => {
+      await page.goto(`/${l.code}`);
+      const pay = page.locator('#paiements');
+      await expect(pay.locator('[data-pay]')).toHaveCount(7);
+      await expect(pay).toContainText(l.note);
+    });
+
+    test('FAQ : ouverture et fermeture au clavier', async ({ page }) => {
+      await page.goto(`/${l.code}`);
+      const first = page.getByRole('button', { name: l.first });
+      const second = page.getByRole('button', { name: l.second });
+      await second.scrollIntoViewIfNeeded();
+      await expect(second).toHaveAttribute('aria-expanded', 'false');
+      await second.focus();
+      await page.keyboard.press('Enter');
+      await expect(second).toHaveAttribute('aria-expanded', 'true');
+      await expect(first).toHaveAttribute('aria-expanded', 'false');
+      await page.keyboard.press('Space');
+      await expect(second).toHaveAttribute('aria-expanded', 'false');
+    });
+
+    test('pas de débordement horizontal à 360 px', async ({ page }) => {
+      await page.setViewportSize({ width: 360, height: 740 });
+      await page.goto(`/${l.code}`);
+      expect(await page.evaluate(noOverflow)).toBe(true);
+    });
+  });
+}

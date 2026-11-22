@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { PRIVATE_ROBOTS } from '@/lib/seo/indexing';
 import { TransactionsFilter } from '@/components/wallet/transactions-filter';
 import { EmptyState } from '@/components/shared/empty-state';
 import { Card } from '@/components/ui/card';
@@ -21,7 +22,7 @@ const PAGE_SIZE = 20;
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'pages' });
-  return { title: t('transactions'), robots: { index: false, follow: false } };
+  return { title: t('transactions'), robots: PRIVATE_ROBOTS };
 }
 
 export default async function TransactionsPage({ params, searchParams }: Props) {

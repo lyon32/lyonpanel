@@ -32,6 +32,9 @@ export const routing = defineRouting({
     '/services/[network]/[type]': '/services/[network]/[type]',
     '/services/[network]/[type]/[id]': '/services/[network]/[type]/[id]',
     '/blog': '/blog',
+    // Pages publiques d'aide (phase 14.4) : mêmes adresses en FR et EN.
+    '/faq': '/faq',
+    '/contact': '/contact',
     // Page interne de démonstration (noindex), même adresse dans les deux langues.
     '/demo': '/demo',
     // Page du lien reçu par email (phase 3) : hors table LLD §6, ajoutée ici.
