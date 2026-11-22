@@ -44,7 +44,7 @@ describe('loadServerEnv', () => {
       SASPAY_MODE: 'live',
       SASPAY_API_KEY: 'sk_live_x',
       VERCEL_ENV: 'production',
-      PROVIDER_MODE: 'mock',
+      PROVIDER_MODE: 'live',
     });
     expect(env.SASPAY_MODE).toBe('live');
   });
@@ -93,7 +93,7 @@ describe('loadServerEnv', () => {
     expect(() => loadServerEnv({ SASPAY_MODE: 'test', SASPAY_API_KEY: 'SK_LIVE_x' })).toThrow();
     expect(() => loadServerEnv({ SASPAY_MODE: 'test', SASPAY_API_KEY: 'sansprefixe' })).toThrow();
     expect(() => loadServerEnv({ SASPAY_MODE: 'test', SASPAY_API_KEY: 'SK_TEST_x' })).not.toThrow();
-    const live = { SASPAY_MODE: 'live', VERCEL_ENV: 'production', PROVIDER_MODE: 'mock' };
+    const live = { SASPAY_MODE: 'live', VERCEL_ENV: 'production', PROVIDER_MODE: 'live' };
     expect(() => loadServerEnv({ ...live, SASPAY_API_KEY: 'sansprefixe' })).toThrow();
     expect(() => loadServerEnv({ ...live, SASPAY_API_KEY: 'SK_TEST_x' })).toThrow();
     expect(() => loadServerEnv({ ...live, SASPAY_API_KEY: 'sk_live_x' })).not.toThrow();
