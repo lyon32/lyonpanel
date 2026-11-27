@@ -26,6 +26,7 @@ La partie « préparation » est faite (accueil, logo, image de partage, mesure 
 
 ## PAS FAIT, HONNÊTEMENT
 - **15.4 Test de charge (100 clients) et test de restauration : EXÉCUTÉS le 2026-11-27 en local, mode faux.** `npm run test:db` : 1333/1333 verts. Charge : 100/100 clients, 300/300 commandes, 0 double crédit, 0 double débit, 0 solde négatif ou incohérent, 0 commande bloquée ; **p95 1956 ms, au-dessus de l'objectif de 800 ms** (pic de 100 clients d'un coup, base locale, à refaire sur Preview). Restauration : soldes et totaux identiques ; RLS et comptes `auth` non couverts par ce test. Détail : `docs/reports/phase-15/charge-restauration.md`.
+- **15.4 bis, montée progressive (2026-11-27, local, mode faux, PAS une mesure Preview/production)** : paliers 10, 30, 100 clients, création des comptes mesurée à part. Argent : 0 double crédit, 0 double débit, 0 solde négatif ou incohérent à tous les paliers et sur toutes les exécutions. Vitesse `place_order`/`credit_payment` : p95 337 ms (10), 328 ms (30), 1641 ms (100, objectif 800 ms non atteint à 100). Instabilité locale : sur 3 exécutions du palier 100, 2 ont perdu 79 puis 2 commandes (`fetch failed` côté client de test, pas d'erreur SQL). Détail : `charge-restauration.md`.
 - **Essais de base de données (`npm run test:db`) non rejoués** : double commande simultanée, webhook rejoué deux fois, droits d'accès. Ils ont été vérifiés par lecture du code seulement.
 - **gitleaks** (recherche de secrets) : non installé ici, à passer en CI sur la PR.
 - **CI GitHub** : à lire sur la PR (pas encore lue ici).

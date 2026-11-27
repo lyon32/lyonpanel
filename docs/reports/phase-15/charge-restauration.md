@@ -49,6 +49,27 @@ Lecture honnête :
 - Vitesse : p95 à 1956 ms, au-dessus de l'objectif de 800 ms de TESTING §6. Les 100 clients démarrent d'un coup (pic, pas de montée progressive) sur un poste local, et les appels mesurés incluent la création de compte auth. Ce n'est pas une mesure de production (pas de routes HTTP, pas de Vercel). À refaire sur Preview avec montée progressive avant d'en tirer une conclusion.
 - Restauration : `pg_restore` signale des erreurs attendues (le schéma `public` existe déjà, et la clé étrangère vers `auth.users` et les politiques RLS qui utilisent `auth.uid()` n'ont pas pu être recréées car le schéma `auth` n'est pas dans la base vide). Les données sont identiques, mais la restauration des politiques RLS n'est pas prouvée par ce test. Une restauration complète d'une vraie sauvegarde Supabase reste à faire à la main.
 
+## Montée progressive (2026-11-27) — local, mode faux, PAS une mesure Preview/production
+Commande : `node --env-file=<fichier temporaire hors dépôt, clés locales seulement> scripts/load-100-clients.mjs 10,30,100`. Paliers lancés l'un après l'autre. p50/p95/max portent sur `credit_payment` + `place_order` seulement ; la création des comptes est mesurée à part. Base : pile locale `lyonpanel` (`pubeka` non touchée). Le fichier temporaire a été supprimé ; aucun secret affiché.
+
+Exécution de référence (code de sortie 0) :
+| Palier | Clients OK | Commandes | Double crédit / débit | Soldes négatifs / incohérents | Bloquées | Argent p50 / p95 / max (ms) | Comptes p50 / p95 / max (ms) | Durée |
+|---|---|---|---|---|---|---|---|---|
+| 10 | 10/10 | 30/30 | 0 / 0 | 0 / 0 | 0 | 225 / 337 / 394 | 469 / 606 / 606 | 1,3 s |
+| 30 | 30/30 | 90/90 | 0 / 0 | 0 / 0 | 0 | 223 / 328 / 363 | 1139 / 1368 / 1397 | 2,0 s |
+| 100 | 100/100 | 300/300 | 0 / 0 | 0 / 0 | 0 | 428 / 1641 / 2776 | 3875 / 4435 / 4458 | 7,4 s |
+
+Autres exécutions du palier 100 (mêmes réglages, résultats variables) :
+- 1re exécution (3 paliers) : 221 commandes sur 300, aucun refus lisible (le script ne comptait pas encore les refus) ; p95 argent 2259 ms.
+- Après ajout du comptage des refus : 298/300 commandes, 4 appels en `TypeError: fetch failed` ; p95 argent 3627 ms. Puis 300/300, p95 2357 ms.
+- Dans tous les cas : 0 double crédit, 0 double débit, 0 solde négatif ou incohérent, 0 commande bloquée. Les commandes manquantes sont des appels qui n'ont pas atteint la base (connexion du poste de test saturée), pas de l'argent perdu : le client n'est pas débité pour une commande non créée.
+
+Lecture honnête :
+- Argent : aucun défaut constaté aux 3 paliers.
+- Vitesse : l'objectif p95 < 800 ms est tenu à 10 et 30 clients, **pas à 100** (1641 à 3627 ms selon l'exécution). Le palier 100 sature le poste local (base, API et script sur la même machine).
+- Ce n'est toujours **pas** une mesure Preview/production : pas de routes HTTP, pas de Vercel, pas de réseau réel. À refaire sur Preview.
+- Le script compte maintenant les refus renvoyés (`refusSql`), sinon une commande perdue ne donnait aucune erreur.
+
 ## Limites connues
 - Le test passe par les fonctions SQL (`place_order`, `credit_payment`) et non par les routes HTTP, donc le p95 est celui de la base, pas celui de l'application.
 - TESTING §6 prévoit k6 sur Preview : non utilisé, aucune nouvelle bibliothèque.
