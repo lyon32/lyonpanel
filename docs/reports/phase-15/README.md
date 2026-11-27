@@ -25,7 +25,7 @@ La partie « préparation » est faite (accueil, logo, image de partage, mesure 
 - **Tests** : **2161** tests unitaires passent.
 
 ## PAS FAIT, HONNÊTEMENT
-- **15.4 Test de charge (100 clients) et test de restauration de sauvegarde : NON EXÉCUTÉS.** Docker est arrêté sur la machine, donc pas de base locale. Les scripts sont prêts et vérifiés pour leur syntaxe, mais **aucun résultat chiffré n'existe**. Détail : `docs/reports/phase-15/charge-restauration.md`.
+- **15.4 Test de charge (100 clients) et test de restauration : EXÉCUTÉS le 2026-11-27 en local, mode faux.** `npm run test:db` : 1333/1333 verts. Charge : 100/100 clients, 300/300 commandes, 0 double crédit, 0 double débit, 0 solde négatif ou incohérent, 0 commande bloquée ; **p95 1956 ms, au-dessus de l'objectif de 800 ms** (pic de 100 clients d'un coup, base locale, à refaire sur Preview). Restauration : soldes et totaux identiques ; RLS et comptes `auth` non couverts par ce test. Détail : `docs/reports/phase-15/charge-restauration.md`.
 - **Essais de base de données (`npm run test:db`) non rejoués** : double commande simultanée, webhook rejoué deux fois, droits d'accès. Ils ont été vérifiés par lecture du code seulement.
 - **gitleaks** (recherche de secrets) : non installé ici, à passer en CI sur la PR.
 - **CI GitHub** : à lire sur la PR (pas encore lue ici).
