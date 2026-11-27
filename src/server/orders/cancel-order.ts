@@ -20,21 +20,16 @@ type Row = {
   cancel_requested_at: string | null;
 };
 
-/** Rembourse (une seule fois) une commande annulée : seule écriture de solde de ce module. */
-export async function refundCanceled(orderId: string): Promise<boolean> {
-  const { error } = await createAdminClient().rpc('refund_canceled_order', { p_order: orderId });
-  if (!error) return true;
-  // Déjà remboursée (rejeu, double clic) : le résultat voulu est atteint.
-  return error.message.includes('ALREADY_REFUNDED');
-}
-
 /**
  * Annulation par le client. Possible seulement tant que le fournisseur n'a rien livré.
- * Ordre voulu : le fournisseur accepte l'annulation d'abord, le remboursement vient ensuite.
- * Si le remboursement échoue après l'accord du fournisseur, le propriétaire est alerté et le
- * prochain passage du suivi des commandes rejoue le remboursement (la fonction SQL est unique par commande).
+ * Décision du 2026-11-27 : aucun remboursement automatique. Une fois l'annulation acceptée par le
+ * fournisseur, la commande passe en `to_review` et le propriétaire décide (remboursement manuel).
  */
-export async function cancelOrder(userId: string, orderId: string): Promise<{ refunded: boolean }> {
+export async function cancelOrder(
+  userId: string,
+  orderId: string,
+): Promise<{ refunded: false; status: 'to_review' }> {
+  const result = { refunded: false, status: 'to_review' } as const;
   if (!UUID.test(orderId)) return apiError('ORDER_NOT_FOUND');
   const db = createAdminClient();
   const { data, error } = await db
@@ -50,6 +45,19 @@ export async function cancelOrder(userId: string, orderId: string): Promise<{ re
   const order = data as Row;
   if (order.status === 'refunded') return apiError('ALREADY_REFUNDED');
 
+  // Demande déjà posée : jamais de 2e appel fournisseur ni de 2e alerte.
+  if (order.cancel_requested_at !== null) {
+    if (order.status !== 'to_review') {
+      // Reprise après une coupure entre la demande et la mise en examen.
+      await db
+        .from('orders')
+        .update({ status: 'to_review' })
+        .eq('id', order.id)
+        .eq('status', order.status);
+    }
+    return result;
+  }
+
   const { data: service } = await db
     .from('services')
     .select('cancel')
@@ -62,28 +70,30 @@ export async function cancelOrder(userId: string, orderId: string): Promise<{ re
     order.provider_order_id !== null &&
     service?.cancel === true &&
     !started;
-  // Demande déjà faite : on retente seulement le remboursement.
-  if (order.cancel_requested_at === null && !cancellable) return apiError('ORDER_NOT_CANCELLABLE');
+  if (!cancellable) return apiError('ORDER_NOT_CANCELLABLE');
 
-  if (order.cancel_requested_at === null) {
-    // Règle lue chez le fournisseur au moment du clic : la synchro peut avoir du retard.
-    // Panne du fournisseur : l'erreur remonte, refus prudent (ni annulation ni remboursement).
-    const live = (
-      await getProvider().status([order.provider_order_id as number], { readOnly: true })
-    )[order.provider_order_id as number];
-    if (live?.status !== 'Pending') return apiError('ORDER_NOT_CANCELLABLE');
-    const accepted = await getProvider().cancel(order.provider_order_id as number);
-    if (!accepted) return apiError('ORDER_NOT_CANCELLABLE');
-    // Garde sur le statut : une seule demande retenue même en cas de double clic.
-    await db
-      .from('orders')
-      .update({ cancel_requested_at: new Date().toISOString() })
-      .eq('id', order.id)
-      .is('cancel_requested_at', null);
+  // Règle lue chez le fournisseur au moment du clic : la synchro peut avoir du retard.
+  // Panne du fournisseur : l'erreur remonte, refus prudent.
+  const live = (
+    await getProvider().status([order.provider_order_id as number], { readOnly: true })
+  )[order.provider_order_id as number];
+  if (live?.status !== 'Pending') return apiError('ORDER_NOT_CANCELLABLE');
+  const accepted = await getProvider().cancel(order.provider_order_id as number);
+  if (!accepted) return apiError('ORDER_NOT_CANCELLABLE');
+  // Garde sur cancel_requested_at : une seule demande retenue (et une seule alerte) même en double clic.
+  const { data: updated } = await db
+    .from('orders')
+    .update({ cancel_requested_at: new Date().toISOString(), status: 'to_review' })
+    .eq('id', order.id)
+    .is('cancel_requested_at', null)
+    .select('id');
+  if (!updated || updated.length > 0) {
+    await notifyOwner('order_cancel_requested', {
+      order_id: order.id,
+      short_id: order.short_id,
+      service_id: order.service_id,
+      charged_xaf: order.charged_xaf,
+    });
   }
-
-  const refunded = await refundCanceled(order.id);
-  // Le fournisseur a annulé mais le solde n'a pas été rendu : le propriétaire est prévenu.
-  if (!refunded) await notifyOwner('internal_error', { where: 'cancelOrder', order_id: order.id });
-  return { refunded };
+  return result;
 }

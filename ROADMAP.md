@@ -32,7 +32,7 @@ Remplace `docs/04-roadmap.md`. S'appuie sur : `PRD.md`, `ARCHITECTURE.md`, `DATA
 | 12 | Admin (2) | Remboursements, services, réglages, journal | — |
 | 13 | Mise en ligne de test | Vercel Preview + Supabase test | Domaine, Supabase, Vercel, email Hostinger |
 | 14 | Accueil soigné + SEO | Accueil final, pages plateformes, FAQ, légal | Textes légaux relus |
-| 15 | Vrai fournisseur + lancement limité | Test réel, charge, lancement limité | Nouvelle clé fournisseur, SasPay en production |
+| 15 | **partielle, en attente de ta décision** (mise à jour 2026-11-27) : 15.1, 15.2, 15.3, 15.5, 15.10 faites ; 15.4 exécutée en local (argent cohérent, vitesse à 100 clients au-dessus de 800 ms, à refaire en ligne) ; annulation client tranchée (plus de remboursement automatique) ; 15.6 à 15.9 en attente de « validé » | — |
 | 16 | Ouverture publique | Site ouvert à tous | Bilan du lancement limité |
 
 ## Détail des phases
@@ -180,5 +180,5 @@ Pages par pays, blog, commandes en lot, notifications client, email « nouvelle 
 | 12 | **validée le 2026-11-21** (PR 31 ; migrations appliquées en production le 2026-11-21) | — |
 | 13 | à faire | — |
 | 14 | **validée le 2026-11-21** (PR 40) | — |
-| 15 | à faire | — |
+| 15 | **partielle, en attente de ta décision** (2026-11-22) : 15.1, 15.2, 15.3, 15.5, 15.10 faites ; 15.4 en attente de Docker ; 15.6 à 15.9 en attente de « validé » | — |
 | 16 | à faire | — |

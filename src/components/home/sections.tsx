@@ -3,47 +3,36 @@ import { useTranslations } from 'next-intl';
 import type { Copy } from './use-copy';
 import type { Loc } from './paths';
 import { CATALOGUE_TOTAL, NETWORKS } from './networks';
-import { PLACEHOLDER_STATS } from './stats';
-import { CARD, H2, Section, TAG, fmt } from './ui';
+import { CARD, H2, Section, fmt } from './ui';
 
 const netCount = (id: string) => NETWORKS.find((n) => n.id === id)?.count ?? 0;
 
-// Les trois premiers chiffres viennent du catalogue ; les autres sont des exemples (pastille).
-const STAT_VALUES = [
-  { value: CATALOGUE_TOTAL, example: false },
-  { value: netCount('instagram'), example: false },
-  { value: netCount('tiktok'), example: false },
-  { value: PLACEHOLDER_STATS.orders, example: true },
-  { value: PLACEHOLDER_STATS.clients, example: true },
-  { value: PLACEHOLDER_STATS.countries, example: true },
-];
+// Trois chiffres viennent du catalogue ; clients et commandes sont des textes des messages.
+const STAT_VALUES = [CATALOGUE_TOTAL, netCount('instagram'), netCount('tiktok')];
 
 export function Stats({ t, loc }: { t: Copy; loc: Loc }) {
   const tr = useTranslations('home');
+  const tile = `e-card e-press flex flex-col rounded-2xl ${CARD} p-5`;
+  const big = 'text-3xl font-bold text-[var(--lp-gray-12)] sm:text-4xl';
   return (
     <Section label={t.statsTitle}>
-      <dl data-reveal-group className="mx-auto grid max-w-4xl grid-cols-2 gap-3 md:grid-cols-3">
-        {STAT_VALUES.map(({ value, example }, i) => {
+      <dl data-reveal-group className="mx-auto grid max-w-4xl grid-cols-2 gap-3 md:grid-cols-6">
+        {STAT_VALUES.map((value, i) => {
           const label = t.statsLabels[i] ?? '';
           return (
-            <div
-              key={label}
-              data-exemple={example ? '' : undefined}
-              className={`e-card e-press flex flex-col rounded-2xl ${CARD} p-5`}
-            >
-              <dd
-                className="order-1 text-3xl font-bold text-[var(--lp-gray-12)] tabular-nums sm:text-4xl"
-                data-count={value}
-              >
+            <div key={label} className={`${tile} md:col-span-2`}>
+              <dd className={`order-1 ${big} tabular-nums`} data-count={value}>
                 {fmt(value, loc)}
               </dd>
-              <dt className="order-2 mt-1 flex flex-wrap items-center gap-2 text-sm text-[var(--lp-gray-11)]">
-                {label}
-                {example && <span className={TAG}>{tr('example')}</span>}
-              </dt>
+              <dt className="order-2 mt-1 text-sm text-[var(--lp-gray-11)]">{label}</dt>
             </div>
           );
         })}
+        {[tr('stats.clients'), tr('stats.orders')].map((text) => (
+          <div key={text} className={`${tile} justify-center max-md:last:col-span-2 md:col-span-3`}>
+            <dt className={big}>{text}</dt>
+          </div>
+        ))}
       </dl>
     </Section>
   );

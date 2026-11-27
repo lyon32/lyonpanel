@@ -79,6 +79,15 @@ const envSchema = z
         message: 'SASPAY_MODE=live est réservé à la production',
       });
     }
+
+    // De vrais paiements avec un faux fournisseur : le client paierait sans rien recevoir.
+    if (env.SASPAY_MODE === 'live' && env.PROVIDER_MODE !== 'live') {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['PROVIDER_MODE'],
+        message: 'SASPAY_MODE=live exige PROVIDER_MODE=live',
+      });
+    }
     // Une clé de test avec le mode live (ou l'inverse) fausserait de vrais paiements.
     const key = env.SASPAY_API_KEY?.toLowerCase();
     if (key) {

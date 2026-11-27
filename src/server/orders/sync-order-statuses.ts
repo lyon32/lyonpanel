@@ -1,5 +1,4 @@
 import 'server-only';
-import { refundCanceled } from './cancel-order';
 import { flagForReview } from './flag-for-review';
 import { createAdminClient } from '@/server/db/supabase-admin';
 import { getProvider } from '@/server/providers';
@@ -57,11 +56,6 @@ async function applyStatus(row: Row, st: ProviderStatus, c: Counters): Promise<v
       .eq('id', row.id)
       .eq('status', row.status);
     if (status === 'completed') c.completed += 1;
-    return;
-  }
-  // Annulation demandée par le client et acceptée par le fournisseur : remboursement intégral.
-  if (st.status === 'Canceled' && row.cancel_requested_at !== null) {
-    if (await refundCanceled(row.id)) c.refunded += 1;
     return;
   }
   // Partial, Canceled ou inconnu : jamais ignoré, le propriétaire examine (pas de remboursement auto).

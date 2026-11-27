@@ -51,6 +51,7 @@ const order = (o: Record<string, unknown> = {}) => ({
 });
 
 beforeEach(() => {
+  vi.mocked(notifyOwner).mockClear();
   h.updates.length = 0;
   h.rpc.mockReset().mockResolvedValue({ data: {}, error: null });
   h.provider.cancel.mockReset().mockResolvedValue(true);
@@ -60,21 +61,42 @@ beforeEach(() => {
   h.tables = { orders: order(), services: { cancel: true } };
 });
 
-describe('cancelOrder', () => {
-  it('fournisseur « Pending » : le fournisseur accepte, remboursement intégral', async () => {
-    await expect(cancelOrder('u1', ID)).resolves.toEqual({ refunded: true });
+const patchWith = (key: string, value: unknown) =>
+  h.updates.some((u) => (u as Record<string, unknown>)[key] === value);
+
+describe('cancelOrder (aucun remboursement automatique, décision du 2026-11-27)', () => {
+  it('fournisseur « Pending » : annulation acceptée, commande mise en examen, AUCUN mouvement d argent', async () => {
+    await expect(cancelOrder('u1', ID)).resolves.toEqual({
+      refunded: false,
+      status: 'to_review',
+    });
     expect(h.provider.cancel).toHaveBeenCalledWith(555);
-    expect(h.rpc).toHaveBeenCalledWith('refund_canceled_order', { p_order: ID });
+    expect(patchWith('status', 'to_review')).toBe(true);
+    expect(h.updates.some((u) => 'cancel_requested_at' in (u as object))).toBe(true);
+    expect(h.rpc).not.toHaveBeenCalled();
   });
 
-  it('commande déjà démarrée (reste < quantité) : refusée, aucun appel fournisseur, aucun remboursement', async () => {
+  it('alerte le propriétaire : demande d annulation à examiner', async () => {
+    await cancelOrder('u1', ID);
+    expect(notifyOwner).toHaveBeenCalledWith(
+      'order_cancel_requested',
+      expect.objectContaining({ order_id: ID }),
+    );
+  });
+
+  it('n expose plus de fonction de remboursement automatique', async () => {
+    const mod = (await import('@/server/orders/cancel-order')) as Record<string, unknown>;
+    expect(mod.refundCanceled).toBeUndefined();
+  });
+
+  it('commande déjà démarrée (reste < quantité) : refusée, aucun appel fournisseur, aucun mouvement', async () => {
     h.tables.orders = order({ remains: 6, start_count: 100 });
     await expect(cancelOrder('u1', ID)).rejects.toMatchObject({ code: 'ORDER_NOT_CANCELLABLE' });
     expect(h.provider.cancel).not.toHaveBeenCalled();
     expect(h.rpc).not.toHaveBeenCalled();
   });
 
-  it('fournisseur « In progress » (même sans rien livré) : refusée, aucun appel cancel ni remboursement', async () => {
+  it('fournisseur « In progress » (même sans rien livré) : refusée, aucun appel cancel', async () => {
     h.provider.status.mockResolvedValue({ 555: { status: 'In progress', remains: 10 } });
     await expect(cancelOrder('u1', ID)).rejects.toMatchObject({ code: 'ORDER_NOT_CANCELLABLE' });
     expect(h.provider.cancel).not.toHaveBeenCalled();
@@ -87,9 +109,11 @@ describe('cancelOrder', () => {
     expect(h.rpc).not.toHaveBeenCalled();
   });
 
-  it('le fournisseur refuse : aucun remboursement', async () => {
+  it('le fournisseur refuse : ni examen ni alerte ni mouvement', async () => {
     h.provider.cancel.mockResolvedValue(false);
     await expect(cancelOrder('u1', ID)).rejects.toMatchObject({ code: 'ORDER_NOT_CANCELLABLE' });
+    expect(patchWith('status', 'to_review')).toBe(false);
+    expect(notifyOwner).not.toHaveBeenCalled();
     expect(h.rpc).not.toHaveBeenCalled();
   });
 
@@ -107,19 +131,22 @@ describe('cancelOrder', () => {
     expect(h.provider.cancel).not.toHaveBeenCalled();
   });
 
-  it('demande déjà faite mais remboursement manqué : on retente le remboursement sans rappeler le fournisseur', async () => {
+  it('demande déjà faite mais commande pas encore en examen : mise en examen sans rappeler le fournisseur ni rembourser', async () => {
     h.tables.orders = order({ cancel_requested_at: '2026-11-17T10:00:00Z' });
-    await expect(cancelOrder('u1', ID)).resolves.toEqual({ refunded: true });
+    await expect(cancelOrder('u1', ID)).resolves.toEqual({ refunded: false, status: 'to_review' });
     expect(h.provider.cancel).not.toHaveBeenCalled();
-    expect(h.rpc).toHaveBeenCalledTimes(1);
+    expect(patchWith('status', 'to_review')).toBe(true);
+    expect(h.rpc).not.toHaveBeenCalled();
   });
 
-  it('remboursement qui échoue après accord du fournisseur : refunded false, alerte, pas d erreur client', async () => {
-    h.rpc.mockResolvedValue({ data: null, error: { message: 'boom' } });
-    await expect(cancelOrder('u1', ID)).resolves.toEqual({ refunded: false });
-    expect(notifyOwner).toHaveBeenCalledWith(
-      'internal_error',
-      expect.objectContaining({ order_id: ID }),
-    );
+  it('double clic (déjà en examen avec demande) : succès idempotent, pas de 2e alerte, pas de mouvement', async () => {
+    h.tables.orders = order({
+      status: 'to_review',
+      cancel_requested_at: '2026-11-17T10:00:00Z',
+    });
+    await expect(cancelOrder('u1', ID)).resolves.toEqual({ refunded: false, status: 'to_review' });
+    expect(h.provider.cancel).not.toHaveBeenCalled();
+    expect(notifyOwner).not.toHaveBeenCalled();
+    expect(h.rpc).not.toHaveBeenCalled();
   });
 });

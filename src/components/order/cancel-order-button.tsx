@@ -6,7 +6,7 @@ import { useState } from 'react';
 
 type Step = 'idle' | 'confirm' | 'sending' | 'done';
 
-/** Annulation d'une commande qui n'a pas démarré : confirmation, puis remboursement du montant débité. */
+/** Annulation d'une commande qui n'a pas démarré : confirmation, puis demande envoyée, examinée par l'équipe (aucun remboursement automatique). */
 export function CancelOrderButton({ orderId, amountXaf }: { orderId: string; amountXaf: number }) {
   const t = useTranslations('orderTracking');
   const locale = useLocale();

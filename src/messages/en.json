@@ -56,7 +56,6 @@
     "heroText": "Followers, likes and views for TikTok, Instagram, YouTube, Telegram and many other networks. Top up your balance, order, and follow every order in one place.",
     "createAccount": "Create an account",
     "seeServices": "See the services",
-    "example": "Example",
     "mockBalance": "Balance",
     "mockOrders": "Orders",
     "mockPlace": "Place an order",
@@ -138,11 +137,10 @@
       "items": {
         "1": "services in the catalogue",
         "2": "Instagram services",
-        "3": "TikTok services",
-        "4": "orders placed",
-        "5": "registered clients",
-        "6": "countries served"
-      }
+        "3": "TikTok services"
+      },
+      "clients": "100+ clients",
+      "orders": "2000+ orders"
     },
     "steps": {
       "title": "Order in 3 steps",
@@ -649,11 +647,11 @@
     "reviewHint": "We are checking this order. We will get back to you as soon as it is sorted.",
     "remaining": "{count} left to deliver",
     "cancel": "Cancel order",
-    "cancelConfirm": "Cancel this order? You will be refunded {amount} XAF.",
+    "cancelConfirm": "Cancel this order? Your request will be reviewed by our team.",
     "cancelYes": "Yes, cancel",
     "cancelNo": "No, keep it",
     "cancelSending": "Cancelling…",
-    "cancelDone": "Order cancelled, balance refunded.",
+    "cancelDone": "Cancellation request received, it will be under review by our team.",
     "cancelFailed": "The cancellation could not be done. Please try again in a moment.",
     "quantity": "{count} units"
   },

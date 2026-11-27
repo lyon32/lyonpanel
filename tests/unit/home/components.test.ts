@@ -4,7 +4,6 @@ import { exists, listFiles, read, sizeOf } from './helpers';
 const HOME = 'src/components/home';
 const homeSrc = () => listFiles(HOME).filter((f) => /\.(tsx?|css)$/.test(f));
 const allHome = () => homeSrc().map(read).join('\n');
-const statsDef = () => homeSrc().filter((f) => /export const PLACEHOLDER_STATS\b/.test(read(f)));
 
 describe('accueil : composants dans src/components/home', () => {
   it('le héros existe', () => {
@@ -36,28 +35,24 @@ describe('accueil : composants dans src/components/home', () => {
   });
 });
 
-describe('accueil : chiffres d’exemple', () => {
-  it('PLACEHOLDER_STATS est exporté une seule fois, avec le commentaire de remplacement', () => {
-    const defs = statsDef();
-    expect(defs).toHaveLength(1);
-    expect(read(defs[0]!)).toContain('À REMPLACER PAR LES VRAIS CHIFFRES AVANT LA MISE EN LIGNE');
+describe('accueil : vrais chiffres (phase 15.1)', () => {
+  it('PLACEHOLDER_STATS n’existe plus nulle part dans src/components/home', () => {
+    expect(allHome()).not.toMatch(/PLACEHOLDER_STATS/);
+    expect(allHome()).not.toContain('À REMPLACER PAR LES VRAIS CHIFFRES');
   });
-  it('les valeurs d’exemple ne sont écrites en dur nulle part ailleurs', async () => {
-    const [def] = statsDef();
-    expect(def).toBeDefined();
-    const mod = (await import(/* @vite-ignore */ `../../../${def!.replace(/\.ts$/, '')}`)) as {
-      PLACEHOLDER_STATS: Record<string, number>;
-    };
-    for (const f of homeSrc().filter((x) => x !== def)) {
-      for (const v of Object.values(mod.PLACEHOLDER_STATS)) {
-        expect(read(f), `${f} contient ${v}`).not.toMatch(new RegExp(`\\b${v}\\b`));
-      }
-    }
+  it('les anciens chiffres inventés (48200, 6400, pays) ont disparu', () => {
+    expect(allHome()).not.toMatch(/(48200|6400)/);
+    expect(allHome()).not.toMatch(/countries/);
   });
-  it('le composant des chiffres affiche la pastille « Exemple » avec PLACEHOLDER_STATS', () => {
-    const f = homeSrc().find((x) => /PLACEHOLDER_STATS/.test(read(x)) && x.endsWith('.tsx'));
-    expect(f, 'un composant .tsx doit utiliser PLACEHOLDER_STATS').toBeDefined();
-    expect(read(f!)).toMatch(/['"]example['"]|home\.example/);
+  it('plus aucune pastille « Exemple » sur les chiffres', () => {
+    const f = homeSrc().filter((x) => x.endsWith('sections.tsx'));
+    expect(f).toHaveLength(1);
+    expect(read(f[0]!)).not.toMatch(/tr\('example'\)|home\.example|data-exemple/);
+  });
+  it('les chiffres viennent des messages, sans nombre en dur', () => {
+    const src = read(`${HOME}/sections.tsx`);
+    expect(src).toMatch(/stats.(clients|orders)/);
+    expect(src).not.toMatch(/(100|2000)/);
   });
 });
 
