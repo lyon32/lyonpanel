@@ -31,6 +31,24 @@ Failles
 2. [Moyenne] Fermeture de l'inscription (à documenter pour 15.9) — aucun interrupteur dans le code : l'inscription passe par admin.auth.admin.createUser (supabase-deps.ts:67) avec la clé service, donc le réglage Supabase « Allow new users to sign up » ne la bloquerait PAS. La table allowed_signups existe (DATA_MODEL.md) mais n'est pas utilisée. Moyens actuels : retirer la clé Turnstile côté serveur (l'inscription échoue en TURNSTILE_FAILED), ou redéployer sans la route. À proposer au propriétaire (changement à valider, rien codé) : réglage « inscriptions ouvertes/fermées » dans la table settings, lu par registerUser, modifiable depuis l'admin. — Responsable : lp-coder + lp-db, après accord
 3. [Basse] src/components/ui/chart.tsx:88 — dangerouslySetInnerHTML (composant shadcn, CSS générée depuis la configuration, pas depuis une saisie) — interdit par CLAUDE.md « Jamais 7 » ; vérifier si le composant est utilisé, sinon le supprimer ; sinon documenter l'exception — Responsable : lp-coder
 4. [Basse] src/lib/security-headers.ts — CSP avec script-src 'unsafe-inline' (affaiblit la protection XSS) ; acceptable tant que Next injecte des scripts en ligne ; à durcir plus tard avec des nonces.
-5. [Basse] Remboursement à l'annulation client (voir plus haut) : faire confirmer par le propriétaire que ce cas, confirmé par le fournisseur, est conforme à « jamais de remboursement auto ».
+5. [Basse] RÉSOLU (addendum 2026-11-27) : l'annulation client ne rembourse plus, elle met la commande en to_review.
 
 Avant 15.6 (obligatoire) : corriger n°1, rejouer avec Docker démarré : npm run test:db (RLS, 2 commandes simultanées, webhook rejoué 2 fois = 1 crédit, 429), régénérer la clé fournisseur, lancer gitleaks en CI sur la PR.
+
+## Annulation client (addendum 2026-11-27)
+
+VERDICT : ACCEPTÉ (diff 507eef6..4183fd9, lecture du code ; base locale non rejouée)
+
+Constats
+- Aucun chemin de remboursement automatique : grep dans src, `refund_canceled_order` n'apparaît plus (seule la fonction SQL reste, réservée à service_role, plus appelée) ; `refund_order` n'est appelé que par src/server/admin/refund-order.ts (action admin). sync-order-statuses ne rembourse plus ; il ne lit que pending/in_progress, donc une commande to_review n'est jamais retraitée. Le cron n'a pas de route de remboursement. → OK
+- Droits : requireApiUser, lecture filtrée `id` + `user_id` (commande d'un autre = ORDER_NOT_FOUND), UUID validé. → OK
+- Idempotence : une demande déjà posée (cancel_requested_at) ne rappelle ni le fournisseur ni Telegram ; l'écriture est gardée par `cancel_requested_at is null` : une seule alerte. Reprise après coupure gérée. → OK
+- provider.add : jamais appelé ici (seulement status en lecture et cancel). → OK
+- Telegram : payload = order_id, short_id, service_id, charged_xaf ; aucune donnée personnelle ni secret ; échec muet. → OK
+- Messages FR/EN : plus de promesse de remboursement, textes cohérents. → OK
+- to_review atteignable par cette voie seulement si fournisseur Pending + cancel accepté ; remboursement uniquement via l'action admin.
+
+Failles
+1. [Basse] src/server/orders/cancel-order.ts:~85 — deux clics simultanés peuvent passer la lecture avant l'écriture et appeler 2 fois provider.cancel (pas de double alerte, pas d'argent, cancel idempotent chez le fournisseur) — correction possible : réserver cancel_requested_at avant l'appel fournisseur (comme claim_order_resend) — Responsable : lp-coder
+2. [Basse] même fichier — l'update final n'a pas de garde sur le statut : si la synchro passe la commande en completed entre-temps, elle repasse en to_review (sans perte d'argent, examen du propriétaire) — ajouter `.in('status', ['pending','in_progress'])`.
+3. [Basse] `!updated || ...` : si l'update échoue (erreur), une alerte part quand même ; acceptable (alerte en trop).
