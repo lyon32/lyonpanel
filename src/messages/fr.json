@@ -647,11 +647,11 @@
     "reviewHint": "Nous vérifions cette commande. Nous revenons vers vous dès que c’est réglé.",
     "remaining": "Il reste {count} à livrer",
     "cancel": "Annuler la commande",
-    "cancelConfirm": "Annuler cette commande ? Vous serez remboursé de {amount} XAF.",
+    "cancelConfirm": "Annuler cette commande ? Votre demande sera examinée par notre équipe.",
     "cancelYes": "Oui, annuler",
     "cancelNo": "Non, garder",
     "cancelSending": "Annulation…",
-    "cancelDone": "Commande annulée, solde remboursé.",
+    "cancelDone": "Demande d’annulation reçue, elle sera examinée par notre équipe.",
     "cancelFailed": "L’annulation n’a pas pu être faite. Réessayez dans un instant.",
     "quantity": "{count} unités"
   },
