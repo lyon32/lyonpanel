@@ -2,18 +2,19 @@
 
 Écrit pour le propriétaire. Une section par phase. Seul le propriétaire valide une phase.
 
-## Phase 15 — Tests finaux et préparation du lancement (2026-11-22) — partielle, en attente de décision
+## Phase 15 — Tests finaux et préparation du lancement (mis à jour le 2026-11-27) — partielle, en attente de décision
 
 ### Nouveau
 - Accueil : « 100+ clients » et « 2000+ commandes », 5 tuiles, sans pastille « Exemple ».
 - Logo en palette sombre ; image de partage `og/default.png` (1200 x 630, en Arial) sur l'accueil et les pages du catalogue.
 - Garde-fou : le paiement SasPay en réel exige le fournisseur en réel.
+- Annulation par le client : plus aucun remboursement automatique. La commande passe en examen et tu décides (décision du 2026-11-27). Audit de sécurité accepté, 3 failles Basses notées.
 
 ### Chiffres
-- 2161 tests unitaires verts. Lighthouse local : téléphone 76 (FR) et 91 (EN), ordinateur 99 et 98 ; blocage TBT 390 ms et 260 ms (objectif 200 ms non atteint).
+- 2161 tests unitaires verts, 1333 tests de base verts. Charge 100 clients en local : argent cohérent, mais p95 de 1641 à 1956 ms (objectif 800 ms) et 2 essais sur 4 ont perdu des commandes ; 10 et 30 clients OK. Lighthouse local : téléphone 76 (FR) et 91 (EN), ordinateur 99 et 98 ; blocage TBT 390 ms et 260 ms (objectif 200 ms non atteint).
 
 ### Pas fait
-- Test de charge 100 clients et restauration : non exécutés (Docker arrêté). Essais de base, gitleaks et CI à passer. Étapes 15.6 à 15.9 (vrai fournisseur, vrai paiement, ouverture limitée) non démarrées. Aucun vrai fournisseur ni paiement utilisé.
+- Charge et restauration exécutées en local seulement (comptes auth et RLS non prouvés) ; à refaire à la mise en ligne de test. gitleaks et CI à passer. Interrupteur d'inscriptions proposé, non fait. Étapes 15.6 à 15.9 (vrai fournisseur, vrai paiement, ouverture limitée) non démarrées. Aucun vrai fournisseur ni paiement utilisé. Clé fournisseur à régénérer (un `.env.local` a été copié par erreur puis supprimé, jamais commité).
 
 ## Phase 12 — Admin (2) : commandes, services, réglages (2026-11-17) — faite, en attente de validation
 

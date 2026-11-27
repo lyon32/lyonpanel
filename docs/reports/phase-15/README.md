@@ -1,8 +1,16 @@
 # Bilan — Phase 15 : vrai fournisseur, tests finaux, lancement limité
-Date : 2026-11-22 · Statut : **partielle, en attente de ta décision** (jamais « validée » par l'équipe : seul ton « validé » compte)
+Date : 2026-11-27 (mis à jour) · Statut : **partielle, en attente de ta décision** (jamais « validée » par l'équipe : seul ton « validé » compte)
 
 ## En une phrase
 La partie « préparation » est faite (accueil, logo, image de partage, mesure de vitesse, audit de sécurité). La partie « vrai argent et vrai fournisseur » (15.6 à 15.9) **n'est pas démarrée** : elle attend tes actions et ton « validé ».
+
+## Ce qu'il reste avant de dire « validé »
+1. Régénérer la clé du fournisseur (et révoquer l'ancienne), la mettre dans Vercel Production, jamais dans un fichier.
+2. Mettre le site en ligne en test (pas de Preview, ta décision du 2026-11-27), puis refaire la mesure de charge et la vitesse de l'accueil (3 passes Lighthouse + un vrai téléphone Android).
+3. Décider de l'interrupteur « inscriptions ouvertes / fermées » (proposé, non fait).
+4. Valider ou non la suppression de la fonction SQL `refund_canceled_order` (migration).
+5. Lire la CI sur la PR et passer gitleaks en CI.
+6. Dire « validé » pour chaque étape réelle (15.7, puis 15.8). Rien de réel ne démarre sans ce mot.
 
 ## Rappel important
 **Aucun vrai fournisseur et aucun vrai paiement n'a été utilisé.** Tout a tourné en mode faux (`PROVIDER_MODE=mock`, SasPay test). Aucune clé réelle n'a été lue ni écrite.
@@ -24,18 +32,27 @@ La partie « préparation » est faite (accueil, logo, image de partage, mesure 
 - **15.10 Rapport** : ce document.
 - **Tests** : **2161** tests unitaires passent.
 
+## DÉCISIONS DÉJÀ PRISES PAR TOI (2026-11-27)
+- **Annulation par le client : TRANCHÉ.** Plus aucun remboursement automatique. Quand le client annule, la commande passe en examen (`to_review`) et c'est toi qui décides du remboursement. Fait dans le commit `4183fd9`. Audit de sécurité : ACCEPTÉ, avec 3 failles Basses : (1) un double clic simultané peut envoyer deux fois `provider.cancel` ; (2) la mise à jour finale du statut n'a pas de garde sur le statut précédent ; (3) l'alerte part même si cette mise à jour échoue. La fonction SQL `refund_canceled_order` est laissée en place : la supprimer demande une migration, à valider par toi.
+- **Image de partage** : gardée en Arial.
+- **Vitesse de l'accueil** : à mesurer d'abord en ligne, avant de changer le code.
+- **Pas de Preview** : la mesure se fera à la mise en ligne de test.
+- **Interrupteur d'inscriptions** : proposé, **pas fait**, il attend ton « validé ».
+
+## INCIDENT
+Un agent a copié par erreur le `.env.local` du dépôt principal, puis l'a supprimé. Jamais commité, aucune valeur affichée. La clé fournisseur reste à régénérer.
+
 ## PAS FAIT, HONNÊTEMENT
-- **15.4 Test de charge (100 clients) et test de restauration : EXÉCUTÉS le 2026-11-27 en local, mode faux.** `npm run test:db` : 1333/1333 verts. Charge : 100/100 clients, 300/300 commandes, 0 double crédit, 0 double débit, 0 solde négatif ou incohérent, 0 commande bloquée ; **p95 1956 ms, au-dessus de l'objectif de 800 ms** (pic de 100 clients d'un coup, base locale, à refaire sur Preview). Restauration : soldes et totaux identiques ; RLS et comptes `auth` non couverts par ce test. Détail : `docs/reports/phase-15/charge-restauration.md`.
+- **15.4 Test de charge (100 clients) et test de restauration : EXÉCUTÉS le 2026-11-27 en local, mode faux.** `npm run test:db` : **1333 tests de base verts**. Charge à 100 clients : argent cohérent (0 double crédit, 0 double débit, 0 solde négatif ou incohérent), mais **p95 entre 1641 et 1956 ms, au-dessus de l'objectif de 800 ms**, et **2 essais sur 4 à 100 clients ont perdu des commandes** en local (cause non prouvée, probablement la saturation du poste). Aux paliers 10 et 30 clients : OK, sous 800 ms. À refaire à la mise en ligne de test. Restauration : soldes et totaux identiques ; **comptes `auth` et règles RLS non prouvés** par ce test. Détail : `docs/reports/phase-15/charge-restauration.md`.
 - **15.4 bis, montée progressive (2026-11-27, local, mode faux, PAS une mesure Preview/production)** : paliers 10, 30, 100 clients, création des comptes mesurée à part. Argent : 0 double crédit, 0 double débit, 0 solde négatif ou incohérent à tous les paliers et sur toutes les exécutions. Vitesse `place_order`/`credit_payment` : p95 337 ms (10), 328 ms (30), 1641 ms (100, objectif 800 ms non atteint à 100). Instabilité locale : sur 3 exécutions du palier 100, 2 ont perdu 79 puis 2 commandes (`fetch failed` côté client de test, pas d'erreur SQL). Détail : `charge-restauration.md`.
-- **Essais de base de données (`npm run test:db`) non rejoués** : double commande simultanée, webhook rejoué deux fois, droits d'accès. Ils ont été vérifiés par lecture du code seulement.
 - **gitleaks** (recherche de secrets) : non installé ici, à passer en CI sur la PR.
 - **CI GitHub** : à lire sur la PR (pas encore lue ici).
 - **Mesure de vitesse sur le vrai site et sur Android** : non faite.
 
 ## DÉCISIONS À PRENDRE PAR TOI
-1. **Vitesse sur téléphone** : si le TBT est confirmé au-dessus de 200 ms sur le vrai site (3 passes), passer les sections fixes de l'accueil en « composants serveur » ? Conseil : d'abord confirmer le chiffre, puis décider.
-2. **Fermer les inscriptions en cas de problème (pour 15.9)** : **rien n'existe aujourd'hui**, sauf retirer la clé Turnstile (anti-robots), ce qui est un moyen détourné. Le réglage de Supabase « autoriser les inscriptions » ne bloquerait pas notre site. Proposition : un réglage « inscriptions ouvertes / fermées » dans l'admin (changement à valider, pas fait d'office).
-3. **Annulation par le client avec remboursement immédiat** : aujourd'hui, si le fournisseur confirme l'annulation et que rien n'a démarré, le client est remboursé tout de suite. Or la règle du projet est « jamais de remboursement automatique, toujours après examen ». À toi de dire : on garde l'exception, ou on repasse par ton examen.
+1. **Vitesse sur téléphone** (à mesurer en ligne d'abord, décidé le 2026-11-27) : si le TBT est confirmé au-dessus de 200 ms sur le vrai site (3 passes), passer les sections fixes de l'accueil en « composants serveur » ? Conseil : d'abord confirmer le chiffre, puis décider.
+2. **Fermer les inscriptions en cas de problème (pour 15.9)** : proposé, **NON fait, attend ton « validé »**. **Rien n'existe aujourd'hui**, sauf retirer la clé Turnstile (anti-robots), ce qui est un moyen détourné. Le réglage de Supabase « autoriser les inscriptions » ne bloquerait pas notre site. Proposition : un réglage « inscriptions ouvertes / fermées » dans l'admin (changement à valider, pas fait d'office).
+3. ~~Annulation par le client avec remboursement immédiat~~ : **TRANCHÉ le 2026-11-27**, plus aucun remboursement automatique (voir plus haut).
 4. **Point faible de sécurité, niveau bas** : la protection du navigateur (CSP) accepte des scripts « en ligne » (`unsafe-inline`). Acceptable pour l'instant ; à durcir plus tard.
 5. **`chart.tsx`** : ce composant utilise `dangerouslySetInnerHTML`, ce que le projet interdit. Le contenu vient de la configuration, pas d'une saisie. À supprimer s'il est inutilisé, sinon à garder comme exception documentée.
 
