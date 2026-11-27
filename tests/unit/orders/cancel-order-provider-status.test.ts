@@ -60,11 +60,11 @@ beforeEach(() => {
 });
 
 describe('cancelOrder : règle lue sur le statut fournisseur', () => {
-  it('en attente chez le fournisseur : annulation acceptée, somme payée rendue', async () => {
+  it('en attente chez le fournisseur : annulation acceptée, mise en examen, aucun remboursement', async () => {
     providerSays('Pending');
-    await expect(cancelOrder('u1', ID)).resolves.toEqual({ refunded: true });
+    await expect(cancelOrder('u1', ID)).resolves.toEqual({ refunded: false, status: 'to_review' });
     expect(h.provider.cancel).toHaveBeenCalledWith(555);
-    expect(h.rpc).toHaveBeenCalledWith('refund_canceled_order', { p_order: ID });
+    expect(h.rpc).not.toHaveBeenCalled();
   });
 
   it('en cours chez le fournisseur (état local in_progress, rien livré) : refusée, aucun appel d’annulation', async () => {
